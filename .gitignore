@@ -1,0 +1,41 @@
+# Data & outputs (too large for version control)
+data/
+output/
+catboost_info/
+
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+*.egg
+dist/
+build/
+.eggs/
+
+# Virtual environments
+venv/
+.venv/
+env/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+
+# Large model files (don't track .pkl, .pth, .pt)
+*.pkl
+*.pth
+*.pt
+*.npy
+*.parquet
+
+# Config with secrets (optional - keep sample)
+# configs/secrets.yaml

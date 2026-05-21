@@ -1,0 +1,10 @@
+numpy>=1.23
+pandas>=1.5
+xarray>=2023.1
+netCDF4>=1.6
+openpyxl>=3.1
+scikit-learn>=1.2
+catboost>=1.2
+matplotlib>=3.7
+Pillow>=9.5
+joblib>=1.2
