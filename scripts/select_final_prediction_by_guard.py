@@ -69,6 +69,9 @@ HOURS = list(range(6, 20))
 TARGET_RATIO = 0.9488
 TARGET_SITE_COUNT = 53
 BLEND_ALPHAS = [0.10, 0.20, 0.30, 0.40, 0.50, 0.60, 0.70, 0.80, 0.90]
+ENABLE_TEST_ORACLE_GUARD = False
+# NRMSE oracle guard 默认关闭（避免 test 集参与最终选择）
+ENABLE_NRMSE_ORACLE_GUARD = False
 
 # ── 输出路径 ────────────────────────────────────────────────────────────────
 OUT_FULL = TABLES_DIR / "distributed_predictions_final_full.pkl"
@@ -434,6 +437,17 @@ def select_per_hour(candidates, valid_df):
         base_metrics = compute_hour_metrics(valid_h, "power_pred")
         base_metrics["_ver"] = "V1"
 
+        # strict hours 固定 V1（不在 valid 集上选择 BlendTotal）
+        if h in STRICT_NRMSE_GUARD_HOURS:
+            base_score = score_candidates(base_metrics)
+            selection[h] = ("V1", base_metrics, base_score, ["strict hour: force V1"])
+            print(
+                f"  h={h:02d}: strict hour 强制 V1 "
+                f"(score={base_score:.2f}, mae={base_metrics.get('mae', np.nan):.4f}, "
+                f"rmse={base_metrics.get('rmse', np.nan):.4f})"
+            )
+            continue
+
         best_score = float("inf")
         best_ver = "V1"
         best_m = base_metrics
@@ -459,12 +473,10 @@ def select_per_hour(candidates, valid_df):
             cand_metrics["_ver"] = ver
 
             if ver == "BaselineTotal":
-                # BaselineTotal 仅作为兜底版本，禁止主动入选
                 passed = False
-                reasons = ["BaselineTotal 仅作为兜底版本，禁止主动入选；请使用 BlendTotal 候选"]
+                reasons = ["BaselineTotal 仅作为兜底版本"]
             elif ver.startswith("BlendTotal"):
-                # BlendTotal 在 valid 集通过宽松 guard，正式选择延后至 test 集
-                # guard 放宽（仅防极端劣化）：比 V1 差太多才拒绝
+                # MAE/RMSE 主约束：不允许大幅牺牲站点误差
                 reasons = []
                 passed = True
                 base_mae = base_metrics.get("mae", np.nan)
@@ -472,13 +484,22 @@ def select_per_hour(candidates, valid_df):
                 base_rmse = base_metrics.get("rmse", np.nan)
                 cand_rmse = cand_metrics.get("rmse", np.nan)
                 if np.isfinite(base_mae) and np.isfinite(cand_mae):
-                    if cand_mae > base_mae * 1.50:   # 宽松：允许 MAE 恶化 50%
+                    if cand_mae > base_mae * 1.05:
                         passed = False
-                        reasons.append(f"BlendTotal mae 极端恶化: {cand_mae:.4f} > 1.50*base {base_mae:.4f}")
+                        reasons.append(
+                            f"BlendTotal mae 恶化: {cand_mae:.4f} > 1.05*base {base_mae:.4f}"
+                        )
                 if np.isfinite(base_rmse) and np.isfinite(cand_rmse):
-                    if cand_rmse > base_rmse * 1.50:  # 宽松：允许 RMSE 恶化 50%
+                    if cand_rmse > base_rmse * 1.05:
                         passed = False
-                        reasons.append(f"BlendTotal rmse 极端恶化: {cand_rmse:.4f} > 1.50*base {base_rmse:.4f}")
+                        reasons.append(
+                            f"BlendTotal rmse 恶化: {cand_rmse:.4f} > 1.05*base {base_rmse:.4f}"
+                        )
+                # ratio 下限软约束（仅排除明显异常）
+                cand_ratio = cand_metrics.get("pred_actual_ratio", np.nan)
+                if np.isfinite(cand_ratio) and cand_ratio < 0.55:
+                    passed = False
+                    reasons.append(f"BlendTotal ratio 过低: {cand_ratio:.3f} < 0.55")
             else:
                 passed, reasons = guard_check(base_metrics, cand_metrics, is_dawn_dusk=(h in DAWN_DUSK_HOURS))
             all_reasons[(h, ver)] = reasons
@@ -500,14 +521,6 @@ def select_per_hour(candidates, valid_df):
             best_score = score_candidates(base_metrics)
             best_reasons = ["dawn_dusk保护：拒绝V1DD"]
 
-        # 早晚重点小时（STRICT_NRMSE_GUARD_HOURS）：强制使用 V1
-        # BlendTotal 在 test 集上统一处理，此处仅对其他版本生效
-        if h in STRICT_NRMSE_GUARD_HOURS and best_ver not in {"V1", "V1_guard", "V1_mae_guard"}:
-            best_ver = "V1"
-            best_m = base_metrics
-            best_score = score_candidates(base_metrics)
-            best_reasons = ["strict_hour强制V1"]
-
         # 回退
         if best_ver not in candidates:
             best_ver = "V1"
@@ -525,18 +538,19 @@ def select_per_hour(candidates, valid_df):
     return selection, all_reasons
 
 
-def select_blend_per_hour_on_test(candidates, selection):
-    """BlendTotal 在 test 集上做最终 alpha 选择（MAE/RMSE 优先，ratio 辅助）。
+def diagnose_blend_per_hour_on_test(candidates, selection):
+    """仅用于诊断 BlendTotal 在 test 集上的理论上限，不参与 final 版本选择。
 
-    背景：valid 集（夏季）和 test 集（秋季）分布不同，导致 valid 上
-    所有 alpha ratio 都 < 0.90，无法用 valid 选择。改用 test 集评估。
+    注意：
+    - test 集不能用于模型选择；
+    - 该函数只生成 oracle 诊断文件；
+    - final 仍必须使用 valid 集选择结果。
     """
-    print("\nBlendTotal 选择（test 集，MAE/RMSE 优先）…")
+    print("\nBlendTotal Oracle 诊断（test 集，仅诊断不参与 final 选择）…")
 
-    # 准备 test 集（用 V1 的 fixed 表）
     v1 = candidates["V1"]
     if "pred_baseline" not in v1.columns:
-        print("  pred_baseline 缺失，跳过 BlendTotal 选择")
+        print("  pred_baseline 缺失，跳过")
         return selection
 
     test_df = build_eval_frame(
@@ -549,26 +563,19 @@ def select_blend_per_hour_on_test(candidates, selection):
         target_site_count=TARGET_SITE_COUNT,
     )
     if test_df.empty:
-        print("  test 集为空，跳过 BlendTotal 选择")
+        print("  test 集为空，跳过")
         return selection
 
-    # 对每个 BlendTotal 小时，检查是否有 BlendTotal 候选
     blend_hours = [h for h, (ver, _, _, _) in selection.items()
                    if ver.startswith("BlendTotal")]
 
-    if not blend_hours:
-        print("  无 BlendTotal 小时需要选择")
-        return selection
-
-    for h in blend_hours:
+    rows = []
+    for h in HOURS:
         h_test = test_df[test_df["hour"] == h]
         if len(h_test) == 0:
             continue
 
         v1_m = compute_hour_metrics(h_test, "power_pred")
-        v1_mae = v1_m.get("mae", np.inf)
-        v1_rmse = v1_m.get("rmse", np.inf)
-
         best_alpha = None
         best_score = float("inf")
         best_m = None
@@ -578,8 +585,6 @@ def select_blend_per_hour_on_test(candidates, selection):
             if key not in candidates:
                 continue
             df_blend = candidates[key]
-
-            # 用 h_test 的 time/site_id 对齐 blend 表的 power_pred
             blend_h_df = df_blend[df_blend["hour"] == h][["time", "site_id", "power_pred"]].copy()
             blend_h_df = blend_h_df.rename(columns={"power_pred": "cand_pred"})
             merged = h_test[["time", "site_id", "power_mw", "capacity_mw", "hour"]].merge(
@@ -587,38 +592,48 @@ def select_blend_per_hour_on_test(candidates, selection):
             )
             if len(merged) == 0:
                 continue
-
             cand_m = compute_hour_metrics(merged, "cand_pred")
             cand_score = score_candidates(cand_m)
-
-            # Guard：不允许显著劣于 V1（MAE/RMSE 优先）
             cand_mae = cand_m.get("mae", np.inf)
             cand_rmse = cand_m.get("rmse", np.inf)
+            v1_mae = v1_m.get("mae", np.inf)
+            v1_rmse = v1_m.get("rmse", np.inf)
             if (np.isfinite(v1_mae) and np.isfinite(cand_mae) and
                     cand_mae > v1_mae * 1.05):
                 continue
             if (np.isfinite(v1_rmse) and np.isfinite(cand_rmse) and
                     cand_rmse > v1_rmse * 1.05):
                 continue
-
             if cand_score < best_score:
                 best_score = cand_score
                 best_alpha = alpha
                 best_m = cand_m
 
         if best_alpha is not None:
-            new_ver = f"BlendTotal_a{int(best_alpha * 100):02d}"
-            new_reasons = list(selection[h][3]) if selection[h][3] else []
-            new_reasons.append(f"test集选择: {new_ver} (mae={best_m.get('mae',0):.4f} rmse={best_m.get('rmse',0):.4f})")
-            selection[h] = (new_ver, best_m, best_score, new_reasons)
-            print(f"  h={h:02d}: BlendTotal 选 {new_ver} "
-                  f"(mae={best_m.get('mae',0):.4f} rmse={best_m.get('rmse',0):.4f})")
+            best_ver = f"BlendTotal_a{int(best_alpha * 100):02d}"
         else:
-            # 没有合适的 BlendTotal，回退 V1
-            new_reasons = list(selection[h][3]) if selection[h][3] else []
-            new_reasons.append("test集: 无合适BlendTotal，回退V1")
-            selection[h] = ("V1", v1_m, score_candidates(v1_m), new_reasons)
-            print(f"  h={h:02d}: 回退 V1（无合适 BlendTotal）")
+            best_ver = "V1"
+            best_m = v1_m
+            best_score = score_candidates(v1_m)
+
+        rows.append({
+            "hour": int(h),
+            "final_selected_version": selection.get(h, (None,))[0],
+            "oracle_best_version_on_test": best_ver,
+            "oracle_score_on_test": round(best_score, 4),
+            "oracle_mae_on_test": round(best_m.get("mae", np.nan), 4),
+            "oracle_rmse_on_test": round(best_m.get("rmse", np.nan), 4),
+            "oracle_nrmse_capacity_pct_on_test": round(best_m.get("nrmse_capacity_pct", np.nan), 4),
+            "oracle_pred_actual_ratio_on_test": round(best_m.get("pred_actual_ratio", np.nan), 6),
+            "note": "diagnostic_only_not_used_for_final_selection",
+        })
+
+    if rows:
+        diag = pd.DataFrame(rows)
+        diag.to_csv(
+            METRICS_DIR / "blend_oracle_on_test_diagnostic_only.csv",
+            index=False, encoding="utf-8-sig")
+        print(f"  已保存 oracle 诊断: {METRICS_DIR / 'blend_oracle_on_test_diagnostic_only.csv'}")
 
     return selection
 
@@ -855,30 +870,36 @@ def main():
     print("\n[Step 3] 逐小时选择 …")
     selection, all_reasons = select_per_hour(candidates, valid_df)
 
-    # Step 3b: BlendTotal 在 test 集上选择最优 alpha
-    selection = select_blend_per_hour_on_test(candidates, selection)
+    # 只生成 test oracle 诊断，不参与 final 选择，避免测试集泄漏
+    selection = diagnose_blend_per_hour_on_test(candidates, selection)
 
     # Step 4: 构建最终预测
     print("\n[Step 4] 构建最终预测 …")
     df_final = build_final(candidates, selection)
 
-    # Step 4b: final 产物 NRMSE 保护
-    df_final, selection, rollback_hours = apply_final_nrmse_guard(
-        df_final,
-        candidates["V1"],
-        selection,
-    )
-    if rollback_hours:
-        print(f"  [NRMSE-GUARD] 回退小时: {rollback_hours}")
+    # Step 4b: final 产物 NRMSE 保护（默认关闭，避免 test 集参与最终选择）
+    if ENABLE_NRMSE_ORACLE_GUARD:
+        df_final, selection, rollback_hours = apply_final_nrmse_guard(
+            df_final,
+            candidates["V1"],
+            selection,
+        )
+        if rollback_hours:
+            print(f"  [NRMSE-GUARD] 回退小时: {rollback_hours}")
+    else:
+        print("  跳过 final NRMSE oracle guard，避免 test 集参与最终选择")
 
-    # Step 4c: final 产物 MAE/RMSE 保护
-    df_final, selection, mae_guard_hours = apply_final_mae_rmse_guard(
-        df_final,
-        candidates["V1"],
-        selection,
-    )
-    if mae_guard_hours:
-        print(f"  [MAE/RMSE-GUARD] 回退小时: {mae_guard_hours}")
+    # Step 4c: final 产物 MAE/RMSE 保护（默认关闭，避免 test 集参与最终选择）
+    if ENABLE_TEST_ORACLE_GUARD:
+        df_final, selection, mae_guard_hours = apply_final_mae_rmse_guard(
+            df_final,
+            candidates["V1"],
+            selection,
+        )
+        if mae_guard_hours:
+            print(f"  [MAE/RMSE-GUARD] 回退小时: {mae_guard_hours}")
+    else:
+        print("  跳过 final MAE/RMSE test oracle guard，避免 test 集参与最终选择")
 
     # Step 5: 保存
     print("\n[Step 5] 保存 …")

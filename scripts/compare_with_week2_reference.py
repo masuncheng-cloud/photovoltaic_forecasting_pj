@@ -138,7 +138,8 @@ def main():
     else:
         verdict_text = (
             f"当前 MAE({mae_cur:.4f}) 和 RMSE({rmse_cur:.4f}) 仍未达到周二基准"
-            f"(MAE={mae_ref:.4f}, RMSE={rmse_ref:.4f})，应继续优先降低站点级误差。"
+            f"(MAE={mae_ref:.4f}, RMSE={rmse_ref:.4f})。"
+            f"当前版本工程闭环和口径统一更完整，但站点级预测精度仍低于周二版。"
         )
 
     lines = [
