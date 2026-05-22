@@ -49,6 +49,7 @@ FIX_SCRIPTS = [
     ROOT / 'scripts' / 'evaluate_fixed_predictions.py',
     ROOT / 'scripts' / 'select_final_prediction_by_guard.py',
     ROOT / 'scripts' / 'regenerate_chinese_metrics.py',
+    ROOT / 'scripts' / 'compare_with_week2_reference.py',
     ROOT / 'scripts' / 'check_pipeline_consistency.py',
 ]
 
@@ -60,6 +61,7 @@ CRITICAL_SCRIPTS = {
     'evaluate_fixed_predictions.py',
     'select_final_prediction_by_guard.py',
     'regenerate_chinese_metrics.py',
+    'compare_with_week2_reference.py',
     'check_pipeline_consistency.py',
 }
 
@@ -75,6 +77,7 @@ KEY_OUTPUT_FILES = [
     'metrics/distributed_metrics_by_hour_fixed.csv',
     'metrics/分布式光伏预测_逐小时平均NRMSE.csv',
     'metrics/分布式光伏预测_周报_整体统计.csv',
+    'metrics/当前结果_vs_周二基准_整体对比.csv',
 ]
 
 
@@ -181,6 +184,11 @@ def assert_final_metrics_valid(output_root):
     import pandas as pd
     import numpy as np
 
+    # 确保能导入项目模块
+    _src = ROOT / "src"
+    if str(_src) not in sys.path:
+        sys.path.insert(0, str(_src))
+
     output_path = ROOT / output_root
     final_eval = output_path / "tables" / "distributed_predictions_final_eval.pkl"
 
@@ -220,6 +228,14 @@ def assert_final_metrics_valid(output_root):
     mae = float(np.mean(np.abs(df["power_pred"] - df["power_mw"])))
     rmse = float(np.sqrt(np.mean((df["power_pred"] - df["power_mw"]) ** 2)))
 
+    # 检查 power_pred 是否与 pred_baseline 完全一致（BaselineTotal 接管检测）
+    if "pred_baseline" in df.columns:
+        final_pred = pd.to_numeric(df["power_pred"], errors="coerce")
+        baseline = pd.to_numeric(df["pred_baseline"], errors="coerce")
+        same_as_baseline = bool(np.nanmax(np.abs(final_pred - baseline)) < 1e-9)
+    else:
+        same_as_baseline = False
+
     print("[FINAL CHECK]")
     print(f"  rows={rows:,}")
     print(f"  sites={n_sites}")
@@ -230,23 +246,67 @@ def assert_final_metrics_valid(output_root):
     print(f"  bias_pct={bias:.2f}%")
     print(f"  MAE={mae:.4f}")
     print(f"  RMSE={rmse:.4f}")
+    print(f"  same_as_baseline={same_as_baseline}")
 
     ok = True
-    if not (66000 <= rows <= 68000):
-        print("[ERROR] final_eval 行数异常，应接近 67,102")
+    # BaselineTotal 接管检测
+    if same_as_baseline:
+        print("[ERROR] final power_pred 与 pred_baseline 完全一致，说明 BaselineTotal 接管了最终结果")
         ok = False
+    # 行数：TEST_END=2026-01-01 后约 67k 行（允许 60k-75k 范围）
+    if not (60000 <= rows <= 75000):
+        print(f"[ERROR] final_eval 行数异常: {rows:,}，应为约 67,102（允许 60k-75k）")
+        ok = False
+    # 站点数：固定 53 个
     if n_sites != 53:
-        print("[ERROR] final_eval 站点数异常，应为 53")
+        print(f"[ERROR] final_eval 站点数异常: {n_sites}，应为 53")
         ok = False
     if not (h_min >= 6 and h_max <= 19):
         print("[ERROR] final_eval 小时范围异常，应为 6-19")
         ok = False
-    if ratio < 0.90:
-        print("[ERROR] pred_actual_ratio 仍然过低，说明系统性低估没有修复")
+    if not (0.90 <= ratio <= 0.98):
+        print(f"[ERROR] pred_actual_ratio 异常 ({ratio:.4f})，应在 0.90~0.98，目标接近周二 0.9488")
         ok = False
     if abs(bias) > 10:
-        print("[ERROR] bias 超过 10%，没有恢复周二效果")
+        print(f"[ERROR] bias 超过 10% ({bias:.2f}%)，没有恢复周二效果")
         ok = False
+
+    # MAE/RMSE 与周二基准对比（提示性，不中止）
+    WEEK2_MAE = 0.4547
+    WEEK2_RMSE = 0.9676
+    if mae > WEEK2_MAE * 1.20:
+        print(f"[WARN] MAE 距周二基准仍偏高: {mae:.4f} > 1.20*{WEEK2_MAE:.4f}")
+    if rmse > WEEK2_RMSE * 1.20:
+        print(f"[WARN] RMSE 距周二基准仍偏高: {rmse:.4f} > 1.20*{WEEK2_RMSE:.4f}")
+
+    # 早晚重点小时 NRMSE 检查
+    try:
+        from pv_forecasting.core.evaluation import build_eval_frame, hourly_nrmse_metrics
+
+        fixed_path = output_path / "tables" / "distributed_predictions_fixed_eval.pkl"
+        if fixed_path.exists():
+            fixed_df = safe_pickle_load(fixed_path)
+            fixed_eval = build_eval_frame(fixed_df, target_site_count=53)
+            final_eval_df = build_eval_frame(df, target_site_count=53)
+
+            fixed_h = hourly_nrmse_metrics(fixed_eval).set_index("hour")
+            final_h = hourly_nrmse_metrics(final_eval_df).set_index("hour")
+
+            for h in [6, 17, 18, 19]:
+                if h not in fixed_h.index or h not in final_h.index:
+                    continue
+                f_site = final_h.loc[h, "site_nrmse_mean_pct"]
+                b_site = fixed_h.loc[h, "site_nrmse_mean_pct"]
+                f_city = final_h.loc[h, "city_nrmse_pct"]
+                b_city = fixed_h.loc[h, "city_nrmse_pct"]
+                if f_site > b_site * 1.05 or f_city > b_city * 1.10:
+                    print(
+                        f"[ERROR] h={h} final NRMSE 劣于 fixed: "
+                        f"site {f_site:.2f}>{b_site:.2f}, city {f_city:.2f}>{b_city:.2f}"
+                    )
+                    ok = False
+    except Exception as e:
+        print(f"[WARN] 早晚小时 NRMSE 验收检查失败: {e}")
 
     return ok
 

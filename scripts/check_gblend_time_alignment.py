@@ -15,6 +15,7 @@
 from __future__ import annotations
 
 import functools
+import sys
 import numpy as np
 import pandas as pd
 from pathlib import Path
@@ -45,6 +46,10 @@ def _patched_read_pickle(*a, **kw):
 pd.read_pickle = _patched_read_pickle
 
 PROJECT_ROOT = Path(__file__).resolve().parents[1]
+sys.path.insert(0, str(PROJECT_ROOT / "src"))
+from pv_forecasting.core.utils import safe_pickle_load
+from pv_forecasting.core.split import add_standard_split
+
 OUTPUT_ROOT = PROJECT_ROOT / "output" / "pv_pipeline"
 TABLES_DIR = OUTPUT_ROOT / "tables"
 METRICS_DIR = OUTPUT_ROOT / "metrics"
@@ -63,7 +68,8 @@ def compute_peak_hour(df, col, group_cols=['date']):
     agg_df = df.groupby(group_cols + ['hour'])[col].sum().reset_index()
     
     # 找每个group的峰值小时
-    peak_hours = agg_df.loc[agg_df.groupby(group_cols)[col].idxmax(), group_cols + ['hour']].copy()
+    peak_idx = agg_df.groupby(group_cols)[col].transform('idxmax')
+    peak_hours = agg_df.loc[peak_idx.dropna(), group_cols + ['hour']].copy()
     peak_hours.columns = group_cols + [f'peak_hour_{col}']
     
     return peak_hours
@@ -81,16 +87,23 @@ def diagnose_time_alignment():
         pred_path = TABLES_DIR / "distributed_predictions_v159.pkl"
     
     print(f"加载预测数据: {pred_path}")
-    df = pd.read_pickle(pred_path)
-    df['time'] = pd.to_datetime(df['time'])
-    df['year'] = df['time'].dt.year
-    df['month'] = df['time'].dt.month
-    df['date'] = df['time'].dt.date
-    
-    # 筛选测试集
-    df = df[(df['year'] >= 2025) & (df['month'] >= 7)]
-    df = df[~df['site_id'].isin(BAD_SITES)]
-    df = df[df['power_mw'].notna() & (df['power_mw'] > 0)]
+    df = safe_pickle_load(pred_path)
+    df["time"] = pd.to_datetime(df["time"], errors="coerce")
+    df["year"] = df["time"].dt.year
+    df["month"] = df["time"].dt.month
+    df["date"] = df["time"].dt.date
+    df["hour"] = df["time"].dt.hour
+    if "split" not in df.columns:
+        df = add_standard_split(df)
+
+    # 筛选测试集（使用标准 split 口径）
+    df = df[
+        (df["split"] == "test")
+        & (df["time"] >= pd.Timestamp("2025-09-01"))
+        & (df["time"] < pd.Timestamp("2026-01-01"))
+    ]
+    df = df[~df["site_id"].isin(BAD_SITES)]
+    df = df[df["power_mw"].notna() & (df["power_mw"] > 0)]
     
     print(f"测试集样本数: {len(df):,}")
     
@@ -106,11 +119,13 @@ def diagnose_time_alignment():
         'p_base': lambda x: np.average(x, weights=df.loc[x.index, 'capacity_mw'].fillna(1)),
     }).reset_index()
     city_df.columns = ['date', 'hour', 'city_power', 'city_gblend', 'city_pbase']
-    
-    # 计算城市级峰值小时
+
+    # 计算城市级峰值小时（用 transform 避免 idxmax 对全 NaN 组报错）
     city_peaks = {}
     for col in ['city_power', 'city_gblend', 'city_pbase']:
-        peak_df = city_df.loc[city_df.groupby('date')[col].idxmax(), ['date', 'hour']].copy()
+        idx_series = city_df.groupby('date')[col].transform('idxmax')
+        valid_idx = idx_series.dropna()
+        peak_df = city_df.loc[valid_idx, ['date', 'hour']].copy()
         peak_df.columns = ['date', f'peak_hour_{col}']
         city_peaks[col] = peak_df
     
@@ -160,7 +175,8 @@ def diagnose_time_alignment():
         # 计算峰值小时
         for col in ['power_mw', 'g_blend_pred', 'p_base']:
             if col in site_agg.columns:
-                peak_df = site_agg.loc[site_agg.groupby('date')[col].idxmax(), ['date', 'hour']]
+                peak_idx = site_agg.groupby('date')[col].transform('idxmax')
+                peak_df = site_agg.loc[peak_idx.dropna(), ['date', 'hour']]
                 peak_df.columns = ['date', f'peak_{col}']
                 site_agg = site_agg.merge(peak_df, on='date', how='left', suffixes=('', '_peak'))
         

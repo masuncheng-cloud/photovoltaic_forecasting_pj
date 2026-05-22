@@ -75,13 +75,14 @@ def warn(msg: str):
 def check_split_no_overlap():
     """检查 split.py 划分不重叠"""
     print("\n[1/7] 检查 split.py 划分不重叠...")
-    from pv_forecasting.core.split import TRAIN_END, VALID_END
-    if not (TRAIN_END < VALID_END):
-        err(f"TRAIN_END ({TRAIN_END}) >= VALID_END ({VALID_END})，存在重叠或颠倒")
+    from pv_forecasting.core.split import TRAIN_END, VALID_END, TEST_END
+    if not (TRAIN_END < VALID_END < TEST_END):
+        err(f"日期常量顺序错误: TRAIN={TRAIN_END}, VALID={VALID_END}, TEST={TEST_END}")
     else:
         print(f"    TRAIN_END = {TRAIN_END}  ✓")
         print(f"    VALID_END = {VALID_END}  ✓")
-        print(f"    → test = time >= {VALID_END}，三个分区无重叠 ✓")
+        print(f"    TEST_END  = {TEST_END}  ✓")
+        print(f"    → train < valid < test < future，四个分区无重叠 ✓")
 
 
 def check_prediction_files():
@@ -286,8 +287,8 @@ def compute_and_print_improvements():
 def check_split_consistency():
     """检查所有 final 文件使用同一套 split（core/split.py 标准）。"""
     print("\n[9/12] 检查 split 唯一性 …")
-    from pv_forecasting.core.split import TRAIN_END, VALID_END
-    print(f"    标准 split: TRAIN_END={TRAIN_END}, VALID_END={VALID_END}")
+    from pv_forecasting.core.split import TRAIN_END, VALID_END, TEST_END
+    print(f"    标准 split: TRAIN_END={TRAIN_END}, VALID_END={VALID_END}, TEST_END={TEST_END}")
     files = [
         ("最终预测表", TABLES_DIR / "distributed_predictions_final_full.pkl", False),
         ("最终评估表", TABLES_DIR / "distributed_predictions_final_eval.pkl", True),
@@ -420,12 +421,33 @@ def check_final_eval_strict():
     print(f"    final_eval: {len(df):,} 行, {df['site_id'].nunique()} 站点")
 
 
+def check_not_all_baseline_total():
+    """检查最终版本是否被 BaselineTotal 全量接管。"""
+    print("\n[新增] 检查最终版本是否被 BaselineTotal 全量接管...")
+    sel_path = METRICS_DIR / "final_version_selection_by_hour.csv"
+    if not sel_path.exists():
+        warn(f"缺少选择表: {sel_path.name}")
+        return
+    df_sel = pd.read_csv(sel_path)
+    if "selected_version" not in df_sel.columns:
+        warn("选择表缺少 selected_version 字段")
+        return
+    versions = set(df_sel["selected_version"].astype(str))
+    if versions == {"BaselineTotal"}:
+        err("14 个小时全部选择 BaselineTotal，最终预测退化为 baseline，总量看似正常但不是周二模型效果")
+    elif "BaselineTotal" in versions:
+        bt_hours = sorted(df_sel.loc[df_sel["selected_version"].astype(str) == "BaselineTotal", "hour"].tolist())
+        warn(f"部分小时使用 BaselineTotal: {bt_hours}")
+    else:
+        print(f"    最终版本集合: {sorted(versions)} ✓")
+
+
 def main():
     print("=" * 70)
-    print("Pipeline 一致性检查（V3 NRMSE 版）")
+    print("Pipeline 一致性检查（NRMSE + BlendTotal 版）")
     print("=" * 70)
     print(f"项目: {PROJECT_ROOT}")
-    print(f"split 口径: train < 2025-07-01 < valid < 2025-09-01 <= test")
+    print(f"split 口径: train < 2025-07-01 < valid < 2025-09-01 < test < 2026-01-01 = future")
 
     check_split_no_overlap()
     check_prediction_files()
@@ -439,6 +461,7 @@ def main():
     check_selection_fields()
     check_final_prediction_loop()
     check_final_eval_strict()
+    check_not_all_baseline_total()
 
     print("\n" + "=" * 70)
     if ERRORS:

@@ -14,36 +14,12 @@ import numpy as np
 import pandas as pd
 from pathlib import Path
 import sys
-import functools
-
-# pandas 3.x 兼容 patch
-_pd_patch_done = False
-def _ensure_patch():
-    global _pd_patch_done
-    if _pd_patch_done:
-        return
-    _pd_patch_done = True
-    try:
-        import pandas.core.arrays.string_ as _sm
-        _orig = _sm.StringDtype.__init__
-        @functools.wraps(_orig)
-        def _p(self, *a, **kw):
-            try: _orig(self)
-            except TypeError:
-                object.__setattr__(self, 'dtype', None)
-                object.__setattr__(self, 'storage', 'python')
-        _sm.StringDtype.__init__ = _p
-    except Exception:
-        pass
-
-_pd_read_pickle = pd.read_pickle
-def _patched_read_pickle(*a, **kw):
-    _ensure_patch()
-    return _pd_read_pickle(*a, **kw)
-pd.read_pickle = _patched_read_pickle
 
 PROJECT_ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(PROJECT_ROOT / "src"))
+
+from pv_forecasting.core.utils import safe_pickle_load
+from pv_forecasting.core.evaluation import build_eval_frame
 
 # ---------------------------------------------------------------------------
 # Paths
@@ -67,17 +43,23 @@ BAD_SITES = {"S026", "S015", "S057", "S036", "S067", "S045", "S058"}
 # Load data
 # ---------------------------------------------------------------------------
 print("Loading prediction table …")
-df = pd.read_pickle(PRED_PKL)
+df = safe_pickle_load(PRED_PKL)
 df["time"] = pd.to_datetime(df["time"])
 df["year"]  = df["time"].dt.year
 df["month"] = df["time"].dt.month
 df["date"]  = df["time"].dt.date
 df["hour"]  = df["time"].dt.hour
 
-# 过滤：test set（split=="test"），去除坏站点（eval pkl 已做，这里双重保险）
-# eval 表：2025-09-01+，hours 6-19，53 sites，67094 rows
-mask = (df["split"] == "test") & (~df["site_id"].isin(BAD_SITES))
-df = df[mask].copy()
+# 统一口径过滤：使用 build_eval_frame（自动处理 split/time/小时/坏站点/53站点）
+df = build_eval_frame(
+    df,
+    pred_col="power_pred",
+    split="test",
+    hours=tuple(range(6, 20)),
+    active_only=True,
+    bad_sites=BAD_SITES,
+    target_site_count=53,
+)
 print(f"Test set: {len(df):,} rows, {df['site_id'].nunique()} sites, "
       f"{df['date'].min()} – {df['date'].max()}")
 
@@ -129,11 +111,29 @@ def rmse(y_true, y_pred):
         return np.nan
     return float(np.sqrt(np.mean((y_true[mask] - y_pred[mask]) ** 2)))
 
-def nrmse(y_true, y_pred):
-    mask = np.isfinite(y_true) & np.isfinite(y_pred)
+def nrmse_pct(y_true, y_pred, capacity=None):
+    """NRMSE(%)：默认用容量归一化；若无容量，则用实际最大值归一化。"""
+    yt = np.asarray(y_true, dtype=float)
+    yp = np.asarray(y_pred, dtype=float)
+    mask = np.isfinite(yt) & np.isfinite(yp)
     if not mask.any():
         return np.nan
-    return float(np.sqrt(np.mean((y_true[mask] - y_pred[mask]) ** 2)))
+
+    rmse_val = float(np.sqrt(np.mean((yt[mask] - yp[mask]) ** 2)))
+
+    if capacity is not None:
+        cap = np.asarray(capacity, dtype=float)
+        cap_mask = mask & np.isfinite(cap) & (cap > 0)
+        if cap_mask.any():
+            scale = float(np.nanmean(cap[cap_mask]))
+        else:
+            scale = np.nan
+    else:
+        scale = float(np.nanmax(yt[mask]))
+
+    if not np.isfinite(scale) or scale <= 0:
+        return np.nan
+    return rmse_val / scale * 100.0
 
 def city_rel_err(y_true_sum, y_pred_sum):
     if not np.isfinite(y_true_sum) or y_true_sum <= 0:
@@ -171,7 +171,7 @@ if not full_path.exists():
     full_path = TABLES_DIR / "distributed_predictions_fixed_full.pkl"
     print(f"  final_full 不存在，回退到: {full_path.name}")
 try:
-    df_full = pd.read_pickle(full_path)
+    df_full = safe_pickle_load(full_path)
     df_full["time"] = pd.to_datetime(df_full["time"])
     df_full["hour"]  = df_full["time"].dt.hour
     # 0值比例：hour in 0-23 的 actual=0 行
@@ -189,7 +189,7 @@ except Exception as e:
 # Load full table for time-series (test set, 0-23h, all sites)
 # ---------------------------------------------------------------------------
 print("\nLoading full prediction table for time-series …")
-df_full_ts = pd.read_pickle(full_path)
+df_full_ts = safe_pickle_load(full_path)
 df_full_ts["time"] = pd.to_datetime(df_full_ts["time"])
 df_full_ts["year"]  = df_full_ts["time"].dt.year
 df_full_ts["month"] = df_full_ts["time"].dt.month
@@ -260,7 +260,7 @@ for (date, hour), g in df.groupby(["date", "hour"]):
         "hour": int(hour),
         "n_samples": len(g),
         "MAPE(%)": round(mape(yt, yp), 2),
-        "NRMSE(%)": round(nrmse(yt, yp), 3),
+        "NRMSE(%)": round(nrmse_pct(yt, yp, g["capacity_mw"].values.astype(float)), 3),
         "MAE": round(mae(yt, yp), 4),
         "RMSE": round(rmse(yt, yp), 4),
     })
@@ -278,7 +278,7 @@ for (date, hour), g in df.groupby(["date", "hour"]):
             "hour": int(hour),
             "n_samples": len(sg),
             "MAPE(%)": round(mape(syt, syp), 2),
-            "NRMSE(%)": round(nrmse(syt, syp), 3),
+            "NRMSE(%)": round(nrmse_pct(syt, syp, sg["capacity_mw"].values.astype(float)), 3),
             "MAE": round(mae(syt, syp), 4),
             "RMSE": round(rmse(syt, syp), 4),
         })
@@ -330,14 +330,14 @@ print(f"  Done → {OUT_DIR / '分布式光伏预测_城市总出力逐小时统
 print("\n[3b/11] 逐小时平均相对误差_对比（V0/V1/V2）…")
 
 # 加载 V0 和 V1
-df_v0 = pd.read_pickle(TABLES_DIR / "distributed_predictions_v159.pkl")
+df_v0 = safe_pickle_load(TABLES_DIR / "distributed_predictions_v159.pkl")
 df_v0["time"] = pd.to_datetime(df_v0["time"])
 df_v0["hour"] = df_v0["time"].dt.hour
 from pv_forecasting.core.evaluation import site_hour_nrmse, city_hour_nrmse
 from pv_forecasting.core.split import add_standard_split
 df_v0 = add_standard_split(df_v0)
 
-df_v1_raw = pd.read_pickle(TABLES_DIR / "distributed_predictions_fixed_full.pkl")
+df_v1_raw = safe_pickle_load(TABLES_DIR / "distributed_predictions_fixed_full.pkl")
 df_v1_raw["time"] = pd.to_datetime(df_v1_raw["time"])
 df_v1_raw["hour"] = df_v1_raw["time"].dt.hour
 
@@ -578,7 +578,7 @@ for h in range(6, 20):
         "date": "",
         "hour": int(h),
         "n_samples": len(sub),
-        "NRMSE": round(nrmse(yt, yp), 4),
+        "NRMSE": round(nrmse_pct(yt, yp, sub["capacity_mw"].values.astype(float)), 4),
         "MAPE(%)": round(mape(yt, yp), 2),
     })
 
@@ -601,7 +601,7 @@ for sid in sorted(df["site_id"].unique()):
             "date": "",
             "hour": int(h),
             "n_samples": len(sg),
-            "NRMSE": round(nrmse(yt, yp), 4),
+            "NRMSE": round(nrmse_pct(yt, yp, sg["capacity_mw"].values.astype(float)), 4),
             "MAPE(%)": round(mape(yt, yp), 2),
         })
 
@@ -707,7 +707,7 @@ for (date, hour), g in df.groupby(["date", "hour"]):
     year_num = g["year"].iloc[0]
     week_num = g["week"].iloc[0]
 
-    nrmse_all = nrmse(yt, yp)
+    nrmse_all = nrmse_pct(yt, yp, g["capacity_mw"].values.astype(float))
     mape_all  = mape(yt, yp)
 
     # 去除最差3站点后
@@ -719,7 +719,7 @@ for (date, hour), g in df.groupby(["date", "hour"]):
     if len(g_clean) > 0:
         yt_c = g_clean["power_mw"].values.astype(float)
         yp_c = g_clean["power_pred"].values.astype(float)
-        nrmse_clean = nrmse(yt_c, yp_c)
+        nrmse_clean = nrmse_pct(yt_c, yp_c, g_clean["capacity_mw"].values.astype(float))
         mape_clean = mape(yt_c, yp_c)
     else:
         nrmse_clean = np.nan
@@ -766,9 +766,9 @@ overall_rows = [{
     "站点数": df["site_id"].nunique(),
     "实际总出力(MWh)": round(city_actual, 2),
     "预测总出力(MWh)": round(city_pred, 2),
-    "平均相对误差(%)": round(city_rel_err(city_actual, city_pred), 3),
-    "WAPE(%)": round(wape(yt_all, yp_all), 3),
-    "MAPE(%)": round(mape(yt_all, yp_all), 3),
+    "pred_actual_ratio": round(city_pred / max(city_actual, 1e-9), 4),
+    "bias(%)": round((city_pred - city_actual) / max(city_actual, 1e-9) * 100, 3),
+    "全样本NRMSE(%)": round(nrmse_pct(yt_all, yp_all, df["capacity_mw"].values.astype(float)), 3),
     "MAE(MW)": round(mae(yt_all, yp_all), 4),
     "RMSE(MW)": round(rmse(yt_all, yp_all), 4),
 }]
@@ -796,9 +796,9 @@ for (year, week), g in df.groupby(["year", "week"]):
         "n_sites": g["site_id"].nunique(),
         "实际总出力(MWh)": round(float(yt_sum), 2),
         "预测总出力(MWh)": round(float(yp_sum), 2),
-        "平均相对误差(%)": round(city_rel_err(yt_sum, yp_sum), 3),
-        "WAPE(%)": round(wape(yt, yp), 3),
-        "MAPE(%)": round(mape(yt, yp), 3),
+        "pred_actual_ratio": round(float(yp_sum) / max(float(yt_sum), 1e-9), 4),
+        "bias(%)": round((float(yp_sum) - float(yt_sum)) / max(float(yt_sum), 1e-9) * 100, 3),
+        "全样本NRMSE(%)": round(nrmse_pct(yt, yp, g["capacity_mw"].values.astype(float)), 3),
         "MAE(MW)": round(mae(yt, yp), 4),
         "RMSE(MW)": round(rmse(yt, yp), 4),
     })
@@ -815,19 +815,25 @@ print("\n[12/12] hourly_nrmse_compare_v2_v3.csv（V2 vs Final）…")
 from pv_forecasting.core.split import add_standard_split
 
 # Load V2 predictions
-v2_raw = pd.read_pickle(TABLES_DIR / "distributed_predictions_fixed_full.pkl")
+v2_raw = safe_pickle_load(TABLES_DIR / "distributed_predictions_fixed_full.pkl")
 v2_raw["time"] = pd.to_datetime(v2_raw["time"])
 v2_raw["hour"] = v2_raw["time"].dt.hour
 if "split" not in v2_raw.columns:
     v2_raw = add_standard_split(v2_raw)
 
-# V2 eval subset
+# V2 eval subset（与 final_eval 完全相同的站点集）
 v2_eval = v2_raw[(v2_raw["split"] == "test") &
                   (~v2_raw["site_id"].isin(BAD_SITES)) &
                   v2_raw["hour"].between(6, 19)].copy()
 
 # Final eval (already loaded and filtered as 'df' above)
 final_eval = df.copy()
+
+# 使用 final_eval 的站点 ID 作为统一的站点集（确保 V2 和 Final 对比时站点相同）
+common_sites = final_eval["site_id"].unique()
+v2_eval = v2_eval[v2_eval["site_id"].isin(common_sites)]
+final_eval = final_eval[final_eval["site_id"].isin(common_sites)]
+print(f"  对比站点数: {len(common_sites)}, V2行数: {len(v2_eval)}, Final行数: {len(final_eval)}")
 
 # Build V2 map for merge (drop duplicates: keep first)
 v2_map = v2_eval[["time", "site_id", "power_pred"]].rename(columns={"power_pred": "pred_v2"}).drop_duplicates(subset=["time", "site_id"])
@@ -879,9 +885,24 @@ cmp_df.to_csv(OUT_DIR / "hourly_nrmse_compare_v2_v3.csv", index=False, encoding=
 print(f"  Done → {OUT_DIR / 'hourly_nrmse_compare_v2_v3.csv'}")
 
 cmp_df[["hour", "rows",
+        "V2_site_nrmse_mean_pct",
         "final_site_nrmse_mean_pct",
-        "final_city_nrmse_pct"]].to_csv(
-    OUT_DIR / "分布式光伏预测_逐小时NRMSE_对比.csv", index=False, encoding="utf-8-sig")
+        "V2_city_nrmse_pct",
+        "final_city_nrmse_pct",
+        "V2_nrmse_score",
+        "final_nrmse_score"]].rename(columns={
+        "hour": "小时",
+        "rows": "样本数",
+        "V2_site_nrmse_mean_pct": "修正前站点平均NRMSE(%)",
+        "final_site_nrmse_mean_pct": "最终站点平均NRMSE(%)",
+        "V2_city_nrmse_pct": "修正前城市NRMSE(%)",
+        "final_city_nrmse_pct": "最终城市NRMSE(%)",
+        "V2_nrmse_score": "修正前综合NRMSE得分",
+        "final_nrmse_score": "最终综合NRMSE得分",
+    }).assign(**{
+        "综合得分变化": cmp_df["final_nrmse_score"] - cmp_df["V2_nrmse_score"],
+        "是否改善": (cmp_df["final_nrmse_score"] - cmp_df["V2_nrmse_score"]).apply(lambda x: "是" if x <= 0 else "否"),
+    }).to_csv(OUT_DIR / "分布式光伏预测_逐小时NRMSE_对比.csv", index=False, encoding="utf-8-sig")
 print(f"  Done → {OUT_DIR / '分布式光伏预测_逐小时NRMSE_对比.csv'}")
 
 cmp_df[["hour", "rows",

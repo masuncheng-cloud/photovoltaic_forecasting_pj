@@ -178,7 +178,8 @@ def main():
 
     # ─── 5. 评估子集表（过滤） ───────────────────────────────────────────
     eval_mask = (
-        (df["hour"].between(6, 19))
+        (df["split"] == "test")
+        & (df["hour"].between(6, 19))
         & df["power_mw"].notna()
         & (df["power_mw"] > 0)
         & (~df["site_id"].isin(BAD_SITES))

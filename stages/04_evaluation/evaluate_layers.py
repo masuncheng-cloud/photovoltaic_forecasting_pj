@@ -17,7 +17,11 @@ def main():
     paths = make_paths(PROJECT_ROOT, args)
     inv = pd.read_csv(paths.metrics / 'inverse_metrics.csv')
     blend = pd.read_csv(paths.metrics / 'irradiance_blend_metrics.csv')
-    dist = pd.read_csv(paths.metrics / 'distributed_metrics.csv')
+    # 优先读 v159 版本，否则 fallback
+    dist_path = paths.metrics / 'distributed_metrics_v159.csv'
+    if not dist_path.exists():
+        dist_path = paths.metrics / 'distributed_metrics.csv'
+    dist = pd.read_csv(dist_path)
     rows = []
     if not inv.empty:
         t = inv[inv['split'] == 'test'].iloc[0]

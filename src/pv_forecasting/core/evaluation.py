@@ -5,16 +5,19 @@ core/evaluation.py
 
 Split 口径（由 core/split.py 定义）
 -----------------------------------
-- train : time < 2025-07-01
-- valid : 2025-07-01 <= time < 2025-09-01
-- test  : time >= 2025-09-01
+- train  : time < 2025-07-01
+- valid  : 2025-07-01 <= time < 2025-09-01
+- test   : 2025-09-01 <= time < 2026-01-01
+- future : time >= 2026-01-01
 
 评估口径（固定值，不得修改）
 -----------------------------
-- split    == "test"
-- hour     in range(6, 20)  即 6~19
-- power_mw > 0
-- site_id  NOT IN BAD_SITES  (7 个异常站点)
+- split              == "test"
+- time               >= 2025-09-01  且  < 2026-01-01
+- hour               in range(6, 20)  即 6~19
+- power_mw          > 0
+- site_id            NOT IN BAD_SITES  (7 个异常站点)
+- 评估站点数量       固定 53 个（按正功率样本数排序）
 """
 from __future__ import annotations
 
@@ -25,7 +28,10 @@ import pandas as pd
 # ── 全局常量（口径基准）───────────────────────────────────────────────────────
 
 DEFAULT_EVAL_HOURS = tuple(range(6, 20))
+DEFAULT_TEST_START = pd.Timestamp("2025-09-01")
+DEFAULT_TEST_END = pd.Timestamp("2026-01-01")
 DEFAULT_BAD_SITES = {"S026", "S015", "S057", "S036", "S067", "S045", "S058"}
+DEFAULT_EVAL_SITE_COUNT = 53
 CLIP_DENOM_FACTOR = 0.05   # clipped MAPE 分母 = max(y, factor*capacity, 0.01)
 
 
@@ -110,6 +116,7 @@ def build_eval_frame(
     hours: tuple[int, ...] | list[int] = DEFAULT_EVAL_HOURS,
     active_only: bool = True,
     bad_sites: set[str] | None = None,
+    target_site_count: int | None = DEFAULT_EVAL_SITE_COUNT,
 ) -> pd.DataFrame:
     """构建统一的评估子集 DataFrame。
 
@@ -127,11 +134,14 @@ def build_eval_frame(
         是否只保留 power_mw > 0 的样本。
     bad_sites : set of str, optional
         排除的异常站点集合。
+    target_site_count : int, optional
+        固定评估站点数量（默认 53）。按正功率样本数排序取前 N 个。
+        传入 None 则不过滤站点数量。
 
     Returns
     -------
     pd.DataFrame
-        评估子集（视图，不是深拷贝）。
+        评估子集（已通过口径过滤和站点筛选）。
     """
     bad_sites = bad_sites or DEFAULT_BAD_SITES
 
@@ -151,8 +161,28 @@ def build_eval_frame(
     mask &= ~out["site_id"].isin(bad_sites)
     if active_only:
         mask &= out["power_mw"] > 0
+    # 强制测试窗口截止（避免 2026-01 之后的数据渗入评估）
+    if split == "test" and "time" in out.columns:
+        mask &= out["time"] >= DEFAULT_TEST_START
+        mask &= out["time"] < DEFAULT_TEST_END
 
-    return out[mask].copy()
+    eval_df = out[mask].copy()
+
+    if target_site_count is not None and target_site_count > 0 and len(eval_df) > 0:
+        try:
+            from pv_forecasting.core.eval_sites import get_eval_site_ids
+
+            keep_sites = get_eval_site_ids(
+                eval_df,
+                target_n=target_site_count,
+                bad_sites=bad_sites,
+            )
+            if keep_sites:
+                eval_df = eval_df[eval_df["site_id"].isin(keep_sites)].copy()
+        except Exception as exc:
+            print(f"[WARN] eval site filtering failed: {exc}")
+
+    return eval_df
 
 
 # ── Per-hour metrics ───────────────────────────────────────────────────────────

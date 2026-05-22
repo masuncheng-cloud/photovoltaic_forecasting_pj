@@ -1,17 +1,19 @@
 """
 统一数据划分工具
 =================
-提供 train/valid/test 统一划分函数，确保全项目口径一致。
+提供 train/valid/test/future 统一划分函数，确保全项目口径一致。
 
 划分规则:
-    train: time < 2025-07-01
-    valid: 2025-07-01 <= time < 2025-09-01
-    test:  time >= 2025-09-01
+    train : time < 2025-07-01
+    valid : 2025-07-01 <= time < 2025-09-01
+    test  : 2025-09-01 <= time < 2026-01-01
+    future: time >= 2026-01-01，不参与最终评估
 
 说明:
     train 用于模型训练
     valid 用于策略选择、参数搜索、guard 判断（不使用测试集数据）
-    test 用于最终留出评估（与 valid 完全不重叠，无数据泄漏）
+    test  用于最终留出评估（与 valid 完全不重叠，无数据泄漏）
+    future 数据仅供未来预测使用，不参与任何历史评估
 """
 from __future__ import annotations
 
@@ -20,10 +22,17 @@ import pandas as pd
 # 统一划分日期常量
 TRAIN_END = pd.Timestamp("2025-07-01")
 VALID_END = pd.Timestamp("2025-09-01")
+TEST_END = pd.Timestamp("2026-01-01")  # 评估窗口截止
 
 
 def add_standard_split(df: "pd.DataFrame", time_col: str = "time") -> "pd.DataFrame":
-    """添加标准数据划分字段
+    """添加标准数据划分字段。
+
+    口径：
+      train  : time < 2025-07-01
+      valid  : 2025-07-01 <= time < 2025-09-01
+      test   : 2025-09-01 <= time < 2026-01-01
+      future : time >= 2026-01-01，不参与最终评估
 
     Args:
         df: 输入 DataFrame
@@ -34,10 +43,11 @@ def add_standard_split(df: "pd.DataFrame", time_col: str = "time") -> "pd.DataFr
     """
     out = df.copy()
     out[time_col] = pd.to_datetime(out[time_col])
-    out["split"] = "test"
+
+    out["split"] = "future"
     out.loc[out[time_col] < TRAIN_END, "split"] = "train"
     out.loc[(out[time_col] >= TRAIN_END) & (out[time_col] < VALID_END), "split"] = "valid"
-    out.loc[out[time_col] >= VALID_END, "split"] = "test"
+    out.loc[(out[time_col] >= VALID_END) & (out[time_col] < TEST_END), "split"] = "test"
     return out
 
 
