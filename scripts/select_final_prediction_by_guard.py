@@ -1068,6 +1068,7 @@ def main():
             "n_gt100": metrics.get("n_gt100", 0),
             "n_gt200": metrics.get("n_gt200", 0),
             "nrmse_capacity_pct": round(metrics.get("nrmse_capacity_pct", np.nan), 4),
+            "site_nrmse_mean_pct": round(metrics.get("site_nrmse_mean_pct", np.nan), 4),
             "pred_actual_ratio": round(metrics.get("pred_actual_ratio", np.nan), 6),
             "ratio_abs_err": round(metrics.get("ratio_abs_err", np.nan), 4),
         })
@@ -1099,8 +1100,10 @@ def main():
         mae = selection[h][1].get("mae", 0)
         rmse = selection[h][1].get("rmse", 0)
         nrmse = selection[h][1].get("nrmse_capacity_pct", 0)
+        site_nrmse = selection[h][1].get("site_nrmse_mean_pct", np.nan)
         ratio = selection[h][1].get("pred_actual_ratio", 0)
-        print(f"  h={h:02d}: {ver} (score={score:.2f}, mae={mae:.4f}, rmse={rmse:.4f}, nrmse={nrmse:.2f}%, ratio={ratio:.4f})")
+        note = f", site_nrmse={site_nrmse:.2f}%" if np.isfinite(site_nrmse) else ""
+        print(f"  h={h:02d}: {ver} (score={score:.2f}, mae={mae:.4f}, rmse={rmse:.4f}, nrmse={nrmse:.2f}%{note}, ratio={ratio:.4f})")
     print("\nDone.")
     return df_final
 
