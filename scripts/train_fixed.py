@@ -47,9 +47,11 @@ FIX_SCRIPTS = [
     ROOT / 'scripts' / 'fix_hourly_bias.py',
     ROOT / 'scripts' / 'apply_p0_p1_fix_v2.py',
     ROOT / 'scripts' / 'evaluate_fixed_predictions.py',
+    ROOT / 'scripts' / 'apply_midday_site_nrmse_calibration.py',
     ROOT / 'scripts' / 'select_final_prediction_by_guard.py',
     ROOT / 'scripts' / 'regenerate_chinese_metrics.py',
     ROOT / 'scripts' / 'compare_with_week2_reference.py',
+    ROOT / 'scripts' / 'update_project_md_metrics.py',
     ROOT / 'scripts' / 'check_pipeline_consistency.py',
 ]
 
@@ -59,6 +61,7 @@ CRITICAL_SCRIPTS = {
     'fix_hourly_bias.py',
     'apply_p0_p1_fix_v2.py',
     'evaluate_fixed_predictions.py',
+    'apply_midday_site_nrmse_calibration.py',
     'select_final_prediction_by_guard.py',
     'regenerate_chinese_metrics.py',
     'compare_with_week2_reference.py',
