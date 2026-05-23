@@ -536,41 +536,54 @@ def select_per_hour(candidates, valid_df):
             if ver == "BaselineTotal":
                 passed = False
                 reasons = ["BaselineTotal 仅作为兜底版本"]
-            elif ver == "MiddaySiteCalibrated":
-                # 10-14 点专用：只允许在 midday 小时出现
+            elif ver in {"MiddaySiteCalibrated", "MiddayResidualSpecialist"}:
+                # 10-14 点专用：只允许在 midday 小时出现，使用站点平均 NRMSE 做主约束
                 reasons = []
                 passed = True
 
                 if h not in MIDDAY_NRMSE_PRIORITY_HOURS:
                     passed = False
-                    reasons.append("MiddaySiteCalibrated 只允许用于 10-14 点")
+                    reasons.append(f"{ver} 只允许用于 10-14 点")
                 else:
-                    base_nrmse = base_metrics.get("nrmse_capacity_pct", np.nan)
-                    cand_nrmse = cand_metrics.get("nrmse_capacity_pct", np.nan)
+                    # 主约束：站点平均 NRMSE（容量归一化，逐站点计算后取均值）
+                    base_site_nrmse = base_metrics.get("site_nrmse_mean_pct", np.nan)
+                    cand_site_nrmse = cand_metrics.get("site_nrmse_mean_pct", np.nan)
                     base_rmse = base_metrics.get("rmse", np.nan)
                     cand_rmse = cand_metrics.get("rmse", np.nan)
+                    base_mae = base_metrics.get("mae", np.nan)
+                    cand_mae = cand_metrics.get("mae", np.nan)
                     cand_ratio = cand_metrics.get("pred_actual_ratio", np.nan)
+                    cand_city = cand_metrics.get("city_rel_err", np.nan)
 
-                    # 10-14 点目标：站点 NRMSE 必须不劣化，最好改善。
-                    if np.isfinite(base_nrmse) and np.isfinite(cand_nrmse):
-                        if cand_nrmse > base_nrmse * 1.01:
+                    # 站点平均 NRMSE 必须不劣于 V1
+                    if np.isfinite(base_site_nrmse) and np.isfinite(cand_site_nrmse):
+                        if cand_site_nrmse > base_site_nrmse * 1.005:
                             passed = False
                             reasons.append(
-                                f"Midday nrmse 未改善: {cand_nrmse:.2f} > 1.01*base {base_nrmse:.2f}"
+                                f"midday site_nrmse 未改善: {cand_site_nrmse:.2f} > 1.005*base {base_site_nrmse:.2f}"
                             )
 
-                    # RMSE 不允许明显变差。
+                    # RMSE/MAE 不允许明显牺牲
                     if np.isfinite(base_rmse) and np.isfinite(cand_rmse):
                         if cand_rmse > base_rmse * 1.03:
                             passed = False
                             reasons.append(
-                                f"Midday rmse 恶化: {cand_rmse:.4f} > 1.03*base {base_rmse:.4f}"
+                                f"midday rmse 恶化: {cand_rmse:.4f} > 1.03*base {base_rmse:.4f}"
+                            )
+                    if np.isfinite(base_mae) and np.isfinite(cand_mae):
+                        if cand_mae > base_mae * 1.03:
+                            passed = False
+                            reasons.append(
+                                f"midday mae 恶化: {cand_mae:.4f} > 1.03*base {base_mae:.4f}"
                             )
 
-                    # ratio 只设置宽松底线，防止明显异常。
-                    if np.isfinite(cand_ratio) and cand_ratio < 0.80:
+                    # 防止城市级总量明显异常
+                    if np.isfinite(cand_ratio) and not (0.86 <= cand_ratio <= 1.06):
                         passed = False
-                        reasons.append(f"Midday ratio 过低: {cand_ratio:.3f} < 0.80")
+                        reasons.append(f"midday ratio 异常: {cand_ratio:.3f} 不在 [0.86, 1.06]")
+                    if np.isfinite(cand_city) and cand_city > 8.0:
+                        passed = False
+                        reasons.append(f"midday city_rel_err 过高: {cand_city:.2f} > 8.0")
 
                 all_reasons[(h, ver)] = reasons
             elif ver.startswith("BlendTotal"):
