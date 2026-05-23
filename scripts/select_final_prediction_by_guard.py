@@ -535,7 +535,7 @@ def select_per_hour(candidates, valid_df):
             print(f"  ⚠️ h={h:02d}: V1DD 被拒绝（dawn/dusk 保护），回退 V1")
             best_ver = "V1"
             best_m = base_metrics
-            best_score = score_candidates(base_metrics)
+            best_score = score_candidates(base_metrics, hour=h)
             best_reasons = ["dawn_dusk保护：拒绝V1DD"]
 
         # 回退
