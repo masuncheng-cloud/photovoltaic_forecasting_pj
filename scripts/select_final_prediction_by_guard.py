@@ -456,7 +456,7 @@ def select_per_hour(candidates, valid_df):
 
         # strict hours 固定 V1（不在 valid 集上选择 BlendTotal）
         if h in STRICT_NRMSE_GUARD_HOURS:
-            base_score = score_candidates(base_metrics)
+            base_score = score_candidates(base_metrics, hour=h)
             selection[h] = ("V1", base_metrics, base_score, ["strict hour: force V1"])
             print(
                 f"  h={h:02d}: strict hour 强制 V1 "
@@ -522,7 +522,7 @@ def select_per_hour(candidates, valid_df):
             all_reasons[(h, ver)] = reasons
 
             if passed:
-                sc = score_candidates(cand_metrics)
+                sc = score_candidates(cand_metrics, hour=h)
                 if sc < best_score:
                     best_score = sc
                     best_ver = ver
