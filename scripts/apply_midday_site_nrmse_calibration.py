@@ -40,9 +40,9 @@ METRICS_DIR.mkdir(parents=True, exist_ok=True)
 MIDDAY_HOURS = [10, 11, 12, 13, 14]
 BAD_SITES = {"S026", "S015", "S057", "S036", "S067", "S045", "S058"}
 
-IN_FULL = TABLES_DIR / "distributed_predictions_final_full.pkl"
-if not IN_FULL.exists():
-    IN_FULL = TABLES_DIR / "distributed_predictions_fixed_full.pkl"
+# apply_midday 读取 fixed_full（rebuild_fixed_predictions.py 输出）
+# select_final_prediction_by_guard.py 会加载 midday_full 作为候选
+IN_FULL = TABLES_DIR / "distributed_predictions_fixed_full.pkl"
 
 OUT_FULL = TABLES_DIR / "distributed_predictions_midday_site_calibrated_full.pkl"
 OUT_EVAL = TABLES_DIR / "distributed_predictions_midday_site_calibrated_eval.pkl"

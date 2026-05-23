@@ -63,7 +63,6 @@ CRITICAL_SCRIPTS = {
     'fix_hourly_bias.py',
     'apply_p0_p1_fix_v2.py',
     'evaluate_fixed_predictions.py',
-    'apply_midday_site_nrmse_calibration.py',
     'select_final_prediction_by_guard.py',
     'regenerate_chinese_metrics.py',
     'compare_with_week2_reference.py',
