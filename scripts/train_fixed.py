@@ -49,7 +49,8 @@ FIX_SCRIPTS = [
     ROOT / 'scripts' / 'fix_hourly_bias.py',
     ROOT / 'scripts' / 'apply_p0_p1_fix_v2.py',
     ROOT / 'scripts' / 'evaluate_fixed_predictions.py',
-    ROOT / 'scripts' / 'apply_midday_site_nrmse_calibration.py',  # 必须先于 guard
+    ROOT / 'scripts' / 'apply_midday_site_nrmse_calibration.py',  # 必须先于 residual specialist
+    ROOT / 'scripts' / 'apply_midday_residual_specialist.py',       # 残差专家（依赖 midday_site_calibrated）
     ROOT / 'scripts' / 'select_final_prediction_by_guard.py',
     ROOT / 'scripts' / 'regenerate_chinese_metrics.py',
     ROOT / 'scripts' / 'compare_with_week2_reference.py',
