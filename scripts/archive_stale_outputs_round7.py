@@ -1,10 +1,9 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-Round7 脚本五：过期文件归档
-============================
+Round7/8 归档脚本（扩展版）：
 将无效候选和过期中间结果移动到 archive_round7/。
-仅归档，不删除，可回溯。
+同时扫描 metrics / tables / docs 目录。
 """
 from __future__ import annotations
 
@@ -16,6 +15,7 @@ PROJECT_ROOT = Path(__file__).resolve().parents[1]
 OUT = PROJECT_ROOT / "output" / "pv_pipeline"
 METRICS = OUT / "metrics"
 TABLES = OUT / "tables"
+DOCS = OUT / "docs"
 ARCHIVE = OUT / "archive_round7"
 ARCHIVE.mkdir(parents=True, exist_ok=True)
 
@@ -32,7 +32,11 @@ KEEP_PATTERNS = [
     "round6_stable_extreme_bias_candidates",
     "round7_",
     "当前最终结果摘要",
-    "任务书完成情况_Round7",
+    "任务书完成情况",
+    "最终交付文件清单",
+    "midday_site_calibration_params",
+    "midday_site_calibration_valid_ablation",
+    "midday_worst_site_hours",
 ]
 
 # 需要归档的文件模式
@@ -42,7 +46,11 @@ STALE_PATTERNS = [
     "distributed_predictions_midday_residual_specialist",
     "distributed_predictions_midday_selective_site_corrected",
     "distributed_predictions_round6_stable_bias",
+    "round6_stable_bias_test_hourly_nrmse",
+    "round6_stable_bias_correction_params",
+    "round6_stable_bias_valid_ablation",
     "midday_nrmse_acceptance",
+    "midday_next_step_gain_vs_site_calibrated",
     "当前结果_vs_周二基准",
 ]
 
@@ -61,7 +69,7 @@ def should_archive(path: Path) -> bool:
 
 def main():
     rows = []
-    for base in [METRICS, TABLES]:
+    for base in [METRICS, TABLES, DOCS]:
         if not base.exists():
             continue
         for path in base.iterdir():
