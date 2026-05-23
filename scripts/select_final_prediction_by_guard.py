@@ -458,6 +458,20 @@ def load_candidates():
     except Exception as e:
         print(f"  MiddaySiteSelectiveCorrected 加载失败: {e}")
 
+    # Round6StableBias: 只对 train/valid 稳定极端偏差站点做保守修正
+    try:
+        round6_path = TABLES_DIR / "distributed_predictions_round6_stable_bias_full.pkl"
+        if round6_path.exists():
+            df = pd.read_pickle(round6_path)
+            df["time"] = pd.to_datetime(df["time"])
+            df["hour"] = df["time"].dt.hour
+            candidates["Round6StableBias"] = df
+            print(f"  Round6StableBias: {len(df):,} 行")
+        else:
+            print("  Round6StableBias: 文件不存在，跳过")
+    except Exception as e:
+        print(f"  Round6StableBias 加载失败: {e}")
+
     # BaselineTotal: 使用 pred_baseline 解决系统性低估
     try:
         if "V1" in candidates:
