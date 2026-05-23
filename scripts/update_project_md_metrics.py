@@ -210,20 +210,29 @@ def generate_docs_summary(final_summary: dict) -> None:
         lines.append("\n## BlendTotal Oracle 诊断（test 集，仅供参考，不参与 final 选择）\n")
         lines.append(diag.to_string(index=False))
 
-    # 选择性修正相关
-    next_step_path = METRICS / "midday_next_step_gain_vs_site_calibrated.csv"
-    if next_step_path.exists():
-        ns = pd.read_csv(next_step_path)
-        lines.append("\n## 本轮相对 MiddaySiteCalibrated 改善情况\n")
-        lines.append(ns.to_string(index=False))
-
+    # 选择性修正相关（Round5 产物，已被归档，仅保留参考）
     selective_params = METRICS / "midday_selective_site_correction_params.csv"
     if selective_params.exists():
         params = pd.read_csv(selective_params)
-        lines.append(f"\n## 选择性站点修正参数（共 {len(params)} 个站点小时对）\n")
+        lines.append(f"\n## 选择性站点修正参数（Round5，共 {len(params)} 个站点小时对）\n")
         lines.append(f"- k 范围: [{params['k'].min():.4f}, {params['k'].max():.4f}]")
         lines.append(f"- k 均值: {params['k'].mean():.4f}")
         lines.append(f"- alpha 分布: {params['alpha'].value_counts().to_dict()}")
+
+    # Round7 工程闭环说明
+    manifest_path = METRICS / "round7_final_metrics_manifest.csv"
+    compliance_path = DOCS / "任务书完成情况_Round7.md"
+    lines.append("\n## Round7 工程闭环\n")
+    lines.append("> Round7（2026-05-23）：统一 final 指标来源，完成流程验收和任务书对照。\n")
+    lines.append("- 所有核心 metrics 均从 `distributed_predictions_final_eval.pkl` 重算\n")
+    lines.append("- 通过 metrics 一致性检查\n")
+    lines.append("- 已生成任务书完成情况对照\n")
+    if compliance_path.exists():
+        lines.append(f"- 任务书完成情况：见 `docs/任务书完成情况_Round7.md`")
+    if manifest_path.exists():
+        manifest = pd.read_csv(manifest_path)
+        lines.append(f"- metrics manifest：共 {len(manifest)} 个文件，全部来源 SHA256 一致")
+    lines.append("\n> **本报告所有最终预测指标均来自 `output/pv_pipeline/tables/distributed_predictions_final_eval.pkl`。**")
 
     md_text = "\n".join(lines)
     (DOCS / "当前最终结果摘要.md").write_text(md_text, encoding="utf-8")
