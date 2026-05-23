@@ -62,28 +62,39 @@ def get_all_files(root: Path):
     # Tracked files
     try:
         result = subprocess.run(
-            [GIT, "ls-files"],
-            cwd=root, capture_output=True, text=True, timeout=10
+            [GIT, "ls-files", "-z"],
+            cwd=root, capture_output=True, timeout=10
         )
-        for f in result.stdout.strip().split("\n"):
-            if f:
-                p = root / f
-                if p.exists():
-                    files[f] = p.stat().st_mtime
+        if result.stdout:
+            for f in result.stdout.rstrip(b"\x00").split(b"\x00"):
+                if f:
+                    try:
+                        decoded = f.decode("utf-8", errors="replace")
+                        p = root / decoded
+                        if p.exists():
+                            files[decoded] = p.stat().st_mtime
+                    except (OSError, ValueError):
+                        pass
     except Exception as e:
         print(f"[auto-sync] Failed to list tracked files: {e}")
 
     # Untracked files (not ignored by git)
     try:
         result = subprocess.run(
-            [GIT, "ls-files", "--others", "--exclude-standard"],
-            cwd=root, capture_output=True, text=True, timeout=10
+            [GIT, "ls-files", "--others", "--exclude-standard", "-z"],
+            cwd=root, capture_output=True, timeout=10
         )
-        for f in result.stdout.strip().split("\n"):
-            if f and not should_ignore(f):
-                p = root / f
-                if p.exists():
-                    files[f] = p.stat().st_mtime
+        if result.stdout:
+            for f in result.stdout.rstrip(b"\x00").split(b"\x00"):
+                if f:
+                    try:
+                        decoded = f.decode("utf-8", errors="replace")
+                        if not should_ignore(decoded):
+                            p = root / decoded
+                            if p.exists():
+                                files[decoded] = p.stat().st_mtime
+                    except (OSError, ValueError):
+                        pass
     except Exception as e:
         print(f"[auto-sync] Failed to list untracked files: {e}")
 
@@ -93,12 +104,13 @@ def get_all_files(root: Path):
 def has_changes(root: Path) -> bool:
     """Check if there are uncommitted changes."""
     result = subprocess.run(
-        [GIT, "status", "--porcelain"],
-        cwd=root, capture_output=True, text=True, timeout=10
+        [GIT, "status", "--porcelain", "-z"],
+        cwd=root, capture_output=True, timeout=10
     )
-    lines = [l for l in result.stdout.strip().split("\n") if l]
-    # Filter out ignored files
-    changed = [l for l in lines if not should_ignore(l.split(maxsplit=1)[-1].strip())]
+    if not result.stdout:
+        return False
+    lines = result.stdout.decode("utf-8", errors="replace").strip().split("\x00")
+    changed = [l for l in lines if l and not should_ignore(l[3:].strip())]
     return bool(changed)
 
 
