@@ -41,13 +41,15 @@ STAGES = [
 ]
 
 # 修复后处理脚本（需要 argparse 检测）
+# 注意：apply_midday 必须在 select_final 之前跑，
+# 因为 midday 输出是 select_final 的候选输入。
 FIX_SCRIPTS = [
     ROOT / 'scripts' / 'rebuild_fixed_predictions.py',
     ROOT / 'scripts' / 'check_gblend_time_alignment.py',
     ROOT / 'scripts' / 'fix_hourly_bias.py',
     ROOT / 'scripts' / 'apply_p0_p1_fix_v2.py',
     ROOT / 'scripts' / 'evaluate_fixed_predictions.py',
-    ROOT / 'scripts' / 'apply_midday_site_nrmse_calibration.py',
+    ROOT / 'scripts' / 'apply_midday_site_nrmse_calibration.py',  # 必须先于 guard
     ROOT / 'scripts' / 'select_final_prediction_by_guard.py',
     ROOT / 'scripts' / 'regenerate_chinese_metrics.py',
     ROOT / 'scripts' / 'compare_with_week2_reference.py',
