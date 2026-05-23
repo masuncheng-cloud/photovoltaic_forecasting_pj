@@ -532,9 +532,8 @@ def select_per_hour(candidates, valid_df):
         base_metrics["_ver"] = "V1"
 
         # ── 10-14 小时：强制 MiddaySiteCalibrated（安全基准）──────────
-        # MiddaySiteCalibrated 已在 valid 集上证明优于 V1，
-        # 且不会像 MiddaySiteSelectiveCorrected 那样过拟合到 valid 集。
-        # 因此 10-14 小时直接使用 MiddaySiteCalibrated，不在候选中比较。
+        # Round6StableBias 只有在显著优于 MiddaySiteCalibrated 时才允许入选。
+        # 10-14 点直接使用 MiddaySiteCalibrated，不在候选中比较。
         if h in MIDDAY_NRMSE_PRIORITY_HOURS:
             if "MiddaySiteCalibrated" in candidates:
                 msc_df = candidates["MiddaySiteCalibrated"]
@@ -545,16 +544,47 @@ def select_per_hour(candidates, valid_df):
                 )
                 msc_metrics = compute_hour_metrics(merged_msc, "cand_pred")
                 msc_score = score_candidates(msc_metrics, hour=h)
-                selection[h] = (
-                    "MiddaySiteCalibrated",
-                    msc_metrics,
-                    msc_score,
-                    ["10-14h 强制 MiddaySiteCalibrated（安全基准，不与 MiddaySiteSelectiveCorrected 竞争）"],
-                )
-                print(
-                    f"  h={h:02d}: 强制 MiddaySiteCalibrated "
-                    f"(score={msc_score:.2f}, site_nrmse={msc_metrics.get('site_nrmse_mean_pct', np.nan):.2f}%)"
-                )
+
+                # 尝试 Round6StableBias：必须比 MiddaySiteCalibrated 至少好 0.05pp
+                round6_better = False
+                if "Round6StableBias" in candidates:
+                    r6_df = candidates["Round6StableBias"]
+                    r6_h = r6_df[r6_df["hour"] == h][["time", "site_id", "power_pred"]].copy()
+                    r6_h = r6_h.rename(columns={"power_pred": "cand_pred"})
+                    merged_r6 = valid_h[["time", "site_id", "power_mw", "capacity_mw", "hour"]].merge(
+                        r6_h, on=["time", "site_id"], how="inner"
+                    )
+                    if len(merged_r6) > 0:
+                        r6_metrics = compute_hour_metrics(merged_r6, "cand_pred")
+                        r6_site_nrmse = r6_metrics.get("site_nrmse_mean_pct", np.nan)
+                        msc_site_nrmse = msc_metrics.get("site_nrmse_mean_pct", np.nan)
+                        if np.isfinite(r6_site_nrmse) and np.isfinite(msc_site_nrmse):
+                            if r6_site_nrmse < msc_site_nrmse - 0.05:
+                                r6_score = score_candidates(r6_metrics, hour=h)
+                                selection[h] = (
+                                    "Round6StableBias",
+                                    r6_metrics,
+                                    r6_score,
+                                    [f"Round6 优于 MiddaySiteCalibrated: {r6_site_nrmse:.2f} < {msc_site_nrmse:.2f} - 0.05"],
+                                )
+                                print(
+                                    f"  h={h:02d}: Round6StableBias "
+                                    f"(score={r6_score:.2f}, site_nrmse={r6_site_nrmse:.2f}%, "
+                                    f"优于安全基准 {msc_site_nrmse:.2f}%)"
+                                )
+                                round6_better = True
+
+                if not round6_better:
+                    selection[h] = (
+                        "MiddaySiteCalibrated",
+                        msc_metrics,
+                        msc_score,
+                        ["10-14h 强制 MiddaySiteCalibrated（安全基准）"],
+                    )
+                    print(
+                        f"  h={h:02d}: 强制 MiddaySiteCalibrated "
+                        f"(score={msc_score:.2f}, site_nrmse={msc_metrics.get('site_nrmse_mean_pct', np.nan):.2f}%)"
+                    )
             else:
                 # Fallback: V1
                 base_score = score_candidates(base_metrics, hour=h)
@@ -600,7 +630,7 @@ def select_per_hour(candidates, valid_df):
             if ver == "BaselineTotal":
                 passed = False
                 reasons = ["BaselineTotal 仅作为兜底版本"]
-            elif ver in {"MiddaySiteCalibrated", "MiddaySiteSelectiveCorrected"}:
+            elif ver in {"MiddaySiteCalibrated", "MiddaySiteSelectiveCorrected", "Round6StableBias"}:
                 # 10-14 点专用：只允许在 midday 小时出现，使用站点平均 NRMSE 做主约束
                 reasons = []
                 passed = True
