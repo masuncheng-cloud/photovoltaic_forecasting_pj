@@ -3,11 +3,11 @@
 7,BlendTotal_a10,BlendTotal_a10,13.0525,0.3042,0.8419,13.5147,0.557745,diagnostic_only_not_used_for_final_selection
 8,BlendTotal_a10,BlendTotal_a10,5.3786,0.3754,0.7695,12.7653,0.902382,diagnostic_only_not_used_for_final_selection
 9,BlendTotal_a10,BlendTotal_a10,5.4838,0.5479,1.0231,16.9884,0.991095,diagnostic_only_not_used_for_final_selection
-10,BlendTotal_a10,BlendTotal_a30,6.6831,0.6794,1.295,21.503,0.995387,diagnostic_only_not_used_for_final_selection
-11,BlendTotal_a10,BlendTotal_a20,7.3238,0.7605,1.4412,23.9492,0.999088,diagnostic_only_not_used_for_final_selection
-12,BlendTotal_a10,BlendTotal_a30,7.7098,0.7923,1.5141,25.1736,0.992538,diagnostic_only_not_used_for_final_selection
-13,BlendTotal_a10,BlendTotal_a30,7.6249,0.7789,1.4694,24.435,1.007953,diagnostic_only_not_used_for_final_selection
-14,BlendTotal_a10,BlendTotal_a30,6.4007,0.6611,1.2368,20.5604,0.998688,diagnostic_only_not_used_for_final_selection
+10,MiddaySiteCalibrated,BlendTotal_a30,6.6831,0.6794,1.295,21.503,0.995387,diagnostic_only_not_used_for_final_selection
+11,MiddaySiteCalibrated,BlendTotal_a20,7.3238,0.7605,1.4412,23.9492,0.999088,diagnostic_only_not_used_for_final_selection
+12,MiddaySiteCalibrated,BlendTotal_a30,7.7098,0.7923,1.5141,25.1736,0.992538,diagnostic_only_not_used_for_final_selection
+13,MiddaySiteCalibrated,BlendTotal_a30,7.6249,0.7789,1.4694,24.435,1.007953,diagnostic_only_not_used_for_final_selection
+14,MiddaySiteCalibrated,BlendTotal_a30,6.4007,0.6611,1.2368,20.5604,0.998688,diagnostic_only_not_used_for_final_selection
 15,BlendTotal_a10,BlendTotal_a20,5.0523,0.4926,0.9405,15.6378,1.000581,diagnostic_only_not_used_for_final_selection
 16,BlendTotal_a10,BlendTotal_a10,4.0776,0.3311,0.723,11.9896,0.95669,diagnostic_only_not_used_for_final_selection
 17,V1,BlendTotal_a10,13.699,0.3561,0.9406,14.6682,0.556879,diagnostic_only_not_used_for_final_selection
