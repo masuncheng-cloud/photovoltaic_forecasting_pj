@@ -52,6 +52,11 @@ FIX_SCRIPTS = [
     ROOT / 'scripts' / 'apply_midday_site_nrmse_calibration.py',  # MiddaySiteCalibrated
     ROOT / 'scripts' / 'diagnose_midday_worst_site_hours.py',     # 诊断最差站点小时（非critical）
     ROOT / 'scripts' / 'apply_midday_selective_site_correction.py',  # 选择性站点修正
+    # Round6: 高误差站点数据侧核查与安全修复
+    ROOT / 'scripts' / 'diagnose_site_capacity_mapping_round6.py',   # 站点容量/映射诊断（非critical）
+    ROOT / 'scripts' / 'diagnose_midday_bias_stability_round6.py',  # 偏差稳定性诊断（非critical）
+    ROOT / 'scripts' / 'apply_site_metadata_overrides.py',           # 人工 overrides 应用
+    ROOT / 'scripts' / 'apply_midday_stable_bias_correction_round6.py',  # 稳定偏差保守修正
     ROOT / 'scripts' / 'select_final_prediction_by_guard.py',
     ROOT / 'scripts' / 'regenerate_chinese_metrics.py',
     ROOT / 'scripts' / 'compare_with_week2_reference.py',
@@ -59,6 +64,7 @@ FIX_SCRIPTS = [
     ROOT / 'scripts' / 'check_pipeline_consistency.py',
     ROOT / 'scripts' / 'check_midday_nrmse_improvement.py',   # final vs fixed 验收
     ROOT / 'scripts' / 'check_midday_next_step_gain.py',     # final vs MiddaySiteCalibrated 验收
+    ROOT / 'scripts' / 'check_round6_midday_gain.py',        # Round6 增量验收
 ]
 
 # 关键脚本：失败必须中止
@@ -72,6 +78,8 @@ CRITICAL_SCRIPTS = {
     'compare_with_week2_reference.py',
     'check_pipeline_consistency.py',
     'apply_midday_selective_site_correction.py',
+    'apply_site_metadata_overrides.py',
+    'apply_midday_stable_bias_correction_round6.py',
 }
 
 # 关键输出文件：必须存在且非空
@@ -93,6 +101,9 @@ KEY_OUTPUT_FILES = [
     'metrics/midday_selective_site_correction_params.csv',
     'metrics/midday_selective_site_correction_valid_ablation.csv',
     'metrics/midday_next_step_gain_vs_site_calibrated.csv',
+    'metrics/round6_site_capacity_mapping_diagnosis.csv',
+    'metrics/round6_midday_bias_stability_summary.csv',
+    'metrics/round6_stable_bias_correction_params.csv',
 ]
 
 
