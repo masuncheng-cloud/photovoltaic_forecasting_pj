@@ -395,6 +395,20 @@ def load_candidates():
     except Exception as e:
         print(f"  V3: 加载失败（可选）: {e}")
 
+    # MiddaySiteCalibrated: 10-14 点站点级 NRMSE 校准候选
+    try:
+        midday_path = TABLES_DIR / "distributed_predictions_midday_site_calibrated_full.pkl"
+        if midday_path.exists():
+            df = pd.read_pickle(midday_path)
+            df["time"] = pd.to_datetime(df["time"])
+            df["hour"] = df["time"].dt.hour
+            candidates["MiddaySiteCalibrated"] = df
+            print(f"  MiddaySiteCalibrated: {len(df):,} 行")
+        else:
+            print("  MiddaySiteCalibrated: 文件不存在，跳过")
+    except Exception as e:
+        print(f"  MiddaySiteCalibrated 加载失败: {e}")
+
     # BaselineTotal: 使用 pred_baseline 解决系统性低估
     try:
         if "V1" in candidates:
