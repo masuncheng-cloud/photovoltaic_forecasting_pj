@@ -66,6 +66,7 @@ BAD_SITES = {"S026", "S015", "S057", "S036", "S067", "S045", "S058"}
 DAWN_DUSK_HOURS = [6, 7, 16, 17, 18, 19]
 STRICT_NRMSE_GUARD_HOURS = [6, 17, 18, 19]
 HOURS = list(range(6, 20))
+MIDDAY_NRMSE_PRIORITY_HOURS = [10, 11, 12, 13, 14]
 TARGET_RATIO = 0.9488
 TARGET_SITE_COUNT = 53
 BLEND_ALPHAS = [0.10, 0.20, 0.30, 0.40, 0.50, 0.60, 0.70, 0.80, 0.90]
@@ -244,7 +245,7 @@ def guard_check(base_metrics, cand_metrics, is_dawn_dusk=False):
     return len(reasons) == 0, reasons
 
 
-def score_candidates(metrics):
+def score_candidates(metrics, hour=None):
     """MAE/RMSE 优先的多目标 score，越低越好。
 
     优先级：
@@ -253,6 +254,9 @@ def score_candidates(metrics):
     3. 容量归一化 NRMSE（权重 0.25）
     4. 城市聚合误差（权重 0.15）
     5. ratio 接近基准 0.9488（权重 0.07）
+
+    10-14 点（is_midday_priority=True）时，提高 NRMSE 权重，降低其他权重：
+      0.45*NRMSE + 0.25*RMSE + 0.15*MAE + 0.08*city + 0.04*ratio + ...
     """
     mae_val = metrics.get("mae", 100)
     rmse_val = metrics.get("rmse", 100)
@@ -273,14 +277,27 @@ def score_candidates(metrics):
     if not np.isfinite(ratio_err):
         ratio_err = 100
 
+    is_midday_priority = hour in MIDDAY_NRMSE_PRIORITY_HOURS if hour is not None else False
+
+    if is_midday_priority:
+        return (
+            0.45 * nrmse
+            + 0.25 * rmse_val
+            + 0.15 * mae_val
+            + 0.08 * city
+            + 0.04 * ratio_err
+            + 0.02 * (n100 * 5)
+            + 0.01 * (n200 * 10)
+        )
+
     return (
-        0.28 * rmse_val +
-        0.22 * mae_val +
-        0.25 * nrmse +
-        0.15 * city +
-        0.07 * ratio_err +
-        0.02 * (n100 * 5) +
-        0.01 * (n200 * 10)
+        0.28 * rmse_val
+        + 0.22 * mae_val
+        + 0.25 * nrmse
+        + 0.15 * city
+        + 0.07 * ratio_err
+        + 0.02 * (n100 * 5)
+        + 0.01 * (n200 * 10)
     )
 
 
