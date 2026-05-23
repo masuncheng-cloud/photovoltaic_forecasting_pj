@@ -535,6 +535,7 @@ def select_per_hour(candidates, valid_df):
         # Round6StableBias 只有在显著优于 MiddaySiteCalibrated 时才允许入选。
         # 10-14 点直接使用 MiddaySiteCalibrated，不在候选中比较。
         if h in MIDDAY_NRMSE_PRIORITY_HOURS:
+            round6_better = False
             if "MiddaySiteCalibrated" in candidates:
                 msc_df = candidates["MiddaySiteCalibrated"]
                 msc_h = msc_df[msc_df["hour"] == h][["time", "site_id", "power_pred"]].copy()
@@ -545,8 +546,6 @@ def select_per_hour(candidates, valid_df):
                 msc_metrics = compute_hour_metrics(merged_msc, "cand_pred")
                 msc_score = score_candidates(msc_metrics, hour=h)
 
-                # 尝试 Round6StableBias：必须比 MiddaySiteCalibrated 至少好 0.05pp
-                round6_better = False
                 if "Round6StableBias" in candidates:
                     r6_df = candidates["Round6StableBias"]
                     r6_h = r6_df[r6_df["hour"] == h][["time", "site_id", "power_pred"]].copy()
@@ -558,21 +557,28 @@ def select_per_hour(candidates, valid_df):
                         r6_metrics = compute_hour_metrics(merged_r6, "cand_pred")
                         r6_site_nrmse = r6_metrics.get("site_nrmse_mean_pct", np.nan)
                         msc_site_nrmse = msc_metrics.get("site_nrmse_mean_pct", np.nan)
+                        # 阈值从 0.05 收紧到 0.15pp，避免 valid 样本少时假阳性
+                        # valid ~62 条/站点小时，阈值需更大才能在 test 泛化
                         if np.isfinite(r6_site_nrmse) and np.isfinite(msc_site_nrmse):
-                            if r6_site_nrmse < msc_site_nrmse - 0.05:
+                            if r6_site_nrmse < msc_site_nrmse - 0.15:
                                 r6_score = score_candidates(r6_metrics, hour=h)
                                 selection[h] = (
                                     "Round6StableBias",
                                     r6_metrics,
                                     r6_score,
-                                    [f"Round6 优于 MiddaySiteCalibrated: {r6_site_nrmse:.2f} < {msc_site_nrmse:.2f} - 0.05"],
+                                    [f"Round6 显著优于 MiddaySiteCalibrated: {r6_site_nrmse:.2f} < {msc_site_nrmse:.2f} - 0.15"],
                                 )
                                 print(
                                     f"  h={h:02d}: Round6StableBias "
                                     f"(score={r6_score:.2f}, site_nrmse={r6_site_nrmse:.2f}%, "
-                                    f"优于安全基准 {msc_site_nrmse:.2f}%)"
+                                    f"显著优于安全基准 {msc_site_nrmse:.2f}%)"
                                 )
                                 round6_better = True
+                            elif r6_site_nrmse < msc_site_nrmse:
+                                print(
+                                    f"  h={h:02d}: Round6StableBias 仅略优 {r6_site_nrmse:.2f} vs {msc_site_nrmse:.2f}，"
+                                    f"不足 0.15pp 安全边界，保留 MiddaySiteCalibrated"
+                                )
 
                 if not round6_better:
                     selection[h] = (
