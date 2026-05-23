@@ -636,7 +636,7 @@ def select_per_hour(candidates, valid_df):
             if ver == "BaselineTotal":
                 passed = False
                 reasons = ["BaselineTotal 仅作为兜底版本"]
-            elif ver in {"MiddaySiteCalibrated", "MiddaySiteSelectiveCorrected", "Round6StableBias"}:
+            elif ver in {"MiddaySiteCalibrated", "MiddaySiteSelectiveCorrected"}:
                 # 10-14 点专用：只允许在 midday 小时出现，使用站点平均 NRMSE 做主约束
                 reasons = []
                 passed = True
