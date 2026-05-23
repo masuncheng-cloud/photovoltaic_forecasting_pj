@@ -176,6 +176,20 @@ def compute_hour_metrics(sub_df, pred_col="power_pred"):
             site_rels.append(r)
     site_rels = np.array(site_rels)
 
+    # site-level NRMSE: per-site RMSE / mean(capacity), then average across sites
+    site_nrmse_vals = []
+    for _, sg in sub_df.groupby("site_id"):
+        yt_s = pd.to_numeric(sg["power_mw"], errors="coerce").to_numpy(dtype=float)
+        yp_s = pd.to_numeric(sg[pred_col], errors="coerce").to_numpy(dtype=float)
+        cap_s = pd.to_numeric(sg["capacity_mw"], errors="coerce").to_numpy(dtype=float)
+        m_s = np.isfinite(yt_s) & np.isfinite(yp_s) & np.isfinite(cap_s) & (cap_s > 0)
+        if not m_s.any():
+            continue
+        rmse_s = float(np.sqrt(np.mean((yt_s[m_s] - yp_s[m_s]) ** 2)))
+        cap_mean_s = float(np.nanmean(cap_s[m_s]))
+        if cap_mean_s > 0:
+            site_nrmse_vals.append(rmse_s / cap_mean_s * 100.0)
+
     return {
         "city_rel_err": city_rel_err(yt, yp),
         "site_mape_raw_mean": float(np.nanmean(site_rels)) if len(site_rels) else np.nan,
@@ -187,6 +201,7 @@ def compute_hour_metrics(sub_df, pred_col="power_pred"):
         "mae": mae(yt, yp),
         "rmse": rmse(yt, yp),
         "nrmse_capacity_pct": nrmse_by_capacity(yt, yp, cap),
+        "site_nrmse_mean_pct": float(np.nanmean(site_nrmse_vals)) if site_nrmse_vals else np.nan,
         "pred_actual_ratio": ratio,
         "ratio_abs_err": abs(ratio - TARGET_RATIO) * 100 if np.isfinite(ratio) else np.nan,
     }
