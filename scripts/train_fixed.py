@@ -58,10 +58,12 @@ FIX_SCRIPTS = [
     ROOT / 'scripts' / 'apply_site_metadata_overrides.py',           # 人工 overrides 应用
     ROOT / 'scripts' / 'apply_midday_stable_bias_correction_round6.py',  # 稳定偏差保守修正
     ROOT / 'scripts' / 'select_final_prediction_by_guard.py',
-    ROOT / 'scripts' / 'regenerate_chinese_metrics.py',
-    ROOT / 'scripts' / 'compare_with_week2_reference.py',
+    # Round7: final 指标统一重算与验收
+    ROOT / 'scripts' / 'regenerate_final_metrics_round7.py',
+    ROOT / 'scripts' / 'assert_final_metrics_consistency_round7.py',
+    ROOT / 'scripts' / 'check_end_to_end_deliverables_round7.py',
+    ROOT / 'scripts' / 'generate_taskbook_compliance_round7.py',
     ROOT / 'scripts' / 'update_project_md_metrics.py',
-    ROOT / 'scripts' / 'check_pipeline_consistency.py',
     ROOT / 'scripts' / 'check_midday_nrmse_improvement.py',   # final vs fixed 验收
     ROOT / 'scripts' / 'check_midday_next_step_gain.py',     # final vs MiddaySiteCalibrated 验收
     ROOT / 'scripts' / 'check_round6_midday_gain.py',        # Round6 增量验收
@@ -74,12 +76,13 @@ CRITICAL_SCRIPTS = {
     'apply_p0_p1_fix_v2.py',
     'evaluate_fixed_predictions.py',
     'select_final_prediction_by_guard.py',
-    'regenerate_chinese_metrics.py',
-    'compare_with_week2_reference.py',
-    'check_pipeline_consistency.py',
     'apply_midday_selective_site_correction.py',
     'apply_site_metadata_overrides.py',
     'apply_midday_stable_bias_correction_round6.py',
+    'regenerate_final_metrics_round7.py',
+    'assert_final_metrics_consistency_round7.py',
+    'check_end_to_end_deliverables_round7.py',
+    'generate_taskbook_compliance_round7.py',
 }
 
 # 关键输出文件：必须存在且非空
@@ -104,6 +107,10 @@ KEY_OUTPUT_FILES = [
     'metrics/round6_site_capacity_mapping_diagnosis.csv',
     'metrics/round6_midday_bias_stability_summary.csv',
     'metrics/round6_stable_bias_correction_params.csv',
+    'metrics/round7_final_overall_metrics.csv',
+    'metrics/round7_final_metrics_manifest.csv',
+    'metrics/round7_end_to_end_deliverables_check.csv',
+    'metrics/round7_taskbook_compliance.csv',
 ]
 
 

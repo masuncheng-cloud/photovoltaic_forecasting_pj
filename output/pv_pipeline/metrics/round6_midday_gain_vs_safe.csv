@@ -1,6 +1,6 @@
-﻿hour,safe_site_nrmse_pct,final_site_nrmse_pct,improvement_pp,safe_city_nrmse_pct,final_city_nrmse_pct
-10,13.29,13.29,0.0,2.674,2.674
-11,14.68,14.68,0.0,2.043,2.043
-12,15.36,15.36,0.0,2.328,2.328
-13,15.31,15.31,0.0,2.555,2.555
-14,13.51,13.51,0.0,2.504,2.504
+﻿hour,safe_site_nrmse_pct,final_site_nrmse_pct,improvement_pp,safe_city_nrmse_pct,final_city_nrmse_pct,city_improvement_pp
+10,13.29,13.29,0.0,2.674,2.674,0.0
+11,14.68,14.68,0.0,2.043,2.043,0.0
+12,15.36,15.36,0.0,2.328,2.328,0.0
+13,15.31,15.31,0.0,2.555,2.555,0.0
+14,13.51,13.51,0.0,2.504,2.504,0.0

@@ -1,6 +1,6 @@
-﻿hour,fixed_site_nrmse_pct,final_site_nrmse_pct,improvement_pct_point,relative_improvement_pct,fixed_city_nrmse_pct,final_city_nrmse_pct
-10,14.86,13.32,1.54,10.36,3.955,2.683
-11,16.63,14.72,1.91,11.49,4.737,2.054
-12,17.23,15.39,1.84,10.68,4.601,2.339
-13,16.95,15.35,1.6,9.44,3.897,2.566
-14,14.77,13.54,1.23,8.33,4.089,2.513
+﻿hour,fixed_site_nrmse_pct,final_site_nrmse_pct,improvement_pp,fixed_city_nrmse_pct,final_city_nrmse_pct,city_improvement_pp
+10,14.86,13.29,1.57,3.955,2.674,1.281
+11,16.63,14.68,1.95,4.737,2.043,2.694
+12,17.23,15.36,1.87,4.601,2.328,2.273
+13,16.95,15.31,1.64,3.897,2.555,1.342
+14,14.77,13.51,1.26,4.089,2.504,1.585
