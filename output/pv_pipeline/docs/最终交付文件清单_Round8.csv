@@ -10,7 +10,7 @@
 正式交付-指标,output/pv_pipeline/metrics/round7_final_metrics_summary.json,final metrics JSON 摘要,是,是,0.001
 正式交付-报告,output/pv_pipeline/docs/当前最终结果摘要.md,最终结果摘要,是,是,0.007
 正式交付-报告,output/pv_pipeline/docs/任务书完成情况_Round7.md,任务书对照验收,是,是,0.003
-正式交付-报告,output/pv_pipeline/docs/最终交付文件清单_Round8.md,最终交付文件说明,否,否,0.0
+正式交付-报告,output/pv_pipeline/docs/最终交付文件清单_Round8.md,最终交付文件说明,否,是,0.003
 诊断保留,output/pv_pipeline/metrics/round6_watch_site_diagnosis.csv,高误差重点站点诊断（S012/S055/S050/S032）,是,是,0.001
 诊断保留,output/pv_pipeline/metrics/round6_site_capacity_mapping_diagnosis.csv,容量/映射诊断,是,是,0.007
 诊断保留,output/pv_pipeline/metrics/round6_midday_bias_stability_summary.csv,正午偏差稳定性诊断,是,是,0.067

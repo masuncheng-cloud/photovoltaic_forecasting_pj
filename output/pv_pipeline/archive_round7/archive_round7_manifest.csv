@@ -1,6 +1,1 @@
-﻿original_path,archived_path,size_mb,reason
-output/pv_pipeline/metrics/round6_stable_bias_correction_params.csv,output/pv_pipeline/archive_round7/metrics/round6_stable_bias_correction_params.csv,0.001,stale_candidate_or_old_baseline
-output/pv_pipeline/metrics/round6_stable_bias_test_hourly_nrmse.csv,output/pv_pipeline/archive_round7/metrics/round6_stable_bias_test_hourly_nrmse.csv,0.0,stale_candidate_or_old_baseline
-output/pv_pipeline/metrics/midday_next_step_gain_vs_site_calibrated.csv,output/pv_pipeline/archive_round7/metrics/midday_next_step_gain_vs_site_calibrated.csv,0.0,stale_candidate_or_old_baseline
-output/pv_pipeline/metrics/round6_stable_bias_valid_ablation.csv,output/pv_pipeline/archive_round7/metrics/round6_stable_bias_valid_ablation.csv,0.0,stale_candidate_or_old_baseline
-output/pv_pipeline/docs/当前结果_vs_周二基准对比.md,output/pv_pipeline/archive_round7/docs/当前结果_vs_周二基准对比.md,0.002,stale_candidate_or_old_baseline
+﻿
