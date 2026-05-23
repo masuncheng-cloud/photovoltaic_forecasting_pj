@@ -77,8 +77,12 @@ def _site_hour_scale(y_true, y_pred, cap, min_rows=40):
 
 def _capacity_nrmse(df: pd.DataFrame, pred_col: str = "power_pred") -> float:
     """单行数据框的容量归一化 NRMSE。"""
+    col = df[pred_col]
+    # 防御：rename 后可能出现重复列名，返回 DataFrame
+    if isinstance(col, pd.DataFrame):
+        col = col.iloc[:, 0]
     yt = pd.to_numeric(df["power_mw"], errors="coerce").to_numpy(dtype=float)
-    yp = pd.to_numeric(df[pred_col], errors="coerce").to_numpy(dtype=float)
+    yp = pd.to_numeric(col, errors="coerce").to_numpy(dtype=float)
     cap = pd.to_numeric(df["capacity_mw"], errors="coerce").to_numpy(dtype=float)
     m = np.isfinite(yt) & np.isfinite(yp) & np.isfinite(cap) & (cap > 0)
     if not m.any():
