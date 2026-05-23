@@ -293,15 +293,16 @@ def score_candidates(metrics, hour=None):
         ratio_err = 100
 
     is_midday_priority = hour in MIDDAY_NRMSE_PRIORITY_HOURS if hour is not None else False
-
+    # 10-14 点：以站点平均 NRMSE 为主指标（替代整小时 nrmse_capacity_pct）
     if is_midday_priority:
+        nrmse_for_score = metrics.get("site_nrmse_mean_pct", metrics.get("nrmse_capacity_pct", 100))
         return (
-            0.45 * nrmse
-            + 0.25 * rmse_val
-            + 0.15 * mae_val
-            + 0.08 * city
-            + 0.04 * ratio_err
-            + 0.02 * (n100 * 5)
+            0.62 * nrmse_for_score
+            + 0.18 * rmse_val
+            + 0.10 * mae_val
+            + 0.06 * city
+            + 0.02 * ratio_err
+            + 0.01 * (n100 * 5)
             + 0.01 * (n200 * 10)
         )
 
