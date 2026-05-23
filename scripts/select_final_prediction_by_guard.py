@@ -506,6 +506,43 @@ def select_per_hour(candidates, valid_df):
             if ver == "BaselineTotal":
                 passed = False
                 reasons = ["BaselineTotal 仅作为兜底版本"]
+            elif ver == "MiddaySiteCalibrated":
+                # 10-14 点专用：只允许在 midday 小时出现
+                reasons = []
+                passed = True
+
+                if h not in MIDDAY_NRMSE_PRIORITY_HOURS:
+                    passed = False
+                    reasons.append("MiddaySiteCalibrated 只允许用于 10-14 点")
+                else:
+                    base_nrmse = base_metrics.get("nrmse_capacity_pct", np.nan)
+                    cand_nrmse = cand_metrics.get("nrmse_capacity_pct", np.nan)
+                    base_rmse = base_metrics.get("rmse", np.nan)
+                    cand_rmse = cand_metrics.get("rmse", np.nan)
+                    cand_ratio = cand_metrics.get("pred_actual_ratio", np.nan)
+
+                    # 10-14 点目标：站点 NRMSE 必须不劣化，最好改善。
+                    if np.isfinite(base_nrmse) and np.isfinite(cand_nrmse):
+                        if cand_nrmse > base_nrmse * 1.01:
+                            passed = False
+                            reasons.append(
+                                f"Midday nrmse 未改善: {cand_nrmse:.2f} > 1.01*base {base_nrmse:.2f}"
+                            )
+
+                    # RMSE 不允许明显变差。
+                    if np.isfinite(base_rmse) and np.isfinite(cand_rmse):
+                        if cand_rmse > base_rmse * 1.03:
+                            passed = False
+                            reasons.append(
+                                f"Midday rmse 恶化: {cand_rmse:.4f} > 1.03*base {base_rmse:.4f}"
+                            )
+
+                    # ratio 只设置宽松底线，防止明显异常。
+                    if np.isfinite(cand_ratio) and cand_ratio < 0.80:
+                        passed = False
+                        reasons.append(f"Midday ratio 过低: {cand_ratio:.3f} < 0.80")
+
+                all_reasons[(h, ver)] = reasons
             elif ver.startswith("BlendTotal"):
                 # MAE/RMSE 主约束：不允许大幅牺牲站点误差
                 reasons = []
