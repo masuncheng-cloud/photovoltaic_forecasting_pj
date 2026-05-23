@@ -53,9 +53,10 @@ def should_keep(path: Path) -> bool:
 
 
 def should_archive(path: Path) -> bool:
+    name = path.name
     if should_keep(path):
         return False
-    return any(p in name for p in STALE_PATTERNS for p in [path.name])
+    return any(p in name for p in STALE_PATTERNS)
 
 
 def main():
