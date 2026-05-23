@@ -63,6 +63,10 @@ FIX_SCRIPTS = [
     ROOT / 'scripts' / 'assert_final_metrics_consistency_round7.py',
     ROOT / 'scripts' / 'check_end_to_end_deliverables_round7.py',
     ROOT / 'scripts' / 'generate_taskbook_compliance_round7.py',
+    ROOT / 'scripts' / 'clean_final_summary_round8.py',
+    ROOT / 'scripts' / 'update_taskbook_compliance_round8.py',
+    ROOT / 'scripts' / 'generate_final_delivery_manifest_round8.py',
+    ROOT / 'scripts' / 'check_round8_final_package.py',
     ROOT / 'scripts' / 'update_project_md_metrics.py',
     ROOT / 'scripts' / 'check_midday_nrmse_improvement.py',   # final vs fixed 验收
     ROOT / 'scripts' / 'check_midday_next_step_gain.py',     # final vs MiddaySiteCalibrated 验收
@@ -83,6 +87,10 @@ CRITICAL_SCRIPTS = {
     'assert_final_metrics_consistency_round7.py',
     'check_end_to_end_deliverables_round7.py',
     'generate_taskbook_compliance_round7.py',
+    'clean_final_summary_round8.py',
+    'update_taskbook_compliance_round8.py',
+    'generate_final_delivery_manifest_round8.py',
+    'check_round8_final_package.py',
 }
 
 # 关键输出文件：必须存在且非空
