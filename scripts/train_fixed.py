@@ -49,14 +49,16 @@ FIX_SCRIPTS = [
     ROOT / 'scripts' / 'fix_hourly_bias.py',
     ROOT / 'scripts' / 'apply_p0_p1_fix_v2.py',
     ROOT / 'scripts' / 'evaluate_fixed_predictions.py',
-    ROOT / 'scripts' / 'apply_midday_site_nrmse_calibration.py',  # 必须先于 residual specialist
-    ROOT / 'scripts' / 'apply_midday_residual_specialist.py',       # 残差专家（依赖 midday_site_calibrated）
+    ROOT / 'scripts' / 'apply_midday_site_nrmse_calibration.py',  # MiddaySiteCalibrated
+    ROOT / 'scripts' / 'diagnose_midday_worst_site_hours.py',     # 诊断最差站点小时（非critical）
+    ROOT / 'scripts' / 'apply_midday_selective_site_correction.py',  # 选择性站点修正
     ROOT / 'scripts' / 'select_final_prediction_by_guard.py',
     ROOT / 'scripts' / 'regenerate_chinese_metrics.py',
     ROOT / 'scripts' / 'compare_with_week2_reference.py',
     ROOT / 'scripts' / 'update_project_md_metrics.py',
     ROOT / 'scripts' / 'check_pipeline_consistency.py',
-    ROOT / 'scripts' / 'check_midday_nrmse_improvement.py',  # 验收：10-14 点 NRMSE 改善检查
+    ROOT / 'scripts' / 'check_midday_nrmse_improvement.py',   # final vs fixed 验收
+    ROOT / 'scripts' / 'check_midday_next_step_gain.py',     # final vs MiddaySiteCalibrated 验收
 ]
 
 # 关键脚本：失败必须中止
@@ -69,7 +71,7 @@ CRITICAL_SCRIPTS = {
     'regenerate_chinese_metrics.py',
     'compare_with_week2_reference.py',
     'check_pipeline_consistency.py',
-    'apply_midday_residual_specialist.py',
+    'apply_midday_selective_site_correction.py',
 }
 
 # 关键输出文件：必须存在且非空
@@ -79,16 +81,18 @@ KEY_OUTPUT_FILES = [
     'tables/distributed_predictions_fixed_full.pkl',
     'tables/distributed_predictions_final_eval.pkl',
     'tables/distributed_predictions_final_full.pkl',
-    'tables/distributed_predictions_midday_residual_specialist_full.pkl',
-    'tables/distributed_predictions_midday_residual_specialist_eval.pkl',
+    'tables/distributed_predictions_midday_site_calibrated_full.pkl',
+    'tables/distributed_predictions_midday_selective_site_corrected_full.pkl',
+    'tables/distributed_predictions_midday_selective_site_corrected_eval.pkl',
     'metrics/distributed_metrics_fixed.csv',
     'metrics/distributed_metrics_by_scene_fixed.csv',
     'metrics/distributed_metrics_by_hour_fixed.csv',
     'metrics/分布式光伏预测_逐小时平均NRMSE.csv',
     'metrics/分布式光伏预测_周报_整体统计.csv',
     'metrics/当前结果_vs_周二基准_整体对比.csv',
-    'metrics/midday_residual_specialist_valid_ablation.csv',
-    'metrics/midday_residual_specialist_test_hourly_nrmse.csv',
+    'metrics/midday_selective_site_correction_params.csv',
+    'metrics/midday_selective_site_correction_valid_ablation.csv',
+    'metrics/midday_next_step_gain_vs_site_calibrated.csv',
 ]
 
 

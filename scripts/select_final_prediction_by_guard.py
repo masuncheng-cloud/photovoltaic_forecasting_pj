@@ -70,6 +70,8 @@ MIDDAY_NRMSE_PRIORITY_HOURS = [10, 11, 12, 13, 14]
 TARGET_RATIO = 0.9488
 TARGET_SITE_COUNT = 53
 BLEND_ALPHAS = [0.10, 0.20, 0.30, 0.40, 0.50, 0.60, 0.70, 0.80, 0.90]
+DISABLE_MIDDAY_RESIDUAL_SPECIALIST = True
+# MiddayResidualSpecialist: 上一轮 valid 消融 10-14 全部轻微变差，默认禁用
 ENABLE_TEST_ORACLE_GUARD = False
 # NRMSE oracle guard 默认关闭（避免 test 集参与最终选择）
 ENABLE_NRMSE_ORACLE_GUARD = False
@@ -425,19 +427,36 @@ def load_candidates():
     except Exception as e:
         print(f"  MiddaySiteCalibrated 加载失败: {e}")
 
-    # MiddayResidualSpecialist: 10-14 点残差专家候选
+    # MiddayResidualSpecialist: 上一轮 valid 消融 10-14 全部轻微变差，默认不参与最终选择。
+    if not DISABLE_MIDDAY_RESIDUAL_SPECIALIST:
+        try:
+            residual_path = TABLES_DIR / "distributed_predictions_midday_residual_specialist_full.pkl"
+            if residual_path.exists():
+                df = pd.read_pickle(residual_path)
+                df["time"] = pd.to_datetime(df["time"])
+                df["hour"] = df["time"].dt.hour
+                candidates["MiddayResidualSpecialist"] = df
+                print(f"  MiddayResidualSpecialist: {len(df):,} 行")
+            else:
+                print("  MiddayResidualSpecialist: 文件不存在，跳过")
+        except Exception as e:
+            print(f"  MiddayResidualSpecialist 加载失败: {e}")
+    else:
+        print("  MiddayResidualSpecialist: valid 消融无效，默认禁用（DISABLE_MIDDAY_RESIDUAL_SPECIALIST=True）")
+
+    # MiddaySiteSelectiveCorrected: 10-14 点选择性站点小时修正候选
     try:
-        residual_path = TABLES_DIR / "distributed_predictions_midday_residual_specialist_full.pkl"
-        if residual_path.exists():
-            df = pd.read_pickle(residual_path)
+        selective_path = TABLES_DIR / "distributed_predictions_midday_selective_site_corrected_full.pkl"
+        if selective_path.exists():
+            df = pd.read_pickle(selective_path)
             df["time"] = pd.to_datetime(df["time"])
             df["hour"] = df["time"].dt.hour
-            candidates["MiddayResidualSpecialist"] = df
-            print(f"  MiddayResidualSpecialist: {len(df):,} 行")
+            candidates["MiddaySiteSelectiveCorrected"] = df
+            print(f"  MiddaySiteSelectiveCorrected: {len(df):,} 行")
         else:
-            print("  MiddayResidualSpecialist: 文件不存在，跳过")
+            print("  MiddaySiteSelectiveCorrected: 文件不存在，跳过（将在 apply_midday_selective_site_correction.py 生成后可用）")
     except Exception as e:
-        print(f"  MiddayResidualSpecialist 加载失败: {e}")
+        print(f"  MiddaySiteSelectiveCorrected 加载失败: {e}")
 
     # BaselineTotal: 使用 pred_baseline 解决系统性低估
     try:
@@ -498,7 +517,38 @@ def select_per_hour(candidates, valid_df):
         base_metrics = compute_hour_metrics(valid_h, "power_pred")
         base_metrics["_ver"] = "V1"
 
-        # strict hours 固定 V1（不在 valid 集上选择 BlendTotal）
+        # ── 10-14 小时：强制 MiddaySiteCalibrated（安全基准）──────────
+        # MiddaySiteCalibrated 已在 valid 集上证明优于 V1，
+        # 且不会像 MiddaySiteSelectiveCorrected 那样过拟合到 valid 集。
+        # 因此 10-14 小时直接使用 MiddaySiteCalibrated，不在候选中比较。
+        if h in MIDDAY_NRMSE_PRIORITY_HOURS:
+            if "MiddaySiteCalibrated" in candidates:
+                msc_df = candidates["MiddaySiteCalibrated"]
+                msc_h = msc_df[msc_df["hour"] == h][["time", "site_id", "power_pred"]].copy()
+                msc_h = msc_h.rename(columns={"power_pred": "cand_pred"})
+                merged_msc = valid_h[["time", "site_id", "power_mw", "capacity_mw", "hour"]].merge(
+                    msc_h, on=["time", "site_id"], how="inner"
+                )
+                msc_metrics = compute_hour_metrics(merged_msc, "cand_pred")
+                msc_score = score_candidates(msc_metrics, hour=h)
+                selection[h] = (
+                    "MiddaySiteCalibrated",
+                    msc_metrics,
+                    msc_score,
+                    ["10-14h 强制 MiddaySiteCalibrated（安全基准，不与 MiddaySiteSelectiveCorrected 竞争）"],
+                )
+                print(
+                    f"  h={h:02d}: 强制 MiddaySiteCalibrated "
+                    f"(score={msc_score:.2f}, site_nrmse={msc_metrics.get('site_nrmse_mean_pct', np.nan):.2f}%)"
+                )
+            else:
+                # Fallback: V1
+                base_score = score_candidates(base_metrics, hour=h)
+                selection[h] = ("V1", base_metrics, base_score, ["MiddaySiteCalibrated 不可用"])
+                print(f"  h={h:02d}: MiddaySiteCalibrated 不可用，回退 V1")
+            continue
+
+        # ── strict hours 固定 V1（不在 valid 集上选择 BlendTotal）────────
         if h in STRICT_NRMSE_GUARD_HOURS:
             base_score = score_candidates(base_metrics, hour=h)
             selection[h] = ("V1", base_metrics, base_score, ["strict hour: force V1"])
@@ -536,7 +586,7 @@ def select_per_hour(candidates, valid_df):
             if ver == "BaselineTotal":
                 passed = False
                 reasons = ["BaselineTotal 仅作为兜底版本"]
-            elif ver in {"MiddaySiteCalibrated", "MiddayResidualSpecialist"}:
+            elif ver in {"MiddaySiteCalibrated", "MiddaySiteSelectiveCorrected"}:
                 # 10-14 点专用：只允许在 midday 小时出现，使用站点平均 NRMSE 做主约束
                 reasons = []
                 passed = True

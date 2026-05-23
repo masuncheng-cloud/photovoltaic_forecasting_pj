@@ -1,21 +1,21 @@
 ﻿hour,version,reason
 7,MiddaySiteCalibrated,MiddaySiteCalibrated 只允许用于 10-14 点
 7,MiddayResidualSpecialist,MiddayResidualSpecialist 只允许用于 10-14 点
+7,MiddaySiteSelectiveCorrected,MiddaySiteSelectiveCorrected 只允许用于 10-14 点
 7,BaselineTotal,BaselineTotal 仅作为兜底版本
 8,MiddaySiteCalibrated,MiddaySiteCalibrated 只允许用于 10-14 点
 8,MiddayResidualSpecialist,MiddayResidualSpecialist 只允许用于 10-14 点
+8,MiddaySiteSelectiveCorrected,MiddaySiteSelectiveCorrected 只允许用于 10-14 点
 8,BaselineTotal,BaselineTotal 仅作为兜底版本
 9,MiddaySiteCalibrated,MiddaySiteCalibrated 只允许用于 10-14 点
 9,MiddayResidualSpecialist,MiddayResidualSpecialist 只允许用于 10-14 点
+9,MiddaySiteSelectiveCorrected,MiddaySiteSelectiveCorrected 只允许用于 10-14 点
 9,BaselineTotal,BaselineTotal 仅作为兜底版本
-10,BaselineTotal,BaselineTotal 仅作为兜底版本
-11,BaselineTotal,BaselineTotal 仅作为兜底版本
-12,BaselineTotal,BaselineTotal 仅作为兜底版本
-13,BaselineTotal,BaselineTotal 仅作为兜底版本
-14,BaselineTotal,BaselineTotal 仅作为兜底版本
 15,MiddaySiteCalibrated,MiddaySiteCalibrated 只允许用于 10-14 点
 15,MiddayResidualSpecialist,MiddayResidualSpecialist 只允许用于 10-14 点
+15,MiddaySiteSelectiveCorrected,MiddaySiteSelectiveCorrected 只允许用于 10-14 点
 15,BaselineTotal,BaselineTotal 仅作为兜底版本
 16,MiddaySiteCalibrated,MiddaySiteCalibrated 只允许用于 10-14 点
 16,MiddayResidualSpecialist,MiddayResidualSpecialist 只允许用于 10-14 点
+16,MiddaySiteSelectiveCorrected,MiddaySiteSelectiveCorrected 只允许用于 10-14 点
 16,BaselineTotal,BaselineTotal 仅作为兜底版本
