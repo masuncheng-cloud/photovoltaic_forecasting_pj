@@ -171,13 +171,15 @@ def _detect_is_full_table(df):
 def load_predictions():
     """加载修复前后预测，优先使用 eval 子集表"""
     # 修复前：使用原始预测（需要内部过滤）
-    for bp in [TABLES_DIR / "distributed_predictions_v159.pkl",
+    before_path = TABLES_DIR / "distributed_predictions_v159.pkl"
+    for bp in [before_path,
                TABLES_DIR / "distributed_predictions.pkl"]:
         if bp.exists():
             before_path = bp
             break
     # 修复后：优先读最终表
-    for ap in [TABLES_DIR / "distributed_predictions_final_eval.pkl",
+    after_path = TABLES_DIR / "distributed_predictions_final_eval.pkl"
+    for ap in [after_path,
                TABLES_DIR / "distributed_predictions_fixed_eval.pkl",
                TABLES_DIR / "distributed_predictions_fixed.pkl"]:
         if ap.exists():
