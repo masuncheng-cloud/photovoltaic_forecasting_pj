@@ -61,7 +61,8 @@ def main():
     sel_path = METRICS / "final_version_selection_by_hour.csv"
     if sel_path.exists():
         sel = pd.read_csv(sel_path)
-        cols = [c for c in ["hour", "selected_version", "mae", "rmse", "pred_actual_ratio"] if c in sel.columns]
+        cols = [c for c in ["hour", "selected_version", "is_midday_nrmse_priority",
+                             "mae", "rmse", "pred_actual_ratio", "nrmse_capacity_pct"] if c in sel.columns]
         lines.append("\n## 版本选择\n")
         lines.append(sel[cols].to_string(index=False))
 
@@ -70,6 +71,33 @@ def main():
         diag = pd.read_csv(oracle_path)
         lines.append("\n## BlendTotal Oracle 诊断（test 集，仅供参考，不参与 final 选择）\n")
         lines.append(diag.to_string(index=False))
+
+    # ── 10-14 点 NRMSE 专项 ───────────────────────────────────────────
+    midday_path = METRICS / "midday_nrmse_acceptance.csv"
+    if midday_path.exists():
+        ab = pd.read_csv(midday_path)
+        lines.append("\n## 10-14 点 NRMSE 专项验收\n")
+        lines.append("说明：10-14 点为主体发电时段，本轮优先优化站点平均 NRMSE；"
+                    "若城市 NRMSE 小幅波动但站点 NRMSE 下降，视为有效改善。")
+        lines.append(ab.to_string(index=False))
+
+    midday_ab_path = METRICS / "midday_site_calibration_valid_ablation.csv"
+    if midday_ab_path.exists():
+        ab = pd.read_csv(midday_ab_path)
+        lines.append("\n## Midday 校准 Valid 消融\n")
+        lines.append(ab.to_string(index=False))
+
+    midday_params_path = METRICS / "midday_site_calibration_params.csv"
+    if midday_params_path.exists():
+        params = pd.read_csv(midday_params_path)
+        lines.append("\n## Midday 校准参数统计\n")
+        lines.append(f"- 共 {len(params)} 个 (hour, site) 校准对")
+        lines.append(f"- k_final 范围: [{params['k_final'].min():.4f}, {params['k_final'].max():.4f}]")
+        lines.append(f"- k_final 均值: {params['k_final'].mean():.4f}")
+        lines.append(f"- best_alpha 分布: {params['best_alpha'].value_counts().to_dict()}")
+        lines.append("\n逐小时参数：")
+        hour_stats = params.groupby("hour")["k_final"].agg(["mean", "std", "count"]).round(4)
+        lines.append(hour_stats.to_string())
 
     md_text = "\n".join(lines)
     (DOCS / "当前最终结果摘要.md").write_text(md_text, encoding="utf-8")
