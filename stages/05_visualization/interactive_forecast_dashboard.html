@@ -1,0 +1,1334 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>光伏功率预测交互式结果页面</title>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: -apple-system, "Microsoft YaHei", "PingFang SC", Arial, sans-serif;
+  font-size: 13px;
+  background: #f5f7fa;
+  color: #333;
+  padding: 16px 20px;
+}
+
+h1 {
+  font-size: 18px;
+  font-weight: 600;
+  color: #1a1a2e;
+  margin-bottom: 14px;
+  padding-bottom: 8px;
+  border-bottom: 2px solid #e0e6ed;
+}
+
+/* ---- Control Area ---- */
+#controls {
+  background: #fff;
+  border: 1px solid #dde3ec;
+  border-radius: 6px;
+  padding: 14px 16px;
+  margin-bottom: 14px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  align-items: center;
+}
+
+.ctrl-group {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.ctrl-label {
+  font-weight: 500;
+  color: #4a5568;
+  font-size: 12px;
+  white-space: nowrap;
+}
+
+.ctrl-group label { display: flex; align-items: center; gap: 4px; cursor: pointer; }
+.ctrl-group input[type="radio"] { cursor: pointer; }
+
+select, input[type="date"], input[type="number"] {
+  border: 1px solid #cbd5e0;
+  border-radius: 4px;
+  padding: 4px 8px;
+  font-size: 12px;
+  background: #fff;
+  color: #2d3748;
+}
+
+input[type="number"] { width: 60px; }
+
+.btn {
+  padding: 5px 12px;
+  border: 1px solid #3182ce;
+  background: #3182ce;
+  color: #fff;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 12px;
+  font-weight: 500;
+  transition: background 0.15s;
+}
+.btn:hover { background: #2b6cb0; }
+.btn:disabled { background: #cbd5e0; border-color: #cbd5e0; cursor: not-allowed; }
+.btn-seas { padding: 4px 10px; font-size: 12px; border-color: #38a169; background: #38a169; }
+.btn-seas:hover { background: #2f855a; }
+.btn-seas:disabled { background: #cbd5e0; border-color: #cbd5e0; cursor: not-allowed; }
+
+.divider { width: 1px; height: 24px; background: #dde3ec; margin: 0 4px; }
+
+/* ---- Cards ---- */
+#metrics-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: 14px;
+}
+
+.metric-card {
+  background: #fff;
+  border: 1px solid #dde3ec;
+  border-radius: 6px;
+  padding: 10px 14px;
+  min-width: 110px;
+  flex: 1;
+}
+
+.metric-card .label {
+  font-size: 11px;
+  color: #718096;
+  margin-bottom: 3px;
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+}
+
+.metric-card .value {
+  font-size: 18px;
+  font-weight: 700;
+  color: #2d3748;
+}
+
+.metric-card .unit {
+  font-size: 11px;
+  color: #a0aec0;
+  font-weight: 400;
+  margin-left: 2px;
+}
+
+/* ---- Chart Area ---- */
+#chart-container {
+  background: #fff;
+  border: 1px solid #dde3ec;
+  border-radius: 6px;
+  padding: 14px;
+  margin-bottom: 14px;
+  position: relative;
+}
+
+#chart-title {
+  font-size: 13px;
+  font-weight: 600;
+  color: #2d3748;
+  margin-bottom: 10px;
+}
+
+#line-chart { width: 100%; height: 340px; display: block; }
+
+/* Tooltip */
+#tooltip {
+  position: fixed;
+  background: rgba(20, 27, 45, 0.92);
+  color: #e2e8f0;
+  padding: 8px 12px;
+  border-radius: 5px;
+  font-size: 12px;
+  pointer-events: none;
+  display: none;
+  z-index: 9999;
+  max-width: 240px;
+  line-height: 1.6;
+}
+#tooltip .tip-label { color: #a0b0c0; font-size: 11px; margin-top: 3px; }
+#tooltip .tip-val { color: #fff; font-weight: 600; }
+
+/* ---- Typical Sites Table ---- */
+#sites-section {
+  background: #fff;
+  border: 1px solid #dde3ec;
+  border-radius: 6px;
+  padding: 14px;
+  margin-bottom: 14px;
+}
+
+.section-title {
+  font-size: 13px;
+  font-weight: 600;
+  color: #2d3748;
+  margin-bottom: 10px;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 12px;
+}
+
+thead th {
+  background: #f0f4f8;
+  padding: 7px 8px;
+  text-align: center;
+  font-weight: 600;
+  color: #4a5568;
+  border-bottom: 2px solid #dde3ec;
+  white-space: nowrap;
+  position: sticky;
+  top: 0;
+}
+
+tbody tr {
+  border-bottom: 1px solid #edf2f7;
+  transition: background 0.1s;
+  cursor: pointer;
+}
+tbody tr:hover { background: #ebf4ff; }
+tbody td {
+  padding: 6px 8px;
+  text-align: center;
+  color: #2d3748;
+}
+
+.cat-best td:first-child { color: #276749; font-weight: 600; }
+.cat-worst td:first-child { color: #c53030; font-weight: 600; }
+.cat-normal td:first-child { color: #2b6cb0; font-weight: 600; }
+.cat-low_sample td:first-child { color: #718096; font-weight: 600; }
+.cat-other td:first-child { color: #a0aec0; }
+
+.cat-best td { background: #f0fff4; }
+.cat-worst td { background: #fff5f5; }
+.cat-normal td { background: #ebf8ff; }
+.cat-low_sample td { background: #f7fafc; }
+
+/* ---- Scatter Section ---- */
+#scatter-section {
+  background: #fff;
+  border: 1px solid #dde3ec;
+  border-radius: 6px;
+  padding: 14px;
+  margin-bottom: 14px;
+}
+
+#scatter-controls {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  margin-bottom: 10px;
+  flex-wrap: wrap;
+}
+
+#scatter-chart { width: 100%; height: 360px; display: block; }
+
+/* ---- Threshold Table ---- */
+#threshold-table {
+  margin-top: 14px;
+  width: 100%;
+  font-size: 12px;
+}
+
+#threshold-table th {
+  background: #f0f4f8;
+  padding: 7px 10px;
+  text-align: center;
+  font-weight: 600;
+  color: #4a5568;
+  border-bottom: 2px solid #dde3ec;
+}
+
+#threshold-table td {
+  padding: 6px 10px;
+  text-align: center;
+  border-bottom: 1px solid #edf2f7;
+  color: #2d3748;
+}
+
+#threshold-note {
+  font-size: 11px;
+  color: #a0aec0;
+  margin-top: 8px;
+  line-height: 1.6;
+  font-style: italic;
+}
+
+/* ---- Footer ---- */
+#footer {
+  font-size: 11px;
+  color: #a0aec0;
+  padding: 10px 0;
+  border-top: 1px solid #dde3ec;
+  margin-top: 14px;
+  line-height: 1.7;
+}
+
+/* Loading overlay */
+#loading {
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(245,247,250,0.85);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9998;
+  font-size: 16px;
+  color: #3182ce;
+  font-weight: 500;
+}
+
+/* Tab bar for scatter hour filter */
+.tab-bar {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+.tab-btn {
+  padding: 3px 10px;
+  border: 1px solid #cbd5e0;
+  background: #fff;
+  border-radius: 3px;
+  cursor: pointer;
+  font-size: 11px;
+  color: #4a5568;
+}
+.tab-btn.active {
+  background: #3182ce;
+  color: #fff;
+  border-color: #3182ce;
+}
+
+/* Color legend */
+.legend-row {
+  display: flex;
+  gap: 14px;
+  flex-wrap: wrap;
+  align-items: center;
+  font-size: 11px;
+  color: #4a5568;
+}
+.legend-item { display: flex; align-items: center; gap: 4px; }
+.legend-dot { width: 10px; height: 10px; border-radius: 50%; display: inline-block; }
+</style>
+</head>
+<body>
+
+<div id="loading">正在加载数据，请稍候...</div>
+<div id="tooltip"></div>
+
+<h1>光伏功率预测交互式结果页面</h1>
+
+<!-- ===== CONTROLS ===== -->
+<div id="controls">
+  <div class="ctrl-group">
+    <span class="ctrl-label">展示对象：</span>
+    <label><input type="radio" name="scope" value="city" checked> 全市</label>
+    <label><input type="radio" name="scope" value="site"> 单站点</label>
+  </div>
+  <div class="divider"></div>
+
+  <div class="ctrl-group" id="site-select-group" style="display:none;">
+    <span class="ctrl-label">选择站点：</span>
+    <select id="site-select"><option value="">-- 请选择 --</option></select>
+  </div>
+
+  <div class="ctrl-group" id="typical-group">
+    <span class="ctrl-label">典型站点：</span>
+    <button class="btn" id="btn-best">预测最好</button>
+    <button class="btn" id="btn-worst">预测最差</button>
+    <button class="btn" id="btn-normal">相对正确</button>
+    <button class="btn" id="btn-low">样本少</button>
+  </div>
+  <div class="divider"></div>
+
+  <div class="ctrl-group">
+    <span class="ctrl-label">日期：</span>
+    <input type="date" id="start-date">
+    <span class="ctrl-label">至</span>
+    <input type="date" id="end-date">
+  </div>
+  <div class="divider"></div>
+
+  <div class="ctrl-group">
+    <span class="ctrl-label">小时：</span>
+    <input type="number" id="start-hour" min="0" max="23" value="6">
+    <span class="ctrl-label">至</span>
+    <input type="number" id="end-hour" min="0" max="23" value="19">
+  </div>
+  <div class="divider"></div>
+
+  <div class="ctrl-group">
+    <button class="btn" id="btn-midday">连云港全市10-14</button>
+  </div>
+  <div class="divider"></div>
+
+  <div class="ctrl-group">
+    <span class="ctrl-label">四季代表日：</span>
+    <button class="btn-seas" id="btn-spring" disabled>春季</button>
+    <button class="btn-seas" id="btn-summer" disabled>夏季</button>
+    <button class="btn-seas" id="btn-autumn" disabled>秋季</button>
+    <button class="btn-seas" id="btn-winter" disabled>冬季</button>
+  </div>
+  <div class="divider"></div>
+
+  <button class="btn" id="btn-refresh">刷新</button>
+</div>
+
+<!-- ===== METRICS CARDS ===== -->
+<div id="metrics-row">
+  <div class="metric-card"><div class="label">样本数</div><div class="value" id="m-samples">--</div></div>
+  <div class="metric-card"><div class="label">站点数</div><div class="value" id="m-sites">--</div></div>
+  <div class="metric-card"><div class="label">实际总电量</div><div class="value"><span id="m-actual">--</span><span class="unit">MWh</span></div></div>
+  <div class="metric-card"><div class="label">预测总电量</div><div class="value"><span id="m-pred">--</span><span class="unit">MWh</span></div></div>
+  <div class="metric-card"><div class="label">pred/actual</div><div class="value" id="m-ratio">--</div></div>
+  <div class="metric-card"><div class="label">MAE</div><div class="value"><span id="m-mae">--</span><span class="unit">MW</span></div></div>
+  <div class="metric-card"><div class="label">RMSE</div><div class="value"><span id="m-rmse">--</span><span class="unit">MW</span></div></div>
+  <div class="metric-card"><div class="label">NRMSE</div><div class="value"><span id="m-nrmse">--</span><span class="unit">%</span></div></div>
+  <div class="metric-card"><div class="label">bias</div><div class="value"><span id="m-bias">--</span><span class="unit">%</span></div></div>
+</div>
+
+<!-- ===== LINE CHART ===== -->
+<div id="chart-container">
+  <div id="chart-title">全市总出力折线图</div>
+  <svg id="line-chart"></svg>
+</div>
+
+<!-- ===== TYPICAL SITES TABLE ===== -->
+<div id="sites-section">
+  <div class="section-title">典型站点</div>
+  <div style="overflow-x:auto; max-height:320px; overflow-y:auto;">
+  <table id="sites-table">
+    <thead>
+      <tr>
+        <th>类别</th><th>站点ID</th><th>站点名称</th><th>容量 MW</th>
+        <th>样本数</th><th>正功率样本</th><th>零值占比%</th>
+        <th>MAE MW</th><th>RMSE MW</th><th>NRMSE %</th><th>pred/actual</th>
+      </tr>
+    </thead>
+    <tbody></tbody>
+  </table>
+  </div>
+</div>
+
+<!-- ===== SCATTER PLOT ===== -->
+<div id="scatter-section">
+  <div class="section-title">误差-样本量散点图（站点-小时组合）</div>
+  <div id="scatter-controls">
+    <span class="ctrl-label">小时筛选：</span>
+    <div class="tab-bar">
+      <button class="tab-btn active" data-hours="all">全部</button>
+      <button class="tab-btn" data-hours="1014">10-14点</button>
+      <button class="tab-btn" data-hours="6-9">6-9点</button>
+      <button class="tab-btn" data-hours="15-19">15-19点</button>
+    </div>
+    <div class="legend-row" style="margin-left:auto;">
+      <div class="legend-item"><div class="legend-dot" style="background:#38a169"></div>预测最好</div>
+      <div class="legend-item"><div class="legend-dot" style="background:#e53e3e"></div>预测最差</div>
+      <div class="legend-item"><div class="legend-dot" style="background:#3182ce"></div>相对正确</div>
+      <div class="legend-item"><div class="legend-dot" style="background:#718096"></div>样本少</div>
+      <div class="legend-item"><div class="legend-dot" style="background:#d0d0d0"></div>其他</div>
+    </div>
+  </div>
+  <svg id="scatter-chart"></svg>
+
+  <table id="threshold-table">
+    <thead>
+      <tr>
+        <th>误差阈值</th><th>达标点数</th><th>总点数</th><th>达标比例%</th>
+        <th>最小样本</th><th>25分位样本</th><th>中位样本</th><th>75分位样本</th>
+      </tr>
+    </thead>
+    <tbody></tbody>
+  </table>
+  <div id="threshold-note">* 该表表示在当前数据和模型结果中，达到指定误差阈值的站点-小时组合通常具备的样本量分布，不代表样本量是唯一决定因素。</div>
+</div>
+
+<!-- ===== FOOTER ===== -->
+<div id="footer">
+  数据来源：output/pv_pipeline/tables/distributed_predictions_final_full.pkl 或 distributed_predictions_final_eval.pkl。<br>
+  页面只用于展示当前 final/best 预测结果，不参与模型训练和模型选择。<br>
+  注意：当前数据为小时粒度，sum(MW) 可近似理解为 MWh。
+</div>
+
+<script>
+// ============================================================
+// GLOBAL DATA
+// ============================================================
+const DASHBOARD_BASE = "../../output/pv_pipeline/interactive_dashboard/";
+const SITE_SERIES_BASE = DASHBOARD_BASE + "site_series/";
+
+let gIndex = null;
+let gCitySeries = [];
+let gSiteMetrics = [];
+let gScatterData = [];
+let gThresholdSummary = [];
+let gSeasonDays = [];
+let gMiddayByDate = [];
+
+// In-memory site series cache
+const siteSeriesCache = {};
+
+// Current view state
+let state = {
+  scope: "city",
+  siteId: "",
+  startDate: "",
+  endDate: "",
+  startHour: 6,
+  endHour: 19,
+  scatterHourFilter: "all",
+};
+
+// ============================================================
+// DATA LOADING
+// ============================================================
+async function loadAll() {
+  const [idx, city, metrics, scatter, threshold, seasons, midday] = await Promise.all([
+    fetchJSON(DASHBOARD_BASE + "index.json"),
+    fetchJSON(DASHBOARD_BASE + "city_series.json"),
+    fetchJSON(DASHBOARD_BASE + "site_metrics.json"),
+    fetchJSON(DASHBOARD_BASE + "scatter_site_hour.json"),
+    fetchJSON(DASHBOARD_BASE + "error_threshold_summary.json"),
+    fetchJSON(DASHBOARD_BASE + "season_days.json"),
+    fetchJSON(DASHBOARD_BASE + "midday_city_by_date.json"),
+  ]);
+
+  gIndex = idx;
+  gCitySeries = city;
+  gSiteMetrics = metrics;
+  gScatterData = scatter;
+  gThresholdSummary = threshold;
+  gSeasonDays = seasons;
+  gMiddayByDate = midday;
+
+  // Set date range defaults
+  state.startDate = idx.default_start_date || idx.min_date;
+  state.endDate = idx.default_end_date || idx.max_date;
+  document.getElementById("start-date").value = state.startDate;
+  document.getElementById("end-date").value = state.endDate;
+
+  // Populate site select
+  populateSiteSelect(metrics);
+
+  // Setup season buttons
+  setupSeasonButtons(seasons);
+
+  document.getElementById("loading").style.display = "none";
+}
+
+async function fetchJSON(url) {
+  const r = await fetch(url);
+  if (!r.ok) throw new Error("fetch " + url + " failed: " + r.status);
+  return r.json();
+}
+
+// ============================================================
+// SITE SELECT
+// ============================================================
+function populateSiteSelect(metrics) {
+  const sel = document.getElementById("site-select");
+  // Group by category for display
+  const cats = [
+    { key: "best", label: "预测最好" },
+    { key: "worst", label: "预测最差" },
+    { key: "normal", label: "相对正确" },
+    { key: "low_sample", label: "样本少" },
+    { key: "other", label: "其他" },
+  ];
+  for (const cat of cats) {
+    const group = document.createElement("optgroup");
+    group.label = "── " + cat.label + " ──";
+    const sites = metrics.filter(s => s.category === cat.key);
+    sites.forEach(s => {
+      const opt = document.createElement("option");
+      opt.value = s.site_id;
+      opt.textContent = s.site_id + " " + s.site_name;
+      group.appendChild(opt);
+    });
+    sel.appendChild(group);
+  }
+}
+
+// ============================================================
+// SEASON BUTTONS
+// ============================================================
+function setupSeasonButtons(seasons) {
+  const map = { spring: "btn-spring", summer: "btn-summer", autumn: "btn-autumn", winter: "btn-winter" };
+  seasons.forEach(s => {
+    const btn = document.getElementById(map[s.season]);
+    if (!btn) return;
+    if (s.available) {
+      btn.disabled = false;
+      btn.dataset.date = s.date;
+    } else {
+      btn.disabled = true;
+      btn.title = s.reason || "暂无数据";
+    }
+  });
+}
+
+// ============================================================
+// FILTERING
+// ============================================================
+function getFilteredRows() {
+  if (state.scope === "city") {
+    return filterCitySeries();
+  } else {
+    return filterSiteSeries(state.siteId);
+  }
+}
+
+function filterCitySeries() {
+  const sd = state.startDate, ed = state.endDate;
+  const sh = state.startHour, eh = state.endHour;
+  return gCitySeries.filter(r => {
+    const d = r.date;
+    const h = r.hour;
+    return d >= sd && d <= ed && h >= sh && h <= eh;
+  });
+}
+
+async function filterSiteSeries(siteId) {
+  if (!siteId) return [];
+  if (!siteSeriesCache[siteId]) {
+    try {
+      siteSeriesCache[siteId] = await fetchJSON(SITE_SERIES_BASE + siteId + ".json");
+    } catch (e) {
+      siteSeriesCache[siteId] = [];
+    }
+  }
+  const sd = state.startDate, ed = state.endDate;
+  const sh = state.startHour, eh = state.endHour;
+  return siteSeriesCache[siteId].filter(r => {
+    return r.date >= sd && r.date <= ed && r.hour >= sh && r.hour <= eh;
+  });
+}
+
+// ============================================================
+// METRICS CALCULATION
+// ============================================================
+function computeMetrics(rows, isSite) {
+  if (!rows || rows.length === 0) {
+    return { samples: 0, sites: 0, actualSum: 0, predSum: 0,
+             mae: 0, rmse: 0, nrmse: 0, bias: 0, ratio: 0 };
+  }
+
+  const actuals = rows.map(r => r.actual_mw || r.actual_mw);
+  const preds = rows.map(r => r.pred_mw || r.pred_mw);
+
+  const actualSum = actuals.reduce((a, b) => a + b, 0);
+  const predSum = preds.reduce((a, b) => a + b, 0);
+
+  // MAE
+  let mae = 0;
+  let rmseSum = 0;
+  let count = 0;
+  let capSum = 0;
+  for (let i = 0; i < rows.length; i++) {
+    const err = preds[i] - actuals[i];
+    mae += Math.abs(err);
+    rmseSum += err * err;
+    capSum += rows[i].capacity_mw || rows[i].capacity_sum_mw || 1;
+    count++;
+  }
+  mae /= count;
+  const rmse = Math.sqrt(rmseSum / count);
+  const capMean = capSum / count;
+
+  const nrmse = isSite ? (rmse / Math.max(capMean, 1e-9) * 100) : rmse;
+  const bias = (predSum - actualSum) / Math.max(actualSum, 1e-9) * 100;
+  const ratio = predSum / Math.max(actualSum, 1e-9);
+
+  // Site count
+  const siteIds = new Set(rows.map(r => r.site_id));
+  const siteCount = isSite ? 1 : siteIds.size;
+
+  return {
+    samples: count,
+    sites: siteCount,
+    actualSum: actualSum,
+    predSum: predSum,
+    mae: mae,
+    rmse: rmse,
+    nrmse: nrmse,
+    bias: bias,
+    ratio: ratio,
+  };
+}
+
+// ============================================================
+// METRICS DISPLAY
+// ============================================================
+function updateMetricsCards(metrics, rows) {
+  const isSite = state.scope === "site";
+  document.getElementById("m-samples").textContent = metrics.samples.toLocaleString();
+  document.getElementById("m-sites").textContent = metrics.sites;
+  document.getElementById("m-actual").textContent = fmt2(metrics.actualSum);
+  document.getElementById("m-pred").textContent = fmt2(metrics.predSum);
+  document.getElementById("m-ratio").textContent = fmt2(metrics.ratio);
+  document.getElementById("m-mae").textContent = fmt2(metrics.mae);
+  document.getElementById("m-rmse").textContent = fmt2(metrics.rmse);
+  document.getElementById("m-nrmse").textContent = fmt2(metrics.nrmse);
+  document.getElementById("m-bias").textContent = fmt2(metrics.bias);
+}
+
+// ============================================================
+// LINE CHART (SVG)
+// ============================================================
+function drawLineChart(rows) {
+  const svg = document.getElementById("line-chart");
+  const title = document.getElementById("chart-title");
+  const isSite = state.scope === "site";
+
+  title.textContent = isSite
+    ? "站点 " + (state.siteId || "") + " 功率曲线"
+    : "全市总出力折线图";
+
+  svg.innerHTML = "";
+
+  if (!rows || rows.length === 0) {
+    svg.setAttribute("height", "100");
+    return;
+  }
+
+  const W = svg.parentElement.clientWidth - 28;
+  const H = 340;
+  const ML = 56, MR = 24, MT = 16, MB = 46;
+  const cw = W - ML - MR;
+  const ch = H - MT - MB;
+
+  svg.setAttribute("viewBox", `0 0 ${W} ${H}`);
+  svg.setAttribute("width", W);
+  svg.setAttribute("height", H);
+
+  // Sort by time
+  rows = [...rows].sort((a, b) => a.time.localeCompare(b.time));
+
+  const actuals = rows.map(r => r.actual_mw || 0);
+  const preds = rows.map(r => r.pred_mw || 0);
+
+  const allVals = [...actuals, ...preds];
+  const maxV = Math.max(...allVals.filter(v => isFinite(v))) * 1.08 || 100;
+  const minV = 0;
+
+  // X scale: map index to pixel
+  const n = rows.length;
+  const xOf = i => ML + (i / Math.max(n - 1, 1)) * cw;
+
+  // Y scale
+  const yOf = v => MT + ch - ((v - minV) / (maxV - minV)) * ch;
+
+  // Build polyline points string
+  function buildPath(vals) {
+    return vals.map((v, i) => `${xOf(i).toFixed(1)},${yOf(isFinite(v) ? v : 0).toFixed(1)}`).join(" ");
+  }
+
+  // X-axis: show date labels at intervals
+  const xLabels = buildXLabels(rows);
+
+  // Y-axis grid lines
+  const gridLines = buildYGrid(minV, maxV);
+
+  // Group for all content
+  const g = svgNS("g");
+
+  // Grid
+  gridLines.forEach(({ v, label }) => {
+    const y = yOf(v).toFixed(1);
+    const line = svgNS("line", {
+      x1: ML, y1: y, x2: (ML + cw).toFixed(1), y2: y,
+      stroke: "#e8edf2", "stroke-width": 1,
+    });
+    g.appendChild(line);
+    // Y label
+    const text = svgNS("text", {
+      x: (ML - 6).toFixed(1), y: (parseFloat(y) + 4).toFixed(1),
+      "text-anchor": "end", fill: "#a0aec0", "font-size": "11",
+    });
+    text.textContent = label;
+    g.appendChild(text);
+  });
+
+  // Zero reference
+  if (minV < 0) {
+    const y0 = yOf(0).toFixed(1);
+    g.appendChild(svgNS("line", {
+      x1: ML, y1: y0, x2: (ML + cw).toFixed(1), y2: y0,
+      stroke: "#ccc", "stroke-width": 1, "stroke-dasharray": "4,2",
+    }));
+  }
+
+  // Prediction line (orange, behind)
+  const predPath = svgNS("polyline", {
+    points: buildPath(preds),
+    fill: "none", stroke: "#f6ad55", "stroke-width": 1.6,
+    "stroke-opacity": 0.85, "stroke-linejoin": "round",
+  });
+  g.appendChild(predPath);
+
+  // Actual line (blue, front)
+  const actualPath = svgNS("polyline", {
+    points: buildPath(actuals),
+    fill: "none", stroke: "#3182ce", "stroke-width": 1.8,
+    "stroke-opacity": 0.9, "stroke-linejoin": "round",
+  });
+  g.appendChild(actualPath);
+
+  // X-axis labels
+  xLabels.forEach(({ i, label }) => {
+    const x = xOf(i).toFixed(1);
+    g.appendChild(svgNS("line", {
+      x1: x, y1: (MT + ch).toFixed(1), x2: x,
+      y2: (MT + ch + 4).toFixed(1), stroke: "#cbd5e0", "stroke-width": 1,
+    }));
+    const text = svgNS("text", {
+      x: x, y: (MT + ch + 16).toFixed(1),
+      "text-anchor": "middle", fill: "#718096", "font-size": "10",
+    });
+    text.textContent = label;
+    g.appendChild(text);
+  });
+
+  // X-axis title
+  const xTitle = svgNS("text", {
+    x: (ML + cw / 2).toFixed(1), y: (H - 4).toFixed(1),
+    "text-anchor": "middle", fill: "#718096", "font-size": "11",
+  });
+  xTitle.textContent = "时间";
+  g.appendChild(xTitle);
+
+  // Y-axis title
+  const yTitle = svgNS("text", {
+    x: 12, y: (MT + ch / 2).toFixed(1),
+    "text-anchor": "middle", fill: "#718096", "font-size": "11",
+    transform: `rotate(-90, 12, ${(MT + ch / 2).toFixed(1)})`,
+  });
+  yTitle.textContent = "功率 (MW)";
+  g.appendChild(yTitle);
+
+  // Legend
+  const legendY = (MT + 8).toFixed(1);
+  g.appendChild(svgNS("line", {
+    x1: (ML + 10).toFixed(1), y1: legendY, x2: (ML + 30).toFixed(1), y2: legendY,
+    stroke: "#3182ce", "stroke-width": 2.5,
+  }));
+  const leg1 = svgNS("text", {
+    x: (ML + 36).toFixed(1), y: (parseFloat(legendY) + 4).toFixed(1),
+    fill: "#4a5568", "font-size": "12",
+  });
+  leg1.textContent = "真实功率 MW";
+  g.appendChild(leg1);
+
+  g.appendChild(svgNS("line", {
+    x1: (ML + 130).toFixed(1), y1: legendY, x2: (ML + 150).toFixed(1), y2: legendY,
+    stroke: "#f6ad55", "stroke-width": 2.5,
+  }));
+  const leg2 = svgNS("text", {
+    x: (ML + 156).toFixed(1), y: (parseFloat(legendY) + 4).toFixed(1),
+    fill: "#4a5568", "font-size": "12",
+  });
+  leg2.textContent = "预测功率 MW";
+  g.appendChild(leg2);
+
+  // Invisible hover rects for tooltip
+  const hoverRects = svgNS("g");
+  const stepW = cw / Math.max(n, 1);
+  rows.forEach((r, i) => {
+    const rect = svgNS("rect", {
+      x: xOf(i).toFixed(1), y: MT.toFixed(1),
+      width: Math.max(stepW, 3).toFixed(1), height: ch.toFixed(1),
+      fill: "transparent", cursor: "crosshair",
+    });
+    rect.addEventListener("mouseenter", e => showTooltip(e, r, isSite));
+    rect.addEventListener("mousemove", moveTooltip);
+    rect.addEventListener("mouseleave", hideTooltip);
+    hoverRects.appendChild(rect);
+  });
+  g.appendChild(hoverRects);
+
+  svg.appendChild(g);
+}
+
+function buildXLabels(rows) {
+  if (!rows.length) return [];
+  const labels = [];
+  // Determine appropriate step
+  const n = rows.length;
+  if (n <= 30) {
+    rows.forEach((r, i) => labels.push({ i, label: fmtTime(r.time) }));
+  } else if (n <= 100) {
+    rows.forEach((r, i) => { if (i % 3 === 0) labels.push({ i, label: fmtTime(r.time) }); });
+  } else {
+    const step = Math.ceil(n / 16);
+    rows.forEach((r, i) => { if (i % step === 0) labels.push({ i, label: fmtTime(r.time) }); });
+  }
+  return labels;
+}
+
+function buildYGrid(minV, maxV) {
+  const range = maxV - minV;
+  const roughStep = niceStep(range / 6);
+  const lines = [];
+  let v = Math.ceil(minV / roughStep) * roughStep;
+  while (v <= maxV) {
+    lines.push({ v, label: fmt2(v) });
+    v += roughStep;
+  }
+  return lines;
+}
+
+function niceStep(rough) {
+  const mag = Math.pow(10, Math.floor(Math.log10(rough)));
+  const norm = rough / mag;
+  if (norm <= 1.5) return mag;
+  if (norm <= 3.5) return mag * 2;
+  if (norm <= 7.5) return mag * 5;
+  return mag * 10;
+}
+
+// ============================================================
+// SCATTER CHART (SVG)
+// ============================================================
+function drawScatterChart(data) {
+  const svg = document.getElementById("scatter-chart");
+  svg.innerHTML = "";
+
+  const W = svg.parentElement.clientWidth - 28;
+  const H = 360;
+  const ML = 60, MR = 28, MT = 16, MB = 50;
+  const cw = W - ML - MR;
+  const ch = H - MT - MB;
+
+  svg.setAttribute("viewBox", `0 0 ${W} ${H}`);
+  svg.setAttribute("width", W);
+  svg.setAttribute("height", H);
+
+  if (!data || data.length === 0) return;
+
+  // Filter by hour
+  let filtered = data;
+  if (state.scatterHourFilter === "1014") {
+    filtered = data.filter(p => p.hour >= 10 && p.hour <= 14);
+  } else if (state.scatterHourFilter === "6-9") {
+    filtered = data.filter(p => p.hour >= 6 && p.hour <= 9);
+  } else if (state.scatterHourFilter === "15-19") {
+    filtered = data.filter(p => p.hour >= 15 && p.hour <= 19);
+  }
+
+  const xVals = filtered.map(p => p.sample_count);
+  const yVals = filtered.map(p => p.nrmse_pct);
+
+  const maxX = Math.max(...xVals) * 1.05 || 500;
+  const maxY = Math.max(...yVals.filter(v => isFinite(v)), 30) * 1.15;
+
+  const catColors = {
+    "预测最好": "#38a169",
+    "预测最差": "#e53e3e",
+    "相对正确": "#3182ce",
+    "样本少": "#718096",
+    "其他": "#d0d0d0",
+  };
+
+  const xOf = v => ML + (v / maxX) * cw;
+  const yOf = v => MT + ch - ((isFinite(v) ? v : 0) / maxY) * ch;
+
+  const g = svgNS("g");
+
+  // Reference lines at 5, 10, 15, 20%
+  [5, 10, 15, 20].forEach(v => {
+    if (v > maxY) return;
+    const y = yOf(v).toFixed(1);
+    g.appendChild(svgNS("line", {
+      x1: ML, y1: y, x2: (ML + cw).toFixed(1), y2: y,
+      stroke: v === 10 ? "#e53e3e" : "#cbd5e0",
+      "stroke-width": v === 10 ? 1.5 : 1,
+      "stroke-dasharray": v === 10 ? "5,3" : "4,2",
+    }));
+    const text = svgNS("text", {
+      x: (ML + cw + 4).toFixed(1), y: (parseFloat(y) + 4).toFixed(1),
+      fill: v === 10 ? "#e53e3e" : "#a0aec0", "font-size": "10",
+    });
+    text.textContent = v + "%";
+    g.appendChild(text);
+  });
+
+  // X-axis
+  g.appendChild(svgNS("line", {
+    x1: ML, y1: (MT + ch).toFixed(1), x2: (ML + cw).toFixed(1), y2: (MT + ch).toFixed(1),
+    stroke: "#cbd5e0", "stroke-width": 1,
+  }));
+  // Y-axis
+  g.appendChild(svgNS("line", {
+    x1: ML, y1: MT.toFixed(1), x2: ML, y2: (MT + ch).toFixed(1),
+    stroke: "#cbd5e0", "stroke-width": 1,
+  }));
+
+  // Y labels
+  const ySteps = 5;
+  for (let i = 0; i <= ySteps; i++) {
+    const v = (maxY / ySteps) * i;
+    const y = yOf(v).toFixed(1);
+    g.appendChild(svgNS("text", {
+      x: (ML - 6).toFixed(1), y: (parseFloat(y) + 4).toFixed(1),
+      "text-anchor": "end", fill: "#a0aec0", "font-size": "11",
+    })).textContent = fmt2(v);
+    g.appendChild(svgNS("line", {
+      x1: ML, y1: y, x2: (ML + cw).toFixed(1), y2: y,
+      stroke: "#edf2f7", "stroke-width": 0.5,
+    }));
+  }
+
+  // X labels
+  const xSteps = 5;
+  for (let i = 0; i <= xSteps; i++) {
+    const v = (maxX / xSteps) * i;
+    const x = xOf(v).toFixed(1);
+    g.appendChild(svgNS("text", {
+      x: x, y: (MT + ch + 16).toFixed(1),
+      "text-anchor": "middle", fill: "#718096", "font-size": "10",
+    })).textContent = Math.round(v);
+    g.appendChild(svgNS("line", {
+      x1: x, y1: MT.toFixed(1), x2: x, y2: (MT + ch).toFixed(1),
+      stroke: "#edf2f7", "stroke-width": 0.5,
+    }));
+  }
+
+  // Axis titles
+  g.appendChild(svgNS("text", {
+    x: (ML + cw / 2).toFixed(1), y: (H - 4).toFixed(1),
+    "text-anchor": "middle", fill: "#718096", "font-size": "11",
+  })).textContent = "样本数";
+
+  const yAxisTitle = svgNS("text", {
+    x: 12, y: (MT + ch / 2).toFixed(1),
+    "text-anchor": "middle", fill: "#718096", "font-size": "11",
+    transform: `rotate(-90, 12, ${(MT + ch / 2).toFixed(1)})`,
+  });
+  yAxisTitle.textContent = "NRMSE %";
+  g.appendChild(yAxisTitle);
+
+  // Dots
+  filtered.forEach(p => {
+    const cx = xOf(p.sample_count).toFixed(1);
+    const cy = yOf(p.nrmse_pct).toFixed(1);
+    const color = catColors[p.category_label] || catColors["其他"];
+    const r = 5;
+
+    const circle = svgNS("circle", {
+      cx, cy, r,
+      fill: color, "fill-opacity": 0.7,
+      stroke: color, "stroke-width": 0.5,
+      cursor: "pointer",
+    });
+    circle.addEventListener("mouseenter", e => showScatterTooltip(e, p));
+    circle.addEventListener("mousemove", moveTooltip);
+    circle.addEventListener("mouseleave", hideTooltip);
+    g.appendChild(circle);
+  });
+
+  svg.appendChild(g);
+
+  // Update threshold table
+  updateThresholdTable(filtered.length);
+}
+
+function updateThresholdTable(totalShown) {
+  const tbody = document.querySelector("#threshold-table tbody");
+  tbody.innerHTML = "";
+  gThresholdSummary.forEach(t => {
+    const row = document.createElement("tr");
+    row.innerHTML = `
+      <td>${t.threshold_pct}%</td>
+      <td>${t.qualified_points}</td>
+      <td>${totalShown}</td>
+      <td>${fmt2(t.qualified_ratio_pct)}%</td>
+      <td>${t.min_sample_count != null ? t.min_sample_count : "-"}</td>
+      <td>${t.p25_sample_count != null ? t.p25_sample_count : "-"}</td>
+      <td>${t.median_sample_count != null ? t.median_sample_count : "-"}</td>
+      <td>${t.p75_sample_count != null ? t.p75_sample_count : "-"}</td>
+    `;
+    tbody.appendChild(row);
+  });
+}
+
+// ============================================================
+// TOOLTIP
+// ============================================================
+function showTooltip(e, row, isSite) {
+  const tip = document.getElementById("tooltip");
+  const date = row.date || "";
+  const hour = row.hour != null ? row.hour : "";
+  const actual = fmt2(row.actual_mw || 0);
+  const pred = fmt2(row.pred_mw || 0);
+  const err = fmt2(Math.abs((row.pred_mw || 0) - (row.actual_mw || 0)));
+  const errPct = fmt2(row.point_nrmse_pct || 0);
+  const siteName = row.site_name || row.site_id || "";
+  const cap = fmt2(row.capacity_mw || row.capacity_sum_mw || 0);
+
+  let html = `<div style="font-weight:600;margin-bottom:4px">${date} ${hour}:00</div>`;
+  if (isSite) {
+    html += `<div style="color:#a0b0c0;font-size:11px">${siteName}</div>`;
+    html += `<div class="tip-label">容量</div><div class="tip-val">${cap} MW</div>`;
+  }
+  html += `<div class="tip-label">真实功率</div><div class="tip-val">${actual} MW</div>`;
+  html += `<div class="tip-label">预测功率</div><div class="tip-val">${pred} MW</div>`;
+  html += `<div class="tip-label">绝对误差</div><div class="tip-val">${err} MW</div>`;
+  if (isSite) {
+    html += `<div class="tip-label">点NRMSE</div><div class="tip-val">${errPct}%</div>`;
+  }
+
+  tip.innerHTML = html;
+  tip.style.display = "block";
+  moveTooltip(e);
+}
+
+function showScatterTooltip(e, p) {
+  const tip = document.getElementById("tooltip");
+  tip.innerHTML = `
+    <div style="font-weight:600;margin-bottom:4px">${p.site_id} ${p.site_name}</div>
+    <div class="tip-label">小时</div><div class="tip-val">${p.hour}:00</div>
+    <div class="tip-label">样本数</div><div class="tip-val">${p.sample_count}</div>
+    <div class="tip-label">NRMSE</div><div class="tip-val">${fmt2(p.nrmse_pct)}%</div>
+    <div class="tip-label">MAE</div><div class="tip-val">${fmt2(p.mae_mw)} MW</div>
+    <div class="tip-label">RMSE</div><div class="tip-val">${fmt2(p.rmse_mw)} MW</div>
+    <div class="tip-label">pred/actual</div><div class="tip-val">${fmt2(p.pred_actual_ratio)}</div>
+    <div class="tip-label">类型</div><div class="tip-val">${p.category_label}</div>
+  `;
+  tip.style.display = "block";
+  moveTooltip(e);
+}
+
+function moveTooltip(e) {
+  const tip = document.getElementById("tooltip");
+  const x = e.clientX + 14;
+  const y = e.clientY - 20;
+  tip.style.left = Math.min(x, window.innerWidth - tip.offsetWidth - 10) + "px";
+  tip.style.top = y + "px";
+}
+
+function hideTooltip() {
+  document.getElementById("tooltip").style.display = "none";
+}
+
+// ============================================================
+// TYPICAL SITES TABLE
+// ============================================================
+function buildSitesTable() {
+  const tbody = document.querySelector("#sites-table tbody");
+  tbody.innerHTML = "";
+
+  const catPriority = { low_sample: 0, worst: 1, best: 2, normal: 3, other: 4 };
+  const sorted = [...gSiteMetrics].sort((a, b) => {
+    return (catPriority[a.category] || 4) - (catPriority[b.category] || 4);
+  });
+
+  sorted.forEach(s => {
+    const tr = document.createElement("tr");
+    tr.className = "cat-" + (s.category || "other");
+    tr.title = "点击查看 " + s.site_name + " 的曲线";
+    tr.innerHTML = `
+      <td>${s.category_label || ""}</td>
+      <td>${s.site_id}</td>
+      <td style="text-align:left;max-width:160px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${s.site_name || ""}</td>
+      <td>${fmt2(s.capacity_mw)}</td>
+      <td>${s.rows.toLocaleString()}</td>
+      <td>${s.positive_rows.toLocaleString()}</td>
+      <td>${fmt2(s.zero_ratio_pct)}</td>
+      <td>${fmt2(s.mae_mw)}</td>
+      <td>${fmt2(s.rmse_mw)}</td>
+      <td>${fmt2(s.nrmse_pct)}</td>
+      <td>${fmt2(s.pred_actual_ratio)}</td>
+    `;
+    tr.addEventListener("click", () => selectSite(s.site_id));
+    tbody.appendChild(tr);
+  });
+}
+
+function selectSite(siteId) {
+  document.querySelector('input[name="scope"][value="site"]').checked = true;
+  state.scope = "site";
+  state.siteId = siteId;
+  document.getElementById("site-select").value = siteId;
+  onScopeChange();
+  refreshAll();
+}
+
+// ============================================================
+// SCOPE CHANGE
+// ============================================================
+function onScopeChange() {
+  const isSite = state.scope === "site";
+  document.getElementById("site-select-group").style.display = isSite ? "flex" : "none";
+  document.getElementById("btn-midday").disabled = isSite;
+}
+
+// ============================================================
+// MAIN REFRESH
+// ============================================================
+async function refreshAll() {
+  const rows = await getFilteredRows();
+  const isSite = state.scope === "site";
+  const m = computeMetrics(rows, isSite);
+  updateMetricsCards(m, rows);
+  drawLineChart(rows);
+  if (!isSite) drawScatterChart(gScatterData);
+}
+
+// ============================================================
+// UTILITIES
+// ============================================================
+function svgNS(tag, attrs) {
+  const el = document.createElementNS("http://www.w3.org/2000/svg", tag);
+  for (const [k, v] of Object.entries(attrs || {})) el.setAttribute(k, v);
+  return el;
+}
+
+function fmt2(v) {
+  if (!isFinite(v) || v === null || v === undefined) return "-";
+  return parseFloat(v.toFixed(2));
+}
+
+function fmtTime(ts) {
+  if (!ts) return "";
+  // ts format: "2025-10-01 14:00:00"
+  const s = ts.substring(5, 16); // "10-01 14:00"
+  return s;
+}
+
+// ============================================================
+// EVENT LISTENERS
+// ============================================================
+document.addEventListener("DOMContentLoaded", () => {
+  loadAll().then(() => {
+    buildSitesTable();
+    onScopeChange();
+    refreshAll();
+  }).catch(err => {
+    document.getElementById("loading").textContent = "加载失败: " + err.message;
+    console.error(err);
+  });
+
+  // Scope radio
+  document.querySelectorAll('input[name="scope"]').forEach(r => {
+    r.addEventListener("change", () => {
+      state.scope = r.value;
+      onScopeChange();
+      refreshAll();
+    });
+  });
+
+  // Site select
+  document.getElementById("site-select").addEventListener("change", e => {
+    state.siteId = e.target.value;
+    state.scope = state.siteId ? "site" : "city";
+    if (state.siteId) {
+      document.querySelector('input[name="scope"][value="site"]').checked = true;
+      state.scope = "site";
+    }
+    onScopeChange();
+    refreshAll();
+  });
+
+  // Date/hours
+  document.getElementById("start-date").addEventListener("change", e => { state.startDate = e.target.value; refreshAll(); });
+  document.getElementById("end-date").addEventListener("change", e => { state.endDate = e.target.value; refreshAll(); });
+  document.getElementById("start-hour").addEventListener("change", e => { state.startHour = parseInt(e.target.value) || 0; refreshAll(); });
+  document.getElementById("end-hour").addEventListener("change", e => { state.endHour = parseInt(e.target.value) || 23; refreshAll(); });
+
+  // Typical sites buttons
+  function selectTypical(category) {
+    const sites = gSiteMetrics.filter(s => s.category === category);
+    if (!sites.length) return;
+    selectSite(sites[0].site_id);
+  }
+  document.getElementById("btn-best").addEventListener("click", () => selectTypical("best"));
+  document.getElementById("btn-worst").addEventListener("click", () => selectTypical("worst"));
+  document.getElementById("btn-normal").addEventListener("click", () => selectTypical("normal"));
+  document.getElementById("btn-low").addEventListener("click", () => selectTypical("low_sample"));
+
+  // Midday button
+  document.getElementById("btn-midday").addEventListener("click", () => {
+    // Find day with NRMSE closest to median in midday data
+    if (!gMiddayByDate || !gMiddayByDate.length) return;
+    const midNrmse = gMiddayByDate
+      .filter(d => d.nrmse_pct != null && isFinite(d.nrmse_pct))
+      .map(d => d.nrmse_pct);
+    const medianNrmse = midNrmse.sort((a, b) => a - b)[Math.floor(midNrmse.length / 2)] || 0;
+    const closest = gMiddayByDate
+      .filter(d => d.nrmse_pct != null)
+      .sort((a, b) => Math.abs(a.nrmse_pct - medianNrmse) - Math.abs(b.nrmse_pct - medianNrmse))[0];
+    if (!closest) return;
+    state.scope = "city";
+    document.querySelector('input[name="scope"][value="city"]').checked = true;
+    state.startDate = closest.date;
+    state.endDate = closest.date;
+    state.startHour = 10;
+    state.endHour = 14;
+    document.getElementById("start-date").value = state.startDate;
+    document.getElementById("end-date").value = state.endDate;
+    document.getElementById("start-hour").value = 10;
+    document.getElementById("end-hour").value = 14;
+    onScopeChange();
+    refreshAll();
+  });
+
+  // Season buttons
+  ["spring", "summer", "autumn", "winter"].forEach(s => {
+    const btn = document.getElementById("btn-" + s);
+    if (!btn) return;
+    btn.addEventListener("click", () => {
+      const season = gSeasonDays.find(sd => sd.season === s);
+      if (!season || !season.available) return;
+      state.scope = "city";
+      document.querySelector('input[name="scope"][value="city"]').checked = true;
+      state.startDate = season.date;
+      state.endDate = season.date;
+      state.startHour = 6;
+      state.endHour = 19;
+      document.getElementById("start-date").value = state.startDate;
+      document.getElementById("end-date").value = state.endDate;
+      document.getElementById("start-hour").value = 6;
+      document.getElementById("end-hour").value = 19;
+      onScopeChange();
+      refreshAll();
+    });
+  });
+
+  // Refresh
+  document.getElementById("btn-refresh").addEventListener("click", refreshAll);
+
+  // Scatter hour filter
+  document.querySelectorAll(".tab-btn").forEach(btn => {
+    btn.addEventListener("click", () => {
+      document.querySelectorAll(".tab-btn").forEach(b => b.classList.remove("active"));
+      btn.classList.add("active");
+      state.scatterHourFilter = btn.dataset.hours;
+      if (state.scope !== "site") drawScatterChart(gScatterData);
+    });
+  });
+
+  // Window resize -> redraw charts
+  let resizeTimer;
+  window.addEventListener("resize", () => {
+    clearTimeout(resizeTimer);
+    resizeTimer = setTimeout(async () => {
+      const rows = await getFilteredRows();
+      drawLineChart(rows);
+      if (state.scope !== "site") drawScatterChart(gScatterData);
+    }, 200);
+  });
+});
+</script>
+</body>
+</html>
