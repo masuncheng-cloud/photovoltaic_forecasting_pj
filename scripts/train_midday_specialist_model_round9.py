@@ -115,12 +115,13 @@ def main():
 
     # 3. 编码类别特征
     print("\n[Step 3] 编码类别特征...")
-    X_train_num = train_pos[feat_num].values.astype(float)
-    X_valid_num = valid_pos[feat_num].values.astype(float)
-    X_test_num = test_pos[feat_num].values.astype(float)
+    from sklearn.preprocessing import OrdinalEncoder
+
+    X_train_num = train_pos[feat_num].values.astype(np.float64)
+    X_valid_num = valid_pos[feat_num].values.astype(np.float64)
+    X_test_num = test_pos[feat_num].values.astype(np.float64)
 
     if feat_cat:
-        from sklearn.preprocessing import OrdinalEncoder
         all_cat_values = pd.concat([
             train_pos[feat_cat],
             valid_pos[feat_cat],
@@ -128,19 +129,18 @@ def main():
         ]).values.astype(str)
         enc = OrdinalEncoder(dtype=np.float64)
         enc.fit(all_cat_values.reshape(-1, len(feat_cat)))
-        X_train_cat = enc.transform(train_pos[feat_cat].values.astype(str)).flatten()
-        X_valid_cat = enc.transform(valid_pos[feat_cat].values.astype(str)).flatten()
-        X_test_cat = enc.transform(test_pos[feat_cat].values.astype(str)).flatten()
-        X_train = np.column_stack([X_train_num, X_train_cat])
-        X_valid = np.column_stack([X_valid_num, X_valid_cat])
-        X_test = np.column_stack([X_test_num, X_test_cat])
+        X_train_cat = enc.transform(train_pos[feat_cat].values.astype(str).reshape(-1, len(feat_cat)))
+        X_valid_cat = enc.transform(valid_pos[feat_cat].values.astype(str).reshape(-1, len(feat_cat)))
+        X_test_cat = enc.transform(test_pos[feat_cat].values.astype(str).reshape(-1, len(feat_cat)))
+        X_train = np.hstack([X_train_num, X_train_cat])
+        X_valid = np.hstack([X_valid_num, X_valid_cat])
+        X_test = np.hstack([X_test_num, X_test_cat])
     else:
-        X_train = X_train_num
-        X_valid = X_valid_num
-        X_test = X_test_num
+        X_train, X_valid, X_test = X_train_num, X_valid_num, X_test_num
+        enc = None
 
-    y_train = train_pos["target_ratio"].values.astype(float)
-    w_train = train_pos["weight"].values.astype(float)
+    y_train = train_pos["target_ratio"].values.astype(np.float64)
+    w_train = train_pos["weight"].values.astype(np.float64)
 
     print(f"  X_train: {X_train.shape}, dtype: {X_train.dtype}")
 
