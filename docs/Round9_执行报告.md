@@ -75,13 +75,35 @@
 
 ### 3.2 结果
 
+**版本 A：sklearn HistGradientBoostingRegressor**
+
 | 分裂 | 样本数 | 站点 NRMSE | MAPE |
 |:---:|---:|---:|---:|
 | train | 150,617 | 20.37% | 69.11% |
 | valid | 21,080 | 27.46% | 80.89% |
 | **test** | **41,480** | **22.50%** | **98.93%** |
 
+**版本 B：LightGBM 4.6 + CatBoost 1.2 集成（pip install 成功）**
+
+| 分裂 | 样本数 | 站点 NRMSE | MAPE |
+|:---:|---:|---:|---:|
+| train | 150,617 | 23.38% | 89.44% |
+| valid | 21,080 | 24.61% | 75.96% |
+| **test** | **41,480** | **22.00%** | **104.61%** |
+
 ### 3.3 与 MiddaySiteCalibrated 对比（test）
+
+**sklearn HistGBDT（版本 A）**
+
+| 小时 | MiddaySiteCalibrated | Specialist | 差值 |
+|:---:|---:|---:|---:|
+| 10 | 13.29% | 14.78% | -1.49 pp |
+| 11 | 14.68% | 16.32% | -1.64 pp |
+| 12 | 15.36% | 16.98% | -1.62 pp |
+| 13 | 15.31% | 16.77% | -1.46 pp |
+| 14 | 13.51% | 15.43% | -1.92 pp |
+
+**CatBoost（版本 B，结果几乎相同）**
 
 | 小时 | MiddaySiteCalibrated | Specialist | 差值 |
 |:---:|---:|---:|---:|
@@ -141,10 +163,14 @@
 | `scripts/export_watch_site_midday_curves_round9.py` | Watch 站点曲线导出 |
 | `scripts/apply_power_alias_overrides_round9.py` | 别名修正应用脚本 |
 | `config/power_alias_overrides_round9.csv` | 别名修正配置（空，待人工填写） |
-| `scripts/train_midday_specialist_model_round9.py` | 中午专用模型训练 |
+| `scripts/train_midday_specialist_model_round9.py` | 中午专用模型训练（sklearn → LightGBM+CatBoost 集成版） |
 | `scripts/blend_midday_specialist_round9.py` | Specialist 与 MiddaySiteCalibrated 混合优化 |
-| `output/pv_pipeline/tables/distributed_model_midday_specialist_round9.pkl` | 训练出的 specialist 模型 |
-| `output/pv_pipeline/tables/distributed_predictions_midday_specialist_round9_full.pkl` | Specialist 全量预测 |
-| `output/pv_pipeline/tables/distributed_predictions_midday_specialist_round9_eval.pkl` | Specialist 评估集预测 |
+| `output/pv_pipeline/tables/distributed_model_midday_specialist_round9.pkl` | sklearn 版本 specialist 模型 |
+| `output/pv_pipeline/tables/distributed_model_midday_specialist_round9_lgb.pkl` | CatBoost 版本 specialist 模型 |
+| `output/pv_pipeline/tables/distributed_predictions_midday_specialist_round9_full.pkl` | sklearn 全量预测 |
+| `output/pv_pipeline/tables/distributed_predictions_midday_specialist_round9_lgb_full.pkl` | CatBoost 全量预测 |
+| `output/pv_pipeline/tables/distributed_predictions_midday_specialist_round9_eval.pkl` | sklearn 评估集预测 |
+| `output/pv_pipeline/tables/distributed_predictions_midday_specialist_round9_lgb_eval.pkl` | CatBoost 评估集预测 |
 | `output/pv_pipeline/metrics/round9_midday_site_drop_contribution.csv` | 站点贡献表 |
 | `output/pv_pipeline/metrics/round9_midday_site_hour_nrmse_detail.csv` | 站点小时 NRMSE 明细 |
+| `output/pv_pipeline/metrics/round9_specialist_lgb_vs_mscal.csv` | LightGBM vs MiddaySiteCalibrated 对比 |
