@@ -1,0 +1,46 @@
+[
+  {
+    "season": "spring",
+    "season_label": "春季",
+    "available": true,
+    "date": "2024-04-01",
+    "actual_mwh": 935.71,
+    "pred_mwh": 869.7432,
+    "n_sites": 31,
+    "sample_count": 434,
+    "reason": "选择 2024-04-01 (日发电量 935.7 MWh，接近季节中位数)"
+  },
+  {
+    "season": "summer",
+    "season_label": "夏季",
+    "available": true,
+    "date": "2024-06-15",
+    "actual_mwh": 974.79,
+    "pred_mwh": 865.2186,
+    "n_sites": 32,
+    "sample_count": 448,
+    "reason": "选择 2024-06-15 (日发电量 974.8 MWh，接近季节中位数)"
+  },
+  {
+    "season": "autumn",
+    "season_label": "秋季",
+    "available": true,
+    "date": "2024-11-05",
+    "actual_mwh": 746.86,
+    "pred_mwh": 703.6204,
+    "n_sites": 36,
+    "sample_count": 504,
+    "reason": "选择 2024-11-05 (日发电量 746.9 MWh，接近季节中位数)"
+  },
+  {
+    "season": "winter",
+    "season_label": "冬季",
+    "available": true,
+    "date": "2025-01-12",
+    "actual_mwh": 539.19,
+    "pred_mwh": 580.6682,
+    "n_sites": 40,
+    "sample_count": 560,
+    "reason": "选择 2025-01-12 (日发电量 539.2 MWh，接近季节中位数)"
+  }
+]

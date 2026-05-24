@@ -359,12 +359,14 @@ def export_midday_city(df, dashboard_root):
         n_sites=("site_id", "nunique"),
     ).reset_index()
 
-    daily["mae_mw"] = df_f.groupby("date").apply(
-        lambda g: (g["power_pred"] - g["power_mw"]).abs().mean()
-    ).values
-    daily["rmse_mw"] = df_f.groupby("date").apply(
-        lambda g: np.sqrt(((g["power_pred"] - g["power_mw"]) ** 2).mean())
-    ).values
+    mae_vals = df_f.groupby("date").apply(
+        lambda g: (g["power_pred"] - g["power_mw"]).abs().mean(), include_groups=False
+    )
+    rmse_vals = df_f.groupby("date").apply(
+        lambda g: np.sqrt(((g["power_pred"] - g["power_mw"]) ** 2).mean()), include_groups=False
+    )
+    daily["mae_mw"] = mae_vals.reindex(daily["date"]).values
+    daily["rmse_mw"] = rmse_vals.reindex(daily["date"]).values
 
     cap_mean_map = df_f.groupby("date")["capacity_mw"].mean().to_dict()
     daily["nrmse_pct"] = daily.apply(
