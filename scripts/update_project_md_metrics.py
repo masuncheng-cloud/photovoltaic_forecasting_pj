@@ -232,6 +232,24 @@ def generate_docs_summary(final_summary: dict) -> None:
     if manifest_path.exists():
         manifest = pd.read_csv(manifest_path)
         lines.append(f"- metrics manifest：共 {len(manifest)} 个文件，全部来源 SHA256 一致")
+
+    # Round10/11 保底最优机制说明
+    best_eval_path = TABLES / "best_predictions_eval.pkl"
+    leaderboard_path = METRICS / "round11_candidate_leaderboard.csv"
+    lines.append("\n## Round10/11 保底最优机制\n")
+    lines.append("> Round10/11（2026-05-24）：固化最优保护机制，所有新候选必须通过晋级脚本判断。\n")
+    lines.append("- 当前 final 由 `best_predictions_eval/full.pkl` 保护，任何新候选只有更优才替换\n")
+    lines.append("- 晋级条件：整体 NRMSE 改善 ≥ 0.10 pp\n")
+    lines.append("- 不满足时自动回退到 best_predictions_*\n")
+    lines.append("- 每次运行输出：round10_site_hour_nrmse.csv、round10_hour_overall_nrmse.csv、round10_overall_nrmse_summary.csv\n")
+    if leaderboard_path.exists():
+        lb = pd.read_csv(leaderboard_path)
+        if not lb.empty:
+            accepted = lb[lb["accepted"]].shape[0]
+            rejected = lb[~lb["accepted"]].shape[0]
+            lines.append(f"- 候选记录：共 {len(lb)} 个（晋级 {accepted}，拒绝 {rejected}）\n")
+    if not best_eval_path.exists():
+        lines.append("- ⚠️ best_predictions_eval.pkl 不存在，请先运行 `save_current_best_round10.py`")
     lines.append("\n> **本报告所有最终预测指标均来自 `output/pv_pipeline/tables/distributed_predictions_final_eval.pkl`。**")
 
     md_text = "\n".join(lines)
