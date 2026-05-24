@@ -71,6 +71,8 @@ FIX_SCRIPTS = [
     ROOT / 'scripts' / 'check_midday_nrmse_improvement.py',   # final vs fixed 验收
     ROOT / 'scripts' / 'check_midday_next_step_gain.py',     # final vs MiddaySiteCalibrated 验收
     ROOT / 'scripts' / 'check_round6_midday_gain.py',        # Round6 增量验收
+    # Round10/11: 最优保护机制
+    ROOT / 'scripts' / 'run_round10_best_guard_pipeline.py',
 ]
 
 # 关键脚本：失败必须中止
