@@ -219,6 +219,21 @@ def generate_docs_summary(final_summary: dict) -> None:
         lines.append(f"- k 均值: {params['k'].mean():.4f}")
         lines.append(f"- alpha 分布: {params['alpha'].value_counts().to_dict()}")
 
+    # 历史候选说明（Round9/10/11 产物）
+    leaderboard_path = METRICS / "round11_candidate_leaderboard.csv"
+    if leaderboard_path.exists():
+        lb = pd.read_csv(leaderboard_path)
+        if not lb.empty:
+            lines.append("\n## 历史候选说明\n")
+            lines.append("> 以下候选曾参与晋级判断，均已被正确处理。\n")
+            for _, r in lb.iterrows():
+                status = "✅ 晋级" if r["accepted"] else "❌ 拒绝"
+                lines.append(
+                    f"- **{r['candidate_name']}**：{status}，整体 NRMSE = {r['candidate_overall_nrmse_pct']:.4f}%，"
+                    f"best NRMSE = {r['best_overall_nrmse_pct']:.4f}%，改善 = {r['overall_improve_pp']:.4f} pp"
+                )
+            lines.append("\n详细记录见 `output/pv_pipeline/docs/候选模型晋级记录_Round11.md`。")
+
     # Round7 工程闭环说明
     manifest_path = METRICS / "round7_final_metrics_manifest.csv"
     compliance_path = DOCS / "任务书完成情况_Round7.md"
