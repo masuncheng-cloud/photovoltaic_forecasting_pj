@@ -35,17 +35,26 @@ def _ensure_hour(df):
     return out
 
 
-def _nrmse(y, p, c):
+def _calc_nrmse(y, p, c):
     y = pd.to_numeric(y, errors="coerce").to_numpy(dtype=float)
     p = pd.to_numeric(p, errors="coerce").to_numpy(dtype=float)
     c = pd.to_numeric(c, errors="coerce").to_numpy(dtype=float)
     m = np.isfinite(y) & np.isfinite(p) & np.isfinite(c) & (c > 0)
     if not m.any():
         return np.nan
-    return float(np.sqrt(np.mean((y[m] - p[m]) ** 2)) / np.nanmean(c[m]) * 100.0)
+    rmse_val = float(np.sqrt(np.mean((y[m] - p[m]) ** 2)))
+    cap_mean = float(np.nanmean(c[m]))
+    return rmse_val / cap_mean * 100.0 if cap_mean > 0 else np.nan
 
 
-def _mae(y, p):
+def _calc_mae(y, p):
+    y = pd.to_numeric(y, errors="coerce").to_numpy(dtype=float)
+    p = pd.to_numeric(p, errors="coerce").to_numpy(dtype=float)
+    m = np.isfinite(y) & np.isfinite(p)
+    return float(np.mean(np.abs(y[m] - p[m]))) if m.any() else np.nan
+
+
+def _calc_rmse(y, p):
     y = pd.to_numeric(y, errors="coerce").to_numpy(dtype=float)
     p = pd.to_numeric(p, errors="coerce").to_numpy(dtype=float)
     m = np.isfinite(y) & np.isfinite(p)
@@ -54,16 +63,39 @@ def _mae(y, p):
 
 def _metrics(df):
     df = _ensure_hour(df)
-    y, p, c = df["power_mw"], df["power_pred"], df["capacity_mw"]
+    y = df["power_mw"]
+    p = df["power_pred"]
+    c = df["capacity_mw"]
+
+    actual = float(pd.to_numeric(y, errors="coerce").sum())
+    pred = float(pd.to_numeric(p, errors="coerce").sum())
+
+    midday = df[df["hour"].isin(MIDDAY)].copy()
+
     return {
-        "overall_nrmse_pct": _nrmse(y, p, c),
-        "mae_mw": _mae(y, p),
+        "rows": int(len(df)),
+        "n_sites": int(df["site_id"].nunique()),
+        "actual_mwh": round(actual, 4),
+        "pred_mwh": round(pred, 4),
+        "pred_actual_ratio": round(pred / actual, 6) if actual > 0 else np.nan,
+        "bias_pct": round((pred / actual - 1.0) * 100.0, 4) if actual > 0 else np.nan,
+        "overall_nrmse_pct": round(_calc_nrmse(y, p, c), 6),
+        "midday_overall_nrmse_pct": round(
+            _calc_nrmse(midday["power_mw"], midday["power_pred"], midday["capacity_mw"]), 6
+        ),
+        "mae_mw": round(_calc_mae(y, p), 6),
+        "rmse_mw": round(_calc_rmse(y, p), 6),
     }
 
 
 def score(m):
     """综合分数，越低越好"""
-    return 0.65 * m["overall_nrmse_pct"] + 0.35 * m.get("mae_mw", 0)
+    return (
+        0.45 * m["midday_overall_nrmse_pct"]
+        + 0.35 * m["overall_nrmse_pct"]
+        + 0.10 * m["mae_mw"]
+        + 0.10 * m["rmse_mw"]
+    )
 
 
 def main():
@@ -72,6 +104,7 @@ def main():
     parser.add_argument("--candidate-full", required=True)
     parser.add_argument("--name", default="candidate")
     parser.add_argument("--min-overall-improve-pp", type=float, default=0.10)
+    parser.add_argument("--min-midday-improve-pp", type=float, default=0.0)
     args = parser.parse_args()
 
     cand_eval = Path(args.candidate_eval)
@@ -95,12 +128,19 @@ def main():
     cand_s = score(cand_m)
 
     overall_improve = best_m["overall_nrmse_pct"] - cand_m["overall_nrmse_pct"]
+    midday_improve = best_m["midday_overall_nrmse_pct"] - cand_m["midday_overall_nrmse_pct"]
 
     accept = overall_improve >= args.min_overall_improve_pp
     reasons = []
+
     if not accept:
         reasons.append(
             f"整体 NRMSE 改善不足: {overall_improve:.4f} pp < {args.min_overall_improve_pp:.4f} pp"
+        )
+    if midday_improve < args.min_midday_improve_pp:
+        accept = False
+        reasons.append(
+            f"10-14 NRMSE 改善不足: {midday_improve:.4f} pp < {args.min_midday_improve_pp:.4f} pp"
         )
 
     decision = {
@@ -113,6 +153,7 @@ def main():
         "best_score": best_s,
         "candidate_score": cand_s,
         "overall_improve_pp": overall_improve,
+        "midday_improve_pp": midday_improve,
     }
 
     out_json = METRICS / f"round10_candidate_decision_{args.name}.json"
@@ -132,8 +173,11 @@ def main():
             print(f"  - {r}")
 
     print(f"\nDecision: {out_json}")
-    print(f"  best_nrmse={best_m['overall_nrmse_pct']:.4f}%, cand_nrmse={cand_m['overall_nrmse_pct']:.4f}%")
-    print(f"  improve={overall_improve:.4f} pp, accept={accept}")
+    print(f"  best_overall={best_m['overall_nrmse_pct']:.4f}%, cand_overall={cand_m['overall_nrmse_pct']:.4f}%")
+    print(f"  best_midday={best_m['midday_overall_nrmse_pct']:.4f}%, cand_midday={cand_m['midday_overall_nrmse_pct']:.4f}%")
+    print(f"  best_mae={best_m['mae_mw']:.6f} MW, cand_mae={cand_m['mae_mw']:.6f} MW")
+    print(f"  best_rmse={best_m['rmse_mw']:.6f} MW, cand_rmse={cand_m['rmse_mw']:.6f} MW")
+    print(f"  overall_improve={overall_improve:.4f} pp, midday_improve={midday_improve:.4f} pp, accept={accept}")
 
 
 if __name__ == "__main__":
