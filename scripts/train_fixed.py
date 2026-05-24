@@ -93,6 +93,7 @@ CRITICAL_SCRIPTS = {
     'update_taskbook_compliance_round8.py',
     'generate_final_delivery_manifest_round8.py',
     'check_round8_final_package.py',
+    'run_round10_best_guard_pipeline.py',
 }
 
 # 关键输出文件：必须存在且非空
@@ -121,6 +122,13 @@ KEY_OUTPUT_FILES = [
     'metrics/round7_final_metrics_manifest.csv',
     'metrics/round7_end_to_end_deliverables_check.csv',
     'metrics/round7_taskbook_compliance.csv',
+    # Round10/11
+    'tables/best_predictions_eval.pkl',
+    'tables/best_predictions_full.pkl',
+    'metrics/round10_site_hour_nrmse.csv',
+    'metrics/round10_hour_overall_nrmse.csv',
+    'metrics/round10_overall_nrmse_summary.csv',
+    'metrics/round11_candidate_leaderboard.csv',
 ]
 
 
