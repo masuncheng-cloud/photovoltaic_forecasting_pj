@@ -1,6 +1,6 @@
 {
   "best_eval": "output/pv_pipeline/tables/best_predictions_eval.pkl",
   "best_full": "output/pv_pipeline/tables/best_predictions_full.pkl",
-  "initialized_at": "2026-05-24 12:39:31",
+  "initialized_at": null,
   "note": "best_predictions_* 是当前最优保护版本，后续候选只有更优才允许覆盖。"
 }
