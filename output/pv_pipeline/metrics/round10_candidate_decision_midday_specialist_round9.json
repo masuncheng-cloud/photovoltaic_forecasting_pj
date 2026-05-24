@@ -1,0 +1,19 @@
+{
+  "time": "2026-05-24 12:39:46",
+  "candidate_name": "midday_specialist_round9",
+  "accepted": false,
+  "reasons": [
+    "整体 NRMSE 改善不足: -2.3789 pp < 0.1000 pp"
+  ],
+  "best_metrics": {
+    "overall_nrmse_pct": 19.710496338365378,
+    "mae_mw": 1.2046988970414598
+  },
+  "candidate_metrics": {
+    "overall_nrmse_pct": 22.08940488181192,
+    "mae_mw": 1.4800233560493306
+  },
+  "best_score": 13.233467233902008,
+  "candidate_score": 14.876121347795015,
+  "overall_improve_pp": -2.378908543446542
+}

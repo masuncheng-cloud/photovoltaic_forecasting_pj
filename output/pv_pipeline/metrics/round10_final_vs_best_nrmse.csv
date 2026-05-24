@@ -1,0 +1,5 @@
+﻿metric,best,final,delta_final_minus_best
+overall_nrmse_pct,19.710496,19.710496,0.0
+mae_mw,0.58932,0.58932,0.0
+rmse_mw,1.204699,1.204699,0.0
+bias_pct,-1.4065,-1.4065,0.0
