@@ -115,30 +115,34 @@ def main():
 
     # 3. 编码类别特征
     print("\n[Step 3] 编码类别特征...")
-    cat_encoder = None
-    X_train_cat = None
-    X_valid_cat = None
-    X_test_cat = None
-
-    if feat_cat:
-        cat_encoder = {}
-        X_train_cat = np.column_stack([train_pos[c].values for c in feat_cat])
-        X_valid_cat = np.column_stack([valid_pos[c].values for c in feat_cat])
-        X_test_cat = np.column_stack([test_pos[c].values for c in feat_cat])
-
     X_train_num = train_pos[feat_num].values.astype(float)
     X_valid_num = valid_pos[feat_num].values.astype(float)
     X_test_num = test_pos[feat_num].values.astype(float)
 
-    X_train = X_train_num if X_train_cat is None else np.hstack([X_train_num, X_train_cat])
-    X_valid = X_valid_num if X_valid_cat is None else np.hstack([X_valid_num, X_valid_cat])
-    X_test = X_test_num if X_test_cat is None else np.hstack([X_test_num, X_test_cat])
+    if feat_cat:
+        from sklearn.preprocessing import OrdinalEncoder
+        all_cat_values = pd.concat([
+            train_pos[feat_cat],
+            valid_pos[feat_cat],
+            test_pos[feat_cat],
+        ]).values.astype(str)
+        enc = OrdinalEncoder(dtype=np.float64)
+        enc.fit(all_cat_values.reshape(-1, len(feat_cat)))
+        X_train_cat = enc.transform(train_pos[feat_cat].values.astype(str)).flatten()
+        X_valid_cat = enc.transform(valid_pos[feat_cat].values.astype(str)).flatten()
+        X_test_cat = enc.transform(test_pos[feat_cat].values.astype(str)).flatten()
+        X_train = np.column_stack([X_train_num, X_train_cat])
+        X_valid = np.column_stack([X_valid_num, X_valid_cat])
+        X_test = np.column_stack([X_test_num, X_test_cat])
+    else:
+        X_train = X_train_num
+        X_valid = X_valid_num
+        X_test = X_test_num
 
     y_train = train_pos["target_ratio"].values.astype(float)
-    y_valid = valid_pos["target_ratio"].values.astype(float)
     w_train = train_pos["weight"].values.astype(float)
 
-    print(f"  X_train: {X_train.shape}, y_train: {y_train.shape}")
+    print(f"  X_train: {X_train.shape}, dtype: {X_train.dtype}")
 
     # 4. 训练
     print("\n[Step 4] 训练 HistGradientBoostingRegressor...")
@@ -189,9 +193,9 @@ def main():
     model_path = TABLES / "distributed_model_midday_specialist_round9.pkl"
     bundle = {
         "model": model,
-        "cat_encoder": cat_encoder,
         "feat_num": feat_num,
         "feat_cat": feat_cat,
+        "cat_encoder": enc if feat_cat else None,
     }
     with open(model_path, "wb") as f:
         pickle.dump(bundle, f)
