@@ -574,11 +574,11 @@ tbody td {
   </div>
 
   <div id="sample-bins-wrap" style="margin-top:12px;">
-    <div class="section-title" style="font-size:12px;">按样本量分箱的站点 NRMSE 分布</div>
+    <div class="section-title" style="font-size:12px;">按单站点全量历史样本数分箱的 NRMSE 分布</div>
     <table id="sample-bins-table">
       <thead>
         <tr>
-          <th>样本量区间</th><th>站点数</th><th>正功率样本中位数</th>
+          <th>样本区间</th><th>站点数</th><th>全量样本中位数</th><th>全量正功率样本中位数</th><th>训练验证正功率样本中位数</th>
           <th>NRMSE均值%</th><th>NRMSE中位数%</th><th>NRMSE25分位%</th><th>NRMSE75分位%</th>
           <th>最佳NRMSE%</th><th>最差NRMSE%</th>
         </tr>
@@ -1269,7 +1269,9 @@ function renderSampleReqBinsTable() {
     row.innerHTML = `
       <td>${b.sample_bin}</td>
       <td>${b.site_count}</td>
-      <td>${b.median_train_valid_positive_rows != null ? b.median_train_valid_positive_rows.toLocaleString() : "-"}</td>
+      <td>${fmtInt(b.median_full_history_rows)}</td>
+      <td>${fmtInt(b.median_full_history_positive_rows)}</td>
+      <td>${fmtInt(b.median_train_valid_positive_rows)}</td>
       <td>${b.mean_nrmse_pct != null ? fmt2(b.mean_nrmse_pct) : "-"}</td>
       <td>${b.median_nrmse_pct != null ? fmt2(b.median_nrmse_pct) : "-"}</td>
       <td>${b.p25_nrmse_pct != null ? fmt2(b.p25_nrmse_pct) : "-"}</td>
