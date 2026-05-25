@@ -21,6 +21,6 @@
   "rmse_match": true,
   "bias_match": true,
   "hourly_nrmse_max_diff": 0.0047,
-  "hourly_city_nrmse_max_diff": 4.6354,
-  "hourly_match": false
+  "hourly_city_nrmse_max_diff": 0.0,
+  "hourly_match": true
 }

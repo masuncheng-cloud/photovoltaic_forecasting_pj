@@ -2,14 +2,14 @@
   "grade": "B",
   "grade_description": "可内部演示，需说明风险",
   "fail_count": 0,
-  "warn_count": 2,
+  "warn_count": 1,
   "module_results": {
     "data_integrity": "WARN",
     "site_mapping": "PASS",
     "split_integrity": "PASS",
     "physical_range": "PASS",
     "final_best_consistency": "PASS",
-    "metrics_recompute": "WARN",
+    "metrics_recompute": "PASS",
     "report_page_consistency": "PASS",
     "key_items": "PASS"
   },
@@ -22,7 +22,8 @@
     "midday_hourly_ref_exists": true,
     "midday_ref_count": 5,
     "city_nrmse_col_exists": true,
-    "site_nrmse_col_exists": false,
+    "site_nrmse_col_exists": true,
+    "ref_uses_english_col_names": true,
     "page_full_history": true,
     "test_6_19_rows": 68888
   },
