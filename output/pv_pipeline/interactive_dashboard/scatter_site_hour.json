@@ -1,7 +1,7 @@
 [
   {
     "site_id": "S002",
-    "site_name": "华筑泰宝光伏电站",
+    "site_name": "华筑泰宝光伏",
     "hour": 6,
     "sample_count": 245,
     "capacity_mw": 3.3,
@@ -14,7 +14,7 @@
   },
   {
     "site_id": "S002",
-    "site_name": "华筑泰宝光伏电站",
+    "site_name": "华筑泰宝光伏",
     "hour": 7,
     "sample_count": 245,
     "capacity_mw": 3.3,
@@ -27,7 +27,7 @@
   },
   {
     "site_id": "S002",
-    "site_name": "华筑泰宝光伏电站",
+    "site_name": "华筑泰宝光伏",
     "hour": 8,
     "sample_count": 245,
     "capacity_mw": 3.3,
@@ -40,7 +40,7 @@
   },
   {
     "site_id": "S002",
-    "site_name": "华筑泰宝光伏电站",
+    "site_name": "华筑泰宝光伏",
     "hour": 9,
     "sample_count": 245,
     "capacity_mw": 3.3,
@@ -53,7 +53,7 @@
   },
   {
     "site_id": "S002",
-    "site_name": "华筑泰宝光伏电站",
+    "site_name": "华筑泰宝光伏",
     "hour": 10,
     "sample_count": 245,
     "capacity_mw": 3.3,
@@ -66,7 +66,7 @@
   },
   {
     "site_id": "S002",
-    "site_name": "华筑泰宝光伏电站",
+    "site_name": "华筑泰宝光伏",
     "hour": 11,
     "sample_count": 246,
     "capacity_mw": 3.3,
@@ -79,7 +79,7 @@
   },
   {
     "site_id": "S002",
-    "site_name": "华筑泰宝光伏电站",
+    "site_name": "华筑泰宝光伏",
     "hour": 12,
     "sample_count": 246,
     "capacity_mw": 3.3,
@@ -92,7 +92,7 @@
   },
   {
     "site_id": "S002",
-    "site_name": "华筑泰宝光伏电站",
+    "site_name": "华筑泰宝光伏",
     "hour": 13,
     "sample_count": 246,
     "capacity_mw": 3.3,
@@ -105,7 +105,7 @@
   },
   {
     "site_id": "S002",
-    "site_name": "华筑泰宝光伏电站",
+    "site_name": "华筑泰宝光伏",
     "hour": 14,
     "sample_count": 246,
     "capacity_mw": 3.3,
@@ -118,7 +118,7 @@
   },
   {
     "site_id": "S002",
-    "site_name": "华筑泰宝光伏电站",
+    "site_name": "华筑泰宝光伏",
     "hour": 15,
     "sample_count": 246,
     "capacity_mw": 3.3,
@@ -131,7 +131,7 @@
   },
   {
     "site_id": "S002",
-    "site_name": "华筑泰宝光伏电站",
+    "site_name": "华筑泰宝光伏",
     "hour": 16,
     "sample_count": 246,
     "capacity_mw": 3.3,
@@ -144,7 +144,7 @@
   },
   {
     "site_id": "S002",
-    "site_name": "华筑泰宝光伏电站",
+    "site_name": "华筑泰宝光伏",
     "hour": 17,
     "sample_count": 246,
     "capacity_mw": 3.3,
@@ -157,7 +157,7 @@
   },
   {
     "site_id": "S002",
-    "site_name": "华筑泰宝光伏电站",
+    "site_name": "华筑泰宝光伏",
     "hour": 18,
     "sample_count": 246,
     "capacity_mw": 3.3,
@@ -170,7 +170,7 @@
   },
   {
     "site_id": "S002",
-    "site_name": "华筑泰宝光伏电站",
+    "site_name": "华筑泰宝光伏",
     "hour": 19,
     "sample_count": 246,
     "capacity_mw": 3.3,
@@ -365,7 +365,7 @@
   },
   {
     "site_id": "S004",
-    "site_name": "旭樱东堡光伏电站",
+    "site_name": "旭樱东堡光伏",
     "hour": 6,
     "sample_count": 251,
     "capacity_mw": 3.97,
@@ -378,7 +378,7 @@
   },
   {
     "site_id": "S004",
-    "site_name": "旭樱东堡光伏电站",
+    "site_name": "旭樱东堡光伏",
     "hour": 7,
     "sample_count": 251,
     "capacity_mw": 3.97,
@@ -391,7 +391,7 @@
   },
   {
     "site_id": "S004",
-    "site_name": "旭樱东堡光伏电站",
+    "site_name": "旭樱东堡光伏",
     "hour": 8,
     "sample_count": 251,
     "capacity_mw": 3.97,
@@ -404,7 +404,7 @@
   },
   {
     "site_id": "S004",
-    "site_name": "旭樱东堡光伏电站",
+    "site_name": "旭樱东堡光伏",
     "hour": 9,
     "sample_count": 251,
     "capacity_mw": 3.97,
@@ -417,7 +417,7 @@
   },
   {
     "site_id": "S004",
-    "site_name": "旭樱东堡光伏电站",
+    "site_name": "旭樱东堡光伏",
     "hour": 10,
     "sample_count": 251,
     "capacity_mw": 3.97,
@@ -430,7 +430,7 @@
   },
   {
     "site_id": "S004",
-    "site_name": "旭樱东堡光伏电站",
+    "site_name": "旭樱东堡光伏",
     "hour": 11,
     "sample_count": 251,
     "capacity_mw": 3.97,
@@ -443,7 +443,7 @@
   },
   {
     "site_id": "S004",
-    "site_name": "旭樱东堡光伏电站",
+    "site_name": "旭樱东堡光伏",
     "hour": 12,
     "sample_count": 251,
     "capacity_mw": 3.97,
@@ -456,7 +456,7 @@
   },
   {
     "site_id": "S004",
-    "site_name": "旭樱东堡光伏电站",
+    "site_name": "旭樱东堡光伏",
     "hour": 13,
     "sample_count": 251,
     "capacity_mw": 3.97,
@@ -469,7 +469,7 @@
   },
   {
     "site_id": "S004",
-    "site_name": "旭樱东堡光伏电站",
+    "site_name": "旭樱东堡光伏",
     "hour": 14,
     "sample_count": 251,
     "capacity_mw": 3.97,
@@ -482,7 +482,7 @@
   },
   {
     "site_id": "S004",
-    "site_name": "旭樱东堡光伏电站",
+    "site_name": "旭樱东堡光伏",
     "hour": 15,
     "sample_count": 252,
     "capacity_mw": 3.97,
@@ -495,7 +495,7 @@
   },
   {
     "site_id": "S004",
-    "site_name": "旭樱东堡光伏电站",
+    "site_name": "旭樱东堡光伏",
     "hour": 16,
     "sample_count": 252,
     "capacity_mw": 3.97,
@@ -508,7 +508,7 @@
   },
   {
     "site_id": "S004",
-    "site_name": "旭樱东堡光伏电站",
+    "site_name": "旭樱东堡光伏",
     "hour": 17,
     "sample_count": 252,
     "capacity_mw": 3.97,
@@ -521,7 +521,7 @@
   },
   {
     "site_id": "S004",
-    "site_name": "旭樱东堡光伏电站",
+    "site_name": "旭樱东堡光伏",
     "hour": 18,
     "sample_count": 252,
     "capacity_mw": 3.97,
@@ -534,7 +534,7 @@
   },
   {
     "site_id": "S004",
-    "site_name": "旭樱东堡光伏电站",
+    "site_name": "旭樱东堡光伏",
     "hour": 19,
     "sample_count": 252,
     "capacity_mw": 3.97,
@@ -547,7 +547,7 @@
   },
   {
     "site_id": "S006",
-    "site_name": "沐恒石湖光伏电站",
+    "site_name": "沐恒石湖光伏",
     "hour": 6,
     "sample_count": 247,
     "capacity_mw": 5.0,
@@ -560,7 +560,7 @@
   },
   {
     "site_id": "S006",
-    "site_name": "沐恒石湖光伏电站",
+    "site_name": "沐恒石湖光伏",
     "hour": 7,
     "sample_count": 247,
     "capacity_mw": 5.0,
@@ -573,7 +573,7 @@
   },
   {
     "site_id": "S006",
-    "site_name": "沐恒石湖光伏电站",
+    "site_name": "沐恒石湖光伏",
     "hour": 8,
     "sample_count": 247,
     "capacity_mw": 5.0,
@@ -586,7 +586,7 @@
   },
   {
     "site_id": "S006",
-    "site_name": "沐恒石湖光伏电站",
+    "site_name": "沐恒石湖光伏",
     "hour": 9,
     "sample_count": 247,
     "capacity_mw": 5.0,
@@ -599,7 +599,7 @@
   },
   {
     "site_id": "S006",
-    "site_name": "沐恒石湖光伏电站",
+    "site_name": "沐恒石湖光伏",
     "hour": 10,
     "sample_count": 247,
     "capacity_mw": 5.0,
@@ -612,7 +612,7 @@
   },
   {
     "site_id": "S006",
-    "site_name": "沐恒石湖光伏电站",
+    "site_name": "沐恒石湖光伏",
     "hour": 11,
     "sample_count": 247,
     "capacity_mw": 5.0,
@@ -625,7 +625,7 @@
   },
   {
     "site_id": "S006",
-    "site_name": "沐恒石湖光伏电站",
+    "site_name": "沐恒石湖光伏",
     "hour": 12,
     "sample_count": 247,
     "capacity_mw": 5.0,
@@ -638,7 +638,7 @@
   },
   {
     "site_id": "S006",
-    "site_name": "沐恒石湖光伏电站",
+    "site_name": "沐恒石湖光伏",
     "hour": 13,
     "sample_count": 247,
     "capacity_mw": 5.0,
@@ -651,7 +651,7 @@
   },
   {
     "site_id": "S006",
-    "site_name": "沐恒石湖光伏电站",
+    "site_name": "沐恒石湖光伏",
     "hour": 14,
     "sample_count": 247,
     "capacity_mw": 5.0,
@@ -664,7 +664,7 @@
   },
   {
     "site_id": "S006",
-    "site_name": "沐恒石湖光伏电站",
+    "site_name": "沐恒石湖光伏",
     "hour": 15,
     "sample_count": 247,
     "capacity_mw": 5.0,
@@ -677,7 +677,7 @@
   },
   {
     "site_id": "S006",
-    "site_name": "沐恒石湖光伏电站",
+    "site_name": "沐恒石湖光伏",
     "hour": 16,
     "sample_count": 247,
     "capacity_mw": 5.0,
@@ -690,7 +690,7 @@
   },
   {
     "site_id": "S006",
-    "site_name": "沐恒石湖光伏电站",
+    "site_name": "沐恒石湖光伏",
     "hour": 17,
     "sample_count": 248,
     "capacity_mw": 5.0,
@@ -703,7 +703,7 @@
   },
   {
     "site_id": "S006",
-    "site_name": "沐恒石湖光伏电站",
+    "site_name": "沐恒石湖光伏",
     "hour": 18,
     "sample_count": 248,
     "capacity_mw": 5.0,
@@ -716,7 +716,7 @@
   },
   {
     "site_id": "S006",
-    "site_name": "沐恒石湖光伏电站",
+    "site_name": "沐恒石湖光伏",
     "hour": 19,
     "sample_count": 248,
     "capacity_mw": 5.0,
@@ -729,7 +729,7 @@
   },
   {
     "site_id": "S007",
-    "site_name": "林洋朝阳光伏电站",
+    "site_name": "林洋朝阳光伏",
     "hour": 6,
     "sample_count": 1096,
     "capacity_mw": 22.0,
@@ -742,7 +742,7 @@
   },
   {
     "site_id": "S007",
-    "site_name": "林洋朝阳光伏电站",
+    "site_name": "林洋朝阳光伏",
     "hour": 7,
     "sample_count": 1096,
     "capacity_mw": 22.0,
@@ -755,7 +755,7 @@
   },
   {
     "site_id": "S007",
-    "site_name": "林洋朝阳光伏电站",
+    "site_name": "林洋朝阳光伏",
     "hour": 8,
     "sample_count": 1096,
     "capacity_mw": 22.0,
@@ -768,7 +768,7 @@
   },
   {
     "site_id": "S007",
-    "site_name": "林洋朝阳光伏电站",
+    "site_name": "林洋朝阳光伏",
     "hour": 9,
     "sample_count": 1096,
     "capacity_mw": 22.0,
@@ -781,7 +781,7 @@
   },
   {
     "site_id": "S007",
-    "site_name": "林洋朝阳光伏电站",
+    "site_name": "林洋朝阳光伏",
     "hour": 10,
     "sample_count": 1096,
     "capacity_mw": 22.0,
@@ -794,7 +794,7 @@
   },
   {
     "site_id": "S007",
-    "site_name": "林洋朝阳光伏电站",
+    "site_name": "林洋朝阳光伏",
     "hour": 11,
     "sample_count": 1096,
     "capacity_mw": 22.0,
@@ -807,7 +807,7 @@
   },
   {
     "site_id": "S007",
-    "site_name": "林洋朝阳光伏电站",
+    "site_name": "林洋朝阳光伏",
     "hour": 12,
     "sample_count": 1096,
     "capacity_mw": 22.0,
@@ -820,7 +820,7 @@
   },
   {
     "site_id": "S007",
-    "site_name": "林洋朝阳光伏电站",
+    "site_name": "林洋朝阳光伏",
     "hour": 13,
     "sample_count": 1096,
     "capacity_mw": 22.0,
@@ -833,7 +833,7 @@
   },
   {
     "site_id": "S007",
-    "site_name": "林洋朝阳光伏电站",
+    "site_name": "林洋朝阳光伏",
     "hour": 14,
     "sample_count": 1096,
     "capacity_mw": 22.0,
@@ -846,7 +846,7 @@
   },
   {
     "site_id": "S007",
-    "site_name": "林洋朝阳光伏电站",
+    "site_name": "林洋朝阳光伏",
     "hour": 15,
     "sample_count": 1096,
     "capacity_mw": 22.0,
@@ -859,7 +859,7 @@
   },
   {
     "site_id": "S007",
-    "site_name": "林洋朝阳光伏电站",
+    "site_name": "林洋朝阳光伏",
     "hour": 16,
     "sample_count": 1096,
     "capacity_mw": 22.0,
@@ -872,7 +872,7 @@
   },
   {
     "site_id": "S007",
-    "site_name": "林洋朝阳光伏电站",
+    "site_name": "林洋朝阳光伏",
     "hour": 17,
     "sample_count": 1096,
     "capacity_mw": 22.0,
@@ -885,7 +885,7 @@
   },
   {
     "site_id": "S007",
-    "site_name": "林洋朝阳光伏电站",
+    "site_name": "林洋朝阳光伏",
     "hour": 18,
     "sample_count": 1096,
     "capacity_mw": 22.0,
@@ -898,7 +898,7 @@
   },
   {
     "site_id": "S007",
-    "site_name": "林洋朝阳光伏电站",
+    "site_name": "林洋朝阳光伏",
     "hour": 19,
     "sample_count": 1096,
     "capacity_mw": 22.0,
@@ -911,7 +911,7 @@
   },
   {
     "site_id": "S008",
-    "site_name": "协鑫盛昌光伏电站",
+    "site_name": "协鑫盛昌光伏",
     "hour": 6,
     "sample_count": 274,
     "capacity_mw": 3.172,
@@ -924,7 +924,7 @@
   },
   {
     "site_id": "S008",
-    "site_name": "协鑫盛昌光伏电站",
+    "site_name": "协鑫盛昌光伏",
     "hour": 7,
     "sample_count": 274,
     "capacity_mw": 3.172,
@@ -937,7 +937,7 @@
   },
   {
     "site_id": "S008",
-    "site_name": "协鑫盛昌光伏电站",
+    "site_name": "协鑫盛昌光伏",
     "hour": 8,
     "sample_count": 274,
     "capacity_mw": 3.172,
@@ -950,7 +950,7 @@
   },
   {
     "site_id": "S008",
-    "site_name": "协鑫盛昌光伏电站",
+    "site_name": "协鑫盛昌光伏",
     "hour": 9,
     "sample_count": 274,
     "capacity_mw": 3.172,
@@ -963,7 +963,7 @@
   },
   {
     "site_id": "S008",
-    "site_name": "协鑫盛昌光伏电站",
+    "site_name": "协鑫盛昌光伏",
     "hour": 10,
     "sample_count": 274,
     "capacity_mw": 3.172,
@@ -976,7 +976,7 @@
   },
   {
     "site_id": "S008",
-    "site_name": "协鑫盛昌光伏电站",
+    "site_name": "协鑫盛昌光伏",
     "hour": 11,
     "sample_count": 274,
     "capacity_mw": 3.172,
@@ -989,7 +989,7 @@
   },
   {
     "site_id": "S008",
-    "site_name": "协鑫盛昌光伏电站",
+    "site_name": "协鑫盛昌光伏",
     "hour": 12,
     "sample_count": 275,
     "capacity_mw": 3.172,
@@ -1002,7 +1002,7 @@
   },
   {
     "site_id": "S008",
-    "site_name": "协鑫盛昌光伏电站",
+    "site_name": "协鑫盛昌光伏",
     "hour": 13,
     "sample_count": 275,
     "capacity_mw": 3.172,
@@ -1015,7 +1015,7 @@
   },
   {
     "site_id": "S008",
-    "site_name": "协鑫盛昌光伏电站",
+    "site_name": "协鑫盛昌光伏",
     "hour": 14,
     "sample_count": 275,
     "capacity_mw": 3.172,
@@ -1028,7 +1028,7 @@
   },
   {
     "site_id": "S008",
-    "site_name": "协鑫盛昌光伏电站",
+    "site_name": "协鑫盛昌光伏",
     "hour": 15,
     "sample_count": 275,
     "capacity_mw": 3.172,
@@ -1041,7 +1041,7 @@
   },
   {
     "site_id": "S008",
-    "site_name": "协鑫盛昌光伏电站",
+    "site_name": "协鑫盛昌光伏",
     "hour": 16,
     "sample_count": 275,
     "capacity_mw": 3.172,
@@ -1054,7 +1054,7 @@
   },
   {
     "site_id": "S008",
-    "site_name": "协鑫盛昌光伏电站",
+    "site_name": "协鑫盛昌光伏",
     "hour": 17,
     "sample_count": 275,
     "capacity_mw": 3.172,
@@ -1067,7 +1067,7 @@
   },
   {
     "site_id": "S008",
-    "site_name": "协鑫盛昌光伏电站",
+    "site_name": "协鑫盛昌光伏",
     "hour": 18,
     "sample_count": 275,
     "capacity_mw": 3.172,
@@ -1080,7 +1080,7 @@
   },
   {
     "site_id": "S008",
-    "site_name": "协鑫盛昌光伏电站",
+    "site_name": "协鑫盛昌光伏",
     "hour": 19,
     "sample_count": 275,
     "capacity_mw": 3.172,
@@ -1093,7 +1093,7 @@
   },
   {
     "site_id": "S009",
-    "site_name": "华电金叶光伏电站",
+    "site_name": "华电金叶光伏",
     "hour": 6,
     "sample_count": 436,
     "capacity_mw": 5.25,
@@ -1106,7 +1106,7 @@
   },
   {
     "site_id": "S009",
-    "site_name": "华电金叶光伏电站",
+    "site_name": "华电金叶光伏",
     "hour": 7,
     "sample_count": 436,
     "capacity_mw": 5.25,
@@ -1119,7 +1119,7 @@
   },
   {
     "site_id": "S009",
-    "site_name": "华电金叶光伏电站",
+    "site_name": "华电金叶光伏",
     "hour": 8,
     "sample_count": 436,
     "capacity_mw": 5.25,
@@ -1132,7 +1132,7 @@
   },
   {
     "site_id": "S009",
-    "site_name": "华电金叶光伏电站",
+    "site_name": "华电金叶光伏",
     "hour": 9,
     "sample_count": 437,
     "capacity_mw": 5.25,
@@ -1145,7 +1145,7 @@
   },
   {
     "site_id": "S009",
-    "site_name": "华电金叶光伏电站",
+    "site_name": "华电金叶光伏",
     "hour": 10,
     "sample_count": 437,
     "capacity_mw": 5.25,
@@ -1158,7 +1158,7 @@
   },
   {
     "site_id": "S009",
-    "site_name": "华电金叶光伏电站",
+    "site_name": "华电金叶光伏",
     "hour": 11,
     "sample_count": 437,
     "capacity_mw": 5.25,
@@ -1171,7 +1171,7 @@
   },
   {
     "site_id": "S009",
-    "site_name": "华电金叶光伏电站",
+    "site_name": "华电金叶光伏",
     "hour": 12,
     "sample_count": 437,
     "capacity_mw": 5.25,
@@ -1184,7 +1184,7 @@
   },
   {
     "site_id": "S009",
-    "site_name": "华电金叶光伏电站",
+    "site_name": "华电金叶光伏",
     "hour": 13,
     "sample_count": 437,
     "capacity_mw": 5.25,
@@ -1197,7 +1197,7 @@
   },
   {
     "site_id": "S009",
-    "site_name": "华电金叶光伏电站",
+    "site_name": "华电金叶光伏",
     "hour": 14,
     "sample_count": 437,
     "capacity_mw": 5.25,
@@ -1210,7 +1210,7 @@
   },
   {
     "site_id": "S009",
-    "site_name": "华电金叶光伏电站",
+    "site_name": "华电金叶光伏",
     "hour": 15,
     "sample_count": 437,
     "capacity_mw": 5.25,
@@ -1223,7 +1223,7 @@
   },
   {
     "site_id": "S009",
-    "site_name": "华电金叶光伏电站",
+    "site_name": "华电金叶光伏",
     "hour": 16,
     "sample_count": 437,
     "capacity_mw": 5.25,
@@ -1236,7 +1236,7 @@
   },
   {
     "site_id": "S009",
-    "site_name": "华电金叶光伏电站",
+    "site_name": "华电金叶光伏",
     "hour": 17,
     "sample_count": 437,
     "capacity_mw": 5.25,
@@ -1249,7 +1249,7 @@
   },
   {
     "site_id": "S009",
-    "site_name": "华电金叶光伏电站",
+    "site_name": "华电金叶光伏",
     "hour": 18,
     "sample_count": 437,
     "capacity_mw": 5.25,
@@ -1262,7 +1262,7 @@
   },
   {
     "site_id": "S009",
-    "site_name": "华电金叶光伏电站",
+    "site_name": "华电金叶光伏",
     "hour": 19,
     "sample_count": 437,
     "capacity_mw": 5.25,
@@ -1275,7 +1275,7 @@
   },
   {
     "site_id": "S010",
-    "site_name": "易睐珂浦南光伏发电站",
+    "site_name": "易睐珂浦南光伏",
     "hour": 6,
     "sample_count": 1096,
     "capacity_mw": 2.0,
@@ -1288,7 +1288,7 @@
   },
   {
     "site_id": "S010",
-    "site_name": "易睐珂浦南光伏发电站",
+    "site_name": "易睐珂浦南光伏",
     "hour": 7,
     "sample_count": 1096,
     "capacity_mw": 2.0,
@@ -1301,7 +1301,7 @@
   },
   {
     "site_id": "S010",
-    "site_name": "易睐珂浦南光伏发电站",
+    "site_name": "易睐珂浦南光伏",
     "hour": 8,
     "sample_count": 1096,
     "capacity_mw": 2.0,
@@ -1314,7 +1314,7 @@
   },
   {
     "site_id": "S010",
-    "site_name": "易睐珂浦南光伏发电站",
+    "site_name": "易睐珂浦南光伏",
     "hour": 9,
     "sample_count": 1096,
     "capacity_mw": 2.0,
@@ -1327,7 +1327,7 @@
   },
   {
     "site_id": "S010",
-    "site_name": "易睐珂浦南光伏发电站",
+    "site_name": "易睐珂浦南光伏",
     "hour": 10,
     "sample_count": 1096,
     "capacity_mw": 2.0,
@@ -1340,7 +1340,7 @@
   },
   {
     "site_id": "S010",
-    "site_name": "易睐珂浦南光伏发电站",
+    "site_name": "易睐珂浦南光伏",
     "hour": 11,
     "sample_count": 1096,
     "capacity_mw": 2.0,
@@ -1353,7 +1353,7 @@
   },
   {
     "site_id": "S010",
-    "site_name": "易睐珂浦南光伏发电站",
+    "site_name": "易睐珂浦南光伏",
     "hour": 12,
     "sample_count": 1096,
     "capacity_mw": 2.0,
@@ -1366,7 +1366,7 @@
   },
   {
     "site_id": "S010",
-    "site_name": "易睐珂浦南光伏发电站",
+    "site_name": "易睐珂浦南光伏",
     "hour": 13,
     "sample_count": 1096,
     "capacity_mw": 2.0,
@@ -1379,7 +1379,7 @@
   },
   {
     "site_id": "S010",
-    "site_name": "易睐珂浦南光伏发电站",
+    "site_name": "易睐珂浦南光伏",
     "hour": 14,
     "sample_count": 1096,
     "capacity_mw": 2.0,
@@ -1392,7 +1392,7 @@
   },
   {
     "site_id": "S010",
-    "site_name": "易睐珂浦南光伏发电站",
+    "site_name": "易睐珂浦南光伏",
     "hour": 15,
     "sample_count": 1096,
     "capacity_mw": 2.0,
@@ -1405,7 +1405,7 @@
   },
   {
     "site_id": "S010",
-    "site_name": "易睐珂浦南光伏发电站",
+    "site_name": "易睐珂浦南光伏",
     "hour": 16,
     "sample_count": 1096,
     "capacity_mw": 2.0,
@@ -1418,7 +1418,7 @@
   },
   {
     "site_id": "S010",
-    "site_name": "易睐珂浦南光伏发电站",
+    "site_name": "易睐珂浦南光伏",
     "hour": 17,
     "sample_count": 1096,
     "capacity_mw": 2.0,
@@ -1431,7 +1431,7 @@
   },
   {
     "site_id": "S010",
-    "site_name": "易睐珂浦南光伏发电站",
+    "site_name": "易睐珂浦南光伏",
     "hour": 18,
     "sample_count": 1096,
     "capacity_mw": 2.0,
@@ -1444,7 +1444,7 @@
   },
   {
     "site_id": "S010",
-    "site_name": "易睐珂浦南光伏发电站",
+    "site_name": "易睐珂浦南光伏",
     "hour": 19,
     "sample_count": 1096,
     "capacity_mw": 2.0,
@@ -1457,7 +1457,7 @@
   },
   {
     "site_id": "S011",
-    "site_name": "中森西苑光伏电站",
+    "site_name": "中森西苑光伏",
     "hour": 6,
     "sample_count": 1096,
     "capacity_mw": 2.323,
@@ -1470,7 +1470,7 @@
   },
   {
     "site_id": "S011",
-    "site_name": "中森西苑光伏电站",
+    "site_name": "中森西苑光伏",
     "hour": 7,
     "sample_count": 1096,
     "capacity_mw": 2.323,
@@ -1483,7 +1483,7 @@
   },
   {
     "site_id": "S011",
-    "site_name": "中森西苑光伏电站",
+    "site_name": "中森西苑光伏",
     "hour": 8,
     "sample_count": 1096,
     "capacity_mw": 2.323,
@@ -1496,7 +1496,7 @@
   },
   {
     "site_id": "S011",
-    "site_name": "中森西苑光伏电站",
+    "site_name": "中森西苑光伏",
     "hour": 9,
     "sample_count": 1096,
     "capacity_mw": 2.323,
@@ -1509,7 +1509,7 @@
   },
   {
     "site_id": "S011",
-    "site_name": "中森西苑光伏电站",
+    "site_name": "中森西苑光伏",
     "hour": 10,
     "sample_count": 1096,
     "capacity_mw": 2.323,
@@ -1522,7 +1522,7 @@
   },
   {
     "site_id": "S011",
-    "site_name": "中森西苑光伏电站",
+    "site_name": "中森西苑光伏",
     "hour": 11,
     "sample_count": 1096,
     "capacity_mw": 2.323,
@@ -1535,7 +1535,7 @@
   },
   {
     "site_id": "S011",
-    "site_name": "中森西苑光伏电站",
+    "site_name": "中森西苑光伏",
     "hour": 12,
     "sample_count": 1096,
     "capacity_mw": 2.323,
@@ -1548,7 +1548,7 @@
   },
   {
     "site_id": "S011",
-    "site_name": "中森西苑光伏电站",
+    "site_name": "中森西苑光伏",
     "hour": 13,
     "sample_count": 1096,
     "capacity_mw": 2.323,
@@ -1561,7 +1561,7 @@
   },
   {
     "site_id": "S011",
-    "site_name": "中森西苑光伏电站",
+    "site_name": "中森西苑光伏",
     "hour": 14,
     "sample_count": 1096,
     "capacity_mw": 2.323,
@@ -1574,7 +1574,7 @@
   },
   {
     "site_id": "S011",
-    "site_name": "中森西苑光伏电站",
+    "site_name": "中森西苑光伏",
     "hour": 15,
     "sample_count": 1096,
     "capacity_mw": 2.323,
@@ -1587,7 +1587,7 @@
   },
   {
     "site_id": "S011",
-    "site_name": "中森西苑光伏电站",
+    "site_name": "中森西苑光伏",
     "hour": 16,
     "sample_count": 1096,
     "capacity_mw": 2.323,
@@ -1600,7 +1600,7 @@
   },
   {
     "site_id": "S011",
-    "site_name": "中森西苑光伏电站",
+    "site_name": "中森西苑光伏",
     "hour": 17,
     "sample_count": 1096,
     "capacity_mw": 2.323,
@@ -1613,7 +1613,7 @@
   },
   {
     "site_id": "S011",
-    "site_name": "中森西苑光伏电站",
+    "site_name": "中森西苑光伏",
     "hour": 18,
     "sample_count": 1096,
     "capacity_mw": 2.323,
@@ -1626,7 +1626,7 @@
   },
   {
     "site_id": "S011",
-    "site_name": "中森西苑光伏电站",
+    "site_name": "中森西苑光伏",
     "hour": 19,
     "sample_count": 1096,
     "capacity_mw": 2.323,
@@ -1639,7 +1639,7 @@
   },
   {
     "site_id": "S012",
-    "site_name": "泰富如意情光伏电站",
+    "site_name": "泰富如意情光伏",
     "hour": 6,
     "sample_count": 245,
     "capacity_mw": 17.55,
@@ -1652,7 +1652,7 @@
   },
   {
     "site_id": "S012",
-    "site_name": "泰富如意情光伏电站",
+    "site_name": "泰富如意情光伏",
     "hour": 7,
     "sample_count": 245,
     "capacity_mw": 17.55,
@@ -1665,7 +1665,7 @@
   },
   {
     "site_id": "S012",
-    "site_name": "泰富如意情光伏电站",
+    "site_name": "泰富如意情光伏",
     "hour": 8,
     "sample_count": 245,
     "capacity_mw": 17.55,
@@ -1678,7 +1678,7 @@
   },
   {
     "site_id": "S012",
-    "site_name": "泰富如意情光伏电站",
+    "site_name": "泰富如意情光伏",
     "hour": 9,
     "sample_count": 245,
     "capacity_mw": 17.55,
@@ -1691,7 +1691,7 @@
   },
   {
     "site_id": "S012",
-    "site_name": "泰富如意情光伏电站",
+    "site_name": "泰富如意情光伏",
     "hour": 10,
     "sample_count": 245,
     "capacity_mw": 17.55,
@@ -1704,7 +1704,7 @@
   },
   {
     "site_id": "S012",
-    "site_name": "泰富如意情光伏电站",
+    "site_name": "泰富如意情光伏",
     "hour": 11,
     "sample_count": 245,
     "capacity_mw": 17.55,
@@ -1717,7 +1717,7 @@
   },
   {
     "site_id": "S012",
-    "site_name": "泰富如意情光伏电站",
+    "site_name": "泰富如意情光伏",
     "hour": 12,
     "sample_count": 245,
     "capacity_mw": 17.55,
@@ -1730,7 +1730,7 @@
   },
   {
     "site_id": "S012",
-    "site_name": "泰富如意情光伏电站",
+    "site_name": "泰富如意情光伏",
     "hour": 13,
     "sample_count": 245,
     "capacity_mw": 17.55,
@@ -1743,7 +1743,7 @@
   },
   {
     "site_id": "S012",
-    "site_name": "泰富如意情光伏电站",
+    "site_name": "泰富如意情光伏",
     "hour": 14,
     "sample_count": 245,
     "capacity_mw": 17.55,
@@ -1756,7 +1756,7 @@
   },
   {
     "site_id": "S012",
-    "site_name": "泰富如意情光伏电站",
+    "site_name": "泰富如意情光伏",
     "hour": 15,
     "sample_count": 246,
     "capacity_mw": 17.55,
@@ -1769,7 +1769,7 @@
   },
   {
     "site_id": "S012",
-    "site_name": "泰富如意情光伏电站",
+    "site_name": "泰富如意情光伏",
     "hour": 16,
     "sample_count": 246,
     "capacity_mw": 17.55,
@@ -1782,7 +1782,7 @@
   },
   {
     "site_id": "S012",
-    "site_name": "泰富如意情光伏电站",
+    "site_name": "泰富如意情光伏",
     "hour": 17,
     "sample_count": 246,
     "capacity_mw": 17.55,
@@ -1795,7 +1795,7 @@
   },
   {
     "site_id": "S012",
-    "site_name": "泰富如意情光伏电站",
+    "site_name": "泰富如意情光伏",
     "hour": 18,
     "sample_count": 246,
     "capacity_mw": 17.55,
@@ -1808,7 +1808,7 @@
   },
   {
     "site_id": "S012",
-    "site_name": "泰富如意情光伏电站",
+    "site_name": "泰富如意情光伏",
     "hour": 19,
     "sample_count": 246,
     "capacity_mw": 17.55,
@@ -1821,7 +1821,7 @@
   },
   {
     "site_id": "S014",
-    "site_name": "鲲鹏昇昌光伏电站",
+    "site_name": "鲲鹏昇昌光伏",
     "hour": 6,
     "sample_count": 245,
     "capacity_mw": 5.1,
@@ -1834,7 +1834,7 @@
   },
   {
     "site_id": "S014",
-    "site_name": "鲲鹏昇昌光伏电站",
+    "site_name": "鲲鹏昇昌光伏",
     "hour": 7,
     "sample_count": 245,
     "capacity_mw": 5.1,
@@ -1847,7 +1847,7 @@
   },
   {
     "site_id": "S014",
-    "site_name": "鲲鹏昇昌光伏电站",
+    "site_name": "鲲鹏昇昌光伏",
     "hour": 8,
     "sample_count": 245,
     "capacity_mw": 5.1,
@@ -1860,7 +1860,7 @@
   },
   {
     "site_id": "S014",
-    "site_name": "鲲鹏昇昌光伏电站",
+    "site_name": "鲲鹏昇昌光伏",
     "hour": 9,
     "sample_count": 245,
     "capacity_mw": 5.1,
@@ -1873,7 +1873,7 @@
   },
   {
     "site_id": "S014",
-    "site_name": "鲲鹏昇昌光伏电站",
+    "site_name": "鲲鹏昇昌光伏",
     "hour": 10,
     "sample_count": 246,
     "capacity_mw": 5.1,
@@ -1886,7 +1886,7 @@
   },
   {
     "site_id": "S014",
-    "site_name": "鲲鹏昇昌光伏电站",
+    "site_name": "鲲鹏昇昌光伏",
     "hour": 11,
     "sample_count": 246,
     "capacity_mw": 5.1,
@@ -1899,7 +1899,7 @@
   },
   {
     "site_id": "S014",
-    "site_name": "鲲鹏昇昌光伏电站",
+    "site_name": "鲲鹏昇昌光伏",
     "hour": 12,
     "sample_count": 246,
     "capacity_mw": 5.1,
@@ -1912,7 +1912,7 @@
   },
   {
     "site_id": "S014",
-    "site_name": "鲲鹏昇昌光伏电站",
+    "site_name": "鲲鹏昇昌光伏",
     "hour": 13,
     "sample_count": 246,
     "capacity_mw": 5.1,
@@ -1925,7 +1925,7 @@
   },
   {
     "site_id": "S014",
-    "site_name": "鲲鹏昇昌光伏电站",
+    "site_name": "鲲鹏昇昌光伏",
     "hour": 14,
     "sample_count": 246,
     "capacity_mw": 5.1,
@@ -1938,7 +1938,7 @@
   },
   {
     "site_id": "S014",
-    "site_name": "鲲鹏昇昌光伏电站",
+    "site_name": "鲲鹏昇昌光伏",
     "hour": 15,
     "sample_count": 246,
     "capacity_mw": 5.1,
@@ -1951,7 +1951,7 @@
   },
   {
     "site_id": "S014",
-    "site_name": "鲲鹏昇昌光伏电站",
+    "site_name": "鲲鹏昇昌光伏",
     "hour": 16,
     "sample_count": 246,
     "capacity_mw": 5.1,
@@ -1964,7 +1964,7 @@
   },
   {
     "site_id": "S014",
-    "site_name": "鲲鹏昇昌光伏电站",
+    "site_name": "鲲鹏昇昌光伏",
     "hour": 17,
     "sample_count": 246,
     "capacity_mw": 5.1,
@@ -1977,7 +1977,7 @@
   },
   {
     "site_id": "S014",
-    "site_name": "鲲鹏昇昌光伏电站",
+    "site_name": "鲲鹏昇昌光伏",
     "hour": 18,
     "sample_count": 246,
     "capacity_mw": 5.1,
@@ -1990,7 +1990,7 @@
   },
   {
     "site_id": "S014",
-    "site_name": "鲲鹏昇昌光伏电站",
+    "site_name": "鲲鹏昇昌光伏",
     "hour": 19,
     "sample_count": 246,
     "capacity_mw": 5.1,
@@ -2003,7 +2003,7 @@
   },
   {
     "site_id": "S016",
-    "site_name": "衡航亚新光伏电站",
+    "site_name": "衡航亚新光伏",
     "hour": 6,
     "sample_count": 246,
     "capacity_mw": 8.5,
@@ -2016,7 +2016,7 @@
   },
   {
     "site_id": "S016",
-    "site_name": "衡航亚新光伏电站",
+    "site_name": "衡航亚新光伏",
     "hour": 7,
     "sample_count": 246,
     "capacity_mw": 8.5,
@@ -2029,7 +2029,7 @@
   },
   {
     "site_id": "S016",
-    "site_name": "衡航亚新光伏电站",
+    "site_name": "衡航亚新光伏",
     "hour": 8,
     "sample_count": 246,
     "capacity_mw": 8.5,
@@ -2042,7 +2042,7 @@
   },
   {
     "site_id": "S016",
-    "site_name": "衡航亚新光伏电站",
+    "site_name": "衡航亚新光伏",
     "hour": 9,
     "sample_count": 246,
     "capacity_mw": 8.5,
@@ -2055,7 +2055,7 @@
   },
   {
     "site_id": "S016",
-    "site_name": "衡航亚新光伏电站",
+    "site_name": "衡航亚新光伏",
     "hour": 10,
     "sample_count": 246,
     "capacity_mw": 8.5,
@@ -2068,7 +2068,7 @@
   },
   {
     "site_id": "S016",
-    "site_name": "衡航亚新光伏电站",
+    "site_name": "衡航亚新光伏",
     "hour": 11,
     "sample_count": 246,
     "capacity_mw": 8.5,
@@ -2081,7 +2081,7 @@
   },
   {
     "site_id": "S016",
-    "site_name": "衡航亚新光伏电站",
+    "site_name": "衡航亚新光伏",
     "hour": 12,
     "sample_count": 246,
     "capacity_mw": 8.5,
@@ -2094,7 +2094,7 @@
   },
   {
     "site_id": "S016",
-    "site_name": "衡航亚新光伏电站",
+    "site_name": "衡航亚新光伏",
     "hour": 13,
     "sample_count": 246,
     "capacity_mw": 8.5,
@@ -2107,7 +2107,7 @@
   },
   {
     "site_id": "S016",
-    "site_name": "衡航亚新光伏电站",
+    "site_name": "衡航亚新光伏",
     "hour": 14,
     "sample_count": 246,
     "capacity_mw": 8.5,
@@ -2120,7 +2120,7 @@
   },
   {
     "site_id": "S016",
-    "site_name": "衡航亚新光伏电站",
+    "site_name": "衡航亚新光伏",
     "hour": 15,
     "sample_count": 246,
     "capacity_mw": 8.5,
@@ -2133,7 +2133,7 @@
   },
   {
     "site_id": "S016",
-    "site_name": "衡航亚新光伏电站",
+    "site_name": "衡航亚新光伏",
     "hour": 16,
     "sample_count": 246,
     "capacity_mw": 8.5,
@@ -2146,7 +2146,7 @@
   },
   {
     "site_id": "S016",
-    "site_name": "衡航亚新光伏电站",
+    "site_name": "衡航亚新光伏",
     "hour": 17,
     "sample_count": 246,
     "capacity_mw": 8.5,
@@ -2159,7 +2159,7 @@
   },
   {
     "site_id": "S016",
-    "site_name": "衡航亚新光伏电站",
+    "site_name": "衡航亚新光伏",
     "hour": 18,
     "sample_count": 246,
     "capacity_mw": 8.5,
@@ -2172,7 +2172,7 @@
   },
   {
     "site_id": "S016",
-    "site_name": "衡航亚新光伏电站",
+    "site_name": "衡航亚新光伏",
     "hour": 19,
     "sample_count": 246,
     "capacity_mw": 8.5,
@@ -2185,7 +2185,7 @@
   },
   {
     "site_id": "S017",
-    "site_name": "富云四队光伏电站",
+    "site_name": "富云四队光伏",
     "hour": 6,
     "sample_count": 1096,
     "capacity_mw": 0.954,
@@ -2198,7 +2198,7 @@
   },
   {
     "site_id": "S017",
-    "site_name": "富云四队光伏电站",
+    "site_name": "富云四队光伏",
     "hour": 7,
     "sample_count": 1096,
     "capacity_mw": 0.954,
@@ -2211,7 +2211,7 @@
   },
   {
     "site_id": "S017",
-    "site_name": "富云四队光伏电站",
+    "site_name": "富云四队光伏",
     "hour": 8,
     "sample_count": 1096,
     "capacity_mw": 0.954,
@@ -2224,7 +2224,7 @@
   },
   {
     "site_id": "S017",
-    "site_name": "富云四队光伏电站",
+    "site_name": "富云四队光伏",
     "hour": 9,
     "sample_count": 1096,
     "capacity_mw": 0.954,
@@ -2237,7 +2237,7 @@
   },
   {
     "site_id": "S017",
-    "site_name": "富云四队光伏电站",
+    "site_name": "富云四队光伏",
     "hour": 10,
     "sample_count": 1096,
     "capacity_mw": 0.954,
@@ -2250,7 +2250,7 @@
   },
   {
     "site_id": "S017",
-    "site_name": "富云四队光伏电站",
+    "site_name": "富云四队光伏",
     "hour": 11,
     "sample_count": 1096,
     "capacity_mw": 0.954,
@@ -2263,7 +2263,7 @@
   },
   {
     "site_id": "S017",
-    "site_name": "富云四队光伏电站",
+    "site_name": "富云四队光伏",
     "hour": 12,
     "sample_count": 1096,
     "capacity_mw": 0.954,
@@ -2276,7 +2276,7 @@
   },
   {
     "site_id": "S017",
-    "site_name": "富云四队光伏电站",
+    "site_name": "富云四队光伏",
     "hour": 13,
     "sample_count": 1096,
     "capacity_mw": 0.954,
@@ -2289,7 +2289,7 @@
   },
   {
     "site_id": "S017",
-    "site_name": "富云四队光伏电站",
+    "site_name": "富云四队光伏",
     "hour": 14,
     "sample_count": 1096,
     "capacity_mw": 0.954,
@@ -2302,7 +2302,7 @@
   },
   {
     "site_id": "S017",
-    "site_name": "富云四队光伏电站",
+    "site_name": "富云四队光伏",
     "hour": 15,
     "sample_count": 1096,
     "capacity_mw": 0.954,
@@ -2315,7 +2315,7 @@
   },
   {
     "site_id": "S017",
-    "site_name": "富云四队光伏电站",
+    "site_name": "富云四队光伏",
     "hour": 16,
     "sample_count": 1096,
     "capacity_mw": 0.954,
@@ -2328,7 +2328,7 @@
   },
   {
     "site_id": "S017",
-    "site_name": "富云四队光伏电站",
+    "site_name": "富云四队光伏",
     "hour": 17,
     "sample_count": 1096,
     "capacity_mw": 0.954,
@@ -2341,7 +2341,7 @@
   },
   {
     "site_id": "S017",
-    "site_name": "富云四队光伏电站",
+    "site_name": "富云四队光伏",
     "hour": 18,
     "sample_count": 1096,
     "capacity_mw": 0.954,
@@ -2354,7 +2354,7 @@
   },
   {
     "site_id": "S017",
-    "site_name": "富云四队光伏电站",
+    "site_name": "富云四队光伏",
     "hour": 19,
     "sample_count": 1096,
     "capacity_mw": 0.954,
@@ -2367,7 +2367,7 @@
   },
   {
     "site_id": "S018",
-    "site_name": "国能百菇源光伏电站",
+    "site_name": "国能百菇源光伏",
     "hour": 6,
     "sample_count": 670,
     "capacity_mw": 5.1,
@@ -2380,7 +2380,7 @@
   },
   {
     "site_id": "S018",
-    "site_name": "国能百菇源光伏电站",
+    "site_name": "国能百菇源光伏",
     "hour": 7,
     "sample_count": 670,
     "capacity_mw": 5.1,
@@ -2393,7 +2393,7 @@
   },
   {
     "site_id": "S018",
-    "site_name": "国能百菇源光伏电站",
+    "site_name": "国能百菇源光伏",
     "hour": 8,
     "sample_count": 670,
     "capacity_mw": 5.1,
@@ -2406,7 +2406,7 @@
   },
   {
     "site_id": "S018",
-    "site_name": "国能百菇源光伏电站",
+    "site_name": "国能百菇源光伏",
     "hour": 9,
     "sample_count": 670,
     "capacity_mw": 5.1,
@@ -2419,7 +2419,7 @@
   },
   {
     "site_id": "S018",
-    "site_name": "国能百菇源光伏电站",
+    "site_name": "国能百菇源光伏",
     "hour": 10,
     "sample_count": 671,
     "capacity_mw": 5.1,
@@ -2432,7 +2432,7 @@
   },
   {
     "site_id": "S018",
-    "site_name": "国能百菇源光伏电站",
+    "site_name": "国能百菇源光伏",
     "hour": 11,
     "sample_count": 671,
     "capacity_mw": 5.1,
@@ -2445,7 +2445,7 @@
   },
   {
     "site_id": "S018",
-    "site_name": "国能百菇源光伏电站",
+    "site_name": "国能百菇源光伏",
     "hour": 12,
     "sample_count": 671,
     "capacity_mw": 5.1,
@@ -2458,7 +2458,7 @@
   },
   {
     "site_id": "S018",
-    "site_name": "国能百菇源光伏电站",
+    "site_name": "国能百菇源光伏",
     "hour": 13,
     "sample_count": 671,
     "capacity_mw": 5.1,
@@ -2471,7 +2471,7 @@
   },
   {
     "site_id": "S018",
-    "site_name": "国能百菇源光伏电站",
+    "site_name": "国能百菇源光伏",
     "hour": 14,
     "sample_count": 671,
     "capacity_mw": 5.1,
@@ -2484,7 +2484,7 @@
   },
   {
     "site_id": "S018",
-    "site_name": "国能百菇源光伏电站",
+    "site_name": "国能百菇源光伏",
     "hour": 15,
     "sample_count": 671,
     "capacity_mw": 5.1,
@@ -2497,7 +2497,7 @@
   },
   {
     "site_id": "S018",
-    "site_name": "国能百菇源光伏电站",
+    "site_name": "国能百菇源光伏",
     "hour": 16,
     "sample_count": 671,
     "capacity_mw": 5.1,
@@ -2510,7 +2510,7 @@
   },
   {
     "site_id": "S018",
-    "site_name": "国能百菇源光伏电站",
+    "site_name": "国能百菇源光伏",
     "hour": 17,
     "sample_count": 671,
     "capacity_mw": 5.1,
@@ -2523,7 +2523,7 @@
   },
   {
     "site_id": "S018",
-    "site_name": "国能百菇源光伏电站",
+    "site_name": "国能百菇源光伏",
     "hour": 18,
     "sample_count": 671,
     "capacity_mw": 5.1,
@@ -2536,7 +2536,7 @@
   },
   {
     "site_id": "S018",
-    "site_name": "国能百菇源光伏电站",
+    "site_name": "国能百菇源光伏",
     "hour": 19,
     "sample_count": 671,
     "capacity_mw": 5.1,
@@ -2549,7 +2549,7 @@
   },
   {
     "site_id": "S019",
-    "site_name": "首耀新海光伏电站",
+    "site_name": "首耀新海光伏",
     "hour": 6,
     "sample_count": 1096,
     "capacity_mw": 3.0,
@@ -2562,7 +2562,7 @@
   },
   {
     "site_id": "S019",
-    "site_name": "首耀新海光伏电站",
+    "site_name": "首耀新海光伏",
     "hour": 7,
     "sample_count": 1096,
     "capacity_mw": 3.0,
@@ -2575,7 +2575,7 @@
   },
   {
     "site_id": "S019",
-    "site_name": "首耀新海光伏电站",
+    "site_name": "首耀新海光伏",
     "hour": 8,
     "sample_count": 1096,
     "capacity_mw": 3.0,
@@ -2588,7 +2588,7 @@
   },
   {
     "site_id": "S019",
-    "site_name": "首耀新海光伏电站",
+    "site_name": "首耀新海光伏",
     "hour": 9,
     "sample_count": 1096,
     "capacity_mw": 3.0,
@@ -2601,7 +2601,7 @@
   },
   {
     "site_id": "S019",
-    "site_name": "首耀新海光伏电站",
+    "site_name": "首耀新海光伏",
     "hour": 10,
     "sample_count": 1096,
     "capacity_mw": 3.0,
@@ -2614,7 +2614,7 @@
   },
   {
     "site_id": "S019",
-    "site_name": "首耀新海光伏电站",
+    "site_name": "首耀新海光伏",
     "hour": 11,
     "sample_count": 1096,
     "capacity_mw": 3.0,
@@ -2627,7 +2627,7 @@
   },
   {
     "site_id": "S019",
-    "site_name": "首耀新海光伏电站",
+    "site_name": "首耀新海光伏",
     "hour": 12,
     "sample_count": 1096,
     "capacity_mw": 3.0,
@@ -2640,7 +2640,7 @@
   },
   {
     "site_id": "S019",
-    "site_name": "首耀新海光伏电站",
+    "site_name": "首耀新海光伏",
     "hour": 13,
     "sample_count": 1096,
     "capacity_mw": 3.0,
@@ -2653,7 +2653,7 @@
   },
   {
     "site_id": "S019",
-    "site_name": "首耀新海光伏电站",
+    "site_name": "首耀新海光伏",
     "hour": 14,
     "sample_count": 1096,
     "capacity_mw": 3.0,
@@ -2666,7 +2666,7 @@
   },
   {
     "site_id": "S019",
-    "site_name": "首耀新海光伏电站",
+    "site_name": "首耀新海光伏",
     "hour": 15,
     "sample_count": 1096,
     "capacity_mw": 3.0,
@@ -2679,7 +2679,7 @@
   },
   {
     "site_id": "S019",
-    "site_name": "首耀新海光伏电站",
+    "site_name": "首耀新海光伏",
     "hour": 16,
     "sample_count": 1096,
     "capacity_mw": 3.0,
@@ -2692,7 +2692,7 @@
   },
   {
     "site_id": "S019",
-    "site_name": "首耀新海光伏电站",
+    "site_name": "首耀新海光伏",
     "hour": 17,
     "sample_count": 1096,
     "capacity_mw": 3.0,
@@ -2705,7 +2705,7 @@
   },
   {
     "site_id": "S019",
-    "site_name": "首耀新海光伏电站",
+    "site_name": "首耀新海光伏",
     "hour": 18,
     "sample_count": 1096,
     "capacity_mw": 3.0,
@@ -2718,7 +2718,7 @@
   },
   {
     "site_id": "S019",
-    "site_name": "首耀新海光伏电站",
+    "site_name": "首耀新海光伏",
     "hour": 19,
     "sample_count": 1096,
     "capacity_mw": 3.0,
@@ -2731,7 +2731,7 @@
   },
   {
     "site_id": "S020",
-    "site_name": "国能赫睿光伏电站",
+    "site_name": "国能赫睿光伏",
     "hour": 6,
     "sample_count": 370,
     "capacity_mw": 3.8,
@@ -2744,7 +2744,7 @@
   },
   {
     "site_id": "S020",
-    "site_name": "国能赫睿光伏电站",
+    "site_name": "国能赫睿光伏",
     "hour": 7,
     "sample_count": 370,
     "capacity_mw": 3.8,
@@ -2757,7 +2757,7 @@
   },
   {
     "site_id": "S020",
-    "site_name": "国能赫睿光伏电站",
+    "site_name": "国能赫睿光伏",
     "hour": 8,
     "sample_count": 370,
     "capacity_mw": 3.8,
@@ -2770,7 +2770,7 @@
   },
   {
     "site_id": "S020",
-    "site_name": "国能赫睿光伏电站",
+    "site_name": "国能赫睿光伏",
     "hour": 9,
     "sample_count": 370,
     "capacity_mw": 3.8,
@@ -2783,7 +2783,7 @@
   },
   {
     "site_id": "S020",
-    "site_name": "国能赫睿光伏电站",
+    "site_name": "国能赫睿光伏",
     "hour": 10,
     "sample_count": 370,
     "capacity_mw": 3.8,
@@ -2796,7 +2796,7 @@
   },
   {
     "site_id": "S020",
-    "site_name": "国能赫睿光伏电站",
+    "site_name": "国能赫睿光伏",
     "hour": 11,
     "sample_count": 370,
     "capacity_mw": 3.8,
@@ -2809,7 +2809,7 @@
   },
   {
     "site_id": "S020",
-    "site_name": "国能赫睿光伏电站",
+    "site_name": "国能赫睿光伏",
     "hour": 12,
     "sample_count": 370,
     "capacity_mw": 3.8,
@@ -2822,7 +2822,7 @@
   },
   {
     "site_id": "S020",
-    "site_name": "国能赫睿光伏电站",
+    "site_name": "国能赫睿光伏",
     "hour": 13,
     "sample_count": 370,
     "capacity_mw": 3.8,
@@ -2835,7 +2835,7 @@
   },
   {
     "site_id": "S020",
-    "site_name": "国能赫睿光伏电站",
+    "site_name": "国能赫睿光伏",
     "hour": 14,
     "sample_count": 370,
     "capacity_mw": 3.8,
@@ -2848,7 +2848,7 @@
   },
   {
     "site_id": "S020",
-    "site_name": "国能赫睿光伏电站",
+    "site_name": "国能赫睿光伏",
     "hour": 15,
     "sample_count": 370,
     "capacity_mw": 3.8,
@@ -2861,7 +2861,7 @@
   },
   {
     "site_id": "S020",
-    "site_name": "国能赫睿光伏电站",
+    "site_name": "国能赫睿光伏",
     "hour": 16,
     "sample_count": 370,
     "capacity_mw": 3.8,
@@ -2874,7 +2874,7 @@
   },
   {
     "site_id": "S020",
-    "site_name": "国能赫睿光伏电站",
+    "site_name": "国能赫睿光伏",
     "hour": 17,
     "sample_count": 370,
     "capacity_mw": 3.8,
@@ -2887,7 +2887,7 @@
   },
   {
     "site_id": "S020",
-    "site_name": "国能赫睿光伏电站",
+    "site_name": "国能赫睿光伏",
     "hour": 18,
     "sample_count": 370,
     "capacity_mw": 3.8,
@@ -2900,7 +2900,7 @@
   },
   {
     "site_id": "S020",
-    "site_name": "国能赫睿光伏电站",
+    "site_name": "国能赫睿光伏",
     "hour": 19,
     "sample_count": 370,
     "capacity_mw": 3.8,
@@ -2913,7 +2913,7 @@
   },
   {
     "site_id": "S021",
-    "site_name": "国能鑫江源光伏电站",
+    "site_name": "国能鑫江源光伏",
     "hour": 6,
     "sample_count": 266,
     "capacity_mw": 2.2,
@@ -2926,7 +2926,7 @@
   },
   {
     "site_id": "S021",
-    "site_name": "国能鑫江源光伏电站",
+    "site_name": "国能鑫江源光伏",
     "hour": 7,
     "sample_count": 266,
     "capacity_mw": 2.2,
@@ -2939,7 +2939,7 @@
   },
   {
     "site_id": "S021",
-    "site_name": "国能鑫江源光伏电站",
+    "site_name": "国能鑫江源光伏",
     "hour": 8,
     "sample_count": 266,
     "capacity_mw": 2.2,
@@ -2952,7 +2952,7 @@
   },
   {
     "site_id": "S021",
-    "site_name": "国能鑫江源光伏电站",
+    "site_name": "国能鑫江源光伏",
     "hour": 9,
     "sample_count": 266,
     "capacity_mw": 2.2,
@@ -2965,7 +2965,7 @@
   },
   {
     "site_id": "S021",
-    "site_name": "国能鑫江源光伏电站",
+    "site_name": "国能鑫江源光伏",
     "hour": 10,
     "sample_count": 266,
     "capacity_mw": 2.2,
@@ -2978,7 +2978,7 @@
   },
   {
     "site_id": "S021",
-    "site_name": "国能鑫江源光伏电站",
+    "site_name": "国能鑫江源光伏",
     "hour": 11,
     "sample_count": 266,
     "capacity_mw": 2.2,
@@ -2991,7 +2991,7 @@
   },
   {
     "site_id": "S021",
-    "site_name": "国能鑫江源光伏电站",
+    "site_name": "国能鑫江源光伏",
     "hour": 12,
     "sample_count": 266,
     "capacity_mw": 2.2,
@@ -3004,7 +3004,7 @@
   },
   {
     "site_id": "S021",
-    "site_name": "国能鑫江源光伏电站",
+    "site_name": "国能鑫江源光伏",
     "hour": 13,
     "sample_count": 266,
     "capacity_mw": 2.2,
@@ -3017,7 +3017,7 @@
   },
   {
     "site_id": "S021",
-    "site_name": "国能鑫江源光伏电站",
+    "site_name": "国能鑫江源光伏",
     "hour": 14,
     "sample_count": 266,
     "capacity_mw": 2.2,
@@ -3030,7 +3030,7 @@
   },
   {
     "site_id": "S021",
-    "site_name": "国能鑫江源光伏电站",
+    "site_name": "国能鑫江源光伏",
     "hour": 15,
     "sample_count": 266,
     "capacity_mw": 2.2,
@@ -3043,7 +3043,7 @@
   },
   {
     "site_id": "S021",
-    "site_name": "国能鑫江源光伏电站",
+    "site_name": "国能鑫江源光伏",
     "hour": 16,
     "sample_count": 267,
     "capacity_mw": 2.2,
@@ -3056,7 +3056,7 @@
   },
   {
     "site_id": "S021",
-    "site_name": "国能鑫江源光伏电站",
+    "site_name": "国能鑫江源光伏",
     "hour": 17,
     "sample_count": 267,
     "capacity_mw": 2.2,
@@ -3069,7 +3069,7 @@
   },
   {
     "site_id": "S021",
-    "site_name": "国能鑫江源光伏电站",
+    "site_name": "国能鑫江源光伏",
     "hour": 18,
     "sample_count": 267,
     "capacity_mw": 2.2,
@@ -3082,7 +3082,7 @@
   },
   {
     "site_id": "S021",
-    "site_name": "国能鑫江源光伏电站",
+    "site_name": "国能鑫江源光伏",
     "hour": 19,
     "sample_count": 267,
     "capacity_mw": 2.2,
@@ -3277,7 +3277,7 @@
   },
   {
     "site_id": "S023",
-    "site_name": "连洋徐圩光伏发电站",
+    "site_name": "连洋徐圩光伏",
     "hour": 6,
     "sample_count": 1096,
     "capacity_mw": 16.37,
@@ -3290,7 +3290,7 @@
   },
   {
     "site_id": "S023",
-    "site_name": "连洋徐圩光伏发电站",
+    "site_name": "连洋徐圩光伏",
     "hour": 7,
     "sample_count": 1096,
     "capacity_mw": 16.37,
@@ -3303,7 +3303,7 @@
   },
   {
     "site_id": "S023",
-    "site_name": "连洋徐圩光伏发电站",
+    "site_name": "连洋徐圩光伏",
     "hour": 8,
     "sample_count": 1096,
     "capacity_mw": 16.37,
@@ -3316,7 +3316,7 @@
   },
   {
     "site_id": "S023",
-    "site_name": "连洋徐圩光伏发电站",
+    "site_name": "连洋徐圩光伏",
     "hour": 9,
     "sample_count": 1096,
     "capacity_mw": 16.37,
@@ -3329,7 +3329,7 @@
   },
   {
     "site_id": "S023",
-    "site_name": "连洋徐圩光伏发电站",
+    "site_name": "连洋徐圩光伏",
     "hour": 10,
     "sample_count": 1096,
     "capacity_mw": 16.37,
@@ -3342,7 +3342,7 @@
   },
   {
     "site_id": "S023",
-    "site_name": "连洋徐圩光伏发电站",
+    "site_name": "连洋徐圩光伏",
     "hour": 11,
     "sample_count": 1096,
     "capacity_mw": 16.37,
@@ -3355,7 +3355,7 @@
   },
   {
     "site_id": "S023",
-    "site_name": "连洋徐圩光伏发电站",
+    "site_name": "连洋徐圩光伏",
     "hour": 12,
     "sample_count": 1096,
     "capacity_mw": 16.37,
@@ -3368,7 +3368,7 @@
   },
   {
     "site_id": "S023",
-    "site_name": "连洋徐圩光伏发电站",
+    "site_name": "连洋徐圩光伏",
     "hour": 13,
     "sample_count": 1096,
     "capacity_mw": 16.37,
@@ -3381,7 +3381,7 @@
   },
   {
     "site_id": "S023",
-    "site_name": "连洋徐圩光伏发电站",
+    "site_name": "连洋徐圩光伏",
     "hour": 14,
     "sample_count": 1096,
     "capacity_mw": 16.37,
@@ -3394,7 +3394,7 @@
   },
   {
     "site_id": "S023",
-    "site_name": "连洋徐圩光伏发电站",
+    "site_name": "连洋徐圩光伏",
     "hour": 15,
     "sample_count": 1096,
     "capacity_mw": 16.37,
@@ -3407,7 +3407,7 @@
   },
   {
     "site_id": "S023",
-    "site_name": "连洋徐圩光伏发电站",
+    "site_name": "连洋徐圩光伏",
     "hour": 16,
     "sample_count": 1096,
     "capacity_mw": 16.37,
@@ -3420,7 +3420,7 @@
   },
   {
     "site_id": "S023",
-    "site_name": "连洋徐圩光伏发电站",
+    "site_name": "连洋徐圩光伏",
     "hour": 17,
     "sample_count": 1096,
     "capacity_mw": 16.37,
@@ -3433,7 +3433,7 @@
   },
   {
     "site_id": "S023",
-    "site_name": "连洋徐圩光伏发电站",
+    "site_name": "连洋徐圩光伏",
     "hour": 18,
     "sample_count": 1096,
     "capacity_mw": 16.37,
@@ -3446,7 +3446,7 @@
   },
   {
     "site_id": "S023",
-    "site_name": "连洋徐圩光伏发电站",
+    "site_name": "连洋徐圩光伏",
     "hour": 19,
     "sample_count": 1096,
     "capacity_mw": 16.37,
@@ -3459,7 +3459,7 @@
   },
   {
     "site_id": "S024",
-    "site_name": "兴怡紧固件光伏电站",
+    "site_name": "兴怡紧固件光伏",
     "hour": 6,
     "sample_count": 888,
     "capacity_mw": 5.99,
@@ -3472,7 +3472,7 @@
   },
   {
     "site_id": "S024",
-    "site_name": "兴怡紧固件光伏电站",
+    "site_name": "兴怡紧固件光伏",
     "hour": 7,
     "sample_count": 888,
     "capacity_mw": 5.99,
@@ -3485,7 +3485,7 @@
   },
   {
     "site_id": "S024",
-    "site_name": "兴怡紧固件光伏电站",
+    "site_name": "兴怡紧固件光伏",
     "hour": 8,
     "sample_count": 888,
     "capacity_mw": 5.99,
@@ -3498,7 +3498,7 @@
   },
   {
     "site_id": "S024",
-    "site_name": "兴怡紧固件光伏电站",
+    "site_name": "兴怡紧固件光伏",
     "hour": 9,
     "sample_count": 888,
     "capacity_mw": 5.99,
@@ -3511,7 +3511,7 @@
   },
   {
     "site_id": "S024",
-    "site_name": "兴怡紧固件光伏电站",
+    "site_name": "兴怡紧固件光伏",
     "hour": 10,
     "sample_count": 888,
     "capacity_mw": 5.99,
@@ -3524,7 +3524,7 @@
   },
   {
     "site_id": "S024",
-    "site_name": "兴怡紧固件光伏电站",
+    "site_name": "兴怡紧固件光伏",
     "hour": 11,
     "sample_count": 888,
     "capacity_mw": 5.99,
@@ -3537,7 +3537,7 @@
   },
   {
     "site_id": "S024",
-    "site_name": "兴怡紧固件光伏电站",
+    "site_name": "兴怡紧固件光伏",
     "hour": 12,
     "sample_count": 888,
     "capacity_mw": 5.99,
@@ -3550,7 +3550,7 @@
   },
   {
     "site_id": "S024",
-    "site_name": "兴怡紧固件光伏电站",
+    "site_name": "兴怡紧固件光伏",
     "hour": 13,
     "sample_count": 888,
     "capacity_mw": 5.99,
@@ -3563,7 +3563,7 @@
   },
   {
     "site_id": "S024",
-    "site_name": "兴怡紧固件光伏电站",
+    "site_name": "兴怡紧固件光伏",
     "hour": 14,
     "sample_count": 888,
     "capacity_mw": 5.99,
@@ -3576,7 +3576,7 @@
   },
   {
     "site_id": "S024",
-    "site_name": "兴怡紧固件光伏电站",
+    "site_name": "兴怡紧固件光伏",
     "hour": 15,
     "sample_count": 888,
     "capacity_mw": 5.99,
@@ -3589,7 +3589,7 @@
   },
   {
     "site_id": "S024",
-    "site_name": "兴怡紧固件光伏电站",
+    "site_name": "兴怡紧固件光伏",
     "hour": 16,
     "sample_count": 889,
     "capacity_mw": 5.99,
@@ -3602,7 +3602,7 @@
   },
   {
     "site_id": "S024",
-    "site_name": "兴怡紧固件光伏电站",
+    "site_name": "兴怡紧固件光伏",
     "hour": 17,
     "sample_count": 889,
     "capacity_mw": 5.99,
@@ -3615,7 +3615,7 @@
   },
   {
     "site_id": "S024",
-    "site_name": "兴怡紧固件光伏电站",
+    "site_name": "兴怡紧固件光伏",
     "hour": 18,
     "sample_count": 889,
     "capacity_mw": 5.99,
@@ -3628,7 +3628,7 @@
   },
   {
     "site_id": "S024",
-    "site_name": "兴怡紧固件光伏电站",
+    "site_name": "兴怡紧固件光伏",
     "hour": 19,
     "sample_count": 889,
     "capacity_mw": 5.99,
@@ -3641,7 +3641,7 @@
   },
   {
     "site_id": "S025",
-    "site_name": "夏源银得隆光伏电站",
+    "site_name": "夏源银得隆光伏",
     "hour": 6,
     "sample_count": 597,
     "capacity_mw": 5.65,
@@ -3654,7 +3654,7 @@
   },
   {
     "site_id": "S025",
-    "site_name": "夏源银得隆光伏电站",
+    "site_name": "夏源银得隆光伏",
     "hour": 7,
     "sample_count": 597,
     "capacity_mw": 5.65,
@@ -3667,7 +3667,7 @@
   },
   {
     "site_id": "S025",
-    "site_name": "夏源银得隆光伏电站",
+    "site_name": "夏源银得隆光伏",
     "hour": 8,
     "sample_count": 597,
     "capacity_mw": 5.65,
@@ -3680,7 +3680,7 @@
   },
   {
     "site_id": "S025",
-    "site_name": "夏源银得隆光伏电站",
+    "site_name": "夏源银得隆光伏",
     "hour": 9,
     "sample_count": 597,
     "capacity_mw": 5.65,
@@ -3693,7 +3693,7 @@
   },
   {
     "site_id": "S025",
-    "site_name": "夏源银得隆光伏电站",
+    "site_name": "夏源银得隆光伏",
     "hour": 10,
     "sample_count": 597,
     "capacity_mw": 5.65,
@@ -3706,7 +3706,7 @@
   },
   {
     "site_id": "S025",
-    "site_name": "夏源银得隆光伏电站",
+    "site_name": "夏源银得隆光伏",
     "hour": 11,
     "sample_count": 597,
     "capacity_mw": 5.65,
@@ -3719,7 +3719,7 @@
   },
   {
     "site_id": "S025",
-    "site_name": "夏源银得隆光伏电站",
+    "site_name": "夏源银得隆光伏",
     "hour": 12,
     "sample_count": 597,
     "capacity_mw": 5.65,
@@ -3732,7 +3732,7 @@
   },
   {
     "site_id": "S025",
-    "site_name": "夏源银得隆光伏电站",
+    "site_name": "夏源银得隆光伏",
     "hour": 13,
     "sample_count": 597,
     "capacity_mw": 5.65,
@@ -3745,7 +3745,7 @@
   },
   {
     "site_id": "S025",
-    "site_name": "夏源银得隆光伏电站",
+    "site_name": "夏源银得隆光伏",
     "hour": 14,
     "sample_count": 597,
     "capacity_mw": 5.65,
@@ -3758,7 +3758,7 @@
   },
   {
     "site_id": "S025",
-    "site_name": "夏源银得隆光伏电站",
+    "site_name": "夏源银得隆光伏",
     "hour": 15,
     "sample_count": 597,
     "capacity_mw": 5.65,
@@ -3771,7 +3771,7 @@
   },
   {
     "site_id": "S025",
-    "site_name": "夏源银得隆光伏电站",
+    "site_name": "夏源银得隆光伏",
     "hour": 16,
     "sample_count": 597,
     "capacity_mw": 5.65,
@@ -3784,7 +3784,7 @@
   },
   {
     "site_id": "S025",
-    "site_name": "夏源银得隆光伏电站",
+    "site_name": "夏源银得隆光伏",
     "hour": 17,
     "sample_count": 598,
     "capacity_mw": 5.65,
@@ -3797,7 +3797,7 @@
   },
   {
     "site_id": "S025",
-    "site_name": "夏源银得隆光伏电站",
+    "site_name": "夏源银得隆光伏",
     "hour": 18,
     "sample_count": 598,
     "capacity_mw": 5.65,
@@ -3810,7 +3810,7 @@
   },
   {
     "site_id": "S025",
-    "site_name": "夏源银得隆光伏电站",
+    "site_name": "夏源银得隆光伏",
     "hour": 19,
     "sample_count": 598,
     "capacity_mw": 5.65,
@@ -3823,7 +3823,7 @@
   },
   {
     "site_id": "S028",
-    "site_name": "华能星耀光伏电站",
+    "site_name": "华能星耀光伏",
     "hour": 6,
     "sample_count": 436,
     "capacity_mw": 3.14,
@@ -3836,7 +3836,7 @@
   },
   {
     "site_id": "S028",
-    "site_name": "华能星耀光伏电站",
+    "site_name": "华能星耀光伏",
     "hour": 7,
     "sample_count": 436,
     "capacity_mw": 3.14,
@@ -3849,7 +3849,7 @@
   },
   {
     "site_id": "S028",
-    "site_name": "华能星耀光伏电站",
+    "site_name": "华能星耀光伏",
     "hour": 8,
     "sample_count": 436,
     "capacity_mw": 3.14,
@@ -3862,7 +3862,7 @@
   },
   {
     "site_id": "S028",
-    "site_name": "华能星耀光伏电站",
+    "site_name": "华能星耀光伏",
     "hour": 9,
     "sample_count": 437,
     "capacity_mw": 3.14,
@@ -3875,7 +3875,7 @@
   },
   {
     "site_id": "S028",
-    "site_name": "华能星耀光伏电站",
+    "site_name": "华能星耀光伏",
     "hour": 10,
     "sample_count": 437,
     "capacity_mw": 3.14,
@@ -3888,7 +3888,7 @@
   },
   {
     "site_id": "S028",
-    "site_name": "华能星耀光伏电站",
+    "site_name": "华能星耀光伏",
     "hour": 11,
     "sample_count": 437,
     "capacity_mw": 3.14,
@@ -3901,7 +3901,7 @@
   },
   {
     "site_id": "S028",
-    "site_name": "华能星耀光伏电站",
+    "site_name": "华能星耀光伏",
     "hour": 12,
     "sample_count": 437,
     "capacity_mw": 3.14,
@@ -3914,7 +3914,7 @@
   },
   {
     "site_id": "S028",
-    "site_name": "华能星耀光伏电站",
+    "site_name": "华能星耀光伏",
     "hour": 13,
     "sample_count": 437,
     "capacity_mw": 3.14,
@@ -3927,7 +3927,7 @@
   },
   {
     "site_id": "S028",
-    "site_name": "华能星耀光伏电站",
+    "site_name": "华能星耀光伏",
     "hour": 14,
     "sample_count": 437,
     "capacity_mw": 3.14,
@@ -3940,7 +3940,7 @@
   },
   {
     "site_id": "S028",
-    "site_name": "华能星耀光伏电站",
+    "site_name": "华能星耀光伏",
     "hour": 15,
     "sample_count": 437,
     "capacity_mw": 3.14,
@@ -3953,7 +3953,7 @@
   },
   {
     "site_id": "S028",
-    "site_name": "华能星耀光伏电站",
+    "site_name": "华能星耀光伏",
     "hour": 16,
     "sample_count": 437,
     "capacity_mw": 3.14,
@@ -3966,7 +3966,7 @@
   },
   {
     "site_id": "S028",
-    "site_name": "华能星耀光伏电站",
+    "site_name": "华能星耀光伏",
     "hour": 17,
     "sample_count": 437,
     "capacity_mw": 3.14,
@@ -3979,7 +3979,7 @@
   },
   {
     "site_id": "S028",
-    "site_name": "华能星耀光伏电站",
+    "site_name": "华能星耀光伏",
     "hour": 18,
     "sample_count": 437,
     "capacity_mw": 3.14,
@@ -3992,7 +3992,7 @@
   },
   {
     "site_id": "S028",
-    "site_name": "华能星耀光伏电站",
+    "site_name": "华能星耀光伏",
     "hour": 19,
     "sample_count": 437,
     "capacity_mw": 3.14,
@@ -4005,7 +4005,7 @@
   },
   {
     "site_id": "S030",
-    "site_name": "中森侍庄光伏发电站",
+    "site_name": "中森侍庄光伏",
     "hour": 6,
     "sample_count": 1096,
     "capacity_mw": 2.9,
@@ -4018,7 +4018,7 @@
   },
   {
     "site_id": "S030",
-    "site_name": "中森侍庄光伏发电站",
+    "site_name": "中森侍庄光伏",
     "hour": 7,
     "sample_count": 1096,
     "capacity_mw": 2.9,
@@ -4031,7 +4031,7 @@
   },
   {
     "site_id": "S030",
-    "site_name": "中森侍庄光伏发电站",
+    "site_name": "中森侍庄光伏",
     "hour": 8,
     "sample_count": 1096,
     "capacity_mw": 2.9,
@@ -4044,7 +4044,7 @@
   },
   {
     "site_id": "S030",
-    "site_name": "中森侍庄光伏发电站",
+    "site_name": "中森侍庄光伏",
     "hour": 9,
     "sample_count": 1096,
     "capacity_mw": 2.9,
@@ -4057,7 +4057,7 @@
   },
   {
     "site_id": "S030",
-    "site_name": "中森侍庄光伏发电站",
+    "site_name": "中森侍庄光伏",
     "hour": 10,
     "sample_count": 1096,
     "capacity_mw": 2.9,
@@ -4070,7 +4070,7 @@
   },
   {
     "site_id": "S030",
-    "site_name": "中森侍庄光伏发电站",
+    "site_name": "中森侍庄光伏",
     "hour": 11,
     "sample_count": 1096,
     "capacity_mw": 2.9,
@@ -4083,7 +4083,7 @@
   },
   {
     "site_id": "S030",
-    "site_name": "中森侍庄光伏发电站",
+    "site_name": "中森侍庄光伏",
     "hour": 12,
     "sample_count": 1096,
     "capacity_mw": 2.9,
@@ -4096,7 +4096,7 @@
   },
   {
     "site_id": "S030",
-    "site_name": "中森侍庄光伏发电站",
+    "site_name": "中森侍庄光伏",
     "hour": 13,
     "sample_count": 1096,
     "capacity_mw": 2.9,
@@ -4109,7 +4109,7 @@
   },
   {
     "site_id": "S030",
-    "site_name": "中森侍庄光伏发电站",
+    "site_name": "中森侍庄光伏",
     "hour": 14,
     "sample_count": 1096,
     "capacity_mw": 2.9,
@@ -4122,7 +4122,7 @@
   },
   {
     "site_id": "S030",
-    "site_name": "中森侍庄光伏发电站",
+    "site_name": "中森侍庄光伏",
     "hour": 15,
     "sample_count": 1096,
     "capacity_mw": 2.9,
@@ -4135,7 +4135,7 @@
   },
   {
     "site_id": "S030",
-    "site_name": "中森侍庄光伏发电站",
+    "site_name": "中森侍庄光伏",
     "hour": 16,
     "sample_count": 1096,
     "capacity_mw": 2.9,
@@ -4148,7 +4148,7 @@
   },
   {
     "site_id": "S030",
-    "site_name": "中森侍庄光伏发电站",
+    "site_name": "中森侍庄光伏",
     "hour": 17,
     "sample_count": 1096,
     "capacity_mw": 2.9,
@@ -4161,7 +4161,7 @@
   },
   {
     "site_id": "S030",
-    "site_name": "中森侍庄光伏发电站",
+    "site_name": "中森侍庄光伏",
     "hour": 18,
     "sample_count": 1096,
     "capacity_mw": 2.9,
@@ -4174,7 +4174,7 @@
   },
   {
     "site_id": "S030",
-    "site_name": "中森侍庄光伏发电站",
+    "site_name": "中森侍庄光伏",
     "hour": 19,
     "sample_count": 1096,
     "capacity_mw": 2.9,
@@ -4187,7 +4187,7 @@
   },
   {
     "site_id": "S031",
-    "site_name": "富云杨集光伏电站",
+    "site_name": "富云杨集光伏",
     "hour": 6,
     "sample_count": 1096,
     "capacity_mw": 0.9222,
@@ -4200,7 +4200,7 @@
   },
   {
     "site_id": "S031",
-    "site_name": "富云杨集光伏电站",
+    "site_name": "富云杨集光伏",
     "hour": 7,
     "sample_count": 1096,
     "capacity_mw": 0.9222,
@@ -4213,7 +4213,7 @@
   },
   {
     "site_id": "S031",
-    "site_name": "富云杨集光伏电站",
+    "site_name": "富云杨集光伏",
     "hour": 8,
     "sample_count": 1096,
     "capacity_mw": 0.9222,
@@ -4226,7 +4226,7 @@
   },
   {
     "site_id": "S031",
-    "site_name": "富云杨集光伏电站",
+    "site_name": "富云杨集光伏",
     "hour": 9,
     "sample_count": 1096,
     "capacity_mw": 0.9222,
@@ -4239,7 +4239,7 @@
   },
   {
     "site_id": "S031",
-    "site_name": "富云杨集光伏电站",
+    "site_name": "富云杨集光伏",
     "hour": 10,
     "sample_count": 1096,
     "capacity_mw": 0.9222,
@@ -4252,7 +4252,7 @@
   },
   {
     "site_id": "S031",
-    "site_name": "富云杨集光伏电站",
+    "site_name": "富云杨集光伏",
     "hour": 11,
     "sample_count": 1096,
     "capacity_mw": 0.9222,
@@ -4265,7 +4265,7 @@
   },
   {
     "site_id": "S031",
-    "site_name": "富云杨集光伏电站",
+    "site_name": "富云杨集光伏",
     "hour": 12,
     "sample_count": 1096,
     "capacity_mw": 0.9222,
@@ -4278,7 +4278,7 @@
   },
   {
     "site_id": "S031",
-    "site_name": "富云杨集光伏电站",
+    "site_name": "富云杨集光伏",
     "hour": 13,
     "sample_count": 1096,
     "capacity_mw": 0.9222,
@@ -4291,7 +4291,7 @@
   },
   {
     "site_id": "S031",
-    "site_name": "富云杨集光伏电站",
+    "site_name": "富云杨集光伏",
     "hour": 14,
     "sample_count": 1096,
     "capacity_mw": 0.9222,
@@ -4304,7 +4304,7 @@
   },
   {
     "site_id": "S031",
-    "site_name": "富云杨集光伏电站",
+    "site_name": "富云杨集光伏",
     "hour": 15,
     "sample_count": 1096,
     "capacity_mw": 0.9222,
@@ -4317,7 +4317,7 @@
   },
   {
     "site_id": "S031",
-    "site_name": "富云杨集光伏电站",
+    "site_name": "富云杨集光伏",
     "hour": 16,
     "sample_count": 1096,
     "capacity_mw": 0.9222,
@@ -4330,7 +4330,7 @@
   },
   {
     "site_id": "S031",
-    "site_name": "富云杨集光伏电站",
+    "site_name": "富云杨集光伏",
     "hour": 17,
     "sample_count": 1096,
     "capacity_mw": 0.9222,
@@ -4343,7 +4343,7 @@
   },
   {
     "site_id": "S031",
-    "site_name": "富云杨集光伏电站",
+    "site_name": "富云杨集光伏",
     "hour": 18,
     "sample_count": 1096,
     "capacity_mw": 0.9222,
@@ -4356,7 +4356,7 @@
   },
   {
     "site_id": "S031",
-    "site_name": "富云杨集光伏电站",
+    "site_name": "富云杨集光伏",
     "hour": 19,
     "sample_count": 1096,
     "capacity_mw": 0.9222,
@@ -4369,7 +4369,7 @@
   },
   {
     "site_id": "S032",
-    "site_name": "华能中林光伏电站",
+    "site_name": "华能中林光伏",
     "hour": 6,
     "sample_count": 750,
     "capacity_mw": 9.335,
@@ -4382,7 +4382,7 @@
   },
   {
     "site_id": "S032",
-    "site_name": "华能中林光伏电站",
+    "site_name": "华能中林光伏",
     "hour": 7,
     "sample_count": 750,
     "capacity_mw": 9.335,
@@ -4395,7 +4395,7 @@
   },
   {
     "site_id": "S032",
-    "site_name": "华能中林光伏电站",
+    "site_name": "华能中林光伏",
     "hour": 8,
     "sample_count": 750,
     "capacity_mw": 9.335,
@@ -4408,7 +4408,7 @@
   },
   {
     "site_id": "S032",
-    "site_name": "华能中林光伏电站",
+    "site_name": "华能中林光伏",
     "hour": 9,
     "sample_count": 750,
     "capacity_mw": 9.335,
@@ -4421,7 +4421,7 @@
   },
   {
     "site_id": "S032",
-    "site_name": "华能中林光伏电站",
+    "site_name": "华能中林光伏",
     "hour": 10,
     "sample_count": 750,
     "capacity_mw": 9.335,
@@ -4434,7 +4434,7 @@
   },
   {
     "site_id": "S032",
-    "site_name": "华能中林光伏电站",
+    "site_name": "华能中林光伏",
     "hour": 11,
     "sample_count": 750,
     "capacity_mw": 9.335,
@@ -4447,7 +4447,7 @@
   },
   {
     "site_id": "S032",
-    "site_name": "华能中林光伏电站",
+    "site_name": "华能中林光伏",
     "hour": 12,
     "sample_count": 750,
     "capacity_mw": 9.335,
@@ -4460,7 +4460,7 @@
   },
   {
     "site_id": "S032",
-    "site_name": "华能中林光伏电站",
+    "site_name": "华能中林光伏",
     "hour": 13,
     "sample_count": 750,
     "capacity_mw": 9.335,
@@ -4473,7 +4473,7 @@
   },
   {
     "site_id": "S032",
-    "site_name": "华能中林光伏电站",
+    "site_name": "华能中林光伏",
     "hour": 14,
     "sample_count": 750,
     "capacity_mw": 9.335,
@@ -4486,7 +4486,7 @@
   },
   {
     "site_id": "S032",
-    "site_name": "华能中林光伏电站",
+    "site_name": "华能中林光伏",
     "hour": 15,
     "sample_count": 750,
     "capacity_mw": 9.335,
@@ -4499,7 +4499,7 @@
   },
   {
     "site_id": "S032",
-    "site_name": "华能中林光伏电站",
+    "site_name": "华能中林光伏",
     "hour": 16,
     "sample_count": 750,
     "capacity_mw": 9.335,
@@ -4512,7 +4512,7 @@
   },
   {
     "site_id": "S032",
-    "site_name": "华能中林光伏电站",
+    "site_name": "华能中林光伏",
     "hour": 17,
     "sample_count": 750,
     "capacity_mw": 9.335,
@@ -4525,7 +4525,7 @@
   },
   {
     "site_id": "S032",
-    "site_name": "华能中林光伏电站",
+    "site_name": "华能中林光伏",
     "hour": 18,
     "sample_count": 750,
     "capacity_mw": 9.335,
@@ -4538,7 +4538,7 @@
   },
   {
     "site_id": "S032",
-    "site_name": "华能中林光伏电站",
+    "site_name": "华能中林光伏",
     "hour": 19,
     "sample_count": 750,
     "capacity_mw": 9.335,
@@ -4551,7 +4551,7 @@
   },
   {
     "site_id": "S033",
-    "site_name": "天瀚万发光伏电站",
+    "site_name": "天瀚万发光伏",
     "hour": 6,
     "sample_count": 294,
     "capacity_mw": 5.688,
@@ -4564,7 +4564,7 @@
   },
   {
     "site_id": "S033",
-    "site_name": "天瀚万发光伏电站",
+    "site_name": "天瀚万发光伏",
     "hour": 7,
     "sample_count": 294,
     "capacity_mw": 5.688,
@@ -4577,7 +4577,7 @@
   },
   {
     "site_id": "S033",
-    "site_name": "天瀚万发光伏电站",
+    "site_name": "天瀚万发光伏",
     "hour": 8,
     "sample_count": 294,
     "capacity_mw": 5.688,
@@ -4590,7 +4590,7 @@
   },
   {
     "site_id": "S033",
-    "site_name": "天瀚万发光伏电站",
+    "site_name": "天瀚万发光伏",
     "hour": 9,
     "sample_count": 294,
     "capacity_mw": 5.688,
@@ -4603,7 +4603,7 @@
   },
   {
     "site_id": "S033",
-    "site_name": "天瀚万发光伏电站",
+    "site_name": "天瀚万发光伏",
     "hour": 10,
     "sample_count": 294,
     "capacity_mw": 5.688,
@@ -4616,7 +4616,7 @@
   },
   {
     "site_id": "S033",
-    "site_name": "天瀚万发光伏电站",
+    "site_name": "天瀚万发光伏",
     "hour": 11,
     "sample_count": 294,
     "capacity_mw": 5.688,
@@ -4629,7 +4629,7 @@
   },
   {
     "site_id": "S033",
-    "site_name": "天瀚万发光伏电站",
+    "site_name": "天瀚万发光伏",
     "hour": 12,
     "sample_count": 294,
     "capacity_mw": 5.688,
@@ -4642,7 +4642,7 @@
   },
   {
     "site_id": "S033",
-    "site_name": "天瀚万发光伏电站",
+    "site_name": "天瀚万发光伏",
     "hour": 13,
     "sample_count": 294,
     "capacity_mw": 5.688,
@@ -4655,7 +4655,7 @@
   },
   {
     "site_id": "S033",
-    "site_name": "天瀚万发光伏电站",
+    "site_name": "天瀚万发光伏",
     "hour": 14,
     "sample_count": 294,
     "capacity_mw": 5.688,
@@ -4668,7 +4668,7 @@
   },
   {
     "site_id": "S033",
-    "site_name": "天瀚万发光伏电站",
+    "site_name": "天瀚万发光伏",
     "hour": 15,
     "sample_count": 295,
     "capacity_mw": 5.688,
@@ -4681,7 +4681,7 @@
   },
   {
     "site_id": "S033",
-    "site_name": "天瀚万发光伏电站",
+    "site_name": "天瀚万发光伏",
     "hour": 16,
     "sample_count": 295,
     "capacity_mw": 5.688,
@@ -4694,7 +4694,7 @@
   },
   {
     "site_id": "S033",
-    "site_name": "天瀚万发光伏电站",
+    "site_name": "天瀚万发光伏",
     "hour": 17,
     "sample_count": 295,
     "capacity_mw": 5.688,
@@ -4707,7 +4707,7 @@
   },
   {
     "site_id": "S033",
-    "site_name": "天瀚万发光伏电站",
+    "site_name": "天瀚万发光伏",
     "hour": 18,
     "sample_count": 295,
     "capacity_mw": 5.688,
@@ -4720,7 +4720,7 @@
   },
   {
     "site_id": "S033",
-    "site_name": "天瀚万发光伏电站",
+    "site_name": "天瀚万发光伏",
     "hour": 19,
     "sample_count": 295,
     "capacity_mw": 5.688,
@@ -4733,7 +4733,7 @@
   },
   {
     "site_id": "S034",
-    "site_name": "建魄俊达光伏电站",
+    "site_name": "建魄俊达光伏",
     "hour": 6,
     "sample_count": 222,
     "capacity_mw": 3.496,
@@ -4746,7 +4746,7 @@
   },
   {
     "site_id": "S034",
-    "site_name": "建魄俊达光伏电站",
+    "site_name": "建魄俊达光伏",
     "hour": 7,
     "sample_count": 222,
     "capacity_mw": 3.496,
@@ -4759,7 +4759,7 @@
   },
   {
     "site_id": "S034",
-    "site_name": "建魄俊达光伏电站",
+    "site_name": "建魄俊达光伏",
     "hour": 8,
     "sample_count": 222,
     "capacity_mw": 3.496,
@@ -4772,7 +4772,7 @@
   },
   {
     "site_id": "S034",
-    "site_name": "建魄俊达光伏电站",
+    "site_name": "建魄俊达光伏",
     "hour": 9,
     "sample_count": 223,
     "capacity_mw": 3.496,
@@ -4785,7 +4785,7 @@
   },
   {
     "site_id": "S034",
-    "site_name": "建魄俊达光伏电站",
+    "site_name": "建魄俊达光伏",
     "hour": 10,
     "sample_count": 223,
     "capacity_mw": 3.496,
@@ -4798,7 +4798,7 @@
   },
   {
     "site_id": "S034",
-    "site_name": "建魄俊达光伏电站",
+    "site_name": "建魄俊达光伏",
     "hour": 11,
     "sample_count": 223,
     "capacity_mw": 3.496,
@@ -4811,7 +4811,7 @@
   },
   {
     "site_id": "S034",
-    "site_name": "建魄俊达光伏电站",
+    "site_name": "建魄俊达光伏",
     "hour": 12,
     "sample_count": 223,
     "capacity_mw": 3.496,
@@ -4824,7 +4824,7 @@
   },
   {
     "site_id": "S034",
-    "site_name": "建魄俊达光伏电站",
+    "site_name": "建魄俊达光伏",
     "hour": 13,
     "sample_count": 223,
     "capacity_mw": 3.496,
@@ -4837,7 +4837,7 @@
   },
   {
     "site_id": "S034",
-    "site_name": "建魄俊达光伏电站",
+    "site_name": "建魄俊达光伏",
     "hour": 14,
     "sample_count": 223,
     "capacity_mw": 3.496,
@@ -4850,7 +4850,7 @@
   },
   {
     "site_id": "S034",
-    "site_name": "建魄俊达光伏电站",
+    "site_name": "建魄俊达光伏",
     "hour": 15,
     "sample_count": 223,
     "capacity_mw": 3.496,
@@ -4863,7 +4863,7 @@
   },
   {
     "site_id": "S034",
-    "site_name": "建魄俊达光伏电站",
+    "site_name": "建魄俊达光伏",
     "hour": 16,
     "sample_count": 223,
     "capacity_mw": 3.496,
@@ -4876,7 +4876,7 @@
   },
   {
     "site_id": "S034",
-    "site_name": "建魄俊达光伏电站",
+    "site_name": "建魄俊达光伏",
     "hour": 17,
     "sample_count": 223,
     "capacity_mw": 3.496,
@@ -4889,7 +4889,7 @@
   },
   {
     "site_id": "S034",
-    "site_name": "建魄俊达光伏电站",
+    "site_name": "建魄俊达光伏",
     "hour": 18,
     "sample_count": 223,
     "capacity_mw": 3.496,
@@ -4902,7 +4902,7 @@
   },
   {
     "site_id": "S034",
-    "site_name": "建魄俊达光伏电站",
+    "site_name": "建魄俊达光伏",
     "hour": 19,
     "sample_count": 223,
     "capacity_mw": 3.496,
@@ -4915,7 +4915,7 @@
   },
   {
     "site_id": "S035",
-    "site_name": "国能品品鲜光伏电站",
+    "site_name": "国能品品鲜光伏",
     "hour": 6,
     "sample_count": 827,
     "capacity_mw": 5.296,
@@ -4928,7 +4928,7 @@
   },
   {
     "site_id": "S035",
-    "site_name": "国能品品鲜光伏电站",
+    "site_name": "国能品品鲜光伏",
     "hour": 7,
     "sample_count": 827,
     "capacity_mw": 5.296,
@@ -4941,7 +4941,7 @@
   },
   {
     "site_id": "S035",
-    "site_name": "国能品品鲜光伏电站",
+    "site_name": "国能品品鲜光伏",
     "hour": 8,
     "sample_count": 827,
     "capacity_mw": 5.296,
@@ -4954,7 +4954,7 @@
   },
   {
     "site_id": "S035",
-    "site_name": "国能品品鲜光伏电站",
+    "site_name": "国能品品鲜光伏",
     "hour": 9,
     "sample_count": 827,
     "capacity_mw": 5.296,
@@ -4967,7 +4967,7 @@
   },
   {
     "site_id": "S035",
-    "site_name": "国能品品鲜光伏电站",
+    "site_name": "国能品品鲜光伏",
     "hour": 10,
     "sample_count": 827,
     "capacity_mw": 5.296,
@@ -4980,7 +4980,7 @@
   },
   {
     "site_id": "S035",
-    "site_name": "国能品品鲜光伏电站",
+    "site_name": "国能品品鲜光伏",
     "hour": 11,
     "sample_count": 827,
     "capacity_mw": 5.296,
@@ -4993,7 +4993,7 @@
   },
   {
     "site_id": "S035",
-    "site_name": "国能品品鲜光伏电站",
+    "site_name": "国能品品鲜光伏",
     "hour": 12,
     "sample_count": 827,
     "capacity_mw": 5.296,
@@ -5006,7 +5006,7 @@
   },
   {
     "site_id": "S035",
-    "site_name": "国能品品鲜光伏电站",
+    "site_name": "国能品品鲜光伏",
     "hour": 13,
     "sample_count": 827,
     "capacity_mw": 5.296,
@@ -5019,7 +5019,7 @@
   },
   {
     "site_id": "S035",
-    "site_name": "国能品品鲜光伏电站",
+    "site_name": "国能品品鲜光伏",
     "hour": 14,
     "sample_count": 827,
     "capacity_mw": 5.296,
@@ -5032,7 +5032,7 @@
   },
   {
     "site_id": "S035",
-    "site_name": "国能品品鲜光伏电站",
+    "site_name": "国能品品鲜光伏",
     "hour": 15,
     "sample_count": 827,
     "capacity_mw": 5.296,
@@ -5045,7 +5045,7 @@
   },
   {
     "site_id": "S035",
-    "site_name": "国能品品鲜光伏电站",
+    "site_name": "国能品品鲜光伏",
     "hour": 16,
     "sample_count": 827,
     "capacity_mw": 5.296,
@@ -5058,7 +5058,7 @@
   },
   {
     "site_id": "S035",
-    "site_name": "国能品品鲜光伏电站",
+    "site_name": "国能品品鲜光伏",
     "hour": 17,
     "sample_count": 827,
     "capacity_mw": 5.296,
@@ -5071,7 +5071,7 @@
   },
   {
     "site_id": "S035",
-    "site_name": "国能品品鲜光伏电站",
+    "site_name": "国能品品鲜光伏",
     "hour": 18,
     "sample_count": 827,
     "capacity_mw": 5.296,
@@ -5084,7 +5084,7 @@
   },
   {
     "site_id": "S035",
-    "site_name": "国能品品鲜光伏电站",
+    "site_name": "国能品品鲜光伏",
     "hour": 19,
     "sample_count": 827,
     "capacity_mw": 5.296,
@@ -5097,7 +5097,7 @@
   },
   {
     "site_id": "S037",
-    "site_name": "华能中林三期光伏电站",
+    "site_name": "华能中林三期光伏",
     "hour": 6,
     "sample_count": 247,
     "capacity_mw": 5.946,
@@ -5110,7 +5110,7 @@
   },
   {
     "site_id": "S037",
-    "site_name": "华能中林三期光伏电站",
+    "site_name": "华能中林三期光伏",
     "hour": 7,
     "sample_count": 247,
     "capacity_mw": 5.946,
@@ -5123,7 +5123,7 @@
   },
   {
     "site_id": "S037",
-    "site_name": "华能中林三期光伏电站",
+    "site_name": "华能中林三期光伏",
     "hour": 8,
     "sample_count": 247,
     "capacity_mw": 5.946,
@@ -5136,7 +5136,7 @@
   },
   {
     "site_id": "S037",
-    "site_name": "华能中林三期光伏电站",
+    "site_name": "华能中林三期光伏",
     "hour": 9,
     "sample_count": 247,
     "capacity_mw": 5.946,
@@ -5149,7 +5149,7 @@
   },
   {
     "site_id": "S037",
-    "site_name": "华能中林三期光伏电站",
+    "site_name": "华能中林三期光伏",
     "hour": 10,
     "sample_count": 247,
     "capacity_mw": 5.946,
@@ -5162,7 +5162,7 @@
   },
   {
     "site_id": "S037",
-    "site_name": "华能中林三期光伏电站",
+    "site_name": "华能中林三期光伏",
     "hour": 11,
     "sample_count": 247,
     "capacity_mw": 5.946,
@@ -5175,7 +5175,7 @@
   },
   {
     "site_id": "S037",
-    "site_name": "华能中林三期光伏电站",
+    "site_name": "华能中林三期光伏",
     "hour": 12,
     "sample_count": 247,
     "capacity_mw": 5.946,
@@ -5188,7 +5188,7 @@
   },
   {
     "site_id": "S037",
-    "site_name": "华能中林三期光伏电站",
+    "site_name": "华能中林三期光伏",
     "hour": 13,
     "sample_count": 247,
     "capacity_mw": 5.946,
@@ -5201,7 +5201,7 @@
   },
   {
     "site_id": "S037",
-    "site_name": "华能中林三期光伏电站",
+    "site_name": "华能中林三期光伏",
     "hour": 14,
     "sample_count": 247,
     "capacity_mw": 5.946,
@@ -5214,7 +5214,7 @@
   },
   {
     "site_id": "S037",
-    "site_name": "华能中林三期光伏电站",
+    "site_name": "华能中林三期光伏",
     "hour": 15,
     "sample_count": 247,
     "capacity_mw": 5.946,
@@ -5227,7 +5227,7 @@
   },
   {
     "site_id": "S037",
-    "site_name": "华能中林三期光伏电站",
+    "site_name": "华能中林三期光伏",
     "hour": 16,
     "sample_count": 248,
     "capacity_mw": 5.946,
@@ -5240,7 +5240,7 @@
   },
   {
     "site_id": "S037",
-    "site_name": "华能中林三期光伏电站",
+    "site_name": "华能中林三期光伏",
     "hour": 17,
     "sample_count": 248,
     "capacity_mw": 5.946,
@@ -5253,7 +5253,7 @@
   },
   {
     "site_id": "S037",
-    "site_name": "华能中林三期光伏电站",
+    "site_name": "华能中林三期光伏",
     "hour": 18,
     "sample_count": 248,
     "capacity_mw": 5.946,
@@ -5266,7 +5266,7 @@
   },
   {
     "site_id": "S037",
-    "site_name": "华能中林三期光伏电站",
+    "site_name": "华能中林三期光伏",
     "hour": 19,
     "sample_count": 248,
     "capacity_mw": 5.946,
@@ -5279,7 +5279,7 @@
   },
   {
     "site_id": "S038",
-    "site_name": "衡诚天晴光伏电站",
+    "site_name": "衡诚天晴光伏",
     "hour": 6,
     "sample_count": 245,
     "capacity_mw": 1.672,
@@ -5292,7 +5292,7 @@
   },
   {
     "site_id": "S038",
-    "site_name": "衡诚天晴光伏电站",
+    "site_name": "衡诚天晴光伏",
     "hour": 7,
     "sample_count": 245,
     "capacity_mw": 1.672,
@@ -5305,7 +5305,7 @@
   },
   {
     "site_id": "S038",
-    "site_name": "衡诚天晴光伏电站",
+    "site_name": "衡诚天晴光伏",
     "hour": 8,
     "sample_count": 245,
     "capacity_mw": 1.672,
@@ -5318,7 +5318,7 @@
   },
   {
     "site_id": "S038",
-    "site_name": "衡诚天晴光伏电站",
+    "site_name": "衡诚天晴光伏",
     "hour": 9,
     "sample_count": 245,
     "capacity_mw": 1.672,
@@ -5331,7 +5331,7 @@
   },
   {
     "site_id": "S038",
-    "site_name": "衡诚天晴光伏电站",
+    "site_name": "衡诚天晴光伏",
     "hour": 10,
     "sample_count": 246,
     "capacity_mw": 1.672,
@@ -5344,7 +5344,7 @@
   },
   {
     "site_id": "S038",
-    "site_name": "衡诚天晴光伏电站",
+    "site_name": "衡诚天晴光伏",
     "hour": 11,
     "sample_count": 246,
     "capacity_mw": 1.672,
@@ -5357,7 +5357,7 @@
   },
   {
     "site_id": "S038",
-    "site_name": "衡诚天晴光伏电站",
+    "site_name": "衡诚天晴光伏",
     "hour": 12,
     "sample_count": 246,
     "capacity_mw": 1.672,
@@ -5370,7 +5370,7 @@
   },
   {
     "site_id": "S038",
-    "site_name": "衡诚天晴光伏电站",
+    "site_name": "衡诚天晴光伏",
     "hour": 13,
     "sample_count": 246,
     "capacity_mw": 1.672,
@@ -5383,7 +5383,7 @@
   },
   {
     "site_id": "S038",
-    "site_name": "衡诚天晴光伏电站",
+    "site_name": "衡诚天晴光伏",
     "hour": 14,
     "sample_count": 246,
     "capacity_mw": 1.672,
@@ -5396,7 +5396,7 @@
   },
   {
     "site_id": "S038",
-    "site_name": "衡诚天晴光伏电站",
+    "site_name": "衡诚天晴光伏",
     "hour": 15,
     "sample_count": 246,
     "capacity_mw": 1.672,
@@ -5409,7 +5409,7 @@
   },
   {
     "site_id": "S038",
-    "site_name": "衡诚天晴光伏电站",
+    "site_name": "衡诚天晴光伏",
     "hour": 16,
     "sample_count": 246,
     "capacity_mw": 1.672,
@@ -5422,7 +5422,7 @@
   },
   {
     "site_id": "S038",
-    "site_name": "衡诚天晴光伏电站",
+    "site_name": "衡诚天晴光伏",
     "hour": 17,
     "sample_count": 246,
     "capacity_mw": 1.672,
@@ -5435,7 +5435,7 @@
   },
   {
     "site_id": "S038",
-    "site_name": "衡诚天晴光伏电站",
+    "site_name": "衡诚天晴光伏",
     "hour": 18,
     "sample_count": 246,
     "capacity_mw": 1.672,
@@ -5448,7 +5448,7 @@
   },
   {
     "site_id": "S038",
-    "site_name": "衡诚天晴光伏电站",
+    "site_name": "衡诚天晴光伏",
     "hour": 19,
     "sample_count": 246,
     "capacity_mw": 1.672,
@@ -5461,7 +5461,7 @@
   },
   {
     "site_id": "S039",
-    "site_name": "沐恒腾东光伏电站",
+    "site_name": "沐恒腾东光伏",
     "hour": 6,
     "sample_count": 245,
     "capacity_mw": 3.45,
@@ -5474,7 +5474,7 @@
   },
   {
     "site_id": "S039",
-    "site_name": "沐恒腾东光伏电站",
+    "site_name": "沐恒腾东光伏",
     "hour": 7,
     "sample_count": 245,
     "capacity_mw": 3.45,
@@ -5487,7 +5487,7 @@
   },
   {
     "site_id": "S039",
-    "site_name": "沐恒腾东光伏电站",
+    "site_name": "沐恒腾东光伏",
     "hour": 8,
     "sample_count": 245,
     "capacity_mw": 3.45,
@@ -5500,7 +5500,7 @@
   },
   {
     "site_id": "S039",
-    "site_name": "沐恒腾东光伏电站",
+    "site_name": "沐恒腾东光伏",
     "hour": 9,
     "sample_count": 245,
     "capacity_mw": 3.45,
@@ -5513,7 +5513,7 @@
   },
   {
     "site_id": "S039",
-    "site_name": "沐恒腾东光伏电站",
+    "site_name": "沐恒腾东光伏",
     "hour": 10,
     "sample_count": 245,
     "capacity_mw": 3.45,
@@ -5526,7 +5526,7 @@
   },
   {
     "site_id": "S039",
-    "site_name": "沐恒腾东光伏电站",
+    "site_name": "沐恒腾东光伏",
     "hour": 11,
     "sample_count": 245,
     "capacity_mw": 3.45,
@@ -5539,7 +5539,7 @@
   },
   {
     "site_id": "S039",
-    "site_name": "沐恒腾东光伏电站",
+    "site_name": "沐恒腾东光伏",
     "hour": 12,
     "sample_count": 245,
     "capacity_mw": 3.45,
@@ -5552,7 +5552,7 @@
   },
   {
     "site_id": "S039",
-    "site_name": "沐恒腾东光伏电站",
+    "site_name": "沐恒腾东光伏",
     "hour": 13,
     "sample_count": 245,
     "capacity_mw": 3.45,
@@ -5565,7 +5565,7 @@
   },
   {
     "site_id": "S039",
-    "site_name": "沐恒腾东光伏电站",
+    "site_name": "沐恒腾东光伏",
     "hour": 14,
     "sample_count": 245,
     "capacity_mw": 3.45,
@@ -5578,7 +5578,7 @@
   },
   {
     "site_id": "S039",
-    "site_name": "沐恒腾东光伏电站",
+    "site_name": "沐恒腾东光伏",
     "hour": 15,
     "sample_count": 246,
     "capacity_mw": 3.45,
@@ -5591,7 +5591,7 @@
   },
   {
     "site_id": "S039",
-    "site_name": "沐恒腾东光伏电站",
+    "site_name": "沐恒腾东光伏",
     "hour": 16,
     "sample_count": 246,
     "capacity_mw": 3.45,
@@ -5604,7 +5604,7 @@
   },
   {
     "site_id": "S039",
-    "site_name": "沐恒腾东光伏电站",
+    "site_name": "沐恒腾东光伏",
     "hour": 17,
     "sample_count": 246,
     "capacity_mw": 3.45,
@@ -5617,7 +5617,7 @@
   },
   {
     "site_id": "S039",
-    "site_name": "沐恒腾东光伏电站",
+    "site_name": "沐恒腾东光伏",
     "hour": 18,
     "sample_count": 246,
     "capacity_mw": 3.45,
@@ -5630,7 +5630,7 @@
   },
   {
     "site_id": "S039",
-    "site_name": "沐恒腾东光伏电站",
+    "site_name": "沐恒腾东光伏",
     "hour": 19,
     "sample_count": 246,
     "capacity_mw": 3.45,
@@ -5643,7 +5643,7 @@
   },
   {
     "site_id": "S040",
-    "site_name": "华电苏班光伏电站",
+    "site_name": "华电苏班光伏",
     "hour": 6,
     "sample_count": 265,
     "capacity_mw": 5.96,
@@ -5656,7 +5656,7 @@
   },
   {
     "site_id": "S040",
-    "site_name": "华电苏班光伏电站",
+    "site_name": "华电苏班光伏",
     "hour": 7,
     "sample_count": 265,
     "capacity_mw": 5.96,
@@ -5669,7 +5669,7 @@
   },
   {
     "site_id": "S040",
-    "site_name": "华电苏班光伏电站",
+    "site_name": "华电苏班光伏",
     "hour": 8,
     "sample_count": 265,
     "capacity_mw": 5.96,
@@ -5682,7 +5682,7 @@
   },
   {
     "site_id": "S040",
-    "site_name": "华电苏班光伏电站",
+    "site_name": "华电苏班光伏",
     "hour": 9,
     "sample_count": 265,
     "capacity_mw": 5.96,
@@ -5695,7 +5695,7 @@
   },
   {
     "site_id": "S040",
-    "site_name": "华电苏班光伏电站",
+    "site_name": "华电苏班光伏",
     "hour": 10,
     "sample_count": 265,
     "capacity_mw": 5.96,
@@ -5708,7 +5708,7 @@
   },
   {
     "site_id": "S040",
-    "site_name": "华电苏班光伏电站",
+    "site_name": "华电苏班光伏",
     "hour": 11,
     "sample_count": 265,
     "capacity_mw": 5.96,
@@ -5721,7 +5721,7 @@
   },
   {
     "site_id": "S040",
-    "site_name": "华电苏班光伏电站",
+    "site_name": "华电苏班光伏",
     "hour": 12,
     "sample_count": 265,
     "capacity_mw": 5.96,
@@ -5734,7 +5734,7 @@
   },
   {
     "site_id": "S040",
-    "site_name": "华电苏班光伏电站",
+    "site_name": "华电苏班光伏",
     "hour": 13,
     "sample_count": 265,
     "capacity_mw": 5.96,
@@ -5747,7 +5747,7 @@
   },
   {
     "site_id": "S040",
-    "site_name": "华电苏班光伏电站",
+    "site_name": "华电苏班光伏",
     "hour": 14,
     "sample_count": 265,
     "capacity_mw": 5.96,
@@ -5760,7 +5760,7 @@
   },
   {
     "site_id": "S040",
-    "site_name": "华电苏班光伏电站",
+    "site_name": "华电苏班光伏",
     "hour": 15,
     "sample_count": 265,
     "capacity_mw": 5.96,
@@ -5773,7 +5773,7 @@
   },
   {
     "site_id": "S040",
-    "site_name": "华电苏班光伏电站",
+    "site_name": "华电苏班光伏",
     "hour": 16,
     "sample_count": 265,
     "capacity_mw": 5.96,
@@ -5786,7 +5786,7 @@
   },
   {
     "site_id": "S040",
-    "site_name": "华电苏班光伏电站",
+    "site_name": "华电苏班光伏",
     "hour": 17,
     "sample_count": 265,
     "capacity_mw": 5.96,
@@ -5799,7 +5799,7 @@
   },
   {
     "site_id": "S040",
-    "site_name": "华电苏班光伏电站",
+    "site_name": "华电苏班光伏",
     "hour": 18,
     "sample_count": 265,
     "capacity_mw": 5.96,
@@ -5812,7 +5812,7 @@
   },
   {
     "site_id": "S040",
-    "site_name": "华电苏班光伏电站",
+    "site_name": "华电苏班光伏",
     "hour": 19,
     "sample_count": 265,
     "capacity_mw": 5.96,
@@ -5825,7 +5825,7 @@
   },
   {
     "site_id": "S041",
-    "site_name": "交控赣榆南光伏电站",
+    "site_name": "交控赣榆南光伏",
     "hour": 6,
     "sample_count": 733,
     "capacity_mw": 2.2,
@@ -5838,7 +5838,7 @@
   },
   {
     "site_id": "S041",
-    "site_name": "交控赣榆南光伏电站",
+    "site_name": "交控赣榆南光伏",
     "hour": 7,
     "sample_count": 733,
     "capacity_mw": 2.2,
@@ -5851,7 +5851,7 @@
   },
   {
     "site_id": "S041",
-    "site_name": "交控赣榆南光伏电站",
+    "site_name": "交控赣榆南光伏",
     "hour": 8,
     "sample_count": 733,
     "capacity_mw": 2.2,
@@ -5864,7 +5864,7 @@
   },
   {
     "site_id": "S041",
-    "site_name": "交控赣榆南光伏电站",
+    "site_name": "交控赣榆南光伏",
     "hour": 9,
     "sample_count": 733,
     "capacity_mw": 2.2,
@@ -5877,7 +5877,7 @@
   },
   {
     "site_id": "S041",
-    "site_name": "交控赣榆南光伏电站",
+    "site_name": "交控赣榆南光伏",
     "hour": 10,
     "sample_count": 733,
     "capacity_mw": 2.2,
@@ -5890,7 +5890,7 @@
   },
   {
     "site_id": "S041",
-    "site_name": "交控赣榆南光伏电站",
+    "site_name": "交控赣榆南光伏",
     "hour": 11,
     "sample_count": 733,
     "capacity_mw": 2.2,
@@ -5903,7 +5903,7 @@
   },
   {
     "site_id": "S041",
-    "site_name": "交控赣榆南光伏电站",
+    "site_name": "交控赣榆南光伏",
     "hour": 12,
     "sample_count": 733,
     "capacity_mw": 2.2,
@@ -5916,7 +5916,7 @@
   },
   {
     "site_id": "S041",
-    "site_name": "交控赣榆南光伏电站",
+    "site_name": "交控赣榆南光伏",
     "hour": 13,
     "sample_count": 733,
     "capacity_mw": 2.2,
@@ -5929,7 +5929,7 @@
   },
   {
     "site_id": "S041",
-    "site_name": "交控赣榆南光伏电站",
+    "site_name": "交控赣榆南光伏",
     "hour": 14,
     "sample_count": 733,
     "capacity_mw": 2.2,
@@ -5942,7 +5942,7 @@
   },
   {
     "site_id": "S041",
-    "site_name": "交控赣榆南光伏电站",
+    "site_name": "交控赣榆南光伏",
     "hour": 15,
     "sample_count": 733,
     "capacity_mw": 2.2,
@@ -5955,7 +5955,7 @@
   },
   {
     "site_id": "S041",
-    "site_name": "交控赣榆南光伏电站",
+    "site_name": "交控赣榆南光伏",
     "hour": 16,
     "sample_count": 733,
     "capacity_mw": 2.2,
@@ -5968,7 +5968,7 @@
   },
   {
     "site_id": "S041",
-    "site_name": "交控赣榆南光伏电站",
+    "site_name": "交控赣榆南光伏",
     "hour": 17,
     "sample_count": 733,
     "capacity_mw": 2.2,
@@ -5981,7 +5981,7 @@
   },
   {
     "site_id": "S041",
-    "site_name": "交控赣榆南光伏电站",
+    "site_name": "交控赣榆南光伏",
     "hour": 18,
     "sample_count": 733,
     "capacity_mw": 2.2,
@@ -5994,7 +5994,7 @@
   },
   {
     "site_id": "S041",
-    "site_name": "交控赣榆南光伏电站",
+    "site_name": "交控赣榆南光伏",
     "hour": 19,
     "sample_count": 733,
     "capacity_mw": 2.2,
@@ -6007,7 +6007,7 @@
   },
   {
     "site_id": "S042",
-    "site_name": "国能联合动力光伏电站",
+    "site_name": "国能联合动力光伏",
     "hour": 6,
     "sample_count": 404,
     "capacity_mw": 3.724,
@@ -6020,7 +6020,7 @@
   },
   {
     "site_id": "S042",
-    "site_name": "国能联合动力光伏电站",
+    "site_name": "国能联合动力光伏",
     "hour": 7,
     "sample_count": 404,
     "capacity_mw": 3.724,
@@ -6033,7 +6033,7 @@
   },
   {
     "site_id": "S042",
-    "site_name": "国能联合动力光伏电站",
+    "site_name": "国能联合动力光伏",
     "hour": 8,
     "sample_count": 404,
     "capacity_mw": 3.724,
@@ -6046,7 +6046,7 @@
   },
   {
     "site_id": "S042",
-    "site_name": "国能联合动力光伏电站",
+    "site_name": "国能联合动力光伏",
     "hour": 9,
     "sample_count": 404,
     "capacity_mw": 3.724,
@@ -6059,7 +6059,7 @@
   },
   {
     "site_id": "S042",
-    "site_name": "国能联合动力光伏电站",
+    "site_name": "国能联合动力光伏",
     "hour": 10,
     "sample_count": 404,
     "capacity_mw": 3.724,
@@ -6072,7 +6072,7 @@
   },
   {
     "site_id": "S042",
-    "site_name": "国能联合动力光伏电站",
+    "site_name": "国能联合动力光伏",
     "hour": 11,
     "sample_count": 404,
     "capacity_mw": 3.724,
@@ -6085,7 +6085,7 @@
   },
   {
     "site_id": "S042",
-    "site_name": "国能联合动力光伏电站",
+    "site_name": "国能联合动力光伏",
     "hour": 12,
     "sample_count": 404,
     "capacity_mw": 3.724,
@@ -6098,7 +6098,7 @@
   },
   {
     "site_id": "S042",
-    "site_name": "国能联合动力光伏电站",
+    "site_name": "国能联合动力光伏",
     "hour": 13,
     "sample_count": 404,
     "capacity_mw": 3.724,
@@ -6111,7 +6111,7 @@
   },
   {
     "site_id": "S042",
-    "site_name": "国能联合动力光伏电站",
+    "site_name": "国能联合动力光伏",
     "hour": 14,
     "sample_count": 404,
     "capacity_mw": 3.724,
@@ -6124,7 +6124,7 @@
   },
   {
     "site_id": "S042",
-    "site_name": "国能联合动力光伏电站",
+    "site_name": "国能联合动力光伏",
     "hour": 15,
     "sample_count": 405,
     "capacity_mw": 3.724,
@@ -6137,7 +6137,7 @@
   },
   {
     "site_id": "S042",
-    "site_name": "国能联合动力光伏电站",
+    "site_name": "国能联合动力光伏",
     "hour": 16,
     "sample_count": 405,
     "capacity_mw": 3.724,
@@ -6150,7 +6150,7 @@
   },
   {
     "site_id": "S042",
-    "site_name": "国能联合动力光伏电站",
+    "site_name": "国能联合动力光伏",
     "hour": 17,
     "sample_count": 405,
     "capacity_mw": 3.724,
@@ -6163,7 +6163,7 @@
   },
   {
     "site_id": "S042",
-    "site_name": "国能联合动力光伏电站",
+    "site_name": "国能联合动力光伏",
     "hour": 18,
     "sample_count": 405,
     "capacity_mw": 3.724,
@@ -6176,7 +6176,7 @@
   },
   {
     "site_id": "S042",
-    "site_name": "国能联合动力光伏电站",
+    "site_name": "国能联合动力光伏",
     "hour": 19,
     "sample_count": 405,
     "capacity_mw": 3.724,
@@ -6189,7 +6189,7 @@
   },
   {
     "site_id": "S044",
-    "site_name": "国能汇菇源光伏电站",
+    "site_name": "国能汇菇源光伏",
     "hour": 6,
     "sample_count": 302,
     "capacity_mw": 8.492,
@@ -6202,7 +6202,7 @@
   },
   {
     "site_id": "S044",
-    "site_name": "国能汇菇源光伏电站",
+    "site_name": "国能汇菇源光伏",
     "hour": 7,
     "sample_count": 302,
     "capacity_mw": 8.492,
@@ -6215,7 +6215,7 @@
   },
   {
     "site_id": "S044",
-    "site_name": "国能汇菇源光伏电站",
+    "site_name": "国能汇菇源光伏",
     "hour": 8,
     "sample_count": 302,
     "capacity_mw": 8.492,
@@ -6228,7 +6228,7 @@
   },
   {
     "site_id": "S044",
-    "site_name": "国能汇菇源光伏电站",
+    "site_name": "国能汇菇源光伏",
     "hour": 9,
     "sample_count": 302,
     "capacity_mw": 8.492,
@@ -6241,7 +6241,7 @@
   },
   {
     "site_id": "S044",
-    "site_name": "国能汇菇源光伏电站",
+    "site_name": "国能汇菇源光伏",
     "hour": 10,
     "sample_count": 303,
     "capacity_mw": 8.492,
@@ -6254,7 +6254,7 @@
   },
   {
     "site_id": "S044",
-    "site_name": "国能汇菇源光伏电站",
+    "site_name": "国能汇菇源光伏",
     "hour": 11,
     "sample_count": 303,
     "capacity_mw": 8.492,
@@ -6267,7 +6267,7 @@
   },
   {
     "site_id": "S044",
-    "site_name": "国能汇菇源光伏电站",
+    "site_name": "国能汇菇源光伏",
     "hour": 12,
     "sample_count": 303,
     "capacity_mw": 8.492,
@@ -6280,7 +6280,7 @@
   },
   {
     "site_id": "S044",
-    "site_name": "国能汇菇源光伏电站",
+    "site_name": "国能汇菇源光伏",
     "hour": 13,
     "sample_count": 303,
     "capacity_mw": 8.492,
@@ -6293,7 +6293,7 @@
   },
   {
     "site_id": "S044",
-    "site_name": "国能汇菇源光伏电站",
+    "site_name": "国能汇菇源光伏",
     "hour": 14,
     "sample_count": 303,
     "capacity_mw": 8.492,
@@ -6306,7 +6306,7 @@
   },
   {
     "site_id": "S044",
-    "site_name": "国能汇菇源光伏电站",
+    "site_name": "国能汇菇源光伏",
     "hour": 15,
     "sample_count": 303,
     "capacity_mw": 8.492,
@@ -6319,7 +6319,7 @@
   },
   {
     "site_id": "S044",
-    "site_name": "国能汇菇源光伏电站",
+    "site_name": "国能汇菇源光伏",
     "hour": 16,
     "sample_count": 303,
     "capacity_mw": 8.492,
@@ -6332,7 +6332,7 @@
   },
   {
     "site_id": "S044",
-    "site_name": "国能汇菇源光伏电站",
+    "site_name": "国能汇菇源光伏",
     "hour": 17,
     "sample_count": 303,
     "capacity_mw": 8.492,
@@ -6345,7 +6345,7 @@
   },
   {
     "site_id": "S044",
-    "site_name": "国能汇菇源光伏电站",
+    "site_name": "国能汇菇源光伏",
     "hour": 18,
     "sample_count": 302,
     "capacity_mw": 8.492,
@@ -6358,7 +6358,7 @@
   },
   {
     "site_id": "S044",
-    "site_name": "国能汇菇源光伏电站",
+    "site_name": "国能汇菇源光伏",
     "hour": 19,
     "sample_count": 302,
     "capacity_mw": 8.492,
@@ -6371,7 +6371,7 @@
   },
   {
     "site_id": "S045",
-    "site_name": "华能华兴光伏电站",
+    "site_name": "华能华兴光伏",
     "hour": 6,
     "sample_count": 290,
     "capacity_mw": 2.915,
@@ -6384,7 +6384,7 @@
   },
   {
     "site_id": "S045",
-    "site_name": "华能华兴光伏电站",
+    "site_name": "华能华兴光伏",
     "hour": 7,
     "sample_count": 290,
     "capacity_mw": 2.915,
@@ -6397,7 +6397,7 @@
   },
   {
     "site_id": "S045",
-    "site_name": "华能华兴光伏电站",
+    "site_name": "华能华兴光伏",
     "hour": 8,
     "sample_count": 290,
     "capacity_mw": 2.915,
@@ -6410,7 +6410,7 @@
   },
   {
     "site_id": "S045",
-    "site_name": "华能华兴光伏电站",
+    "site_name": "华能华兴光伏",
     "hour": 9,
     "sample_count": 290,
     "capacity_mw": 2.915,
@@ -6423,7 +6423,7 @@
   },
   {
     "site_id": "S045",
-    "site_name": "华能华兴光伏电站",
+    "site_name": "华能华兴光伏",
     "hour": 10,
     "sample_count": 290,
     "capacity_mw": 2.915,
@@ -6436,7 +6436,7 @@
   },
   {
     "site_id": "S045",
-    "site_name": "华能华兴光伏电站",
+    "site_name": "华能华兴光伏",
     "hour": 11,
     "sample_count": 290,
     "capacity_mw": 2.915,
@@ -6449,7 +6449,7 @@
   },
   {
     "site_id": "S045",
-    "site_name": "华能华兴光伏电站",
+    "site_name": "华能华兴光伏",
     "hour": 12,
     "sample_count": 290,
     "capacity_mw": 2.915,
@@ -6462,7 +6462,7 @@
   },
   {
     "site_id": "S045",
-    "site_name": "华能华兴光伏电站",
+    "site_name": "华能华兴光伏",
     "hour": 13,
     "sample_count": 290,
     "capacity_mw": 2.915,
@@ -6475,7 +6475,7 @@
   },
   {
     "site_id": "S045",
-    "site_name": "华能华兴光伏电站",
+    "site_name": "华能华兴光伏",
     "hour": 14,
     "sample_count": 290,
     "capacity_mw": 2.915,
@@ -6488,7 +6488,7 @@
   },
   {
     "site_id": "S045",
-    "site_name": "华能华兴光伏电站",
+    "site_name": "华能华兴光伏",
     "hour": 15,
     "sample_count": 291,
     "capacity_mw": 2.915,
@@ -6501,7 +6501,7 @@
   },
   {
     "site_id": "S045",
-    "site_name": "华能华兴光伏电站",
+    "site_name": "华能华兴光伏",
     "hour": 16,
     "sample_count": 291,
     "capacity_mw": 2.915,
@@ -6514,7 +6514,7 @@
   },
   {
     "site_id": "S045",
-    "site_name": "华能华兴光伏电站",
+    "site_name": "华能华兴光伏",
     "hour": 17,
     "sample_count": 291,
     "capacity_mw": 2.915,
@@ -6527,7 +6527,7 @@
   },
   {
     "site_id": "S045",
-    "site_name": "华能华兴光伏电站",
+    "site_name": "华能华兴光伏",
     "hour": 18,
     "sample_count": 291,
     "capacity_mw": 2.915,
@@ -6540,7 +6540,7 @@
   },
   {
     "site_id": "S045",
-    "site_name": "华能华兴光伏电站",
+    "site_name": "华能华兴光伏",
     "hour": 19,
     "sample_count": 291,
     "capacity_mw": 2.915,
@@ -6553,7 +6553,7 @@
   },
   {
     "site_id": "S046",
-    "site_name": "国能新易春光伏电站",
+    "site_name": "国能新易春光伏",
     "hour": 6,
     "sample_count": 380,
     "capacity_mw": 4.25,
@@ -6566,7 +6566,7 @@
   },
   {
     "site_id": "S046",
-    "site_name": "国能新易春光伏电站",
+    "site_name": "国能新易春光伏",
     "hour": 7,
     "sample_count": 380,
     "capacity_mw": 4.25,
@@ -6579,7 +6579,7 @@
   },
   {
     "site_id": "S046",
-    "site_name": "国能新易春光伏电站",
+    "site_name": "国能新易春光伏",
     "hour": 8,
     "sample_count": 380,
     "capacity_mw": 4.25,
@@ -6592,7 +6592,7 @@
   },
   {
     "site_id": "S046",
-    "site_name": "国能新易春光伏电站",
+    "site_name": "国能新易春光伏",
     "hour": 9,
     "sample_count": 380,
     "capacity_mw": 4.25,
@@ -6605,7 +6605,7 @@
   },
   {
     "site_id": "S046",
-    "site_name": "国能新易春光伏电站",
+    "site_name": "国能新易春光伏",
     "hour": 10,
     "sample_count": 380,
     "capacity_mw": 4.25,
@@ -6618,7 +6618,7 @@
   },
   {
     "site_id": "S046",
-    "site_name": "国能新易春光伏电站",
+    "site_name": "国能新易春光伏",
     "hour": 11,
     "sample_count": 380,
     "capacity_mw": 4.25,
@@ -6631,7 +6631,7 @@
   },
   {
     "site_id": "S046",
-    "site_name": "国能新易春光伏电站",
+    "site_name": "国能新易春光伏",
     "hour": 12,
     "sample_count": 380,
     "capacity_mw": 4.25,
@@ -6644,7 +6644,7 @@
   },
   {
     "site_id": "S046",
-    "site_name": "国能新易春光伏电站",
+    "site_name": "国能新易春光伏",
     "hour": 13,
     "sample_count": 380,
     "capacity_mw": 4.25,
@@ -6657,7 +6657,7 @@
   },
   {
     "site_id": "S046",
-    "site_name": "国能新易春光伏电站",
+    "site_name": "国能新易春光伏",
     "hour": 14,
     "sample_count": 380,
     "capacity_mw": 4.25,
@@ -6670,7 +6670,7 @@
   },
   {
     "site_id": "S046",
-    "site_name": "国能新易春光伏电站",
+    "site_name": "国能新易春光伏",
     "hour": 15,
     "sample_count": 380,
     "capacity_mw": 4.25,
@@ -6683,7 +6683,7 @@
   },
   {
     "site_id": "S046",
-    "site_name": "国能新易春光伏电站",
+    "site_name": "国能新易春光伏",
     "hour": 16,
     "sample_count": 381,
     "capacity_mw": 4.25,
@@ -6696,7 +6696,7 @@
   },
   {
     "site_id": "S046",
-    "site_name": "国能新易春光伏电站",
+    "site_name": "国能新易春光伏",
     "hour": 17,
     "sample_count": 381,
     "capacity_mw": 4.25,
@@ -6709,7 +6709,7 @@
   },
   {
     "site_id": "S046",
-    "site_name": "国能新易春光伏电站",
+    "site_name": "国能新易春光伏",
     "hour": 18,
     "sample_count": 381,
     "capacity_mw": 4.25,
@@ -6722,7 +6722,7 @@
   },
   {
     "site_id": "S046",
-    "site_name": "国能新易春光伏电站",
+    "site_name": "国能新易春光伏",
     "hour": 19,
     "sample_count": 381,
     "capacity_mw": 4.25,
@@ -6735,7 +6735,7 @@
   },
   {
     "site_id": "S047",
-    "site_name": "汇九齿轮光伏发电站",
+    "site_name": "汇九齿轮光伏电站",
     "hour": 6,
     "sample_count": 957,
     "capacity_mw": 4.8,
@@ -6748,7 +6748,7 @@
   },
   {
     "site_id": "S047",
-    "site_name": "汇九齿轮光伏发电站",
+    "site_name": "汇九齿轮光伏电站",
     "hour": 7,
     "sample_count": 957,
     "capacity_mw": 4.8,
@@ -6761,7 +6761,7 @@
   },
   {
     "site_id": "S047",
-    "site_name": "汇九齿轮光伏发电站",
+    "site_name": "汇九齿轮光伏电站",
     "hour": 8,
     "sample_count": 957,
     "capacity_mw": 4.8,
@@ -6774,7 +6774,7 @@
   },
   {
     "site_id": "S047",
-    "site_name": "汇九齿轮光伏发电站",
+    "site_name": "汇九齿轮光伏电站",
     "hour": 9,
     "sample_count": 957,
     "capacity_mw": 4.8,
@@ -6787,7 +6787,7 @@
   },
   {
     "site_id": "S047",
-    "site_name": "汇九齿轮光伏发电站",
+    "site_name": "汇九齿轮光伏电站",
     "hour": 10,
     "sample_count": 957,
     "capacity_mw": 4.8,
@@ -6800,7 +6800,7 @@
   },
   {
     "site_id": "S047",
-    "site_name": "汇九齿轮光伏发电站",
+    "site_name": "汇九齿轮光伏电站",
     "hour": 11,
     "sample_count": 957,
     "capacity_mw": 4.8,
@@ -6813,7 +6813,7 @@
   },
   {
     "site_id": "S047",
-    "site_name": "汇九齿轮光伏发电站",
+    "site_name": "汇九齿轮光伏电站",
     "hour": 12,
     "sample_count": 957,
     "capacity_mw": 4.8,
@@ -6826,7 +6826,7 @@
   },
   {
     "site_id": "S047",
-    "site_name": "汇九齿轮光伏发电站",
+    "site_name": "汇九齿轮光伏电站",
     "hour": 13,
     "sample_count": 957,
     "capacity_mw": 4.8,
@@ -6839,7 +6839,7 @@
   },
   {
     "site_id": "S047",
-    "site_name": "汇九齿轮光伏发电站",
+    "site_name": "汇九齿轮光伏电站",
     "hour": 14,
     "sample_count": 957,
     "capacity_mw": 4.8,
@@ -6852,7 +6852,7 @@
   },
   {
     "site_id": "S047",
-    "site_name": "汇九齿轮光伏发电站",
+    "site_name": "汇九齿轮光伏电站",
     "hour": 15,
     "sample_count": 957,
     "capacity_mw": 4.8,
@@ -6865,7 +6865,7 @@
   },
   {
     "site_id": "S047",
-    "site_name": "汇九齿轮光伏发电站",
+    "site_name": "汇九齿轮光伏电站",
     "hour": 16,
     "sample_count": 957,
     "capacity_mw": 4.8,
@@ -6878,7 +6878,7 @@
   },
   {
     "site_id": "S047",
-    "site_name": "汇九齿轮光伏发电站",
+    "site_name": "汇九齿轮光伏电站",
     "hour": 17,
     "sample_count": 957,
     "capacity_mw": 4.8,
@@ -6891,7 +6891,7 @@
   },
   {
     "site_id": "S047",
-    "site_name": "汇九齿轮光伏发电站",
+    "site_name": "汇九齿轮光伏电站",
     "hour": 18,
     "sample_count": 957,
     "capacity_mw": 4.8,
@@ -6904,7 +6904,7 @@
   },
   {
     "site_id": "S047",
-    "site_name": "汇九齿轮光伏发电站",
+    "site_name": "汇九齿轮光伏电站",
     "hour": 19,
     "sample_count": 957,
     "capacity_mw": 4.8,
@@ -6917,7 +6917,7 @@
   },
   {
     "site_id": "S048",
-    "site_name": "卓贵光之明光伏电站",
+    "site_name": "卓贵光之明光伏",
     "hour": 6,
     "sample_count": 245,
     "capacity_mw": 4.0,
@@ -6930,7 +6930,7 @@
   },
   {
     "site_id": "S048",
-    "site_name": "卓贵光之明光伏电站",
+    "site_name": "卓贵光之明光伏",
     "hour": 7,
     "sample_count": 245,
     "capacity_mw": 4.0,
@@ -6943,7 +6943,7 @@
   },
   {
     "site_id": "S048",
-    "site_name": "卓贵光之明光伏电站",
+    "site_name": "卓贵光之明光伏",
     "hour": 8,
     "sample_count": 245,
     "capacity_mw": 4.0,
@@ -6956,7 +6956,7 @@
   },
   {
     "site_id": "S048",
-    "site_name": "卓贵光之明光伏电站",
+    "site_name": "卓贵光之明光伏",
     "hour": 9,
     "sample_count": 245,
     "capacity_mw": 4.0,
@@ -6969,7 +6969,7 @@
   },
   {
     "site_id": "S048",
-    "site_name": "卓贵光之明光伏电站",
+    "site_name": "卓贵光之明光伏",
     "hour": 10,
     "sample_count": 245,
     "capacity_mw": 4.0,
@@ -6982,7 +6982,7 @@
   },
   {
     "site_id": "S048",
-    "site_name": "卓贵光之明光伏电站",
+    "site_name": "卓贵光之明光伏",
     "hour": 11,
     "sample_count": 246,
     "capacity_mw": 4.0,
@@ -6995,7 +6995,7 @@
   },
   {
     "site_id": "S048",
-    "site_name": "卓贵光之明光伏电站",
+    "site_name": "卓贵光之明光伏",
     "hour": 12,
     "sample_count": 246,
     "capacity_mw": 4.0,
@@ -7008,7 +7008,7 @@
   },
   {
     "site_id": "S048",
-    "site_name": "卓贵光之明光伏电站",
+    "site_name": "卓贵光之明光伏",
     "hour": 13,
     "sample_count": 246,
     "capacity_mw": 4.0,
@@ -7021,7 +7021,7 @@
   },
   {
     "site_id": "S048",
-    "site_name": "卓贵光之明光伏电站",
+    "site_name": "卓贵光之明光伏",
     "hour": 14,
     "sample_count": 246,
     "capacity_mw": 4.0,
@@ -7034,7 +7034,7 @@
   },
   {
     "site_id": "S048",
-    "site_name": "卓贵光之明光伏电站",
+    "site_name": "卓贵光之明光伏",
     "hour": 15,
     "sample_count": 246,
     "capacity_mw": 4.0,
@@ -7047,7 +7047,7 @@
   },
   {
     "site_id": "S048",
-    "site_name": "卓贵光之明光伏电站",
+    "site_name": "卓贵光之明光伏",
     "hour": 16,
     "sample_count": 246,
     "capacity_mw": 4.0,
@@ -7060,7 +7060,7 @@
   },
   {
     "site_id": "S048",
-    "site_name": "卓贵光之明光伏电站",
+    "site_name": "卓贵光之明光伏",
     "hour": 17,
     "sample_count": 246,
     "capacity_mw": 4.0,
@@ -7073,7 +7073,7 @@
   },
   {
     "site_id": "S048",
-    "site_name": "卓贵光之明光伏电站",
+    "site_name": "卓贵光之明光伏",
     "hour": 18,
     "sample_count": 246,
     "capacity_mw": 4.0,
@@ -7086,7 +7086,7 @@
   },
   {
     "site_id": "S048",
-    "site_name": "卓贵光之明光伏电站",
+    "site_name": "卓贵光之明光伏",
     "hour": 19,
     "sample_count": 246,
     "capacity_mw": 4.0,
@@ -7099,7 +7099,7 @@
   },
   {
     "site_id": "S049",
-    "site_name": "华能灌云光伏发电站",
+    "site_name": "华能灌云光伏",
     "hour": 6,
     "sample_count": 1096,
     "capacity_mw": 14.1,
@@ -7112,7 +7112,7 @@
   },
   {
     "site_id": "S049",
-    "site_name": "华能灌云光伏发电站",
+    "site_name": "华能灌云光伏",
     "hour": 7,
     "sample_count": 1096,
     "capacity_mw": 14.1,
@@ -7125,7 +7125,7 @@
   },
   {
     "site_id": "S049",
-    "site_name": "华能灌云光伏发电站",
+    "site_name": "华能灌云光伏",
     "hour": 8,
     "sample_count": 1096,
     "capacity_mw": 14.1,
@@ -7138,7 +7138,7 @@
   },
   {
     "site_id": "S049",
-    "site_name": "华能灌云光伏发电站",
+    "site_name": "华能灌云光伏",
     "hour": 9,
     "sample_count": 1096,
     "capacity_mw": 14.1,
@@ -7151,7 +7151,7 @@
   },
   {
     "site_id": "S049",
-    "site_name": "华能灌云光伏发电站",
+    "site_name": "华能灌云光伏",
     "hour": 10,
     "sample_count": 1096,
     "capacity_mw": 14.1,
@@ -7164,7 +7164,7 @@
   },
   {
     "site_id": "S049",
-    "site_name": "华能灌云光伏发电站",
+    "site_name": "华能灌云光伏",
     "hour": 11,
     "sample_count": 1096,
     "capacity_mw": 14.1,
@@ -7177,7 +7177,7 @@
   },
   {
     "site_id": "S049",
-    "site_name": "华能灌云光伏发电站",
+    "site_name": "华能灌云光伏",
     "hour": 12,
     "sample_count": 1096,
     "capacity_mw": 14.1,
@@ -7190,7 +7190,7 @@
   },
   {
     "site_id": "S049",
-    "site_name": "华能灌云光伏发电站",
+    "site_name": "华能灌云光伏",
     "hour": 13,
     "sample_count": 1096,
     "capacity_mw": 14.1,
@@ -7203,7 +7203,7 @@
   },
   {
     "site_id": "S049",
-    "site_name": "华能灌云光伏发电站",
+    "site_name": "华能灌云光伏",
     "hour": 14,
     "sample_count": 1096,
     "capacity_mw": 14.1,
@@ -7216,7 +7216,7 @@
   },
   {
     "site_id": "S049",
-    "site_name": "华能灌云光伏发电站",
+    "site_name": "华能灌云光伏",
     "hour": 15,
     "sample_count": 1096,
     "capacity_mw": 14.1,
@@ -7229,7 +7229,7 @@
   },
   {
     "site_id": "S049",
-    "site_name": "华能灌云光伏发电站",
+    "site_name": "华能灌云光伏",
     "hour": 16,
     "sample_count": 1096,
     "capacity_mw": 14.1,
@@ -7242,7 +7242,7 @@
   },
   {
     "site_id": "S049",
-    "site_name": "华能灌云光伏发电站",
+    "site_name": "华能灌云光伏",
     "hour": 17,
     "sample_count": 1096,
     "capacity_mw": 14.1,
@@ -7255,7 +7255,7 @@
   },
   {
     "site_id": "S049",
-    "site_name": "华能灌云光伏发电站",
+    "site_name": "华能灌云光伏",
     "hour": 18,
     "sample_count": 1096,
     "capacity_mw": 14.1,
@@ -7268,7 +7268,7 @@
   },
   {
     "site_id": "S049",
-    "site_name": "华能灌云光伏发电站",
+    "site_name": "华能灌云光伏",
     "hour": 19,
     "sample_count": 1096,
     "capacity_mw": 14.1,
@@ -7281,7 +7281,7 @@
   },
   {
     "site_id": "S050",
-    "site_name": "沐恒东海产业园光伏电站",
+    "site_name": "沐恒东海产业园光伏",
     "hour": 6,
     "sample_count": 245,
     "capacity_mw": 2.55,
@@ -7294,7 +7294,7 @@
   },
   {
     "site_id": "S050",
-    "site_name": "沐恒东海产业园光伏电站",
+    "site_name": "沐恒东海产业园光伏",
     "hour": 7,
     "sample_count": 245,
     "capacity_mw": 2.55,
@@ -7307,7 +7307,7 @@
   },
   {
     "site_id": "S050",
-    "site_name": "沐恒东海产业园光伏电站",
+    "site_name": "沐恒东海产业园光伏",
     "hour": 8,
     "sample_count": 245,
     "capacity_mw": 2.55,
@@ -7320,7 +7320,7 @@
   },
   {
     "site_id": "S050",
-    "site_name": "沐恒东海产业园光伏电站",
+    "site_name": "沐恒东海产业园光伏",
     "hour": 9,
     "sample_count": 245,
     "capacity_mw": 2.55,
@@ -7333,7 +7333,7 @@
   },
   {
     "site_id": "S050",
-    "site_name": "沐恒东海产业园光伏电站",
+    "site_name": "沐恒东海产业园光伏",
     "hour": 10,
     "sample_count": 245,
     "capacity_mw": 2.55,
@@ -7346,7 +7346,7 @@
   },
   {
     "site_id": "S050",
-    "site_name": "沐恒东海产业园光伏电站",
+    "site_name": "沐恒东海产业园光伏",
     "hour": 11,
     "sample_count": 245,
     "capacity_mw": 2.55,
@@ -7359,7 +7359,7 @@
   },
   {
     "site_id": "S050",
-    "site_name": "沐恒东海产业园光伏电站",
+    "site_name": "沐恒东海产业园光伏",
     "hour": 12,
     "sample_count": 245,
     "capacity_mw": 2.55,
@@ -7372,7 +7372,7 @@
   },
   {
     "site_id": "S050",
-    "site_name": "沐恒东海产业园光伏电站",
+    "site_name": "沐恒东海产业园光伏",
     "hour": 13,
     "sample_count": 245,
     "capacity_mw": 2.55,
@@ -7385,7 +7385,7 @@
   },
   {
     "site_id": "S050",
-    "site_name": "沐恒东海产业园光伏电站",
+    "site_name": "沐恒东海产业园光伏",
     "hour": 14,
     "sample_count": 245,
     "capacity_mw": 2.55,
@@ -7398,7 +7398,7 @@
   },
   {
     "site_id": "S050",
-    "site_name": "沐恒东海产业园光伏电站",
+    "site_name": "沐恒东海产业园光伏",
     "hour": 15,
     "sample_count": 246,
     "capacity_mw": 2.55,
@@ -7411,7 +7411,7 @@
   },
   {
     "site_id": "S050",
-    "site_name": "沐恒东海产业园光伏电站",
+    "site_name": "沐恒东海产业园光伏",
     "hour": 16,
     "sample_count": 246,
     "capacity_mw": 2.55,
@@ -7424,7 +7424,7 @@
   },
   {
     "site_id": "S050",
-    "site_name": "沐恒东海产业园光伏电站",
+    "site_name": "沐恒东海产业园光伏",
     "hour": 17,
     "sample_count": 246,
     "capacity_mw": 2.55,
@@ -7437,7 +7437,7 @@
   },
   {
     "site_id": "S050",
-    "site_name": "沐恒东海产业园光伏电站",
+    "site_name": "沐恒东海产业园光伏",
     "hour": 18,
     "sample_count": 246,
     "capacity_mw": 2.55,
@@ -7450,7 +7450,7 @@
   },
   {
     "site_id": "S050",
-    "site_name": "沐恒东海产业园光伏电站",
+    "site_name": "沐恒东海产业园光伏",
     "hour": 19,
     "sample_count": 246,
     "capacity_mw": 2.55,
@@ -7463,7 +7463,7 @@
   },
   {
     "site_id": "S051",
-    "site_name": "鲲鹏德宇光伏电站",
+    "site_name": "鲲鹏德宇光伏",
     "hour": 6,
     "sample_count": 245,
     "capacity_mw": 5.025,
@@ -7476,7 +7476,7 @@
   },
   {
     "site_id": "S051",
-    "site_name": "鲲鹏德宇光伏电站",
+    "site_name": "鲲鹏德宇光伏",
     "hour": 7,
     "sample_count": 245,
     "capacity_mw": 5.025,
@@ -7489,7 +7489,7 @@
   },
   {
     "site_id": "S051",
-    "site_name": "鲲鹏德宇光伏电站",
+    "site_name": "鲲鹏德宇光伏",
     "hour": 8,
     "sample_count": 245,
     "capacity_mw": 5.025,
@@ -7502,7 +7502,7 @@
   },
   {
     "site_id": "S051",
-    "site_name": "鲲鹏德宇光伏电站",
+    "site_name": "鲲鹏德宇光伏",
     "hour": 9,
     "sample_count": 245,
     "capacity_mw": 5.025,
@@ -7515,7 +7515,7 @@
   },
   {
     "site_id": "S051",
-    "site_name": "鲲鹏德宇光伏电站",
+    "site_name": "鲲鹏德宇光伏",
     "hour": 10,
     "sample_count": 246,
     "capacity_mw": 5.025,
@@ -7528,7 +7528,7 @@
   },
   {
     "site_id": "S051",
-    "site_name": "鲲鹏德宇光伏电站",
+    "site_name": "鲲鹏德宇光伏",
     "hour": 11,
     "sample_count": 246,
     "capacity_mw": 5.025,
@@ -7541,7 +7541,7 @@
   },
   {
     "site_id": "S051",
-    "site_name": "鲲鹏德宇光伏电站",
+    "site_name": "鲲鹏德宇光伏",
     "hour": 12,
     "sample_count": 246,
     "capacity_mw": 5.025,
@@ -7554,7 +7554,7 @@
   },
   {
     "site_id": "S051",
-    "site_name": "鲲鹏德宇光伏电站",
+    "site_name": "鲲鹏德宇光伏",
     "hour": 13,
     "sample_count": 246,
     "capacity_mw": 5.025,
@@ -7567,7 +7567,7 @@
   },
   {
     "site_id": "S051",
-    "site_name": "鲲鹏德宇光伏电站",
+    "site_name": "鲲鹏德宇光伏",
     "hour": 14,
     "sample_count": 246,
     "capacity_mw": 5.025,
@@ -7580,7 +7580,7 @@
   },
   {
     "site_id": "S051",
-    "site_name": "鲲鹏德宇光伏电站",
+    "site_name": "鲲鹏德宇光伏",
     "hour": 15,
     "sample_count": 246,
     "capacity_mw": 5.025,
@@ -7593,7 +7593,7 @@
   },
   {
     "site_id": "S051",
-    "site_name": "鲲鹏德宇光伏电站",
+    "site_name": "鲲鹏德宇光伏",
     "hour": 16,
     "sample_count": 246,
     "capacity_mw": 5.025,
@@ -7606,7 +7606,7 @@
   },
   {
     "site_id": "S051",
-    "site_name": "鲲鹏德宇光伏电站",
+    "site_name": "鲲鹏德宇光伏",
     "hour": 17,
     "sample_count": 246,
     "capacity_mw": 5.025,
@@ -7619,7 +7619,7 @@
   },
   {
     "site_id": "S051",
-    "site_name": "鲲鹏德宇光伏电站",
+    "site_name": "鲲鹏德宇光伏",
     "hour": 18,
     "sample_count": 246,
     "capacity_mw": 5.025,
@@ -7632,7 +7632,7 @@
   },
   {
     "site_id": "S051",
-    "site_name": "鲲鹏德宇光伏电站",
+    "site_name": "鲲鹏德宇光伏",
     "hour": 19,
     "sample_count": 246,
     "capacity_mw": 5.025,
@@ -7645,7 +7645,7 @@
   },
   {
     "site_id": "S052",
-    "site_name": "鹰游新立成二期光伏电站",
+    "site_name": "鹰游新立成二期光伏",
     "hour": 6,
     "sample_count": 499,
     "capacity_mw": 6.08,
@@ -7658,7 +7658,7 @@
   },
   {
     "site_id": "S052",
-    "site_name": "鹰游新立成二期光伏电站",
+    "site_name": "鹰游新立成二期光伏",
     "hour": 7,
     "sample_count": 499,
     "capacity_mw": 6.08,
@@ -7671,7 +7671,7 @@
   },
   {
     "site_id": "S052",
-    "site_name": "鹰游新立成二期光伏电站",
+    "site_name": "鹰游新立成二期光伏",
     "hour": 8,
     "sample_count": 499,
     "capacity_mw": 6.08,
@@ -7684,7 +7684,7 @@
   },
   {
     "site_id": "S052",
-    "site_name": "鹰游新立成二期光伏电站",
+    "site_name": "鹰游新立成二期光伏",
     "hour": 9,
     "sample_count": 499,
     "capacity_mw": 6.08,
@@ -7697,7 +7697,7 @@
   },
   {
     "site_id": "S052",
-    "site_name": "鹰游新立成二期光伏电站",
+    "site_name": "鹰游新立成二期光伏",
     "hour": 10,
     "sample_count": 499,
     "capacity_mw": 6.08,
@@ -7710,7 +7710,7 @@
   },
   {
     "site_id": "S052",
-    "site_name": "鹰游新立成二期光伏电站",
+    "site_name": "鹰游新立成二期光伏",
     "hour": 11,
     "sample_count": 499,
     "capacity_mw": 6.08,
@@ -7723,7 +7723,7 @@
   },
   {
     "site_id": "S052",
-    "site_name": "鹰游新立成二期光伏电站",
+    "site_name": "鹰游新立成二期光伏",
     "hour": 12,
     "sample_count": 499,
     "capacity_mw": 6.08,
@@ -7736,7 +7736,7 @@
   },
   {
     "site_id": "S052",
-    "site_name": "鹰游新立成二期光伏电站",
+    "site_name": "鹰游新立成二期光伏",
     "hour": 13,
     "sample_count": 499,
     "capacity_mw": 6.08,
@@ -7749,7 +7749,7 @@
   },
   {
     "site_id": "S052",
-    "site_name": "鹰游新立成二期光伏电站",
+    "site_name": "鹰游新立成二期光伏",
     "hour": 14,
     "sample_count": 499,
     "capacity_mw": 6.08,
@@ -7762,7 +7762,7 @@
   },
   {
     "site_id": "S052",
-    "site_name": "鹰游新立成二期光伏电站",
+    "site_name": "鹰游新立成二期光伏",
     "hour": 15,
     "sample_count": 499,
     "capacity_mw": 6.08,
@@ -7775,7 +7775,7 @@
   },
   {
     "site_id": "S052",
-    "site_name": "鹰游新立成二期光伏电站",
+    "site_name": "鹰游新立成二期光伏",
     "hour": 16,
     "sample_count": 499,
     "capacity_mw": 6.08,
@@ -7788,7 +7788,7 @@
   },
   {
     "site_id": "S052",
-    "site_name": "鹰游新立成二期光伏电站",
+    "site_name": "鹰游新立成二期光伏",
     "hour": 17,
     "sample_count": 499,
     "capacity_mw": 6.08,
@@ -7801,7 +7801,7 @@
   },
   {
     "site_id": "S052",
-    "site_name": "鹰游新立成二期光伏电站",
+    "site_name": "鹰游新立成二期光伏",
     "hour": 18,
     "sample_count": 499,
     "capacity_mw": 6.08,
@@ -7814,7 +7814,7 @@
   },
   {
     "site_id": "S052",
-    "site_name": "鹰游新立成二期光伏电站",
+    "site_name": "鹰游新立成二期光伏",
     "hour": 19,
     "sample_count": 499,
     "capacity_mw": 6.08,
@@ -7827,7 +7827,7 @@
   },
   {
     "site_id": "S053",
-    "site_name": "鹰游新立成光伏发电站",
+    "site_name": "鹰游新立成光伏电站",
     "hour": 6,
     "sample_count": 1096,
     "capacity_mw": 13.33,
@@ -7840,7 +7840,7 @@
   },
   {
     "site_id": "S053",
-    "site_name": "鹰游新立成光伏发电站",
+    "site_name": "鹰游新立成光伏电站",
     "hour": 7,
     "sample_count": 1096,
     "capacity_mw": 13.33,
@@ -7853,7 +7853,7 @@
   },
   {
     "site_id": "S053",
-    "site_name": "鹰游新立成光伏发电站",
+    "site_name": "鹰游新立成光伏电站",
     "hour": 8,
     "sample_count": 1096,
     "capacity_mw": 13.33,
@@ -7866,7 +7866,7 @@
   },
   {
     "site_id": "S053",
-    "site_name": "鹰游新立成光伏发电站",
+    "site_name": "鹰游新立成光伏电站",
     "hour": 9,
     "sample_count": 1096,
     "capacity_mw": 13.33,
@@ -7879,7 +7879,7 @@
   },
   {
     "site_id": "S053",
-    "site_name": "鹰游新立成光伏发电站",
+    "site_name": "鹰游新立成光伏电站",
     "hour": 10,
     "sample_count": 1096,
     "capacity_mw": 13.33,
@@ -7892,7 +7892,7 @@
   },
   {
     "site_id": "S053",
-    "site_name": "鹰游新立成光伏发电站",
+    "site_name": "鹰游新立成光伏电站",
     "hour": 11,
     "sample_count": 1096,
     "capacity_mw": 13.33,
@@ -7905,7 +7905,7 @@
   },
   {
     "site_id": "S053",
-    "site_name": "鹰游新立成光伏发电站",
+    "site_name": "鹰游新立成光伏电站",
     "hour": 12,
     "sample_count": 1096,
     "capacity_mw": 13.33,
@@ -7918,7 +7918,7 @@
   },
   {
     "site_id": "S053",
-    "site_name": "鹰游新立成光伏发电站",
+    "site_name": "鹰游新立成光伏电站",
     "hour": 13,
     "sample_count": 1096,
     "capacity_mw": 13.33,
@@ -7931,7 +7931,7 @@
   },
   {
     "site_id": "S053",
-    "site_name": "鹰游新立成光伏发电站",
+    "site_name": "鹰游新立成光伏电站",
     "hour": 14,
     "sample_count": 1096,
     "capacity_mw": 13.33,
@@ -7944,7 +7944,7 @@
   },
   {
     "site_id": "S053",
-    "site_name": "鹰游新立成光伏发电站",
+    "site_name": "鹰游新立成光伏电站",
     "hour": 15,
     "sample_count": 1096,
     "capacity_mw": 13.33,
@@ -7957,7 +7957,7 @@
   },
   {
     "site_id": "S053",
-    "site_name": "鹰游新立成光伏发电站",
+    "site_name": "鹰游新立成光伏电站",
     "hour": 16,
     "sample_count": 1096,
     "capacity_mw": 13.33,
@@ -7970,7 +7970,7 @@
   },
   {
     "site_id": "S053",
-    "site_name": "鹰游新立成光伏发电站",
+    "site_name": "鹰游新立成光伏电站",
     "hour": 17,
     "sample_count": 1096,
     "capacity_mw": 13.33,
@@ -7983,7 +7983,7 @@
   },
   {
     "site_id": "S053",
-    "site_name": "鹰游新立成光伏发电站",
+    "site_name": "鹰游新立成光伏电站",
     "hour": 18,
     "sample_count": 1096,
     "capacity_mw": 13.33,
@@ -7996,7 +7996,7 @@
   },
   {
     "site_id": "S053",
-    "site_name": "鹰游新立成光伏发电站",
+    "site_name": "鹰游新立成光伏电站",
     "hour": 19,
     "sample_count": 1096,
     "capacity_mw": 13.33,
@@ -8009,7 +8009,7 @@
   },
   {
     "site_id": "S054",
-    "site_name": "鸿天伍江光伏电站",
+    "site_name": "鸿天伍江光伏",
     "hour": 6,
     "sample_count": 350,
     "capacity_mw": 11.272,
@@ -8022,7 +8022,7 @@
   },
   {
     "site_id": "S054",
-    "site_name": "鸿天伍江光伏电站",
+    "site_name": "鸿天伍江光伏",
     "hour": 7,
     "sample_count": 350,
     "capacity_mw": 11.272,
@@ -8035,7 +8035,7 @@
   },
   {
     "site_id": "S054",
-    "site_name": "鸿天伍江光伏电站",
+    "site_name": "鸿天伍江光伏",
     "hour": 8,
     "sample_count": 350,
     "capacity_mw": 11.272,
@@ -8048,7 +8048,7 @@
   },
   {
     "site_id": "S054",
-    "site_name": "鸿天伍江光伏电站",
+    "site_name": "鸿天伍江光伏",
     "hour": 9,
     "sample_count": 350,
     "capacity_mw": 11.272,
@@ -8061,7 +8061,7 @@
   },
   {
     "site_id": "S054",
-    "site_name": "鸿天伍江光伏电站",
+    "site_name": "鸿天伍江光伏",
     "hour": 10,
     "sample_count": 350,
     "capacity_mw": 11.272,
@@ -8074,7 +8074,7 @@
   },
   {
     "site_id": "S054",
-    "site_name": "鸿天伍江光伏电站",
+    "site_name": "鸿天伍江光伏",
     "hour": 11,
     "sample_count": 350,
     "capacity_mw": 11.272,
@@ -8087,7 +8087,7 @@
   },
   {
     "site_id": "S054",
-    "site_name": "鸿天伍江光伏电站",
+    "site_name": "鸿天伍江光伏",
     "hour": 12,
     "sample_count": 350,
     "capacity_mw": 11.272,
@@ -8100,7 +8100,7 @@
   },
   {
     "site_id": "S054",
-    "site_name": "鸿天伍江光伏电站",
+    "site_name": "鸿天伍江光伏",
     "hour": 13,
     "sample_count": 350,
     "capacity_mw": 11.272,
@@ -8113,7 +8113,7 @@
   },
   {
     "site_id": "S054",
-    "site_name": "鸿天伍江光伏电站",
+    "site_name": "鸿天伍江光伏",
     "hour": 14,
     "sample_count": 350,
     "capacity_mw": 11.272,
@@ -8126,7 +8126,7 @@
   },
   {
     "site_id": "S054",
-    "site_name": "鸿天伍江光伏电站",
+    "site_name": "鸿天伍江光伏",
     "hour": 15,
     "sample_count": 350,
     "capacity_mw": 11.272,
@@ -8139,7 +8139,7 @@
   },
   {
     "site_id": "S054",
-    "site_name": "鸿天伍江光伏电站",
+    "site_name": "鸿天伍江光伏",
     "hour": 16,
     "sample_count": 351,
     "capacity_mw": 11.272,
@@ -8152,7 +8152,7 @@
   },
   {
     "site_id": "S054",
-    "site_name": "鸿天伍江光伏电站",
+    "site_name": "鸿天伍江光伏",
     "hour": 17,
     "sample_count": 351,
     "capacity_mw": 11.272,
@@ -8165,7 +8165,7 @@
   },
   {
     "site_id": "S054",
-    "site_name": "鸿天伍江光伏电站",
+    "site_name": "鸿天伍江光伏",
     "hour": 18,
     "sample_count": 351,
     "capacity_mw": 11.272,
@@ -8178,7 +8178,7 @@
   },
   {
     "site_id": "S054",
-    "site_name": "鸿天伍江光伏电站",
+    "site_name": "鸿天伍江光伏",
     "hour": 19,
     "sample_count": 351,
     "capacity_mw": 11.272,
@@ -8191,7 +8191,7 @@
   },
   {
     "site_id": "S055",
-    "site_name": "沐恒曲阳光伏电站",
+    "site_name": "沐恒曲阳光伏",
     "hour": 6,
     "sample_count": 245,
     "capacity_mw": 4.0,
@@ -8204,7 +8204,7 @@
   },
   {
     "site_id": "S055",
-    "site_name": "沐恒曲阳光伏电站",
+    "site_name": "沐恒曲阳光伏",
     "hour": 7,
     "sample_count": 245,
     "capacity_mw": 4.0,
@@ -8217,7 +8217,7 @@
   },
   {
     "site_id": "S055",
-    "site_name": "沐恒曲阳光伏电站",
+    "site_name": "沐恒曲阳光伏",
     "hour": 8,
     "sample_count": 245,
     "capacity_mw": 4.0,
@@ -8230,7 +8230,7 @@
   },
   {
     "site_id": "S055",
-    "site_name": "沐恒曲阳光伏电站",
+    "site_name": "沐恒曲阳光伏",
     "hour": 9,
     "sample_count": 245,
     "capacity_mw": 4.0,
@@ -8243,7 +8243,7 @@
   },
   {
     "site_id": "S055",
-    "site_name": "沐恒曲阳光伏电站",
+    "site_name": "沐恒曲阳光伏",
     "hour": 10,
     "sample_count": 245,
     "capacity_mw": 4.0,
@@ -8256,7 +8256,7 @@
   },
   {
     "site_id": "S055",
-    "site_name": "沐恒曲阳光伏电站",
+    "site_name": "沐恒曲阳光伏",
     "hour": 11,
     "sample_count": 245,
     "capacity_mw": 4.0,
@@ -8269,7 +8269,7 @@
   },
   {
     "site_id": "S055",
-    "site_name": "沐恒曲阳光伏电站",
+    "site_name": "沐恒曲阳光伏",
     "hour": 12,
     "sample_count": 245,
     "capacity_mw": 4.0,
@@ -8282,7 +8282,7 @@
   },
   {
     "site_id": "S055",
-    "site_name": "沐恒曲阳光伏电站",
+    "site_name": "沐恒曲阳光伏",
     "hour": 13,
     "sample_count": 245,
     "capacity_mw": 4.0,
@@ -8295,7 +8295,7 @@
   },
   {
     "site_id": "S055",
-    "site_name": "沐恒曲阳光伏电站",
+    "site_name": "沐恒曲阳光伏",
     "hour": 14,
     "sample_count": 245,
     "capacity_mw": 4.0,
@@ -8308,7 +8308,7 @@
   },
   {
     "site_id": "S055",
-    "site_name": "沐恒曲阳光伏电站",
+    "site_name": "沐恒曲阳光伏",
     "hour": 15,
     "sample_count": 246,
     "capacity_mw": 4.0,
@@ -8321,7 +8321,7 @@
   },
   {
     "site_id": "S055",
-    "site_name": "沐恒曲阳光伏电站",
+    "site_name": "沐恒曲阳光伏",
     "hour": 16,
     "sample_count": 246,
     "capacity_mw": 4.0,
@@ -8334,7 +8334,7 @@
   },
   {
     "site_id": "S055",
-    "site_name": "沐恒曲阳光伏电站",
+    "site_name": "沐恒曲阳光伏",
     "hour": 17,
     "sample_count": 246,
     "capacity_mw": 4.0,
@@ -8347,7 +8347,7 @@
   },
   {
     "site_id": "S055",
-    "site_name": "沐恒曲阳光伏电站",
+    "site_name": "沐恒曲阳光伏",
     "hour": 18,
     "sample_count": 246,
     "capacity_mw": 4.0,
@@ -8360,7 +8360,7 @@
   },
   {
     "site_id": "S055",
-    "site_name": "沐恒曲阳光伏电站",
+    "site_name": "沐恒曲阳光伏",
     "hour": 19,
     "sample_count": 246,
     "capacity_mw": 4.0,
@@ -8373,7 +8373,7 @@
   },
   {
     "site_id": "S056",
-    "site_name": "昱中科技光伏电站",
+    "site_name": "昱中科技光伏",
     "hour": 6,
     "sample_count": 251,
     "capacity_mw": 3.15,
@@ -8386,7 +8386,7 @@
   },
   {
     "site_id": "S056",
-    "site_name": "昱中科技光伏电站",
+    "site_name": "昱中科技光伏",
     "hour": 7,
     "sample_count": 251,
     "capacity_mw": 3.15,
@@ -8399,7 +8399,7 @@
   },
   {
     "site_id": "S056",
-    "site_name": "昱中科技光伏电站",
+    "site_name": "昱中科技光伏",
     "hour": 8,
     "sample_count": 251,
     "capacity_mw": 3.15,
@@ -8412,7 +8412,7 @@
   },
   {
     "site_id": "S056",
-    "site_name": "昱中科技光伏电站",
+    "site_name": "昱中科技光伏",
     "hour": 9,
     "sample_count": 251,
     "capacity_mw": 3.15,
@@ -8425,7 +8425,7 @@
   },
   {
     "site_id": "S056",
-    "site_name": "昱中科技光伏电站",
+    "site_name": "昱中科技光伏",
     "hour": 10,
     "sample_count": 251,
     "capacity_mw": 3.15,
@@ -8438,7 +8438,7 @@
   },
   {
     "site_id": "S056",
-    "site_name": "昱中科技光伏电站",
+    "site_name": "昱中科技光伏",
     "hour": 11,
     "sample_count": 251,
     "capacity_mw": 3.15,
@@ -8451,7 +8451,7 @@
   },
   {
     "site_id": "S056",
-    "site_name": "昱中科技光伏电站",
+    "site_name": "昱中科技光伏",
     "hour": 12,
     "sample_count": 251,
     "capacity_mw": 3.15,
@@ -8464,7 +8464,7 @@
   },
   {
     "site_id": "S056",
-    "site_name": "昱中科技光伏电站",
+    "site_name": "昱中科技光伏",
     "hour": 13,
     "sample_count": 251,
     "capacity_mw": 3.15,
@@ -8477,7 +8477,7 @@
   },
   {
     "site_id": "S056",
-    "site_name": "昱中科技光伏电站",
+    "site_name": "昱中科技光伏",
     "hour": 14,
     "sample_count": 251,
     "capacity_mw": 3.15,
@@ -8490,7 +8490,7 @@
   },
   {
     "site_id": "S056",
-    "site_name": "昱中科技光伏电站",
+    "site_name": "昱中科技光伏",
     "hour": 15,
     "sample_count": 252,
     "capacity_mw": 3.15,
@@ -8503,7 +8503,7 @@
   },
   {
     "site_id": "S056",
-    "site_name": "昱中科技光伏电站",
+    "site_name": "昱中科技光伏",
     "hour": 16,
     "sample_count": 252,
     "capacity_mw": 3.15,
@@ -8516,7 +8516,7 @@
   },
   {
     "site_id": "S056",
-    "site_name": "昱中科技光伏电站",
+    "site_name": "昱中科技光伏",
     "hour": 17,
     "sample_count": 252,
     "capacity_mw": 3.15,
@@ -8529,7 +8529,7 @@
   },
   {
     "site_id": "S056",
-    "site_name": "昱中科技光伏电站",
+    "site_name": "昱中科技光伏",
     "hour": 18,
     "sample_count": 252,
     "capacity_mw": 3.15,
@@ -8542,7 +8542,7 @@
   },
   {
     "site_id": "S056",
-    "site_name": "昱中科技光伏电站",
+    "site_name": "昱中科技光伏",
     "hour": 19,
     "sample_count": 252,
     "capacity_mw": 3.15,
@@ -8737,7 +8737,7 @@
   },
   {
     "site_id": "S059",
-    "site_name": "首耀清墩光伏电站",
+    "site_name": "首耀清墩光伏",
     "hour": 6,
     "sample_count": 1096,
     "capacity_mw": 2.0,
@@ -8750,7 +8750,7 @@
   },
   {
     "site_id": "S059",
-    "site_name": "首耀清墩光伏电站",
+    "site_name": "首耀清墩光伏",
     "hour": 7,
     "sample_count": 1096,
     "capacity_mw": 2.0,
@@ -8763,7 +8763,7 @@
   },
   {
     "site_id": "S059",
-    "site_name": "首耀清墩光伏电站",
+    "site_name": "首耀清墩光伏",
     "hour": 8,
     "sample_count": 1096,
     "capacity_mw": 2.0,
@@ -8776,7 +8776,7 @@
   },
   {
     "site_id": "S059",
-    "site_name": "首耀清墩光伏电站",
+    "site_name": "首耀清墩光伏",
     "hour": 9,
     "sample_count": 1096,
     "capacity_mw": 2.0,
@@ -8789,7 +8789,7 @@
   },
   {
     "site_id": "S059",
-    "site_name": "首耀清墩光伏电站",
+    "site_name": "首耀清墩光伏",
     "hour": 10,
     "sample_count": 1096,
     "capacity_mw": 2.0,
@@ -8802,7 +8802,7 @@
   },
   {
     "site_id": "S059",
-    "site_name": "首耀清墩光伏电站",
+    "site_name": "首耀清墩光伏",
     "hour": 11,
     "sample_count": 1096,
     "capacity_mw": 2.0,
@@ -8815,7 +8815,7 @@
   },
   {
     "site_id": "S059",
-    "site_name": "首耀清墩光伏电站",
+    "site_name": "首耀清墩光伏",
     "hour": 12,
     "sample_count": 1096,
     "capacity_mw": 2.0,
@@ -8828,7 +8828,7 @@
   },
   {
     "site_id": "S059",
-    "site_name": "首耀清墩光伏电站",
+    "site_name": "首耀清墩光伏",
     "hour": 13,
     "sample_count": 1096,
     "capacity_mw": 2.0,
@@ -8841,7 +8841,7 @@
   },
   {
     "site_id": "S059",
-    "site_name": "首耀清墩光伏电站",
+    "site_name": "首耀清墩光伏",
     "hour": 14,
     "sample_count": 1096,
     "capacity_mw": 2.0,
@@ -8854,7 +8854,7 @@
   },
   {
     "site_id": "S059",
-    "site_name": "首耀清墩光伏电站",
+    "site_name": "首耀清墩光伏",
     "hour": 15,
     "sample_count": 1096,
     "capacity_mw": 2.0,
@@ -8867,7 +8867,7 @@
   },
   {
     "site_id": "S059",
-    "site_name": "首耀清墩光伏电站",
+    "site_name": "首耀清墩光伏",
     "hour": 16,
     "sample_count": 1096,
     "capacity_mw": 2.0,
@@ -8880,7 +8880,7 @@
   },
   {
     "site_id": "S059",
-    "site_name": "首耀清墩光伏电站",
+    "site_name": "首耀清墩光伏",
     "hour": 17,
     "sample_count": 1096,
     "capacity_mw": 2.0,
@@ -8893,7 +8893,7 @@
   },
   {
     "site_id": "S059",
-    "site_name": "首耀清墩光伏电站",
+    "site_name": "首耀清墩光伏",
     "hour": 18,
     "sample_count": 1096,
     "capacity_mw": 2.0,
@@ -8906,7 +8906,7 @@
   },
   {
     "site_id": "S059",
-    "site_name": "首耀清墩光伏电站",
+    "site_name": "首耀清墩光伏",
     "hour": 19,
     "sample_count": 1096,
     "capacity_mw": 2.0,
@@ -8919,7 +8919,7 @@
   },
   {
     "site_id": "S060",
-    "site_name": "华电蒙然源光伏电站",
+    "site_name": "华电蒙然源光伏",
     "hour": 6,
     "sample_count": 256,
     "capacity_mw": 5.84,
@@ -8932,7 +8932,7 @@
   },
   {
     "site_id": "S060",
-    "site_name": "华电蒙然源光伏电站",
+    "site_name": "华电蒙然源光伏",
     "hour": 7,
     "sample_count": 256,
     "capacity_mw": 5.84,
@@ -8945,7 +8945,7 @@
   },
   {
     "site_id": "S060",
-    "site_name": "华电蒙然源光伏电站",
+    "site_name": "华电蒙然源光伏",
     "hour": 8,
     "sample_count": 256,
     "capacity_mw": 5.84,
@@ -8958,7 +8958,7 @@
   },
   {
     "site_id": "S060",
-    "site_name": "华电蒙然源光伏电站",
+    "site_name": "华电蒙然源光伏",
     "hour": 9,
     "sample_count": 256,
     "capacity_mw": 5.84,
@@ -8971,7 +8971,7 @@
   },
   {
     "site_id": "S060",
-    "site_name": "华电蒙然源光伏电站",
+    "site_name": "华电蒙然源光伏",
     "hour": 10,
     "sample_count": 256,
     "capacity_mw": 5.84,
@@ -8984,7 +8984,7 @@
   },
   {
     "site_id": "S060",
-    "site_name": "华电蒙然源光伏电站",
+    "site_name": "华电蒙然源光伏",
     "hour": 11,
     "sample_count": 256,
     "capacity_mw": 5.84,
@@ -8997,7 +8997,7 @@
   },
   {
     "site_id": "S060",
-    "site_name": "华电蒙然源光伏电站",
+    "site_name": "华电蒙然源光伏",
     "hour": 12,
     "sample_count": 256,
     "capacity_mw": 5.84,
@@ -9010,7 +9010,7 @@
   },
   {
     "site_id": "S060",
-    "site_name": "华电蒙然源光伏电站",
+    "site_name": "华电蒙然源光伏",
     "hour": 13,
     "sample_count": 256,
     "capacity_mw": 5.84,
@@ -9023,7 +9023,7 @@
   },
   {
     "site_id": "S060",
-    "site_name": "华电蒙然源光伏电站",
+    "site_name": "华电蒙然源光伏",
     "hour": 14,
     "sample_count": 256,
     "capacity_mw": 5.84,
@@ -9036,7 +9036,7 @@
   },
   {
     "site_id": "S060",
-    "site_name": "华电蒙然源光伏电站",
+    "site_name": "华电蒙然源光伏",
     "hour": 15,
     "sample_count": 256,
     "capacity_mw": 5.84,
@@ -9049,7 +9049,7 @@
   },
   {
     "site_id": "S060",
-    "site_name": "华电蒙然源光伏电站",
+    "site_name": "华电蒙然源光伏",
     "hour": 16,
     "sample_count": 256,
     "capacity_mw": 5.84,
@@ -9062,7 +9062,7 @@
   },
   {
     "site_id": "S060",
-    "site_name": "华电蒙然源光伏电站",
+    "site_name": "华电蒙然源光伏",
     "hour": 17,
     "sample_count": 256,
     "capacity_mw": 5.84,
@@ -9075,7 +9075,7 @@
   },
   {
     "site_id": "S060",
-    "site_name": "华电蒙然源光伏电站",
+    "site_name": "华电蒙然源光伏",
     "hour": 18,
     "sample_count": 256,
     "capacity_mw": 5.84,
@@ -9088,7 +9088,7 @@
   },
   {
     "site_id": "S060",
-    "site_name": "华电蒙然源光伏电站",
+    "site_name": "华电蒙然源光伏",
     "hour": 19,
     "sample_count": 256,
     "capacity_mw": 5.84,
@@ -9101,7 +9101,7 @@
   },
   {
     "site_id": "S061",
-    "site_name": "嘉伏黎明光伏电站",
+    "site_name": "嘉伏黎明光伏",
     "hour": 6,
     "sample_count": 251,
     "capacity_mw": 3.784,
@@ -9114,7 +9114,7 @@
   },
   {
     "site_id": "S061",
-    "site_name": "嘉伏黎明光伏电站",
+    "site_name": "嘉伏黎明光伏",
     "hour": 7,
     "sample_count": 251,
     "capacity_mw": 3.784,
@@ -9127,7 +9127,7 @@
   },
   {
     "site_id": "S061",
-    "site_name": "嘉伏黎明光伏电站",
+    "site_name": "嘉伏黎明光伏",
     "hour": 8,
     "sample_count": 251,
     "capacity_mw": 3.784,
@@ -9140,7 +9140,7 @@
   },
   {
     "site_id": "S061",
-    "site_name": "嘉伏黎明光伏电站",
+    "site_name": "嘉伏黎明光伏",
     "hour": 9,
     "sample_count": 251,
     "capacity_mw": 3.784,
@@ -9153,7 +9153,7 @@
   },
   {
     "site_id": "S061",
-    "site_name": "嘉伏黎明光伏电站",
+    "site_name": "嘉伏黎明光伏",
     "hour": 10,
     "sample_count": 251,
     "capacity_mw": 3.784,
@@ -9166,7 +9166,7 @@
   },
   {
     "site_id": "S061",
-    "site_name": "嘉伏黎明光伏电站",
+    "site_name": "嘉伏黎明光伏",
     "hour": 11,
     "sample_count": 251,
     "capacity_mw": 3.784,
@@ -9179,7 +9179,7 @@
   },
   {
     "site_id": "S061",
-    "site_name": "嘉伏黎明光伏电站",
+    "site_name": "嘉伏黎明光伏",
     "hour": 12,
     "sample_count": 251,
     "capacity_mw": 3.784,
@@ -9192,7 +9192,7 @@
   },
   {
     "site_id": "S061",
-    "site_name": "嘉伏黎明光伏电站",
+    "site_name": "嘉伏黎明光伏",
     "hour": 13,
     "sample_count": 251,
     "capacity_mw": 3.784,
@@ -9205,7 +9205,7 @@
   },
   {
     "site_id": "S061",
-    "site_name": "嘉伏黎明光伏电站",
+    "site_name": "嘉伏黎明光伏",
     "hour": 14,
     "sample_count": 251,
     "capacity_mw": 3.784,
@@ -9218,7 +9218,7 @@
   },
   {
     "site_id": "S061",
-    "site_name": "嘉伏黎明光伏电站",
+    "site_name": "嘉伏黎明光伏",
     "hour": 15,
     "sample_count": 252,
     "capacity_mw": 3.784,
@@ -9231,7 +9231,7 @@
   },
   {
     "site_id": "S061",
-    "site_name": "嘉伏黎明光伏电站",
+    "site_name": "嘉伏黎明光伏",
     "hour": 16,
     "sample_count": 252,
     "capacity_mw": 3.784,
@@ -9244,7 +9244,7 @@
   },
   {
     "site_id": "S061",
-    "site_name": "嘉伏黎明光伏电站",
+    "site_name": "嘉伏黎明光伏",
     "hour": 17,
     "sample_count": 252,
     "capacity_mw": 3.784,
@@ -9257,7 +9257,7 @@
   },
   {
     "site_id": "S061",
-    "site_name": "嘉伏黎明光伏电站",
+    "site_name": "嘉伏黎明光伏",
     "hour": 18,
     "sample_count": 252,
     "capacity_mw": 3.784,
@@ -9270,7 +9270,7 @@
   },
   {
     "site_id": "S061",
-    "site_name": "嘉伏黎明光伏电站",
+    "site_name": "嘉伏黎明光伏",
     "hour": 19,
     "sample_count": 252,
     "capacity_mw": 3.784,
@@ -9465,7 +9465,7 @@
   },
   {
     "site_id": "S063",
-    "site_name": "铭信润海光伏电站",
+    "site_name": "铭信润海光伏",
     "hour": 6,
     "sample_count": 245,
     "capacity_mw": 3.66,
@@ -9478,7 +9478,7 @@
   },
   {
     "site_id": "S063",
-    "site_name": "铭信润海光伏电站",
+    "site_name": "铭信润海光伏",
     "hour": 7,
     "sample_count": 245,
     "capacity_mw": 3.66,
@@ -9491,7 +9491,7 @@
   },
   {
     "site_id": "S063",
-    "site_name": "铭信润海光伏电站",
+    "site_name": "铭信润海光伏",
     "hour": 8,
     "sample_count": 245,
     "capacity_mw": 3.66,
@@ -9504,7 +9504,7 @@
   },
   {
     "site_id": "S063",
-    "site_name": "铭信润海光伏电站",
+    "site_name": "铭信润海光伏",
     "hour": 9,
     "sample_count": 245,
     "capacity_mw": 3.66,
@@ -9517,7 +9517,7 @@
   },
   {
     "site_id": "S063",
-    "site_name": "铭信润海光伏电站",
+    "site_name": "铭信润海光伏",
     "hour": 10,
     "sample_count": 245,
     "capacity_mw": 3.66,
@@ -9530,7 +9530,7 @@
   },
   {
     "site_id": "S063",
-    "site_name": "铭信润海光伏电站",
+    "site_name": "铭信润海光伏",
     "hour": 11,
     "sample_count": 245,
     "capacity_mw": 3.66,
@@ -9543,7 +9543,7 @@
   },
   {
     "site_id": "S063",
-    "site_name": "铭信润海光伏电站",
+    "site_name": "铭信润海光伏",
     "hour": 12,
     "sample_count": 246,
     "capacity_mw": 3.66,
@@ -9556,7 +9556,7 @@
   },
   {
     "site_id": "S063",
-    "site_name": "铭信润海光伏电站",
+    "site_name": "铭信润海光伏",
     "hour": 13,
     "sample_count": 246,
     "capacity_mw": 3.66,
@@ -9569,7 +9569,7 @@
   },
   {
     "site_id": "S063",
-    "site_name": "铭信润海光伏电站",
+    "site_name": "铭信润海光伏",
     "hour": 14,
     "sample_count": 246,
     "capacity_mw": 3.66,
@@ -9582,7 +9582,7 @@
   },
   {
     "site_id": "S063",
-    "site_name": "铭信润海光伏电站",
+    "site_name": "铭信润海光伏",
     "hour": 15,
     "sample_count": 246,
     "capacity_mw": 3.66,
@@ -9595,7 +9595,7 @@
   },
   {
     "site_id": "S063",
-    "site_name": "铭信润海光伏电站",
+    "site_name": "铭信润海光伏",
     "hour": 16,
     "sample_count": 246,
     "capacity_mw": 3.66,
@@ -9608,7 +9608,7 @@
   },
   {
     "site_id": "S063",
-    "site_name": "铭信润海光伏电站",
+    "site_name": "铭信润海光伏",
     "hour": 17,
     "sample_count": 246,
     "capacity_mw": 3.66,
@@ -9621,7 +9621,7 @@
   },
   {
     "site_id": "S063",
-    "site_name": "铭信润海光伏电站",
+    "site_name": "铭信润海光伏",
     "hour": 18,
     "sample_count": 246,
     "capacity_mw": 3.66,
@@ -9634,7 +9634,7 @@
   },
   {
     "site_id": "S063",
-    "site_name": "铭信润海光伏电站",
+    "site_name": "铭信润海光伏",
     "hour": 19,
     "sample_count": 246,
     "capacity_mw": 3.66,
@@ -9647,7 +9647,7 @@
   },
   {
     "site_id": "S064",
-    "site_name": "昱瑞青口光伏发电站",
+    "site_name": "昱瑞青口光伏",
     "hour": 6,
     "sample_count": 1096,
     "capacity_mw": 3.288,
@@ -9660,7 +9660,7 @@
   },
   {
     "site_id": "S064",
-    "site_name": "昱瑞青口光伏发电站",
+    "site_name": "昱瑞青口光伏",
     "hour": 7,
     "sample_count": 1096,
     "capacity_mw": 3.288,
@@ -9673,7 +9673,7 @@
   },
   {
     "site_id": "S064",
-    "site_name": "昱瑞青口光伏发电站",
+    "site_name": "昱瑞青口光伏",
     "hour": 8,
     "sample_count": 1096,
     "capacity_mw": 3.288,
@@ -9686,7 +9686,7 @@
   },
   {
     "site_id": "S064",
-    "site_name": "昱瑞青口光伏发电站",
+    "site_name": "昱瑞青口光伏",
     "hour": 9,
     "sample_count": 1096,
     "capacity_mw": 3.288,
@@ -9699,7 +9699,7 @@
   },
   {
     "site_id": "S064",
-    "site_name": "昱瑞青口光伏发电站",
+    "site_name": "昱瑞青口光伏",
     "hour": 10,
     "sample_count": 1096,
     "capacity_mw": 3.288,
@@ -9712,7 +9712,7 @@
   },
   {
     "site_id": "S064",
-    "site_name": "昱瑞青口光伏发电站",
+    "site_name": "昱瑞青口光伏",
     "hour": 11,
     "sample_count": 1096,
     "capacity_mw": 3.288,
@@ -9725,7 +9725,7 @@
   },
   {
     "site_id": "S064",
-    "site_name": "昱瑞青口光伏发电站",
+    "site_name": "昱瑞青口光伏",
     "hour": 12,
     "sample_count": 1096,
     "capacity_mw": 3.288,
@@ -9738,7 +9738,7 @@
   },
   {
     "site_id": "S064",
-    "site_name": "昱瑞青口光伏发电站",
+    "site_name": "昱瑞青口光伏",
     "hour": 13,
     "sample_count": 1096,
     "capacity_mw": 3.288,
@@ -9751,7 +9751,7 @@
   },
   {
     "site_id": "S064",
-    "site_name": "昱瑞青口光伏发电站",
+    "site_name": "昱瑞青口光伏",
     "hour": 14,
     "sample_count": 1096,
     "capacity_mw": 3.288,
@@ -9764,7 +9764,7 @@
   },
   {
     "site_id": "S064",
-    "site_name": "昱瑞青口光伏发电站",
+    "site_name": "昱瑞青口光伏",
     "hour": 15,
     "sample_count": 1096,
     "capacity_mw": 3.288,
@@ -9777,7 +9777,7 @@
   },
   {
     "site_id": "S064",
-    "site_name": "昱瑞青口光伏发电站",
+    "site_name": "昱瑞青口光伏",
     "hour": 16,
     "sample_count": 1096,
     "capacity_mw": 3.288,
@@ -9790,7 +9790,7 @@
   },
   {
     "site_id": "S064",
-    "site_name": "昱瑞青口光伏发电站",
+    "site_name": "昱瑞青口光伏",
     "hour": 17,
     "sample_count": 1096,
     "capacity_mw": 3.288,
@@ -9803,7 +9803,7 @@
   },
   {
     "site_id": "S064",
-    "site_name": "昱瑞青口光伏发电站",
+    "site_name": "昱瑞青口光伏",
     "hour": 18,
     "sample_count": 1096,
     "capacity_mw": 3.288,
@@ -9816,7 +9816,7 @@
   },
   {
     "site_id": "S064",
-    "site_name": "昱瑞青口光伏发电站",
+    "site_name": "昱瑞青口光伏",
     "hour": 19,
     "sample_count": 1096,
     "capacity_mw": 3.288,
@@ -9829,7 +9829,7 @@
   },
   {
     "site_id": "S065",
-    "site_name": "中盛石榴光伏电站",
+    "site_name": "中盛石榴光伏",
     "hour": 6,
     "sample_count": 1096,
     "capacity_mw": 1.9239,
@@ -9842,7 +9842,7 @@
   },
   {
     "site_id": "S065",
-    "site_name": "中盛石榴光伏电站",
+    "site_name": "中盛石榴光伏",
     "hour": 7,
     "sample_count": 1096,
     "capacity_mw": 1.9239,
@@ -9855,7 +9855,7 @@
   },
   {
     "site_id": "S065",
-    "site_name": "中盛石榴光伏电站",
+    "site_name": "中盛石榴光伏",
     "hour": 8,
     "sample_count": 1096,
     "capacity_mw": 1.9239,
@@ -9868,7 +9868,7 @@
   },
   {
     "site_id": "S065",
-    "site_name": "中盛石榴光伏电站",
+    "site_name": "中盛石榴光伏",
     "hour": 9,
     "sample_count": 1096,
     "capacity_mw": 1.9239,
@@ -9881,7 +9881,7 @@
   },
   {
     "site_id": "S065",
-    "site_name": "中盛石榴光伏电站",
+    "site_name": "中盛石榴光伏",
     "hour": 10,
     "sample_count": 1096,
     "capacity_mw": 1.9239,
@@ -9894,7 +9894,7 @@
   },
   {
     "site_id": "S065",
-    "site_name": "中盛石榴光伏电站",
+    "site_name": "中盛石榴光伏",
     "hour": 11,
     "sample_count": 1096,
     "capacity_mw": 1.9239,
@@ -9907,7 +9907,7 @@
   },
   {
     "site_id": "S065",
-    "site_name": "中盛石榴光伏电站",
+    "site_name": "中盛石榴光伏",
     "hour": 12,
     "sample_count": 1096,
     "capacity_mw": 1.9239,
@@ -9920,7 +9920,7 @@
   },
   {
     "site_id": "S065",
-    "site_name": "中盛石榴光伏电站",
+    "site_name": "中盛石榴光伏",
     "hour": 13,
     "sample_count": 1096,
     "capacity_mw": 1.9239,
@@ -9933,7 +9933,7 @@
   },
   {
     "site_id": "S065",
-    "site_name": "中盛石榴光伏电站",
+    "site_name": "中盛石榴光伏",
     "hour": 14,
     "sample_count": 1096,
     "capacity_mw": 1.9239,
@@ -9946,7 +9946,7 @@
   },
   {
     "site_id": "S065",
-    "site_name": "中盛石榴光伏电站",
+    "site_name": "中盛石榴光伏",
     "hour": 15,
     "sample_count": 1096,
     "capacity_mw": 1.9239,
@@ -9959,7 +9959,7 @@
   },
   {
     "site_id": "S065",
-    "site_name": "中盛石榴光伏电站",
+    "site_name": "中盛石榴光伏",
     "hour": 16,
     "sample_count": 1096,
     "capacity_mw": 1.9239,
@@ -9972,7 +9972,7 @@
   },
   {
     "site_id": "S065",
-    "site_name": "中盛石榴光伏电站",
+    "site_name": "中盛石榴光伏",
     "hour": 17,
     "sample_count": 1096,
     "capacity_mw": 1.9239,
@@ -9985,7 +9985,7 @@
   },
   {
     "site_id": "S065",
-    "site_name": "中盛石榴光伏电站",
+    "site_name": "中盛石榴光伏",
     "hour": 18,
     "sample_count": 1096,
     "capacity_mw": 1.9239,
@@ -9998,7 +9998,7 @@
   },
   {
     "site_id": "S065",
-    "site_name": "中盛石榴光伏电站",
+    "site_name": "中盛石榴光伏",
     "hour": 19,
     "sample_count": 1096,
     "capacity_mw": 1.9239,
@@ -10011,7 +10011,7 @@
   },
   {
     "site_id": "S066",
-    "site_name": "科来恩润石光伏电站",
+    "site_name": "科来恩润石光伏",
     "hour": 6,
     "sample_count": 531,
     "capacity_mw": 5.45,
@@ -10024,7 +10024,7 @@
   },
   {
     "site_id": "S066",
-    "site_name": "科来恩润石光伏电站",
+    "site_name": "科来恩润石光伏",
     "hour": 7,
     "sample_count": 531,
     "capacity_mw": 5.45,
@@ -10037,7 +10037,7 @@
   },
   {
     "site_id": "S066",
-    "site_name": "科来恩润石光伏电站",
+    "site_name": "科来恩润石光伏",
     "hour": 8,
     "sample_count": 531,
     "capacity_mw": 5.45,
@@ -10050,7 +10050,7 @@
   },
   {
     "site_id": "S066",
-    "site_name": "科来恩润石光伏电站",
+    "site_name": "科来恩润石光伏",
     "hour": 9,
     "sample_count": 531,
     "capacity_mw": 5.45,
@@ -10063,7 +10063,7 @@
   },
   {
     "site_id": "S066",
-    "site_name": "科来恩润石光伏电站",
+    "site_name": "科来恩润石光伏",
     "hour": 10,
     "sample_count": 531,
     "capacity_mw": 5.45,
@@ -10076,7 +10076,7 @@
   },
   {
     "site_id": "S066",
-    "site_name": "科来恩润石光伏电站",
+    "site_name": "科来恩润石光伏",
     "hour": 11,
     "sample_count": 531,
     "capacity_mw": 5.45,
@@ -10089,7 +10089,7 @@
   },
   {
     "site_id": "S066",
-    "site_name": "科来恩润石光伏电站",
+    "site_name": "科来恩润石光伏",
     "hour": 12,
     "sample_count": 531,
     "capacity_mw": 5.45,
@@ -10102,7 +10102,7 @@
   },
   {
     "site_id": "S066",
-    "site_name": "科来恩润石光伏电站",
+    "site_name": "科来恩润石光伏",
     "hour": 13,
     "sample_count": 531,
     "capacity_mw": 5.45,
@@ -10115,7 +10115,7 @@
   },
   {
     "site_id": "S066",
-    "site_name": "科来恩润石光伏电站",
+    "site_name": "科来恩润石光伏",
     "hour": 14,
     "sample_count": 531,
     "capacity_mw": 5.45,
@@ -10128,7 +10128,7 @@
   },
   {
     "site_id": "S066",
-    "site_name": "科来恩润石光伏电站",
+    "site_name": "科来恩润石光伏",
     "hour": 15,
     "sample_count": 531,
     "capacity_mw": 5.45,
@@ -10141,7 +10141,7 @@
   },
   {
     "site_id": "S066",
-    "site_name": "科来恩润石光伏电站",
+    "site_name": "科来恩润石光伏",
     "hour": 16,
     "sample_count": 531,
     "capacity_mw": 5.45,
@@ -10154,7 +10154,7 @@
   },
   {
     "site_id": "S066",
-    "site_name": "科来恩润石光伏电站",
+    "site_name": "科来恩润石光伏",
     "hour": 17,
     "sample_count": 531,
     "capacity_mw": 5.45,
@@ -10167,7 +10167,7 @@
   },
   {
     "site_id": "S066",
-    "site_name": "科来恩润石光伏电站",
+    "site_name": "科来恩润石光伏",
     "hour": 18,
     "sample_count": 531,
     "capacity_mw": 5.45,
@@ -10180,7 +10180,7 @@
   },
   {
     "site_id": "S066",
-    "site_name": "科来恩润石光伏电站",
+    "site_name": "科来恩润石光伏",
     "hour": 19,
     "sample_count": 531,
     "capacity_mw": 5.45,
@@ -10193,7 +10193,7 @@
   },
   {
     "site_id": "S068",
-    "site_name": "富云下车光伏电站",
+    "site_name": "富云下车光伏",
     "hour": 6,
     "sample_count": 1096,
     "capacity_mw": 1.223,
@@ -10206,7 +10206,7 @@
   },
   {
     "site_id": "S068",
-    "site_name": "富云下车光伏电站",
+    "site_name": "富云下车光伏",
     "hour": 7,
     "sample_count": 1096,
     "capacity_mw": 1.223,
@@ -10219,7 +10219,7 @@
   },
   {
     "site_id": "S068",
-    "site_name": "富云下车光伏电站",
+    "site_name": "富云下车光伏",
     "hour": 8,
     "sample_count": 1096,
     "capacity_mw": 1.223,
@@ -10232,7 +10232,7 @@
   },
   {
     "site_id": "S068",
-    "site_name": "富云下车光伏电站",
+    "site_name": "富云下车光伏",
     "hour": 9,
     "sample_count": 1096,
     "capacity_mw": 1.223,
@@ -10245,7 +10245,7 @@
   },
   {
     "site_id": "S068",
-    "site_name": "富云下车光伏电站",
+    "site_name": "富云下车光伏",
     "hour": 10,
     "sample_count": 1096,
     "capacity_mw": 1.223,
@@ -10258,7 +10258,7 @@
   },
   {
     "site_id": "S068",
-    "site_name": "富云下车光伏电站",
+    "site_name": "富云下车光伏",
     "hour": 11,
     "sample_count": 1096,
     "capacity_mw": 1.223,
@@ -10271,7 +10271,7 @@
   },
   {
     "site_id": "S068",
-    "site_name": "富云下车光伏电站",
+    "site_name": "富云下车光伏",
     "hour": 12,
     "sample_count": 1096,
     "capacity_mw": 1.223,
@@ -10284,7 +10284,7 @@
   },
   {
     "site_id": "S068",
-    "site_name": "富云下车光伏电站",
+    "site_name": "富云下车光伏",
     "hour": 13,
     "sample_count": 1096,
     "capacity_mw": 1.223,
@@ -10297,7 +10297,7 @@
   },
   {
     "site_id": "S068",
-    "site_name": "富云下车光伏电站",
+    "site_name": "富云下车光伏",
     "hour": 14,
     "sample_count": 1096,
     "capacity_mw": 1.223,
@@ -10310,7 +10310,7 @@
   },
   {
     "site_id": "S068",
-    "site_name": "富云下车光伏电站",
+    "site_name": "富云下车光伏",
     "hour": 15,
     "sample_count": 1096,
     "capacity_mw": 1.223,
@@ -10323,7 +10323,7 @@
   },
   {
     "site_id": "S068",
-    "site_name": "富云下车光伏电站",
+    "site_name": "富云下车光伏",
     "hour": 16,
     "sample_count": 1096,
     "capacity_mw": 1.223,
@@ -10336,7 +10336,7 @@
   },
   {
     "site_id": "S068",
-    "site_name": "富云下车光伏电站",
+    "site_name": "富云下车光伏",
     "hour": 17,
     "sample_count": 1096,
     "capacity_mw": 1.223,
@@ -10349,7 +10349,7 @@
   },
   {
     "site_id": "S068",
-    "site_name": "富云下车光伏电站",
+    "site_name": "富云下车光伏",
     "hour": 18,
     "sample_count": 1096,
     "capacity_mw": 1.223,
@@ -10362,7 +10362,7 @@
   },
   {
     "site_id": "S068",
-    "site_name": "富云下车光伏电站",
+    "site_name": "富云下车光伏",
     "hour": 19,
     "sample_count": 1096,
     "capacity_mw": 1.223,
@@ -10375,7 +10375,7 @@
   },
   {
     "site_id": "S069",
-    "site_name": "沐恒东海科创园光伏电站",
+    "site_name": "沐恒东海科创园光伏",
     "hour": 6,
     "sample_count": 245,
     "capacity_mw": 3.0,
@@ -10388,7 +10388,7 @@
   },
   {
     "site_id": "S069",
-    "site_name": "沐恒东海科创园光伏电站",
+    "site_name": "沐恒东海科创园光伏",
     "hour": 7,
     "sample_count": 245,
     "capacity_mw": 3.0,
@@ -10401,7 +10401,7 @@
   },
   {
     "site_id": "S069",
-    "site_name": "沐恒东海科创园光伏电站",
+    "site_name": "沐恒东海科创园光伏",
     "hour": 8,
     "sample_count": 245,
     "capacity_mw": 3.0,
@@ -10414,7 +10414,7 @@
   },
   {
     "site_id": "S069",
-    "site_name": "沐恒东海科创园光伏电站",
+    "site_name": "沐恒东海科创园光伏",
     "hour": 9,
     "sample_count": 245,
     "capacity_mw": 3.0,
@@ -10427,7 +10427,7 @@
   },
   {
     "site_id": "S069",
-    "site_name": "沐恒东海科创园光伏电站",
+    "site_name": "沐恒东海科创园光伏",
     "hour": 10,
     "sample_count": 245,
     "capacity_mw": 3.0,
@@ -10440,7 +10440,7 @@
   },
   {
     "site_id": "S069",
-    "site_name": "沐恒东海科创园光伏电站",
+    "site_name": "沐恒东海科创园光伏",
     "hour": 11,
     "sample_count": 245,
     "capacity_mw": 3.0,
@@ -10453,7 +10453,7 @@
   },
   {
     "site_id": "S069",
-    "site_name": "沐恒东海科创园光伏电站",
+    "site_name": "沐恒东海科创园光伏",
     "hour": 12,
     "sample_count": 246,
     "capacity_mw": 3.0,
@@ -10466,7 +10466,7 @@
   },
   {
     "site_id": "S069",
-    "site_name": "沐恒东海科创园光伏电站",
+    "site_name": "沐恒东海科创园光伏",
     "hour": 13,
     "sample_count": 246,
     "capacity_mw": 3.0,
@@ -10479,7 +10479,7 @@
   },
   {
     "site_id": "S069",
-    "site_name": "沐恒东海科创园光伏电站",
+    "site_name": "沐恒东海科创园光伏",
     "hour": 14,
     "sample_count": 246,
     "capacity_mw": 3.0,
@@ -10492,7 +10492,7 @@
   },
   {
     "site_id": "S069",
-    "site_name": "沐恒东海科创园光伏电站",
+    "site_name": "沐恒东海科创园光伏",
     "hour": 15,
     "sample_count": 246,
     "capacity_mw": 3.0,
@@ -10505,7 +10505,7 @@
   },
   {
     "site_id": "S069",
-    "site_name": "沐恒东海科创园光伏电站",
+    "site_name": "沐恒东海科创园光伏",
     "hour": 16,
     "sample_count": 246,
     "capacity_mw": 3.0,
@@ -10518,7 +10518,7 @@
   },
   {
     "site_id": "S069",
-    "site_name": "沐恒东海科创园光伏电站",
+    "site_name": "沐恒东海科创园光伏",
     "hour": 17,
     "sample_count": 246,
     "capacity_mw": 3.0,
@@ -10531,7 +10531,7 @@
   },
   {
     "site_id": "S069",
-    "site_name": "沐恒东海科创园光伏电站",
+    "site_name": "沐恒东海科创园光伏",
     "hour": 18,
     "sample_count": 246,
     "capacity_mw": 3.0,
@@ -10544,7 +10544,7 @@
   },
   {
     "site_id": "S069",
-    "site_name": "沐恒东海科创园光伏电站",
+    "site_name": "沐恒东海科创园光伏",
     "hour": 19,
     "sample_count": 246,
     "capacity_mw": 3.0,
@@ -10557,7 +10557,7 @@
   },
   {
     "site_id": "S070",
-    "site_name": "旭日虎山光伏发电站",
+    "site_name": "旭日虎山光伏",
     "hour": 6,
     "sample_count": 1096,
     "capacity_mw": 2.1,
@@ -10570,7 +10570,7 @@
   },
   {
     "site_id": "S070",
-    "site_name": "旭日虎山光伏发电站",
+    "site_name": "旭日虎山光伏",
     "hour": 7,
     "sample_count": 1096,
     "capacity_mw": 2.1,
@@ -10583,7 +10583,7 @@
   },
   {
     "site_id": "S070",
-    "site_name": "旭日虎山光伏发电站",
+    "site_name": "旭日虎山光伏",
     "hour": 8,
     "sample_count": 1096,
     "capacity_mw": 2.1,
@@ -10596,7 +10596,7 @@
   },
   {
     "site_id": "S070",
-    "site_name": "旭日虎山光伏发电站",
+    "site_name": "旭日虎山光伏",
     "hour": 9,
     "sample_count": 1096,
     "capacity_mw": 2.1,
@@ -10609,7 +10609,7 @@
   },
   {
     "site_id": "S070",
-    "site_name": "旭日虎山光伏发电站",
+    "site_name": "旭日虎山光伏",
     "hour": 10,
     "sample_count": 1096,
     "capacity_mw": 2.1,
@@ -10622,7 +10622,7 @@
   },
   {
     "site_id": "S070",
-    "site_name": "旭日虎山光伏发电站",
+    "site_name": "旭日虎山光伏",
     "hour": 11,
     "sample_count": 1096,
     "capacity_mw": 2.1,
@@ -10635,7 +10635,7 @@
   },
   {
     "site_id": "S070",
-    "site_name": "旭日虎山光伏发电站",
+    "site_name": "旭日虎山光伏",
     "hour": 12,
     "sample_count": 1096,
     "capacity_mw": 2.1,
@@ -10648,7 +10648,7 @@
   },
   {
     "site_id": "S070",
-    "site_name": "旭日虎山光伏发电站",
+    "site_name": "旭日虎山光伏",
     "hour": 13,
     "sample_count": 1096,
     "capacity_mw": 2.1,
@@ -10661,7 +10661,7 @@
   },
   {
     "site_id": "S070",
-    "site_name": "旭日虎山光伏发电站",
+    "site_name": "旭日虎山光伏",
     "hour": 14,
     "sample_count": 1096,
     "capacity_mw": 2.1,
@@ -10674,7 +10674,7 @@
   },
   {
     "site_id": "S070",
-    "site_name": "旭日虎山光伏发电站",
+    "site_name": "旭日虎山光伏",
     "hour": 15,
     "sample_count": 1096,
     "capacity_mw": 2.1,
@@ -10687,7 +10687,7 @@
   },
   {
     "site_id": "S070",
-    "site_name": "旭日虎山光伏发电站",
+    "site_name": "旭日虎山光伏",
     "hour": 16,
     "sample_count": 1096,
     "capacity_mw": 2.1,
@@ -10700,7 +10700,7 @@
   },
   {
     "site_id": "S070",
-    "site_name": "旭日虎山光伏发电站",
+    "site_name": "旭日虎山光伏",
     "hour": 17,
     "sample_count": 1096,
     "capacity_mw": 2.1,
@@ -10713,7 +10713,7 @@
   },
   {
     "site_id": "S070",
-    "site_name": "旭日虎山光伏发电站",
+    "site_name": "旭日虎山光伏",
     "hour": 18,
     "sample_count": 1096,
     "capacity_mw": 2.1,
@@ -10726,7 +10726,7 @@
   },
   {
     "site_id": "S070",
-    "site_name": "旭日虎山光伏发电站",
+    "site_name": "旭日虎山光伏",
     "hour": 19,
     "sample_count": 1096,
     "capacity_mw": 2.1,
@@ -10739,7 +10739,7 @@
   },
   {
     "site_id": "S071",
-    "site_name": "协鑫南岗光伏发电站",
+    "site_name": "协鑫南岗光伏",
     "hour": 6,
     "sample_count": 1096,
     "capacity_mw": 20.0,
@@ -10752,7 +10752,7 @@
   },
   {
     "site_id": "S071",
-    "site_name": "协鑫南岗光伏发电站",
+    "site_name": "协鑫南岗光伏",
     "hour": 7,
     "sample_count": 1096,
     "capacity_mw": 20.0,
@@ -10765,7 +10765,7 @@
   },
   {
     "site_id": "S071",
-    "site_name": "协鑫南岗光伏发电站",
+    "site_name": "协鑫南岗光伏",
     "hour": 8,
     "sample_count": 1096,
     "capacity_mw": 20.0,
@@ -10778,7 +10778,7 @@
   },
   {
     "site_id": "S071",
-    "site_name": "协鑫南岗光伏发电站",
+    "site_name": "协鑫南岗光伏",
     "hour": 9,
     "sample_count": 1096,
     "capacity_mw": 20.0,
@@ -10791,7 +10791,7 @@
   },
   {
     "site_id": "S071",
-    "site_name": "协鑫南岗光伏发电站",
+    "site_name": "协鑫南岗光伏",
     "hour": 10,
     "sample_count": 1096,
     "capacity_mw": 20.0,
@@ -10804,7 +10804,7 @@
   },
   {
     "site_id": "S071",
-    "site_name": "协鑫南岗光伏发电站",
+    "site_name": "协鑫南岗光伏",
     "hour": 11,
     "sample_count": 1096,
     "capacity_mw": 20.0,
@@ -10817,7 +10817,7 @@
   },
   {
     "site_id": "S071",
-    "site_name": "协鑫南岗光伏发电站",
+    "site_name": "协鑫南岗光伏",
     "hour": 12,
     "sample_count": 1096,
     "capacity_mw": 20.0,
@@ -10830,7 +10830,7 @@
   },
   {
     "site_id": "S071",
-    "site_name": "协鑫南岗光伏发电站",
+    "site_name": "协鑫南岗光伏",
     "hour": 13,
     "sample_count": 1096,
     "capacity_mw": 20.0,
@@ -10843,7 +10843,7 @@
   },
   {
     "site_id": "S071",
-    "site_name": "协鑫南岗光伏发电站",
+    "site_name": "协鑫南岗光伏",
     "hour": 14,
     "sample_count": 1096,
     "capacity_mw": 20.0,
@@ -10856,7 +10856,7 @@
   },
   {
     "site_id": "S071",
-    "site_name": "协鑫南岗光伏发电站",
+    "site_name": "协鑫南岗光伏",
     "hour": 15,
     "sample_count": 1096,
     "capacity_mw": 20.0,
@@ -10869,7 +10869,7 @@
   },
   {
     "site_id": "S071",
-    "site_name": "协鑫南岗光伏发电站",
+    "site_name": "协鑫南岗光伏",
     "hour": 16,
     "sample_count": 1096,
     "capacity_mw": 20.0,
@@ -10882,7 +10882,7 @@
   },
   {
     "site_id": "S071",
-    "site_name": "协鑫南岗光伏发电站",
+    "site_name": "协鑫南岗光伏",
     "hour": 17,
     "sample_count": 1096,
     "capacity_mw": 20.0,
@@ -10895,7 +10895,7 @@
   },
   {
     "site_id": "S071",
-    "site_name": "协鑫南岗光伏发电站",
+    "site_name": "协鑫南岗光伏",
     "hour": 18,
     "sample_count": 1096,
     "capacity_mw": 20.0,
@@ -10908,7 +10908,7 @@
   },
   {
     "site_id": "S071",
-    "site_name": "协鑫南岗光伏发电站",
+    "site_name": "协鑫南岗光伏",
     "hour": 19,
     "sample_count": 1096,
     "capacity_mw": 20.0,
@@ -10921,7 +10921,7 @@
   },
   {
     "site_id": "S072",
-    "site_name": "交控大浦光伏电站",
+    "site_name": "交控大浦光伏",
     "hour": 6,
     "sample_count": 827,
     "capacity_mw": 3.125,
@@ -10934,7 +10934,7 @@
   },
   {
     "site_id": "S072",
-    "site_name": "交控大浦光伏电站",
+    "site_name": "交控大浦光伏",
     "hour": 7,
     "sample_count": 827,
     "capacity_mw": 3.125,
@@ -10947,7 +10947,7 @@
   },
   {
     "site_id": "S072",
-    "site_name": "交控大浦光伏电站",
+    "site_name": "交控大浦光伏",
     "hour": 8,
     "sample_count": 827,
     "capacity_mw": 3.125,
@@ -10960,7 +10960,7 @@
   },
   {
     "site_id": "S072",
-    "site_name": "交控大浦光伏电站",
+    "site_name": "交控大浦光伏",
     "hour": 9,
     "sample_count": 827,
     "capacity_mw": 3.125,
@@ -10973,7 +10973,7 @@
   },
   {
     "site_id": "S072",
-    "site_name": "交控大浦光伏电站",
+    "site_name": "交控大浦光伏",
     "hour": 10,
     "sample_count": 827,
     "capacity_mw": 3.125,
@@ -10986,7 +10986,7 @@
   },
   {
     "site_id": "S072",
-    "site_name": "交控大浦光伏电站",
+    "site_name": "交控大浦光伏",
     "hour": 11,
     "sample_count": 827,
     "capacity_mw": 3.125,
@@ -10999,7 +10999,7 @@
   },
   {
     "site_id": "S072",
-    "site_name": "交控大浦光伏电站",
+    "site_name": "交控大浦光伏",
     "hour": 12,
     "sample_count": 827,
     "capacity_mw": 3.125,
@@ -11012,7 +11012,7 @@
   },
   {
     "site_id": "S072",
-    "site_name": "交控大浦光伏电站",
+    "site_name": "交控大浦光伏",
     "hour": 13,
     "sample_count": 827,
     "capacity_mw": 3.125,
@@ -11025,7 +11025,7 @@
   },
   {
     "site_id": "S072",
-    "site_name": "交控大浦光伏电站",
+    "site_name": "交控大浦光伏",
     "hour": 14,
     "sample_count": 827,
     "capacity_mw": 3.125,
@@ -11038,7 +11038,7 @@
   },
   {
     "site_id": "S072",
-    "site_name": "交控大浦光伏电站",
+    "site_name": "交控大浦光伏",
     "hour": 15,
     "sample_count": 827,
     "capacity_mw": 3.125,
@@ -11051,7 +11051,7 @@
   },
   {
     "site_id": "S072",
-    "site_name": "交控大浦光伏电站",
+    "site_name": "交控大浦光伏",
     "hour": 16,
     "sample_count": 827,
     "capacity_mw": 3.125,
@@ -11064,7 +11064,7 @@
   },
   {
     "site_id": "S072",
-    "site_name": "交控大浦光伏电站",
+    "site_name": "交控大浦光伏",
     "hour": 17,
     "sample_count": 827,
     "capacity_mw": 3.125,
@@ -11077,7 +11077,7 @@
   },
   {
     "site_id": "S072",
-    "site_name": "交控大浦光伏电站",
+    "site_name": "交控大浦光伏",
     "hour": 18,
     "sample_count": 827,
     "capacity_mw": 3.125,
@@ -11090,7 +11090,7 @@
   },
   {
     "site_id": "S072",
-    "site_name": "交控大浦光伏电站",
+    "site_name": "交控大浦光伏",
     "hour": 19,
     "sample_count": 827,
     "capacity_mw": 3.125,
@@ -11103,7 +11103,7 @@
   },
   {
     "site_id": "S073",
-    "site_name": "华能裕灌光伏电站",
+    "site_name": "华能裕灌光伏",
     "hour": 6,
     "sample_count": 747,
     "capacity_mw": 15.0,
@@ -11116,7 +11116,7 @@
   },
   {
     "site_id": "S073",
-    "site_name": "华能裕灌光伏电站",
+    "site_name": "华能裕灌光伏",
     "hour": 7,
     "sample_count": 747,
     "capacity_mw": 15.0,
@@ -11129,7 +11129,7 @@
   },
   {
     "site_id": "S073",
-    "site_name": "华能裕灌光伏电站",
+    "site_name": "华能裕灌光伏",
     "hour": 8,
     "sample_count": 747,
     "capacity_mw": 15.0,
@@ -11142,7 +11142,7 @@
   },
   {
     "site_id": "S073",
-    "site_name": "华能裕灌光伏电站",
+    "site_name": "华能裕灌光伏",
     "hour": 9,
     "sample_count": 747,
     "capacity_mw": 15.0,
@@ -11155,7 +11155,7 @@
   },
   {
     "site_id": "S073",
-    "site_name": "华能裕灌光伏电站",
+    "site_name": "华能裕灌光伏",
     "hour": 10,
     "sample_count": 747,
     "capacity_mw": 15.0,
@@ -11168,7 +11168,7 @@
   },
   {
     "site_id": "S073",
-    "site_name": "华能裕灌光伏电站",
+    "site_name": "华能裕灌光伏",
     "hour": 11,
     "sample_count": 748,
     "capacity_mw": 15.0,
@@ -11181,7 +11181,7 @@
   },
   {
     "site_id": "S073",
-    "site_name": "华能裕灌光伏电站",
+    "site_name": "华能裕灌光伏",
     "hour": 12,
     "sample_count": 748,
     "capacity_mw": 15.0,
@@ -11194,7 +11194,7 @@
   },
   {
     "site_id": "S073",
-    "site_name": "华能裕灌光伏电站",
+    "site_name": "华能裕灌光伏",
     "hour": 13,
     "sample_count": 748,
     "capacity_mw": 15.0,
@@ -11207,7 +11207,7 @@
   },
   {
     "site_id": "S073",
-    "site_name": "华能裕灌光伏电站",
+    "site_name": "华能裕灌光伏",
     "hour": 14,
     "sample_count": 748,
     "capacity_mw": 15.0,
@@ -11220,7 +11220,7 @@
   },
   {
     "site_id": "S073",
-    "site_name": "华能裕灌光伏电站",
+    "site_name": "华能裕灌光伏",
     "hour": 15,
     "sample_count": 748,
     "capacity_mw": 15.0,
@@ -11233,7 +11233,7 @@
   },
   {
     "site_id": "S073",
-    "site_name": "华能裕灌光伏电站",
+    "site_name": "华能裕灌光伏",
     "hour": 16,
     "sample_count": 748,
     "capacity_mw": 15.0,
@@ -11246,7 +11246,7 @@
   },
   {
     "site_id": "S073",
-    "site_name": "华能裕灌光伏电站",
+    "site_name": "华能裕灌光伏",
     "hour": 17,
     "sample_count": 748,
     "capacity_mw": 15.0,
@@ -11259,7 +11259,7 @@
   },
   {
     "site_id": "S073",
-    "site_name": "华能裕灌光伏电站",
+    "site_name": "华能裕灌光伏",
     "hour": 18,
     "sample_count": 748,
     "capacity_mw": 15.0,
@@ -11272,7 +11272,7 @@
   },
   {
     "site_id": "S073",
-    "site_name": "华能裕灌光伏电站",
+    "site_name": "华能裕灌光伏",
     "hour": 19,
     "sample_count": 748,
     "capacity_mw": 15.0,
@@ -11285,7 +11285,7 @@
   },
   {
     "site_id": "S074",
-    "site_name": "华能中林二期光伏电站",
+    "site_name": "华能中林二期光伏",
     "hour": 6,
     "sample_count": 363,
     "capacity_mw": 4.0,
@@ -11298,7 +11298,7 @@
   },
   {
     "site_id": "S074",
-    "site_name": "华能中林二期光伏电站",
+    "site_name": "华能中林二期光伏",
     "hour": 7,
     "sample_count": 363,
     "capacity_mw": 4.0,
@@ -11311,7 +11311,7 @@
   },
   {
     "site_id": "S074",
-    "site_name": "华能中林二期光伏电站",
+    "site_name": "华能中林二期光伏",
     "hour": 8,
     "sample_count": 363,
     "capacity_mw": 4.0,
@@ -11324,7 +11324,7 @@
   },
   {
     "site_id": "S074",
-    "site_name": "华能中林二期光伏电站",
+    "site_name": "华能中林二期光伏",
     "hour": 9,
     "sample_count": 363,
     "capacity_mw": 4.0,
@@ -11337,7 +11337,7 @@
   },
   {
     "site_id": "S074",
-    "site_name": "华能中林二期光伏电站",
+    "site_name": "华能中林二期光伏",
     "hour": 10,
     "sample_count": 363,
     "capacity_mw": 4.0,
@@ -11350,7 +11350,7 @@
   },
   {
     "site_id": "S074",
-    "site_name": "华能中林二期光伏电站",
+    "site_name": "华能中林二期光伏",
     "hour": 11,
     "sample_count": 363,
     "capacity_mw": 4.0,
@@ -11363,7 +11363,7 @@
   },
   {
     "site_id": "S074",
-    "site_name": "华能中林二期光伏电站",
+    "site_name": "华能中林二期光伏",
     "hour": 12,
     "sample_count": 363,
     "capacity_mw": 4.0,
@@ -11376,7 +11376,7 @@
   },
   {
     "site_id": "S074",
-    "site_name": "华能中林二期光伏电站",
+    "site_name": "华能中林二期光伏",
     "hour": 13,
     "sample_count": 363,
     "capacity_mw": 4.0,
@@ -11389,7 +11389,7 @@
   },
   {
     "site_id": "S074",
-    "site_name": "华能中林二期光伏电站",
+    "site_name": "华能中林二期光伏",
     "hour": 14,
     "sample_count": 363,
     "capacity_mw": 4.0,
@@ -11402,7 +11402,7 @@
   },
   {
     "site_id": "S074",
-    "site_name": "华能中林二期光伏电站",
+    "site_name": "华能中林二期光伏",
     "hour": 15,
     "sample_count": 364,
     "capacity_mw": 4.0,
@@ -11415,7 +11415,7 @@
   },
   {
     "site_id": "S074",
-    "site_name": "华能中林二期光伏电站",
+    "site_name": "华能中林二期光伏",
     "hour": 16,
     "sample_count": 364,
     "capacity_mw": 4.0,
@@ -11428,7 +11428,7 @@
   },
   {
     "site_id": "S074",
-    "site_name": "华能中林二期光伏电站",
+    "site_name": "华能中林二期光伏",
     "hour": 17,
     "sample_count": 364,
     "capacity_mw": 4.0,
@@ -11441,7 +11441,7 @@
   },
   {
     "site_id": "S074",
-    "site_name": "华能中林二期光伏电站",
+    "site_name": "华能中林二期光伏",
     "hour": 18,
     "sample_count": 364,
     "capacity_mw": 4.0,
@@ -11454,7 +11454,7 @@
   },
   {
     "site_id": "S074",
-    "site_name": "华能中林二期光伏电站",
+    "site_name": "华能中林二期光伏",
     "hour": 19,
     "sample_count": 364,
     "capacity_mw": 4.0,
@@ -11467,7 +11467,7 @@
   },
   {
     "site_id": "S075",
-    "site_name": "旭樱新田光伏电站",
+    "site_name": "旭樱新田光伏",
     "hour": 6,
     "sample_count": 291,
     "capacity_mw": 2.63,
@@ -11480,7 +11480,7 @@
   },
   {
     "site_id": "S075",
-    "site_name": "旭樱新田光伏电站",
+    "site_name": "旭樱新田光伏",
     "hour": 7,
     "sample_count": 291,
     "capacity_mw": 2.63,
@@ -11493,7 +11493,7 @@
   },
   {
     "site_id": "S075",
-    "site_name": "旭樱新田光伏电站",
+    "site_name": "旭樱新田光伏",
     "hour": 8,
     "sample_count": 291,
     "capacity_mw": 2.63,
@@ -11506,7 +11506,7 @@
   },
   {
     "site_id": "S075",
-    "site_name": "旭樱新田光伏电站",
+    "site_name": "旭樱新田光伏",
     "hour": 9,
     "sample_count": 291,
     "capacity_mw": 2.63,
@@ -11519,7 +11519,7 @@
   },
   {
     "site_id": "S075",
-    "site_name": "旭樱新田光伏电站",
+    "site_name": "旭樱新田光伏",
     "hour": 10,
     "sample_count": 291,
     "capacity_mw": 2.63,
@@ -11532,7 +11532,7 @@
   },
   {
     "site_id": "S075",
-    "site_name": "旭樱新田光伏电站",
+    "site_name": "旭樱新田光伏",
     "hour": 11,
     "sample_count": 290,
     "capacity_mw": 2.63,
@@ -11545,7 +11545,7 @@
   },
   {
     "site_id": "S075",
-    "site_name": "旭樱新田光伏电站",
+    "site_name": "旭樱新田光伏",
     "hour": 12,
     "sample_count": 290,
     "capacity_mw": 2.63,
@@ -11558,7 +11558,7 @@
   },
   {
     "site_id": "S075",
-    "site_name": "旭樱新田光伏电站",
+    "site_name": "旭樱新田光伏",
     "hour": 13,
     "sample_count": 290,
     "capacity_mw": 2.63,
@@ -11571,7 +11571,7 @@
   },
   {
     "site_id": "S075",
-    "site_name": "旭樱新田光伏电站",
+    "site_name": "旭樱新田光伏",
     "hour": 14,
     "sample_count": 290,
     "capacity_mw": 2.63,
@@ -11584,7 +11584,7 @@
   },
   {
     "site_id": "S075",
-    "site_name": "旭樱新田光伏电站",
+    "site_name": "旭樱新田光伏",
     "hour": 15,
     "sample_count": 290,
     "capacity_mw": 2.63,
@@ -11597,7 +11597,7 @@
   },
   {
     "site_id": "S075",
-    "site_name": "旭樱新田光伏电站",
+    "site_name": "旭樱新田光伏",
     "hour": 16,
     "sample_count": 291,
     "capacity_mw": 2.63,
@@ -11610,7 +11610,7 @@
   },
   {
     "site_id": "S075",
-    "site_name": "旭樱新田光伏电站",
+    "site_name": "旭樱新田光伏",
     "hour": 17,
     "sample_count": 292,
     "capacity_mw": 2.63,
@@ -11623,7 +11623,7 @@
   },
   {
     "site_id": "S075",
-    "site_name": "旭樱新田光伏电站",
+    "site_name": "旭樱新田光伏",
     "hour": 18,
     "sample_count": 292,
     "capacity_mw": 2.63,
@@ -11636,7 +11636,7 @@
   },
   {
     "site_id": "S075",
-    "site_name": "旭樱新田光伏电站",
+    "site_name": "旭樱新田光伏",
     "hour": 19,
     "sample_count": 292,
     "capacity_mw": 2.63,
@@ -11649,7 +11649,7 @@
   },
   {
     "site_id": "S076",
-    "site_name": "太阳光东海光伏电站",
+    "site_name": "太阳光东海光伏",
     "hour": 6,
     "sample_count": 245,
     "capacity_mw": 5.0,
@@ -11662,7 +11662,7 @@
   },
   {
     "site_id": "S076",
-    "site_name": "太阳光东海光伏电站",
+    "site_name": "太阳光东海光伏",
     "hour": 7,
     "sample_count": 245,
     "capacity_mw": 5.0,
@@ -11675,7 +11675,7 @@
   },
   {
     "site_id": "S076",
-    "site_name": "太阳光东海光伏电站",
+    "site_name": "太阳光东海光伏",
     "hour": 8,
     "sample_count": 245,
     "capacity_mw": 5.0,
@@ -11688,7 +11688,7 @@
   },
   {
     "site_id": "S076",
-    "site_name": "太阳光东海光伏电站",
+    "site_name": "太阳光东海光伏",
     "hour": 9,
     "sample_count": 245,
     "capacity_mw": 5.0,
@@ -11701,7 +11701,7 @@
   },
   {
     "site_id": "S076",
-    "site_name": "太阳光东海光伏电站",
+    "site_name": "太阳光东海光伏",
     "hour": 10,
     "sample_count": 246,
     "capacity_mw": 5.0,
@@ -11714,7 +11714,7 @@
   },
   {
     "site_id": "S076",
-    "site_name": "太阳光东海光伏电站",
+    "site_name": "太阳光东海光伏",
     "hour": 11,
     "sample_count": 246,
     "capacity_mw": 5.0,
@@ -11727,7 +11727,7 @@
   },
   {
     "site_id": "S076",
-    "site_name": "太阳光东海光伏电站",
+    "site_name": "太阳光东海光伏",
     "hour": 12,
     "sample_count": 246,
     "capacity_mw": 5.0,
@@ -11740,7 +11740,7 @@
   },
   {
     "site_id": "S076",
-    "site_name": "太阳光东海光伏电站",
+    "site_name": "太阳光东海光伏",
     "hour": 13,
     "sample_count": 246,
     "capacity_mw": 5.0,
@@ -11753,7 +11753,7 @@
   },
   {
     "site_id": "S076",
-    "site_name": "太阳光东海光伏电站",
+    "site_name": "太阳光东海光伏",
     "hour": 14,
     "sample_count": 246,
     "capacity_mw": 5.0,
@@ -11766,7 +11766,7 @@
   },
   {
     "site_id": "S076",
-    "site_name": "太阳光东海光伏电站",
+    "site_name": "太阳光东海光伏",
     "hour": 15,
     "sample_count": 246,
     "capacity_mw": 5.0,
@@ -11779,7 +11779,7 @@
   },
   {
     "site_id": "S076",
-    "site_name": "太阳光东海光伏电站",
+    "site_name": "太阳光东海光伏",
     "hour": 16,
     "sample_count": 246,
     "capacity_mw": 5.0,
@@ -11792,7 +11792,7 @@
   },
   {
     "site_id": "S076",
-    "site_name": "太阳光东海光伏电站",
+    "site_name": "太阳光东海光伏",
     "hour": 17,
     "sample_count": 246,
     "capacity_mw": 5.0,
@@ -11805,7 +11805,7 @@
   },
   {
     "site_id": "S076",
-    "site_name": "太阳光东海光伏电站",
+    "site_name": "太阳光东海光伏",
     "hour": 18,
     "sample_count": 246,
     "capacity_mw": 5.0,
@@ -11818,7 +11818,7 @@
   },
   {
     "site_id": "S076",
-    "site_name": "太阳光东海光伏电站",
+    "site_name": "太阳光东海光伏",
     "hour": 19,
     "sample_count": 246,
     "capacity_mw": 5.0,
@@ -11831,7 +11831,7 @@
   },
   {
     "site_id": "S077",
-    "site_name": "富云图河光伏电站",
+    "site_name": "富云图河光伏",
     "hour": 6,
     "sample_count": 1096,
     "capacity_mw": 0.901,
@@ -11844,7 +11844,7 @@
   },
   {
     "site_id": "S077",
-    "site_name": "富云图河光伏电站",
+    "site_name": "富云图河光伏",
     "hour": 7,
     "sample_count": 1096,
     "capacity_mw": 0.901,
@@ -11857,7 +11857,7 @@
   },
   {
     "site_id": "S077",
-    "site_name": "富云图河光伏电站",
+    "site_name": "富云图河光伏",
     "hour": 8,
     "sample_count": 1096,
     "capacity_mw": 0.901,
@@ -11870,7 +11870,7 @@
   },
   {
     "site_id": "S077",
-    "site_name": "富云图河光伏电站",
+    "site_name": "富云图河光伏",
     "hour": 9,
     "sample_count": 1096,
     "capacity_mw": 0.901,
@@ -11883,7 +11883,7 @@
   },
   {
     "site_id": "S077",
-    "site_name": "富云图河光伏电站",
+    "site_name": "富云图河光伏",
     "hour": 10,
     "sample_count": 1096,
     "capacity_mw": 0.901,
@@ -11896,7 +11896,7 @@
   },
   {
     "site_id": "S077",
-    "site_name": "富云图河光伏电站",
+    "site_name": "富云图河光伏",
     "hour": 11,
     "sample_count": 1096,
     "capacity_mw": 0.901,
@@ -11909,7 +11909,7 @@
   },
   {
     "site_id": "S077",
-    "site_name": "富云图河光伏电站",
+    "site_name": "富云图河光伏",
     "hour": 12,
     "sample_count": 1096,
     "capacity_mw": 0.901,
@@ -11922,7 +11922,7 @@
   },
   {
     "site_id": "S077",
-    "site_name": "富云图河光伏电站",
+    "site_name": "富云图河光伏",
     "hour": 13,
     "sample_count": 1096,
     "capacity_mw": 0.901,
@@ -11935,7 +11935,7 @@
   },
   {
     "site_id": "S077",
-    "site_name": "富云图河光伏电站",
+    "site_name": "富云图河光伏",
     "hour": 14,
     "sample_count": 1096,
     "capacity_mw": 0.901,
@@ -11948,7 +11948,7 @@
   },
   {
     "site_id": "S077",
-    "site_name": "富云图河光伏电站",
+    "site_name": "富云图河光伏",
     "hour": 15,
     "sample_count": 1096,
     "capacity_mw": 0.901,
@@ -11961,7 +11961,7 @@
   },
   {
     "site_id": "S077",
-    "site_name": "富云图河光伏电站",
+    "site_name": "富云图河光伏",
     "hour": 16,
     "sample_count": 1096,
     "capacity_mw": 0.901,
@@ -11974,7 +11974,7 @@
   },
   {
     "site_id": "S077",
-    "site_name": "富云图河光伏电站",
+    "site_name": "富云图河光伏",
     "hour": 17,
     "sample_count": 1096,
     "capacity_mw": 0.901,
@@ -11987,7 +11987,7 @@
   },
   {
     "site_id": "S077",
-    "site_name": "富云图河光伏电站",
+    "site_name": "富云图河光伏",
     "hour": 18,
     "sample_count": 1096,
     "capacity_mw": 0.901,
@@ -12000,7 +12000,7 @@
   },
   {
     "site_id": "S077",
-    "site_name": "富云图河光伏电站",
+    "site_name": "富云图河光伏",
     "hour": 19,
     "sample_count": 1096,
     "capacity_mw": 0.901,
@@ -12013,7 +12013,7 @@
   },
   {
     "site_id": "S115",
-    "site_name": "鑫众墩尚光伏发电站",
+    "site_name": "鑫众墩尚光伏电站",
     "hour": 6,
     "sample_count": 1096,
     "capacity_mw": 7.0,
@@ -12026,7 +12026,7 @@
   },
   {
     "site_id": "S115",
-    "site_name": "鑫众墩尚光伏发电站",
+    "site_name": "鑫众墩尚光伏电站",
     "hour": 7,
     "sample_count": 1096,
     "capacity_mw": 7.0,
@@ -12039,7 +12039,7 @@
   },
   {
     "site_id": "S115",
-    "site_name": "鑫众墩尚光伏发电站",
+    "site_name": "鑫众墩尚光伏电站",
     "hour": 8,
     "sample_count": 1096,
     "capacity_mw": 7.0,
@@ -12052,7 +12052,7 @@
   },
   {
     "site_id": "S115",
-    "site_name": "鑫众墩尚光伏发电站",
+    "site_name": "鑫众墩尚光伏电站",
     "hour": 9,
     "sample_count": 1096,
     "capacity_mw": 7.0,
@@ -12065,7 +12065,7 @@
   },
   {
     "site_id": "S115",
-    "site_name": "鑫众墩尚光伏发电站",
+    "site_name": "鑫众墩尚光伏电站",
     "hour": 10,
     "sample_count": 1096,
     "capacity_mw": 7.0,
@@ -12078,7 +12078,7 @@
   },
   {
     "site_id": "S115",
-    "site_name": "鑫众墩尚光伏发电站",
+    "site_name": "鑫众墩尚光伏电站",
     "hour": 11,
     "sample_count": 1096,
     "capacity_mw": 7.0,
@@ -12091,7 +12091,7 @@
   },
   {
     "site_id": "S115",
-    "site_name": "鑫众墩尚光伏发电站",
+    "site_name": "鑫众墩尚光伏电站",
     "hour": 12,
     "sample_count": 1096,
     "capacity_mw": 7.0,
@@ -12104,7 +12104,7 @@
   },
   {
     "site_id": "S115",
-    "site_name": "鑫众墩尚光伏发电站",
+    "site_name": "鑫众墩尚光伏电站",
     "hour": 13,
     "sample_count": 1096,
     "capacity_mw": 7.0,
@@ -12117,7 +12117,7 @@
   },
   {
     "site_id": "S115",
-    "site_name": "鑫众墩尚光伏发电站",
+    "site_name": "鑫众墩尚光伏电站",
     "hour": 14,
     "sample_count": 1096,
     "capacity_mw": 7.0,
@@ -12130,7 +12130,7 @@
   },
   {
     "site_id": "S115",
-    "site_name": "鑫众墩尚光伏发电站",
+    "site_name": "鑫众墩尚光伏电站",
     "hour": 15,
     "sample_count": 1096,
     "capacity_mw": 7.0,
@@ -12143,7 +12143,7 @@
   },
   {
     "site_id": "S115",
-    "site_name": "鑫众墩尚光伏发电站",
+    "site_name": "鑫众墩尚光伏电站",
     "hour": 16,
     "sample_count": 1096,
     "capacity_mw": 7.0,
@@ -12156,7 +12156,7 @@
   },
   {
     "site_id": "S115",
-    "site_name": "鑫众墩尚光伏发电站",
+    "site_name": "鑫众墩尚光伏电站",
     "hour": 17,
     "sample_count": 1096,
     "capacity_mw": 7.0,
@@ -12169,7 +12169,7 @@
   },
   {
     "site_id": "S115",
-    "site_name": "鑫众墩尚光伏发电站",
+    "site_name": "鑫众墩尚光伏电站",
     "hour": 18,
     "sample_count": 1096,
     "capacity_mw": 7.0,
@@ -12182,7 +12182,7 @@
   },
   {
     "site_id": "S115",
-    "site_name": "鑫众墩尚光伏发电站",
+    "site_name": "鑫众墩尚光伏电站",
     "hour": 19,
     "sample_count": 1096,
     "capacity_mw": 7.0,
@@ -12195,7 +12195,7 @@
   },
   {
     "site_id": "S116",
-    "site_name": "林洋伊山光伏发电站",
+    "site_name": "林洋伊山光伏电站",
     "hour": 6,
     "sample_count": 1096,
     "capacity_mw": 22.0,
@@ -12208,7 +12208,7 @@
   },
   {
     "site_id": "S116",
-    "site_name": "林洋伊山光伏发电站",
+    "site_name": "林洋伊山光伏电站",
     "hour": 7,
     "sample_count": 1096,
     "capacity_mw": 22.0,
@@ -12221,7 +12221,7 @@
   },
   {
     "site_id": "S116",
-    "site_name": "林洋伊山光伏发电站",
+    "site_name": "林洋伊山光伏电站",
     "hour": 8,
     "sample_count": 1096,
     "capacity_mw": 22.0,
@@ -12234,7 +12234,7 @@
   },
   {
     "site_id": "S116",
-    "site_name": "林洋伊山光伏发电站",
+    "site_name": "林洋伊山光伏电站",
     "hour": 9,
     "sample_count": 1096,
     "capacity_mw": 22.0,
@@ -12247,7 +12247,7 @@
   },
   {
     "site_id": "S116",
-    "site_name": "林洋伊山光伏发电站",
+    "site_name": "林洋伊山光伏电站",
     "hour": 10,
     "sample_count": 1096,
     "capacity_mw": 22.0,
@@ -12260,7 +12260,7 @@
   },
   {
     "site_id": "S116",
-    "site_name": "林洋伊山光伏发电站",
+    "site_name": "林洋伊山光伏电站",
     "hour": 11,
     "sample_count": 1096,
     "capacity_mw": 22.0,
@@ -12273,7 +12273,7 @@
   },
   {
     "site_id": "S116",
-    "site_name": "林洋伊山光伏发电站",
+    "site_name": "林洋伊山光伏电站",
     "hour": 12,
     "sample_count": 1096,
     "capacity_mw": 22.0,
@@ -12286,7 +12286,7 @@
   },
   {
     "site_id": "S116",
-    "site_name": "林洋伊山光伏发电站",
+    "site_name": "林洋伊山光伏电站",
     "hour": 13,
     "sample_count": 1096,
     "capacity_mw": 22.0,
@@ -12299,7 +12299,7 @@
   },
   {
     "site_id": "S116",
-    "site_name": "林洋伊山光伏发电站",
+    "site_name": "林洋伊山光伏电站",
     "hour": 14,
     "sample_count": 1096,
     "capacity_mw": 22.0,
@@ -12312,7 +12312,7 @@
   },
   {
     "site_id": "S116",
-    "site_name": "林洋伊山光伏发电站",
+    "site_name": "林洋伊山光伏电站",
     "hour": 15,
     "sample_count": 1096,
     "capacity_mw": 22.0,
@@ -12325,7 +12325,7 @@
   },
   {
     "site_id": "S116",
-    "site_name": "林洋伊山光伏发电站",
+    "site_name": "林洋伊山光伏电站",
     "hour": 16,
     "sample_count": 1096,
     "capacity_mw": 22.0,
@@ -12338,7 +12338,7 @@
   },
   {
     "site_id": "S116",
-    "site_name": "林洋伊山光伏发电站",
+    "site_name": "林洋伊山光伏电站",
     "hour": 17,
     "sample_count": 1096,
     "capacity_mw": 22.0,
@@ -12351,7 +12351,7 @@
   },
   {
     "site_id": "S116",
-    "site_name": "林洋伊山光伏发电站",
+    "site_name": "林洋伊山光伏电站",
     "hour": 18,
     "sample_count": 1096,
     "capacity_mw": 22.0,
@@ -12364,7 +12364,7 @@
   },
   {
     "site_id": "S116",
-    "site_name": "林洋伊山光伏发电站",
+    "site_name": "林洋伊山光伏电站",
     "hour": 19,
     "sample_count": 1096,
     "capacity_mw": 22.0,
