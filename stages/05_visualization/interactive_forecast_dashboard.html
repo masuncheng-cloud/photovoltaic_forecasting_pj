@@ -320,6 +320,90 @@ tbody td {
 }
 .legend-item { display: flex; align-items: center; gap: 4px; }
 .legend-dot { width: 10px; height: 10px; border-radius: 50%; display: inline-block; }
+
+/* ---- Hourly Prediction Panel ---- */
+.hourly-panel {
+  background: #fff;
+  border: 1px solid #dde3ec;
+  border-radius: 6px;
+  padding: 14px;
+  margin-bottom: 14px;
+}
+
+.hourly-panel .panel-header {
+  margin-bottom: 12px;
+}
+
+.hourly-panel h2 {
+  font-size: 14px;
+  font-weight: 600;
+  color: #2d3748;
+  margin-bottom: 4px;
+}
+
+.hourly-panel .panel-desc {
+  font-size: 11px;
+  color: #718096;
+  line-height: 1.6;
+}
+
+.hourly-grid {
+  display: grid;
+  grid-template-columns: minmax(360px, 1.2fr) minmax(360px, 1fr);
+  gap: 16px;
+  align-items: stretch;
+}
+
+.chart-wrap, .table-wrap {
+  min-width: 0;
+}
+
+#hourlyNrmseChart {
+  width: 100%;
+  height: 300px;
+  display: block;
+}
+
+#hourlySummaryTable {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 12px;
+}
+
+#hourlySummaryTable th {
+  background: #f0f4f8;
+  padding: 7px 10px;
+  text-align: center;
+  font-weight: 600;
+  color: #4a5568;
+  border-bottom: 2px solid #dde3ec;
+  white-space: nowrap;
+}
+
+#hourlySummaryTable td {
+  padding: 6px 10px;
+  text-align: center;
+  border-bottom: 1px solid #edf2f7;
+  color: #2d3748;
+}
+
+#hourlySummaryTable tr:hover td {
+  background: #f7fafc;
+}
+
+.hourly-panel .note {
+  font-size: 11px;
+  color: #a0aec0;
+  margin-top: 10px;
+  line-height: 1.6;
+  font-style: italic;
+}
+
+@media (max-width: 900px) {
+  .hourly-grid {
+    grid-template-columns: 1fr;
+  }
+}
 </style>
 </head>
 <body>
