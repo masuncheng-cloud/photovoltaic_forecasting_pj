@@ -993,6 +993,9 @@ def main():
     print("\n[10] Exporting error_threshold_summary.json...")
     export_error_threshold_summary(scatter_data, dashboard_root)
 
+    print("\n[10b] Exporting hourly_prediction_summary.json...")
+    hourly_summary = export_hourly_prediction_summary(output_root, dashboard_root, df)
+
     # Validation
     print("\n[11] Validating outputs...")
     assert len(city) > 0, "city_series is empty"
@@ -1004,6 +1007,11 @@ def main():
     assert len(sample_req_bins) > 0, "sample_requirement_bins is empty"
     assert "train_valid_positive_rows" in scatter_site[0], "missing train_valid_positive_rows field"
     assert "test_nrmse_pct" in scatter_site[0], "missing test_nrmse_pct field"
+    assert len(hourly_summary) == 14, f"hourly_summary expected 14 rows (6-19h), got {len(hourly_summary)}"
+    assert "hour" in hourly_summary[0], "missing hour field"
+    assert "rows" in hourly_summary[0], "missing rows field"
+    assert "site_nrmse_mean_pct" in hourly_summary[0], "missing site_nrmse_mean_pct field"
+    assert "city_nrmse_pct" in hourly_summary[0], "missing city_nrmse_pct field"
     total_actual = city["actual_mw"].sum()
     total_pred = city["pred_mw"].sum()
     assert total_actual > 0, "actual_mw all zero"
