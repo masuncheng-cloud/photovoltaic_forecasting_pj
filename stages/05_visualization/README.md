@@ -23,4 +23,4 @@ python -m http.server 8060
 http://127.0.0.1:8060/stages/05_visualization/interactive_forecast_dashboard.html
 ```
 
-页面支持全市/单站点真实值与预测值对比、典型站点选择、10-14 点典型时段、四季代表日、误差-样本量散点图。
+页面支持全市/单站点真实值与预测值对比、典型站点选择、10-14 点典型时段、四季代表日、逐小时预测结果（站点平均 NRMSE 与城市 NRMSE）、单站点样本量与最终 NRMSE 关系散点图。
