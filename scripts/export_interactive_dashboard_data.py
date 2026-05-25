@@ -481,6 +481,245 @@ def export_season_days(df, dashboard_root):
     return results
 
 
+def load_site_master_full(output_root):
+    """Load full site master CSV for site names and metadata."""
+    sm_path = Path(output_root) / "tables" / "site_master.csv"
+    if not sm_path.exists():
+        return None
+    sm = pd.read_csv(sm_path)
+    cols_needed = ["site_id", "site_short_name", "site_full_name", "county", "capacity_mw"]
+    cols_exist = [c for c in cols_needed if c in sm.columns]
+    if "site_id" not in sm.columns:
+        return None
+    return sm[cols_exist].set_index("site_id")
+
+
+def build_site_name_lookup(sm_df):
+    """Build site name lookup dict."""
+    if sm_df is None:
+        return None
+    lookup = {}
+    for sid, row in sm_df.iterrows():
+        name = (row.get("site_short_name") or "").strip()
+        if not name:
+            name = (row.get("site_full_name") or "").strip()
+        if not name:
+            name = str(sid)
+        lookup[sid] = name
+    return lookup
+
+
+def export_scatter_site_sample_nrmse(df, site_names, sm_df, metrics_df, dashboard_root):
+    """Export scatter_site_sample_nrmse.json: each point = one site."""
+    # Split: train+valid for sample counts, test for NRMSE
+    tv = df[df["split"].isin(["train", "valid"])].copy()
+    test = df[df["split"].eq("test")].copy()
+
+    # Build category lookup
+    cat_map = dict(zip(metrics_df["site_id"], metrics_df["category_label"]))
+
+    # Sample counts per site
+    train_rows = df[df["split"].eq("train")].groupby("site_id").size().rename("train_rows")
+    valid_rows = df[df["split"].eq("valid")].groupby("site_id").size().rename("valid_rows")
+
+    tv_agg = tv.groupby("site_id").agg(
+        train_valid_rows=("power_mw", "size"),
+        train_valid_positive_rows=("power_mw", lambda s: (s.fillna(0) > 0).sum()),
+        train_valid_zero_rows=("power_mw", lambda s: (s.fillna(0) == 0).sum()),
+        capacity_mw_tv=("capacity_mw", "mean"),
+    ).reset_index()
+    tv_agg["train_valid_zero_ratio_pct"] = (
+        tv_agg["train_valid_zero_rows"] / tv_agg["train_valid_rows"].clip(lower=1) * 100
+    )
+    tv_agg = tv_agg.merge(train_rows.reset_index(), on="site_id", how="left")
+    tv_agg = tv_agg.merge(valid_rows.reset_index(), on="site_id", how="left")
+    tv_agg["train_rows"] = tv_agg["train_rows"].fillna(0).astype(int)
+    tv_agg["valid_rows"] = tv_agg["valid_rows"].fillna(0).astype(int)
+    tv_agg["train_valid_positive_rows"] = tv_agg["train_valid_positive_rows"].astype(int)
+
+    # Test NRMSE per site (6-19h only, non-null)
+    test_eval = test[test["hour"].between(6, 19)].copy()
+    test_eval = test_eval[test_eval["power_mw"].notna() & test_eval["power_pred"].notna()]
+
+    def rmse(y, p):
+        return np.sqrt(np.mean((p - y) ** 2))
+
+    test_rows = []
+    for sid, g in test_eval.groupby("site_id"):
+        y = g["power_mw"].astype(float).values
+        p = g["power_pred"].astype(float).values
+        c = max(float(g["capacity_mw"].mean()), 1e-9)
+        actual_sum = float(np.sum(y))
+        pred_sum = float(np.sum(p))
+        rmse_mw = rmse(y, p)
+        test_rows.append({
+            "site_id": sid,
+            "test_rows": int(len(g)),
+            "test_positive_rows": int((g["power_mw"].fillna(0) > 0).sum()),
+            "test_mae_mw": float(np.mean(np.abs(p - y))),
+            "test_rmse_mw": float(rmse_mw),
+            "test_nrmse_pct": float(rmse_mw / c * 100),
+            "test_bias_pct": float((pred_sum - actual_sum) / max(actual_sum, 1e-9) * 100),
+            "test_pred_actual_ratio": float(pred_sum / max(actual_sum, 1e-9)),
+        })
+    test_df = pd.DataFrame(test_rows)
+
+    # Merge
+    merged = tv_agg.merge(test_df, on="site_id", how="inner")
+    merged["capacity_mw"] = merged["capacity_mw_tv"]
+
+    # Site names
+    if sm_df is not None:
+        name_map = {}
+        for sid, row in sm_df.iterrows():
+            name = (str(row.get("site_short_name") or "") or "").strip()
+            if not name:
+                name = (str(row.get("site_full_name") or "") or "").strip()
+            if not name:
+                name = str(sid)
+            name_map[sid] = name
+        merged["site_name"] = merged["site_id"].map(name_map).fillna(merged["site_id"])
+        merged["county"] = merged["site_id"].map(
+            lambda s: str(sm_df.loc[s, "county"]) if s in sm_df.index and pd.notna(sm_df.loc[s, "county"]) else ""
+        )
+    else:
+        merged["site_name"] = merged["site_id"].map(lambda s: site_names.get(s, s) if site_names else s)
+        merged["county"] = ""
+
+    merged["category_label"] = merged["site_id"].map(lambda s: cat_map.get(s, "其他"))
+
+    # Round numeric cols
+    for col in ["test_mae_mw", "test_rmse_mw", "test_nrmse_pct", "test_bias_pct",
+                "test_pred_actual_ratio", "train_valid_zero_ratio_pct"]:
+        if col in merged.columns:
+            merged[col] = merged[col].round(4)
+    for col in ["capacity_mw"]:
+        if col in merged.columns:
+            merged[col] = merged[col].round(4)
+
+    # Sort: category then nrmse
+    cat_order = {"预测最好": 0, "预测最差": 1, "相对正确": 2, "样本少": 3, "其他": 4}
+    merged["_cat_order"] = merged["category_label"].map(lambda c: cat_order.get(c, 5))
+    merged = merged.sort_values(["_cat_order", "test_nrmse_pct"]).drop(columns=["_cat_order"])
+
+    records = merged.to_dict(orient="records")
+    out_path = Path(dashboard_root) / "scatter_site_sample_nrmse.json"
+    with open(out_path, "w", encoding="utf-8") as f:
+        json.dump(records, f, ensure_ascii=False, indent=2)
+    print(f"  [OK] scatter_site_sample_nrmse.json ({len(records)} sites)")
+    return records
+
+
+def export_sample_requirement_summary(scatter_data, dashboard_root):
+    """Export sample_requirement_summary.json."""
+    thresholds = [5, 10, 15, 20, 25]
+    total = len(scatter_data)
+    notes_base = (
+        "经验估计：在当前数据和当前模型下，达到指定NRMSE阈值的站点通常具备的训练样本量分布。"
+        "不代表样本量是唯一决定因素。"
+    )
+    results = []
+    for thresh in thresholds:
+        qualified = [s for s in scatter_data if s.get("test_nrmse_pct", 9999) <= thresh]
+        q_count = len(qualified)
+        if q_count == 0:
+            results.append({
+                "threshold_pct": thresh,
+                "qualified_sites": 0,
+                "total_sites": total,
+                "qualified_ratio_pct": 0.0,
+                "min_train_valid_positive_rows": None,
+                "p25_train_valid_positive_rows": None,
+                "median_train_valid_positive_rows": None,
+                "p75_train_valid_positive_rows": None,
+                "max_train_valid_positive_rows": None,
+                "min_train_valid_rows": None,
+                "p25_train_valid_rows": None,
+                "median_train_valid_rows": None,
+                "p75_train_valid_rows": None,
+                "max_train_valid_rows": None,
+                "note": notes_base,
+            })
+            continue
+        pos_rows = sorted([s.get("train_valid_positive_rows", 0) for s in qualified])
+        all_rows = sorted([s.get("train_valid_rows", 0) for s in qualified])
+        n = len(pos_rows)
+        results.append({
+            "threshold_pct": thresh,
+            "qualified_sites": q_count,
+            "total_sites": total,
+            "qualified_ratio_pct": round(q_count / total * 100, 2),
+            "min_train_valid_positive_rows": int(min(pos_rows)),
+            "p25_train_valid_positive_rows": int(pos_rows[n // 4]),
+            "median_train_valid_positive_rows": int(pos_rows[n // 2]),
+            "p75_train_valid_positive_rows": int(pos_rows[3 * n // 4]),
+            "max_train_valid_positive_rows": int(max(pos_rows)),
+            "min_train_valid_rows": int(min(all_rows)),
+            "p25_train_valid_rows": int(all_rows[n // 4]),
+            "median_train_valid_rows": int(all_rows[n // 2]),
+            "p75_train_valid_rows": int(all_rows[3 * n // 4]),
+            "max_train_valid_rows": int(max(all_rows)),
+            "note": notes_base,
+        })
+
+    out_path = Path(dashboard_root) / "sample_requirement_summary.json"
+    with open(out_path, "w", encoding="utf-8") as f:
+        json.dump(results, f, ensure_ascii=False, indent=2)
+    print(f"  [OK] sample_requirement_summary.json ({len(results)} thresholds)")
+    return results
+
+
+def export_sample_requirement_bins(scatter_data, dashboard_root):
+    """Export sample_requirement_bins.json."""
+    bins_def = [
+        (0, 1000, "0-1000"),
+        (1000, 3000, "1000-3000"),
+        (3000, 6000, "3000-6000"),
+        (6000, 10000, "6000-10000"),
+        (10000, 15000, "10000-15000"),
+        (15000, 20000, "15000-20000"),
+        (20000, 26000, "20000-26000"),
+        (26000, float("inf"), "26000+"),
+    ]
+
+    rows = []
+    for lo, hi, label in bins_def:
+        bucket = [s for s in scatter_data if lo <= s.get("train_valid_positive_rows", 0) < hi]
+        if not bucket:
+            rows.append({
+                "sample_bin": label,
+                "site_count": 0,
+                "median_train_valid_positive_rows": None,
+                "mean_nrmse_pct": None,
+                "median_nrmse_pct": None,
+                "p25_nrmse_pct": None,
+                "p75_nrmse_pct": None,
+                "best_nrmse_pct": None,
+                "worst_nrmse_pct": None,
+            })
+            continue
+        nrmse_vals = sorted([s.get("test_nrmse_pct", 0) for s in bucket])
+        pos_vals = [s.get("train_valid_positive_rows", 0) for s in bucket]
+        n = len(nrmse_vals)
+        rows.append({
+            "sample_bin": label,
+            "site_count": len(bucket),
+            "median_train_valid_positive_rows": int(np.median(pos_vals)),
+            "mean_nrmse_pct": round(float(np.mean(nrmse_vals)), 4),
+            "median_nrmse_pct": round(float(nrmse_vals[n // 2]), 4),
+            "p25_nrmse_pct": round(float(nrmse_vals[n // 4]), 4),
+            "p75_nrmse_pct": round(float(nrmse_vals[3 * n // 4]), 4),
+            "best_nrmse_pct": round(float(nrmse_vals[0]), 4),
+            "worst_nrmse_pct": round(float(nrmse_vals[-1]), 4),
+        })
+
+    out_path = Path(dashboard_root) / "sample_requirement_bins.json"
+    with open(out_path, "w", encoding="utf-8") as f:
+        json.dump(rows, f, ensure_ascii=False, indent=2)
+    print(f"  [OK] sample_requirement_bins.json ({len(rows)} bins)")
+    return rows
+
+
 def export_scatter_site_hour(df, site_names, metrics_df, dashboard_root):
     """Export scatter_site_hour.json: each point = site_id + hour."""
     df_f = df[
@@ -627,6 +866,16 @@ def main():
 
     print("\n[9] Exporting scatter_site_hour.json...")
     scatter_data = export_scatter_site_hour(df, site_names, metrics_df, dashboard_root)
+
+    print("\n[9b] Exporting scatter_site_sample_nrmse.json...")
+    sm_df = load_site_master_full(output_root)
+    scatter_site = export_scatter_site_sample_nrmse(df, site_names, sm_df, metrics_df, dashboard_root)
+
+    print("\n[9c] Exporting sample_requirement_summary.json...")
+    sample_req_summary = export_sample_requirement_summary(scatter_site, dashboard_root)
+
+    print("\n[9d] Exporting sample_requirement_bins.json...")
+    sample_req_bins = export_sample_requirement_bins(scatter_site, dashboard_root)
 
     print("\n[10] Exporting error_threshold_summary.json...")
     export_error_threshold_summary(scatter_data, dashboard_root)
