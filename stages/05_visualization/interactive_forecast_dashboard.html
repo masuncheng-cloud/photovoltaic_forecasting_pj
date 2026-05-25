@@ -558,18 +558,19 @@ tbody td {
   </div>
 
   <div id="sample-req-table-wrap" style="margin-top:12px;">
-    <div class="section-title" style="font-size:12px;">达到不同 NRMSE 阈值的站点样本量分布</div>
+    <div class="section-title" style="font-size:12px;">达到不同 NRMSE 阈值的全量历史样本量分布</div>
     <table id="threshold-table">
       <thead>
         <tr>
           <th>NRMSE阈值</th><th>达标站点数</th><th>总站点数</th><th>达标比例</th>
-          <th>正功率样本最小值</th><th>正功率样本25分位</th><th>正功率样本中位数</th>
-          <th>正功率样本75分位</th><th>总样本中位数</th>
+          <th>全量样本最小值</th><th>全量样本25分位</th><th>全量样本中位数</th>
+          <th>全量样本75分位</th><th>全量样本最大值</th>
+          <th>正功率样本中位数</th>
         </tr>
       </thead>
       <tbody></tbody>
     </table>
-    <div id="threshold-note">说明：这里统计的是单站点累计训练+验证样本量，而不是站点-小时样本量。该结果是当前数据和当前模型下的经验统计，不代表样本量达到该数值后必然达到对应精度。</div>
+    <div id="threshold-note">说明：这里统计的是单站点在预测表中的全量历史样本数，包含夜间、0值、训练集、验证集、测试集及 future 行；测试 NRMSE 仍只使用测试集 6-19 点计算。样本量不是唯一决定因素，容量、站点映射、异常0值、限电、遮挡和气象插值都会影响最终 NRMSE。</div>
   </div>
 
   <div id="sample-bins-wrap" style="margin-top:12px;">
