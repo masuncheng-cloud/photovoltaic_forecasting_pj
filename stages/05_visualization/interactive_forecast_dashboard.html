@@ -505,6 +505,35 @@ tbody td {
   </div>
 </div>
 
+<!-- ===== HOURLY PREDICTION PANEL ===== -->
+<section class="hourly-panel">
+  <div class="panel-header">
+    <h2>逐小时预测结果</h2>
+    <p class="panel-desc">测试集 6-19 点逐小时样本量、站点平均 NRMSE 与城市 NRMSE。</p>
+  </div>
+  <div class="hourly-grid">
+    <div class="chart-wrap">
+      <svg id="hourlyNrmseChart"></svg>
+    </div>
+    <div class="table-wrap">
+      <table id="hourlySummaryTable">
+        <thead>
+          <tr>
+            <th>小时（时）</th>
+            <th>样本数（行）</th>
+            <th>站点平均 NRMSE（%）</th>
+            <th>城市 NRMSE（%）</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+    </div>
+  </div>
+  <p class="note">
+    说明：站点平均 NRMSE 表示每个站点分别计算 NRMSE 后再按小时取平均；城市 NRMSE 表示全市聚合功率在该小时的误差水平。该表使用测试集 6-19 点数据。
+  </p>
+</section>
+
 <!-- ===== SCATTER PLOT ===== -->
 <div id="scatter-section">
   <div class="section-title">单站点样本量与最终 NRMSE 关系</div>
@@ -579,6 +608,7 @@ let gScatterSite = [];
 let gThresholdSummary = [];
 let gSampleReqSummary = [];
 let gSampleReqBins = [];
+let gHourlySummary = [];
 let gSeasonDays = [];
 let gMiddayByDate = [];
 
