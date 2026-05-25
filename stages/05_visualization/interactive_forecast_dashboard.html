@@ -510,13 +510,14 @@ let state = {
   startHour: 6,
   endHour: 19,
   scatterHourFilter: "all",
+  scatterXAxis: "positive",
 };
 
 // ============================================================
 // DATA LOADING
 // ============================================================
 async function loadAll() {
-  const [idx, city, metrics, scatter, threshold, seasons, midday] = await Promise.all([
+  const [idx, city, metrics, scatter, threshold, seasons, midday, scatterSite, sampleReq, sampleBins] = await Promise.all([
     fetchJSON(DASHBOARD_BASE + "index.json"),
     fetchJSON(DASHBOARD_BASE + "city_series.json"),
     fetchJSON(DASHBOARD_BASE + "site_metrics.json"),
@@ -524,6 +525,9 @@ async function loadAll() {
     fetchJSON(DASHBOARD_BASE + "error_threshold_summary.json"),
     fetchJSON(DASHBOARD_BASE + "season_days.json"),
     fetchJSON(DASHBOARD_BASE + "midday_city_by_date.json"),
+    fetchJSON(DASHBOARD_BASE + "scatter_site_sample_nrmse.json"),
+    fetchJSON(DASHBOARD_BASE + "sample_requirement_summary.json"),
+    fetchJSON(DASHBOARD_BASE + "sample_requirement_bins.json"),
   ]);
 
   gIndex = idx;
@@ -531,6 +535,9 @@ async function loadAll() {
   gSiteMetrics = metrics;
   gScatterData = scatter;
   gThresholdSummary = threshold;
+  gScatterSite = scatterSite;
+  gSampleReqSummary = sampleReq;
+  gSampleReqBins = sampleBins;
   gSeasonDays = seasons;
   gMiddayByDate = midday;
 
