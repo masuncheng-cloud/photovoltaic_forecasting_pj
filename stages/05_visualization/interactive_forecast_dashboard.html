@@ -1286,7 +1286,7 @@ async function refreshAll() {
   const m = computeMetrics(rows, isSite);
   updateMetricsCards(m, rows);
   drawLineChart(rows);
-  if (!isSite) drawScatterChart(gScatterData);
+  if (!isSite) drawScatterChart(gScatterSite);
 }
 
 // ============================================================
@@ -1420,7 +1420,7 @@ document.addEventListener("DOMContentLoaded", () => {
       document.querySelectorAll(".tab-btn[data-xaxis]").forEach(b => b.classList.remove("active"));
       btn.classList.add("active");
       state.scatterXAxis = xaxis;
-      if (state.scope !== "site") drawScatterChart(gScatterData);
+      if (state.scope !== "site") drawScatterChart(gScatterSite);
     });
   });
 
@@ -1431,7 +1431,7 @@ document.addEventListener("DOMContentLoaded", () => {
     resizeTimer = setTimeout(async () => {
       const rows = await getFilteredRows();
       drawLineChart(rows);
-      if (state.scope !== "site") drawScatterChart(gScatterData);
+      if (state.scope !== "site") drawScatterChart(gScatterSite);
     }, 200);
   });
 });
