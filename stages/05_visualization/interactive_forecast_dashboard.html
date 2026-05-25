@@ -536,7 +536,7 @@ tbody td {
 
 <!-- ===== SCATTER PLOT ===== -->
 <div id="scatter-section">
-  <div class="section-title">单站点样本量与最终 NRMSE 关系</div>
+  <div class="section-title">单站点全量历史样本数与测试集 NRMSE 关系</div>
   <div id="scatter-controls">
     <span class="ctrl-label">横轴口径：</span>
     <div class="tab-bar">
@@ -625,7 +625,7 @@ let state = {
   startHour: 6,
   endHour: 19,
   scatterHourFilter: "all",
-  scatterXAxis: "positive",
+  scatterXAxis: "full",
 };
 
 // ============================================================
@@ -1079,9 +1079,11 @@ function drawScatterChart(data) {
   if (!chartData || chartData.length === 0) return;
 
   // Determine x-axis field
-  const xField = state.scatterXAxis === "positive"
-    ? "train_valid_positive_rows"
-    : "train_valid_rows";
+  const xField = state.scatterXAxis === "full"
+    ? "full_history_rows"
+    : (state.scatterXAxis === "positive"
+        ? "train_valid_positive_rows"
+        : "train_valid_rows");
 
   const xVals = chartData.map(p => p[xField] || 0);
   const yVals = chartData.map(p => p["test_nrmse_pct"] || 0);
