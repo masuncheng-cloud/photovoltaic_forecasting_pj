@@ -838,7 +838,8 @@ def main():
 
     # Load site master for names
     print("\n[2] Loading site master...")
-    site_names = load_site_master(output_root)
+    sm_df = load_site_master_full(output_root)
+    site_names = build_site_name_lookup(sm_df)
     if site_names:
         print(f"  Loaded {len(site_names)} site names")
     else:
@@ -886,6 +887,11 @@ def main():
     assert len(metrics_df) > 0, "site_metrics is empty"
     assert len(scatter_data) > 0, "scatter is empty"
     assert len(site_ids) > 0, "no site series files"
+    assert len(scatter_site) > 0, "scatter_site_sample_nrmse is empty"
+    assert len(sample_req_summary) == 5, f"expected 5 thresholds, got {len(sample_req_summary)}"
+    assert len(sample_req_bins) > 0, "sample_requirement_bins is empty"
+    assert "train_valid_positive_rows" in scatter_site[0], "missing train_valid_positive_rows field"
+    assert "test_nrmse_pct" in scatter_site[0], "missing test_nrmse_pct field"
     total_actual = city["actual_mw"].sum()
     total_pred = city["pred_mw"].sum()
     assert total_actual > 0, "actual_mw all zero"
@@ -905,7 +911,8 @@ def main():
     print(f"     date_range  = {min_date} ~ {max_date}")
     print(f"     city_series = {len(city):,} rows")
     print(f"     site_series = {site_series_count} files")
-    print(f"     scatter_pts  = {len(scatter_data)}")
+    print(f"     scatter_pts (site-hour) = {len(scatter_data)}")
+    print(f"     scatter_pts (site)      = {len(scatter_site)}")
     print(f"\nDashboard root: {dashboard_root}")
     print(f"Run: python -m http.server 8060")
     print(f"Open: http://127.0.0.1:8060/stages/05_visualization/interactive_forecast_dashboard.html")
