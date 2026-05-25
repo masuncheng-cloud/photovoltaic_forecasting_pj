@@ -518,30 +518,31 @@ def export_scatter_site_sample_nrmse(df, site_names, sm_df, metrics_df, dashboar
 
     # ---- Full-history stats (all splits, all hours, no power filter) ----
     full_hist = df.copy()
-    full_hist["time_dt"] = pd.to_datetime(full_hist["time"], errors="coerce")
+    # time column is already datetime-like; just ensure datetime dtype for min/max
+    full_hist["time"] = pd.to_datetime(full_hist["time"], errors="coerce")
     full_hist_agg = full_hist.groupby("site_id").agg(
         full_history_rows=("site_id", "size"),
         full_history_non_null_rows=("power_mw", lambda s: int(s.notna().sum())),
         full_history_positive_rows=("power_mw", lambda s: int((s.fillna(0) > 0).sum())),
         full_history_zero_rows=("power_mw", lambda s: int((s.fillna(0) == 0).sum())),
-        full_history_start_date=("time_dt", "min"),
-        full_history_end_date=("time_dt", "max"),
+        full_history_start_date=("time", "min"),
+        full_history_end_date=("time", "max"),
     ).reset_index()
     full_hist_agg["full_history_zero_ratio_pct"] = (
         full_hist_agg["full_history_zero_rows"] /
         full_hist_agg["full_history_rows"].clip(lower=1) * 100
     ).round(4)
+    # Convert date columns to string; min/max of datetime may return NaT for bad values
     full_hist_agg["full_history_start_date"] = (
-        full_hist_agg["full_history_start_date"]
+        pd.to_datetime(full_hist_agg["full_history_start_date"], errors="coerce")
         .dt.strftime("%Y-%m-%d")
         .fillna("")
     )
     full_hist_agg["full_history_end_date"] = (
-        full_hist_agg["full_history_end_date"]
+        pd.to_datetime(full_hist_agg["full_history_end_date"], errors="coerce")
         .dt.strftime("%Y-%m-%d")
         .fillna("")
     )
-    full_hist_agg = full_hist_agg.drop(columns=["time_dt"])
 
     # Build category lookup
     cat_map = dict(zip(metrics_df["site_id"], metrics_df["category_label"]))
