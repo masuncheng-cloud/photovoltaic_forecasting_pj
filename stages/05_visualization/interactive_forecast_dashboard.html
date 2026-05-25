@@ -1412,12 +1412,14 @@ document.addEventListener("DOMContentLoaded", () => {
   // Refresh
   document.getElementById("btn-refresh").addEventListener("click", refreshAll);
 
-  // Scatter hour filter
+  // Scatter x-axis toggle (new site-level scatter)
   document.querySelectorAll(".tab-btn").forEach(btn => {
     btn.addEventListener("click", () => {
-      document.querySelectorAll(".tab-btn").forEach(b => b.classList.remove("active"));
+      const xaxis = btn.dataset.xaxis;
+      if (!xaxis) return; // skip non-scatter tab-btns
+      document.querySelectorAll(".tab-btn[data-xaxis]").forEach(b => b.classList.remove("active"));
       btn.classList.add("active");
-      state.scatterHourFilter = btn.dataset.hours;
+      state.scatterXAxis = xaxis;
       if (state.scope !== "site") drawScatterChart(gScatterData);
     });
   });
