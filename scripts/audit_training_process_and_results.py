@@ -112,7 +112,21 @@ def check_data_sources(root: Path) -> tuple[pd.DataFrame, list[dict]]:
 
         # Try to read
         if path.suffix == ".pkl":
-            df = safe_read_pkl(path)
+            try:
+                df = pd.read_pickle(path)
+            except Exception as e:
+                # pandas version incompatibility — try fastparquet fallback
+                try:
+                    import fastparquet
+                    df = pd.read_parquet(str(path).replace(".pkl", ".parquet"))
+                except Exception:
+                    df = None
+                if df is None:
+                    print(f"  [WARN] Cannot read {path}: {e}")
+                    entry["status"] = "WARN"
+                    entry["read_error"] = str(e)
+                    rows.append(entry)
+                    continue
         else:
             df = safe_read_csv(path)
 
