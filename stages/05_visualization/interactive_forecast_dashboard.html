@@ -931,7 +931,7 @@ function niceStep(rough) {
 }
 
 // ============================================================
-// SCATTER CHART (SVG)
+// SCATTER CHART (SVG) - Site-level: train+valid samples vs test NRMSE
 // ============================================================
 function drawScatterChart(data) {
   const svg = document.getElementById("scatter-chart");
@@ -947,22 +947,22 @@ function drawScatterChart(data) {
   svg.setAttribute("width", W);
   svg.setAttribute("height", H);
 
-  if (!data || data.length === 0) return;
+  // Use site-level data (gScatterSite) if available, fallback to old data
+  const chartData = (window.gScatterSite && window.gScatterSite.length > 0)
+    ? window.gScatterSite
+    : (data || []);
 
-  // Filter by hour
-  let filtered = data;
-  if (state.scatterHourFilter === "1014") {
-    filtered = data.filter(p => p.hour >= 10 && p.hour <= 14);
-  } else if (state.scatterHourFilter === "6-9") {
-    filtered = data.filter(p => p.hour >= 6 && p.hour <= 9);
-  } else if (state.scatterHourFilter === "15-19") {
-    filtered = data.filter(p => p.hour >= 15 && p.hour <= 19);
-  }
+  if (!chartData || chartData.length === 0) return;
 
-  const xVals = filtered.map(p => p.sample_count);
-  const yVals = filtered.map(p => p.nrmse_pct);
+  // Determine x-axis field
+  const xField = state.scatterXAxis === "positive"
+    ? "train_valid_positive_rows"
+    : "train_valid_rows";
 
-  const maxX = Math.max(...xVals) * 1.05 || 500;
+  const xVals = chartData.map(p => p[xField] || 0);
+  const yVals = chartData.map(p => p["test_nrmse_pct"] || 0);
+
+  const maxX = Math.max(...xVals, 1) * 1.05;
   const maxY = Math.max(...yVals.filter(v => isFinite(v)), 30) * 1.15;
 
   const catColors = {
@@ -978,8 +978,8 @@ function drawScatterChart(data) {
 
   const g = svgNS("g");
 
-  // Reference lines at 5, 10, 15, 20%
-  [5, 10, 15, 20].forEach(v => {
+  // Reference lines at 5, 10, 15, 20, 25%
+  [5, 10, 15, 20, 25].forEach(v => {
     if (v > maxY) return;
     const y = yOf(v).toFixed(1);
     g.appendChild(svgNS("line", {
@@ -1038,25 +1038,30 @@ function drawScatterChart(data) {
   }
 
   // Axis titles
+  const xAxisLabel = state.scatterXAxis === "positive"
+    ? "训练+验证正功率样本数（行）"
+    : "训练+验证总样本数（行）";
   g.appendChild(svgNS("text", {
     x: (ML + cw / 2).toFixed(1), y: (H - 4).toFixed(1),
     "text-anchor": "middle", fill: "#718096", "font-size": "11",
-  })).textContent = "样本数";
+  })).textContent = xAxisLabel;
 
   const yAxisTitle = svgNS("text", {
     x: 12, y: (MT + ch / 2).toFixed(1),
     "text-anchor": "middle", fill: "#718096", "font-size": "11",
     transform: `rotate(-90, 12, ${(MT + ch / 2).toFixed(1)})`,
   });
-  yAxisTitle.textContent = "NRMSE %";
+  yAxisTitle.textContent = "测试集站点 NRMSE（%）";
   g.appendChild(yAxisTitle);
 
   // Dots
-  filtered.forEach(p => {
-    const cx = xOf(p.sample_count).toFixed(1);
-    const cy = yOf(p.nrmse_pct).toFixed(1);
+  chartData.forEach(p => {
+    const xVal = p[xField] || 0;
+    const yVal = p["test_nrmse_pct"] || 0;
+    const cx = xOf(xVal).toFixed(1);
+    const cy = yOf(yVal).toFixed(1);
     const color = catColors[p.category_label] || catColors["其他"];
-    const r = 5;
+    const r = 6;
 
     const circle = svgNS("circle", {
       cx, cy, r,
@@ -1064,7 +1069,7 @@ function drawScatterChart(data) {
       stroke: color, "stroke-width": 0.5,
       cursor: "pointer",
     });
-    circle.addEventListener("mouseenter", e => showScatterTooltip(e, p));
+    circle.addEventListener("mouseenter", e => showSiteScatterTooltip(e, p, xField));
     circle.addEventListener("mousemove", moveTooltip);
     circle.addEventListener("mouseleave", hideTooltip);
     g.appendChild(circle);
@@ -1072,12 +1077,78 @@ function drawScatterChart(data) {
 
   svg.appendChild(g);
 
-  // Update threshold table
-  updateThresholdTable(filtered.length);
+  // Update threshold table with new site-level summary
+  renderSampleReqSummaryTable();
+}
+
+function showSiteScatterTooltip(e, p, xField) {
+  const tip = document.getElementById("tooltip");
+  const xLabel = xField === "train_valid_positive_rows"
+    ? "训练+验证正功率样本数"
+    : "训练+验证总样本数";
+  tip.innerHTML = `
+    <div style="font-weight:600;margin-bottom:4px">${p.site_id} ${p.site_name || ""}</div>
+    <div class="tip-label">容量</div><div class="tip-val">${fmt2(p.capacity_mw || 0)} MW</div>
+    <div class="tip-label">${xLabel}</div><div class="tip-val">${(p[xField] || 0).toLocaleString()} 行</div>
+    <div class="tip-label">训练+验证零值率</div><div class="tip-val">${fmt2(p.train_valid_zero_ratio_pct || 0)}%</div>
+    <div class="tip-label">测试样本数</div><div class="tip-val">${(p.test_rows || 0).toLocaleString()} 行</div>
+    <div class="tip-label">测试集站点 NRMSE</div><div class="tip-val">${fmt2(p.test_nrmse_pct || 0)}%</div>
+    <div class="tip-label">测试 MAE</div><div class="tip-val">${fmt2(p.test_mae_mw || 0)} MW</div>
+    <div class="tip-label">测试 RMSE</div><div class="tip-val">${fmt2(p.test_rmse_mw || 0)} MW</div>
+    <div class="tip-label">pred/actual</div><div class="tip-val">${fmt2(p.test_pred_actual_ratio || 0)}</div>
+    <div class="tip-label">类型</div><div class="tip-val">${p.category_label || "其他"}</div>
+  `;
+  tip.style.display = "block";
+  moveTooltip(e);
+}
+
+function renderSampleReqSummaryTable() {
+  const tbody = document.querySelector("#threshold-table tbody");
+  if (!tbody) return;
+  tbody.innerHTML = "";
+  const data = window.gSampleReqSummary || [];
+  data.forEach(t => {
+    const row = document.createElement("tr");
+    row.innerHTML = `
+      <td>${t.threshold_pct}%</td>
+      <td>${t.qualified_sites}</td>
+      <td>${t.total_sites}</td>
+      <td>${fmt2(t.qualified_ratio_pct)}%</td>
+      <td>${t.min_train_valid_positive_rows != null ? t.min_train_valid_positive_rows.toLocaleString() : "-"}</td>
+      <td>${t.p25_train_valid_positive_rows != null ? t.p25_train_valid_positive_rows.toLocaleString() : "-"}</td>
+      <td>${t.median_train_valid_positive_rows != null ? t.median_train_valid_positive_rows.toLocaleString() : "-"}</td>
+      <td>${t.p75_train_valid_positive_rows != null ? t.p75_train_valid_positive_rows.toLocaleString() : "-"}</td>
+      <td>${t.median_train_valid_rows != null ? t.median_train_valid_rows.toLocaleString() : "-"}</td>
+    `;
+    tbody.appendChild(row);
+  });
+}
+
+function renderSampleReqBinsTable() {
+  const tbody = document.querySelector("#sample-bins-table tbody");
+  if (!tbody) return;
+  tbody.innerHTML = "";
+  const data = window.gSampleReqBins || [];
+  data.forEach(b => {
+    const row = document.createElement("tr");
+    row.innerHTML = `
+      <td>${b.sample_bin}</td>
+      <td>${b.site_count}</td>
+      <td>${b.median_train_valid_positive_rows != null ? b.median_train_valid_positive_rows.toLocaleString() : "-"}</td>
+      <td>${b.mean_nrmse_pct != null ? fmt2(b.mean_nrmse_pct) : "-"}</td>
+      <td>${b.median_nrmse_pct != null ? fmt2(b.median_nrmse_pct) : "-"}</td>
+      <td>${b.p25_nrmse_pct != null ? fmt2(b.p25_nrmse_pct) : "-"}</td>
+      <td>${b.p75_nrmse_pct != null ? fmt2(b.p75_nrmse_pct) : "-"}</td>
+      <td>${b.best_nrmse_pct != null ? fmt2(b.best_nrmse_pct) : "-"}</td>
+      <td>${b.worst_nrmse_pct != null ? fmt2(b.worst_nrmse_pct) : "-"}</td>
+    `;
+    tbody.appendChild(row);
+  });
 }
 
 function updateThresholdTable(totalShown) {
   const tbody = document.querySelector("#threshold-table tbody");
+  if (!tbody) return;
   tbody.innerHTML = "";
   gThresholdSummary.forEach(t => {
     const row = document.createElement("tr");
