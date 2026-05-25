@@ -631,7 +631,7 @@ let state = {
 // DATA LOADING
 // ============================================================
 async function loadAll() {
-  const [idx, city, metrics, scatter, threshold, seasons, midday, scatterSite, sampleReq, sampleBins] = await Promise.all([
+  const [idx, city, metrics, scatter, threshold, seasons, midday, scatterSite, sampleReq, sampleBins, hourly] = await Promise.all([
     fetchJSON(DASHBOARD_BASE + "index.json"),
     fetchJSON(DASHBOARD_BASE + "city_series.json"),
     fetchJSON(DASHBOARD_BASE + "site_metrics.json"),
@@ -642,6 +642,10 @@ async function loadAll() {
     fetchJSON(DASHBOARD_BASE + "scatter_site_sample_nrmse.json"),
     fetchJSON(DASHBOARD_BASE + "sample_requirement_summary.json"),
     fetchJSON(DASHBOARD_BASE + "sample_requirement_bins.json"),
+    fetchJSON(DASHBOARD_BASE + "hourly_prediction_summary.json").catch(() => {
+      console.warn("hourly_prediction_summary.json not found");
+      return [];
+    }),
   ]);
 
   gIndex = idx;
@@ -652,6 +656,7 @@ async function loadAll() {
   gScatterSite = scatterSite;
   gSampleReqSummary = sampleReq;
   gSampleReqBins = sampleBins;
+  gHourlySummary = hourly || [];
   gSeasonDays = seasons;
   gMiddayByDate = midday;
 
@@ -670,6 +675,10 @@ async function loadAll() {
   // Render scatter site sample tables
   renderSampleReqSummaryTable();
   renderSampleReqBinsTable();
+
+  // Render hourly prediction section
+  renderHourlySummaryTable();
+  drawHourlyNrmseChart();
 
   document.getElementById("loading").style.display = "none";
 }
