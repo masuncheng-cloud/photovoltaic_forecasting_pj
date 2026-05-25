@@ -7,5 +7,7 @@
   "hourly_has_site_nrmse": true,
   "hourly_has_city_nrmse": true,
   "scatter_has_test_nrmse": true,
+  "page_has_final_note": true,
+  "page_mentions_test_nrmse": true,
   "index_has_hourly_ref": true
 }
