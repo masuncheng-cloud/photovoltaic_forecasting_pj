@@ -733,10 +733,13 @@ def check_8_key_items(root: Path) -> tuple[dict, list[str]]:
     if hourly_ref.exists():
         ref_h = safe_read_csv(hourly_ref)
         if ref_h is not None:
-            cn = [c for c in ref_h.columns if "城市" in c or "city" in c.lower()]
-            sn = [c for c in ref_h.columns if "站点" in c]
+            # Reference CSV uses English column names (site_nrmse_mean_pct, city_nrmse_pct)
+            cn = [c for c in ref_h.columns if "city" in c.lower() or "城市" in c]
+            sn = [c for c in ref_h.columns if "site" in c.lower() or "站点" in c or "nrmse" in c.lower()]
             results["city_nrmse_col_exists"] = len(cn) > 0
             results["site_nrmse_col_exists"] = len(sn) > 0
+            # Note: reference uses English column names, not Chinese
+            results["ref_uses_english_col_names"] = "site_nrmse_mean_pct" in ref_h.columns
 
     # 6. Page uses full_history_rows (already checked above)
     scatter_json = dashboard_dir / "scatter_site_sample_nrmse.json"
