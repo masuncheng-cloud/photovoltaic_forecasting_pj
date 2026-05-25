@@ -423,14 +423,12 @@ tbody td {
 
 <!-- ===== SCATTER PLOT ===== -->
 <div id="scatter-section">
-  <div class="section-title">误差-样本量散点图（站点-小时组合）</div>
+  <div class="section-title">单站点样本量与最终 NRMSE 关系</div>
   <div id="scatter-controls">
-    <span class="ctrl-label">小时筛选：</span>
+    <span class="ctrl-label">横轴口径：</span>
     <div class="tab-bar">
-      <button class="tab-btn active" data-hours="all">全部</button>
-      <button class="tab-btn" data-hours="1014">10-14点</button>
-      <button class="tab-btn" data-hours="6-9">6-9点</button>
-      <button class="tab-btn" data-hours="15-19">15-19点</button>
+      <button class="tab-btn active" data-xaxis="positive">训练+验证正功率样本数</button>
+      <button class="tab-btn" data-xaxis="total">训练+验证总样本数</button>
     </div>
     <div class="legend-row" style="margin-left:auto;">
       <div class="legend-item"><div class="legend-dot" style="background:#38a169"></div>预测最好</div>
@@ -441,17 +439,38 @@ tbody td {
     </div>
   </div>
   <svg id="scatter-chart"></svg>
+  <div id="scatter-desc" style="font-size:11px;color:#718096;margin-top:6px;">
+    本图每个点代表一个站点。横轴为该站点在训练+验证阶段可用于学习的累计样本量，纵轴为该站点在测试集上的最终 NRMSE。点越靠右表示历史数据越多，点越靠下表示预测精度越高。
+  </div>
 
-  <table id="threshold-table">
-    <thead>
-      <tr>
-        <th>误差阈值</th><th>达标点数</th><th>总点数</th><th>达标比例%</th>
-        <th>最小样本</th><th>25分位样本</th><th>中位样本</th><th>75分位样本</th>
-      </tr>
-    </thead>
-    <tbody></tbody>
-  </table>
-  <div id="threshold-note">* 该表表示在当前数据和模型结果中，达到指定误差阈值的站点-小时组合通常具备的样本量分布，不代表样本量是唯一决定因素。</div>
+  <div id="sample-req-table-wrap" style="margin-top:12px;">
+    <div class="section-title" style="font-size:12px;">达到不同 NRMSE 阈值的站点样本量分布</div>
+    <table id="threshold-table">
+      <thead>
+        <tr>
+          <th>NRMSE阈值</th><th>达标站点数</th><th>总站点数</th><th>达标比例</th>
+          <th>正功率样本最小值</th><th>正功率样本25分位</th><th>正功率样本中位数</th>
+          <th>正功率样本75分位</th><th>总样本中位数</th>
+        </tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+    <div id="threshold-note">说明：这里统计的是单站点累计训练+验证样本量，而不是站点-小时样本量。该结果是当前数据和当前模型下的经验统计，不代表样本量达到该数值后必然达到对应精度。</div>
+  </div>
+
+  <div id="sample-bins-wrap" style="margin-top:12px;">
+    <div class="section-title" style="font-size:12px;">按样本量分箱的站点 NRMSE 分布</div>
+    <table id="sample-bins-table">
+      <thead>
+        <tr>
+          <th>样本量区间</th><th>站点数</th><th>正功率样本中位数</th>
+          <th>NRMSE均值%</th><th>NRMSE中位数%</th><th>NRMSE25分位%</th><th>NRMSE75分位%</th>
+          <th>最佳NRMSE%</th><th>最差NRMSE%</th>
+        </tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+  </div>
 </div>
 
 <!-- ===== FOOTER ===== -->
@@ -472,7 +491,10 @@ let gIndex = null;
 let gCitySeries = [];
 let gSiteMetrics = [];
 let gScatterData = [];
+let gScatterSite = [];
 let gThresholdSummary = [];
+let gSampleReqSummary = [];
+let gSampleReqBins = [];
 let gSeasonDays = [];
 let gMiddayByDate = [];
 
