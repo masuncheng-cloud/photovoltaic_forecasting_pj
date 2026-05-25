@@ -1,0 +1,33 @@
+{
+  "grade": "C",
+  "grade_description": "不可交付",
+  "fail_count": 2,
+  "warn_count": 1,
+  "module_results": {
+    "data_integrity": "FAIL",
+    "site_mapping": "PASS",
+    "split_integrity": "PASS",
+    "physical_range": "PASS",
+    "final_best_consistency": "PASS",
+    "metrics_recompute": "WARN",
+    "report_page_consistency": "FAIL",
+    "key_items": "PASS"
+  },
+  "key_issues": [],
+  "key_item_details": {
+    "final_equals_best": true,
+    "rejected_candidates": 1,
+    "rejected_no_override": true,
+    "mae_rmse_distinct": true,
+    "midday_hourly_ref_exists": true,
+    "midday_ref_count": 5,
+    "city_nrmse_col_exists": true,
+    "site_nrmse_col_exists": false,
+    "page_full_history": true,
+    "test_6_19_rows": 68888
+  },
+  "computed_overall_nrmse": 19.7105,
+  "reference_nrmse": 19.710496,
+  "final_equals_best": true,
+  "max_full_history_rows": null
+}

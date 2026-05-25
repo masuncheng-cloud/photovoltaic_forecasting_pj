@@ -1,0 +1,26 @@
+{
+  "computed": {
+    "rows": 68888,
+    "actual_mwh": 93382.49,
+    "pred_mwh": 92069.0926,
+    "mae_mw": 0.5893,
+    "rmse_mw": 1.2047,
+    "nrmse_pct": 19.7105,
+    "bias_pct": -1.4065,
+    "pred_actual_ratio": 0.985935
+  },
+  "reference": {
+    "nrmse_pct": 19.710496,
+    "mae_mw": 0.58932,
+    "rmse_mw": 1.204699,
+    "bias_pct": -1.4065
+  },
+  "reference_source": "round10_overall_nrmse_summary.csv",
+  "nrmse_match": true,
+  "mae_match": true,
+  "rmse_match": true,
+  "bias_match": true,
+  "hourly_nrmse_max_diff": 0.0047,
+  "hourly_city_nrmse_max_diff": 4.6354,
+  "hourly_match": false
+}
