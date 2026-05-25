@@ -1024,6 +1024,9 @@ def main():
     max_date = pd.to_datetime(dates).max().strftime("%Y-%m-%d")
     site_series_dir = Path(dashboard_root) / "site_series"
     site_series_count = len(list(site_series_dir.glob("*.json")))
+    dates = pd.to_datetime(df["date"]).dropna().unique()
+    min_date = pd.to_datetime(dates).min().strftime("%Y-%m-%d")
+    max_date = pd.to_datetime(dates).max().strftime("%Y-%m-%d")
 
     print(f"\n[OK] interactive dashboard data exported")
     print(f"     rows        = {len(df[df['split'].isin(['train','valid','test']) & df['hour'].between(6,19)]):,}")
@@ -1033,6 +1036,7 @@ def main():
     print(f"     site_series = {site_series_count} files")
     print(f"     scatter_pts (site-hour) = {len(scatter_data)}")
     print(f"     scatter_pts (site)      = {len(scatter_site)}")
+    print(f"     hourly_prediction_summary = {len(hourly_summary)} rows (6-19h)")
     print(f"\nDashboard root: {dashboard_root}")
     print(f"Run: python -m http.server 8060")
     print(f"Open: http://127.0.0.1:8060/stages/05_visualization/interactive_forecast_dashboard.html")
