@@ -553,6 +553,10 @@ async function loadAll() {
   // Setup season buttons
   setupSeasonButtons(seasons);
 
+  // Render scatter site sample tables
+  renderSampleReqSummaryTable();
+  renderSampleReqBinsTable();
+
   document.getElementById("loading").style.display = "none";
 }
 
