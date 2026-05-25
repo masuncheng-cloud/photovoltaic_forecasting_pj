@@ -618,10 +618,10 @@ def check_report_page_consistency(root: Path) -> tuple[dict, str]:
         result["scatter_has_test_nrmse"] = all("test_nrmse_pct" in s for s in scatter)
 
     # 4. Page has clear notes about data source
-    page_html = root.parent / "stages" / "05_visualization" / "interactive_forecast_dashboard.html"
+    page_html = root.parent.parent / "stages" / "05_visualization" / "interactive_forecast_dashboard.html"
     if page_html.exists():
         html = page_html.read_text(encoding="utf-8")
-        result["page_has_final_note"] = ("\u4e0d" in html) and ("\u6a21\u578b" in html)  # rough check for Chinese text about "不参与模型"
+        result["page_has_final_note"] = "不参与模型训练和模型选择" in html
         result["page_mentions_test_nrmse"] = "测试集" in html
 
     # 5. index.json has hourly reference
