@@ -1064,7 +1064,7 @@ def main():
     assert "full_history_start_date" in scatter_site[0], "missing full_history_start_date field"
     assert "full_history_end_date" in scatter_site[0], "missing full_history_end_date field"
     assert "test_nrmse_pct" in scatter_site[0], "missing test_nrmse_pct field"
-    assert "median_full_history_rows" in summary[0], "missing median_full_history_rows in summary"
+    assert "median_full_history_rows" in sample_req_summary[0], "missing median_full_history_rows in summary"
     assert len(hourly_summary) == 14, f"hourly_summary expected 14 rows (6-19h), got {len(hourly_summary)}"
     assert "hour" in hourly_summary[0], "missing hour field"
     assert "rows" in hourly_summary[0], "missing rows field"
