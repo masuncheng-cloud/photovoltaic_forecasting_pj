@@ -1248,11 +1248,12 @@ function renderSampleReqSummaryTable() {
       <td>${t.qualified_sites}</td>
       <td>${t.total_sites}</td>
       <td>${fmt2(t.qualified_ratio_pct)}%</td>
-      <td>${t.min_train_valid_positive_rows != null ? t.min_train_valid_positive_rows.toLocaleString() : "-"}</td>
-      <td>${t.p25_train_valid_positive_rows != null ? t.p25_train_valid_positive_rows.toLocaleString() : "-"}</td>
-      <td>${t.median_train_valid_positive_rows != null ? t.median_train_valid_positive_rows.toLocaleString() : "-"}</td>
-      <td>${t.p75_train_valid_positive_rows != null ? t.p75_train_valid_positive_rows.toLocaleString() : "-"}</td>
-      <td>${t.median_train_valid_rows != null ? t.median_train_valid_rows.toLocaleString() : "-"}</td>
+      <td>${fmtInt(t.min_full_history_rows)}</td>
+      <td>${fmtInt(t.p25_full_history_rows)}</td>
+      <td>${fmtInt(t.median_full_history_rows)}</td>
+      <td>${fmtInt(t.p75_full_history_rows)}</td>
+      <td>${fmtInt(t.max_full_history_rows)}</td>
+      <td>${fmtInt(t.median_train_valid_positive_rows)}</td>
     `;
     tbody.appendChild(row);
   });
