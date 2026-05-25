@@ -9,5 +9,6 @@
   "default_end_date": "2026-03-31",
   "total_rows": 1172180,
   "total_sites": 69,
-  "date_range": "2023-01-01 ~ 2026-03-31"
+  "date_range": "2023-01-01 ~ 2026-03-31",
+  "hourly_prediction_summary": "hourly_prediction_summary.json"
 }
