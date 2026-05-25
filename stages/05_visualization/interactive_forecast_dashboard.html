@@ -948,8 +948,8 @@ function drawScatterChart(data) {
   svg.setAttribute("height", H);
 
   // Use site-level data (gScatterSite) if available, fallback to old data
-  const chartData = (window.gScatterSite && window.gScatterSite.length > 0)
-    ? window.gScatterSite
+  const chartData = (gScatterSite && gScatterSite.length > 0)
+    ? gScatterSite
     : (data || []);
 
   if (!chartData || chartData.length === 0) return;
@@ -1106,7 +1106,7 @@ function renderSampleReqSummaryTable() {
   const tbody = document.querySelector("#threshold-table tbody");
   if (!tbody) return;
   tbody.innerHTML = "";
-  const data = window.gSampleReqSummary || [];
+  const data = gSampleReqSummary || [];
   data.forEach(t => {
     const row = document.createElement("tr");
     row.innerHTML = `
@@ -1128,7 +1128,7 @@ function renderSampleReqBinsTable() {
   const tbody = document.querySelector("#sample-bins-table tbody");
   if (!tbody) return;
   tbody.innerHTML = "";
-  const data = window.gSampleReqBins || [];
+  const data = gSampleReqBins || [];
   data.forEach(b => {
     const row = document.createElement("tr");
     row.innerHTML = `
