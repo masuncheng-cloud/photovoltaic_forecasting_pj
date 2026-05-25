@@ -540,8 +540,9 @@ tbody td {
   <div id="scatter-controls">
     <span class="ctrl-label">横轴口径：</span>
     <div class="tab-bar">
-      <button class="tab-btn active" data-xaxis="positive">训练+验证正功率样本数</button>
+      <button class="tab-btn active" data-xaxis="full">全量历史样本数</button>
       <button class="tab-btn" data-xaxis="total">训练+验证总样本数</button>
+      <button class="tab-btn" data-xaxis="positive">训练+验证正功率样本数</button>
     </div>
     <div class="legend-row" style="margin-left:auto;">
       <div class="legend-item"><div class="legend-dot" style="background:#38a169"></div>预测最好</div>
@@ -553,7 +554,7 @@ tbody td {
   </div>
   <svg id="scatter-chart"></svg>
   <div id="scatter-desc" style="font-size:11px;color:#718096;margin-top:6px;">
-    本图每个点代表一个站点。横轴为该站点在训练+验证阶段可用于学习的累计样本量，纵轴为该站点在测试集上的最终 NRMSE。点越靠右表示历史数据越多，点越靠下表示预测精度越高。
+    本图每个点代表一个站点。横轴为该站点在预测表中的全量历史记录数，纵轴为该站点在测试集上的最终 NRMSE。点越靠右表示历史数据越多，点越靠下表示预测精度越高。样本量不是唯一决定因素，容量、站点映射、异常0值、限电、遮挡和气象插值都会影响最终 NRMSE。
   </div>
 
   <div id="sample-req-table-wrap" style="margin-top:12px;">
