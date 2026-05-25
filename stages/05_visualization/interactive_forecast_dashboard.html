@@ -1433,6 +1433,198 @@ function fmtTime(ts) {
   return s;
 }
 
+function fmtInt(v) {
+  if (v === null || v === undefined || Number.isNaN(Number(v))) return "-";
+  return Math.round(Number(v)).toLocaleString("zh-CN");
+}
+
+function fmtNum(v, digits = 2) {
+  if (v === null || v === undefined || Number.isNaN(Number(v))) return "-";
+  return Number(v).toFixed(digits);
+}
+
+// ============================================================
+// HOURLY PREDICTION CHART + TABLE
+// ============================================================
+function drawHourlyNrmseChart() {
+  const svg = document.getElementById("hourlyNrmseChart");
+  if (!svg) return;
+  svg.innerHTML = "";
+
+  const data = gHourlySummary || [];
+  if (!data.length) {
+    svg.innerHTML = `<text x="20" y="40" fill="#64748b" font-size="13">暂无逐小时预测结果数据</text>`;
+    return;
+  }
+
+  const W = svg.parentElement.clientWidth - 28;
+  const H = 300;
+  const ML = 52, MR = 20, MT = 20, MB = 40;
+  const cw = W - ML - MR;
+  const ch = H - MT - MB;
+
+  svg.setAttribute("viewBox", `0 0 ${W} ${H}`);
+  svg.setAttribute("width", W);
+  svg.setAttribute("height", H);
+
+  const hours = data.map(d => d.hour);
+  const siteVals = data.map(d => d.site_nrmse_mean_pct);
+  const cityVals = data.map(d => d.city_nrmse_pct);
+
+  const maxX = 19;
+  const minX = 6;
+  const allVals = [...siteVals, ...cityVals].filter(v => isFinite(v));
+  const maxY = Math.max(...allVals, 1) * 1.15;
+
+  const xOf = h => ML + ((h - minX) / (maxX - minX)) * cw;
+  const yOf = v => MT + ch - ((isFinite(v) ? v : 0) / maxY) * ch;
+
+  const g = svgNS("g");
+
+  // Grid lines
+  const ySteps = 5;
+  for (let i = 0; i <= ySteps; i++) {
+    const v = (maxY / ySteps) * i;
+    const y = yOf(v).toFixed(1);
+    g.appendChild(svgNS("line", {
+      x1: ML, y1: y, x2: (ML + cw).toFixed(1), y2: y,
+      stroke: "#edf2f7", "stroke-width": 0.5,
+    }));
+    g.appendChild(svgNS("text", {
+      x: (ML - 6).toFixed(1), y: (parseFloat(y) + 4).toFixed(1),
+      "text-anchor": "end", fill: "#a0aec0", "font-size": "11",
+    })).textContent = fmtNum(v, 1);
+  }
+
+  // X-axis
+  g.appendChild(svgNS("line", {
+    x1: ML, y1: (MT + ch).toFixed(1), x2: (ML + cw).toFixed(1), y2: (MT + ch).toFixed(1),
+    stroke: "#cbd5e0", "stroke-width": 1,
+  }));
+
+  // X labels (every 2 hours)
+  for (let h = 6; h <= 19; h += 2) {
+    const x = xOf(h).toFixed(1);
+    g.appendChild(svgNS("text", {
+      x, y: (MT + ch + 16).toFixed(1),
+      "text-anchor": "middle", fill: "#718096", "font-size": "10",
+    })).textContent = h + "时";
+    g.appendChild(svgNS("line", {
+      x1: x, y1: MT.toFixed(1), x2: x, y2: (MT + ch).toFixed(1),
+      stroke: "#edf2f7", "stroke-width": 0.5,
+    }));
+  }
+
+  // Y-axis title
+  g.appendChild(svgNS("text", {
+    x: 12, y: (MT + ch / 2).toFixed(1),
+    "text-anchor": "middle", fill: "#718096", "font-size": "11",
+    transform: `rotate(-90, 12, ${(MT + ch / 2).toFixed(1)})`,
+  })).textContent = "NRMSE（%）";
+
+  // Helper: build polyline points
+  function buildLinePoints(vals, color, key) {
+    const pts = vals.map((v, i) => {
+      const x = xOf(hours[i]).toFixed(1);
+      const y = yOf(v).toFixed(1);
+      return `${x},${y}`;
+    }).join(" ");
+    const line = svgNS("polyline", {
+      points: pts,
+      fill: "none",
+      stroke: color,
+      "stroke-width": 2,
+      "stroke-linejoin": "round",
+      "stroke-linejoin": "round",
+    });
+
+    // Tooltip dots
+    vals.forEach((v, i) => {
+      if (!isFinite(v)) return;
+      const dot = svgNS("circle", {
+        cx: xOf(hours[i]).toFixed(1),
+        cy: yOf(v).toFixed(1),
+        r: 4,
+        fill: color,
+        "fill-opacity": 0.8,
+        stroke: "#fff",
+        "stroke-width": 1,
+        cursor: "pointer",
+      });
+      dot.addEventListener("mouseenter", e => showHourlyTooltip(e, data[i], key, color));
+      dot.addEventListener("mousemove", moveTooltip);
+      dot.addEventListener("mouseleave", hideTooltip);
+      g.appendChild(dot);
+    });
+
+    g.appendChild(line);
+  }
+
+  buildLinePoints(siteVals, "#2563eb", "site_nrmse_mean_pct");
+  buildLinePoints(cityVals, "#f97316", "city_nrmse_pct");
+
+  // Legend
+  const legendY = (MT + 8).toFixed(1);
+  g.appendChild(svgNS("line", {
+    x1: (ML + cw - 180).toFixed(1), y1: legendY, x2: (ML + cw - 155).toFixed(1), y2: legendY,
+    stroke: "#2563eb", "stroke-width": 2,
+  }));
+  g.appendChild(svgNS("text", {
+    x: (ML + cw - 150).toFixed(1), y: (parseFloat(legendY) + 4).toFixed(1),
+    fill: "#2563eb", "font-size": "11",
+  })).textContent = "站点平均 NRMSE";
+
+  g.appendChild(svgNS("line", {
+    x1: (ML + cw - 60).toFixed(1), y1: legendY, x2: (ML + cw - 35).toFixed(1), y2: legendY,
+    stroke: "#f97316", "stroke-width": 2,
+  }));
+  g.appendChild(svgNS("text", {
+    x: (ML + cw - 30).toFixed(1), y: (parseFloat(legendY) + 4).toFixed(1),
+    fill: "#f97316", "font-size": "11",
+  })).textContent = "城市 NRMSE";
+
+  svg.appendChild(g);
+}
+
+function showHourlyTooltip(e, row, key, color) {
+  const tip = document.getElementById("tooltip");
+  const siteVal = row.site_nrmse_mean_pct;
+  const cityVal = row.city_nrmse_pct;
+  tip.innerHTML = `
+    <div style="font-weight:600;margin-bottom:4px">${row.hour}时 逐小时预测结果</div>
+    <div class="tip-label">样本数</div><div class="tip-val">${fmtInt(row.rows)} 行</div>
+    <div style="margin-top:4px;color:#2563eb;font-size:11px">站点平均 NRMSE</div>
+    <div class="tip-val" style="color:#2563eb">${fmtNum(siteVal, 2)}%</div>
+    <div style="margin-top:4px;color:#f97316;font-size:11px">城市 NRMSE</div>
+    <div class="tip-val" style="color:#f97316">${fmtNum(cityVal, 3)}%</div>
+  `;
+  tip.style.display = "block";
+  moveTooltip(e);
+}
+
+function renderHourlySummaryTable() {
+  const tbody = document.querySelector("#hourlySummaryTable tbody");
+  if (!tbody) return;
+  tbody.innerHTML = "";
+
+  const data = gHourlySummary || [];
+  if (!data.length) {
+    tbody.innerHTML = `<tr><td colspan="4" style="text-align:center;color:#a0aec0">暂无逐小时预测结果数据</td></tr>`;
+    return;
+  }
+
+  for (const row of data) {
+    const tr = document.createElement("tr");
+    tr.innerHTML = `
+      <td>${row.hour}</td>
+      <td>${fmtInt(row.rows)}</td>
+      <td>${fmtNum(row.site_nrmse_mean_pct, 2)}%</td>
+      <td>${fmtNum(row.city_nrmse_pct, 3)}%</td>
+    `;
+    tbody.appendChild(tr);
+  }
+}
+
 // ============================================================
 // EVENT LISTENERS
 // ============================================================
