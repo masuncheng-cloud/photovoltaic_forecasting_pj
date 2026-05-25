@@ -131,6 +131,7 @@ def export_index(df, site_names, dashboard_root):
         "total_rows": int(len(df)),
         "total_sites": int(df["site_id"].nunique()),
         "date_range": f"{min_date} ~ {max_date}",
+        "hourly_prediction_summary": "hourly_prediction_summary.json",
     }
 
     out_path = Path(dashboard_root) / "index.json"
