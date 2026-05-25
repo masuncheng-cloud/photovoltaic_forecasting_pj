@@ -640,54 +640,66 @@ def export_scatter_site_sample_nrmse(df, site_names, sm_df, metrics_df, dashboar
 
 
 def export_sample_requirement_summary(scatter_data, dashboard_root):
-    """Export sample_requirement_summary.json."""
+    """Export sample_requirement_summary.json with full-history sample size fields."""
     thresholds = [5, 10, 15, 20, 25]
     total = len(scatter_data)
     notes_base = (
-        "经验估计：在当前数据和当前模型下，达到指定NRMSE阈值的站点通常具备的训练样本量分布。"
-        "不代表样本量是唯一决定因素。"
+        "经验估计：在当前数据和当前模型下，达到指定NRMSE阈值的站点通常具备的全量历史样本量分布。"
+        "样本量不是唯一决定因素，容量、站点映射、异常0值、限电、遮挡和气象插值都会影响最终NRMSE。"
     )
     results = []
     for thresh in thresholds:
         qualified = [s for s in scatter_data if s.get("test_nrmse_pct", 9999) <= thresh]
         q_count = len(qualified)
+
+        # Full-history rows statistics
+        full_hist_vals = sorted([
+            s.get("full_history_rows", 0) or 0
+            for s in qualified
+        ])
+        full_hist_pos_vals = sorted([
+            s.get("full_history_positive_rows", 0) or 0
+            for s in qualified
+        ])
+        # Auxiliary: train/valid positive rows
+        tv_pos_vals = sorted([s.get("train_valid_positive_rows", 0) or 0 for s in qualified])
+
+        def pctile(sorted_vals, p):
+            if not sorted_vals:
+                return None
+            idx = int((len(sorted_vals) - 1) * p)
+            return int(sorted_vals[idx])
+
         if q_count == 0:
             results.append({
                 "threshold_pct": thresh,
                 "qualified_sites": 0,
                 "total_sites": total,
                 "qualified_ratio_pct": 0.0,
-                "min_train_valid_positive_rows": None,
-                "p25_train_valid_positive_rows": None,
+                "min_full_history_rows": None,
+                "p25_full_history_rows": None,
+                "median_full_history_rows": None,
+                "p75_full_history_rows": None,
+                "max_full_history_rows": None,
+                "median_full_history_positive_rows": None,
                 "median_train_valid_positive_rows": None,
-                "p75_train_valid_positive_rows": None,
-                "max_train_valid_positive_rows": None,
-                "min_train_valid_rows": None,
-                "p25_train_valid_rows": None,
-                "median_train_valid_rows": None,
-                "p75_train_valid_rows": None,
-                "max_train_valid_rows": None,
                 "note": notes_base,
             })
             continue
-        pos_rows = sorted([s.get("train_valid_positive_rows", 0) for s in qualified])
-        all_rows = sorted([s.get("train_valid_rows", 0) for s in qualified])
-        n = len(pos_rows)
+
+        n = len(full_hist_vals)
         results.append({
             "threshold_pct": thresh,
             "qualified_sites": q_count,
             "total_sites": total,
             "qualified_ratio_pct": round(q_count / total * 100, 2),
-            "min_train_valid_positive_rows": int(min(pos_rows)),
-            "p25_train_valid_positive_rows": int(pos_rows[n // 4]),
-            "median_train_valid_positive_rows": int(pos_rows[n // 2]),
-            "p75_train_valid_positive_rows": int(pos_rows[3 * n // 4]),
-            "max_train_valid_positive_rows": int(max(pos_rows)),
-            "min_train_valid_rows": int(min(all_rows)),
-            "p25_train_valid_rows": int(all_rows[n // 4]),
-            "median_train_valid_rows": int(all_rows[n // 2]),
-            "p75_train_valid_rows": int(all_rows[3 * n // 4]),
-            "max_train_valid_rows": int(max(all_rows)),
+            "min_full_history_rows": int(min(full_hist_vals)),
+            "p25_full_history_rows": pctile(full_hist_vals, 0.25),
+            "median_full_history_rows": pctile(full_hist_vals, 0.50),
+            "p75_full_history_rows": pctile(full_hist_vals, 0.75),
+            "max_full_history_rows": int(max(full_hist_vals)),
+            "median_full_history_positive_rows": pctile(full_hist_pos_vals, 0.50),
+            "median_train_valid_positive_rows": pctile(tv_pos_vals, 0.50),
             "note": notes_base,
         })
 
