@@ -1409,6 +1409,7 @@ async function refreshAll() {
   const m = computeMetrics(rows, isSite);
   updateMetricsCards(m, rows);
   drawLineChart(rows);
+  drawHourlyNrmseChart();
   if (!isSite) drawScatterChart(gScatterSite);
 }
 
