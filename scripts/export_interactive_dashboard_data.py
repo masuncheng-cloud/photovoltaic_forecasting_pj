@@ -711,25 +711,26 @@ def export_sample_requirement_summary(scatter_data, dashboard_root):
 
 
 def export_sample_requirement_bins(scatter_data, dashboard_root):
-    """Export sample_requirement_bins.json."""
+    """Export sample_requirement_bins.json using full_history_rows as binning key."""
     bins_def = [
-        (0, 1000, "0-1000"),
-        (1000, 3000, "1000-3000"),
-        (3000, 6000, "3000-6000"),
-        (6000, 10000, "6000-10000"),
+        (0, 5000, "0-5000"),
+        (5000, 10000, "5000-10000"),
         (10000, 15000, "10000-15000"),
         (15000, 20000, "15000-20000"),
         (20000, 26000, "20000-26000"),
-        (26000, float("inf"), "26000+"),
+        (26000, 28000, "26000-28000"),
+        (28000, float("inf"), "28000+"),
     ]
 
     rows = []
     for lo, hi, label in bins_def:
-        bucket = [s for s in scatter_data if lo <= s.get("train_valid_positive_rows", 0) < hi]
+        bucket = [s for s in scatter_data if lo <= (s.get("full_history_rows") or 0) < hi]
         if not bucket:
             rows.append({
                 "sample_bin": label,
                 "site_count": 0,
+                "median_full_history_rows": None,
+                "median_full_history_positive_rows": None,
                 "median_train_valid_positive_rows": None,
                 "mean_nrmse_pct": None,
                 "median_nrmse_pct": None,
@@ -739,14 +740,24 @@ def export_sample_requirement_bins(scatter_data, dashboard_root):
                 "worst_nrmse_pct": None,
             })
             continue
-        nrmse_vals = sorted([s.get("test_nrmse_pct", 0) for s in bucket])
-        pos_vals = [s.get("train_valid_positive_rows", 0) for s in bucket]
+
+        nrmse_vals = sorted([s.get("test_nrmse_pct") for s in bucket if s.get("test_nrmse_pct") is not None])
+        full_hist = [s.get("full_history_rows") for s in bucket]
+        full_pos = [s.get("full_history_positive_rows") for s in bucket]
+        tv_pos = [s.get("train_valid_positive_rows") for s in bucket]
         n = len(nrmse_vals)
+
+        def med(vals):
+            vals_s = sorted([v for v in vals if v is not None])
+            return int(np.median(vals_s)) if vals_s else None
+
         rows.append({
             "sample_bin": label,
             "site_count": len(bucket),
-            "median_train_valid_positive_rows": int(np.median(pos_vals)),
-            "mean_nrmse_pct": round(float(np.mean(nrmse_vals)), 4),
+            "median_full_history_rows": med(full_hist),
+            "median_full_history_positive_rows": med(full_pos),
+            "median_train_valid_positive_rows": med(tv_pos),
+            "mean_nrmse_pct": round(float(np.mean(nrmse_vals)), 4) if nrmse_vals else None,
             "median_nrmse_pct": round(float(nrmse_vals[n // 2]), 4),
             "p25_nrmse_pct": round(float(nrmse_vals[n // 4]), 4),
             "p75_nrmse_pct": round(float(nrmse_vals[3 * n // 4]), 4),
@@ -1046,7 +1057,12 @@ def main():
     assert len(sample_req_summary) == 5, f"expected 5 thresholds, got {len(sample_req_summary)}"
     assert len(sample_req_bins) > 0, "sample_requirement_bins is empty"
     assert "train_valid_positive_rows" in scatter_site[0], "missing train_valid_positive_rows field"
-    assert "test_nrmse_pct" in scatter_site[0], "missing test_nrmse_pct field"
+    assert "full_history_rows" in scatter_site[0], "missing full_history_rows field"
+    assert "full_history_positive_rows" in scatter_site[0], "missing full_history_positive_rows field"
+    assert "full_history_zero_ratio_pct" in scatter_site[0], "missing full_history_zero_ratio_pct field"
+    assert "full_history_start_date" in scatter_site[0], "missing full_history_start_date field"
+    assert "full_history_end_date" in scatter_site[0], "missing full_history_end_date field"
+    assert "median_full_history_rows" in summary[0], "missing median_full_history_rows in summary"
     assert len(hourly_summary) == 14, f"hourly_summary expected 14 rows (6-19h), got {len(hourly_summary)}"
     assert "hour" in hourly_summary[0], "missing hour field"
     assert "rows" in hourly_summary[0], "missing rows field"
