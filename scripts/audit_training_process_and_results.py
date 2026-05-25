@@ -461,25 +461,33 @@ def compute_hourly_metrics(df: pd.DataFrame) -> pd.DataFrame:
     site_avg.columns = ["hour", "site_nrmse_mean_pct"]
 
     # City NRMSE per hour
+    # Formula: |sum(actual) - sum(predicted)| / sum(capacity_mw) * 100
+    # This matches the project's city_hour_nrmse() in evaluation.py
     city_rows = []
     for hour, g in eval_df.groupby("hour"):
-        city_by_time = g.groupby("time").agg(
-            actual=("power_mw", "sum"),
-            pred=("power_pred", "sum"),
-            capacity=("capacity_mw", "sum"),
-        ).reset_index()
-        y = city_by_time["actual"].astype(float).to_numpy()
-        p = city_by_time["pred"].astype(float).to_numpy()
-        c = max(float(city_by_time["capacity"].mean()), 1e-9)
-        rmse = float(np.sqrt(np.mean((p - y) ** 2)))
-        city_rows.append({"hour": int(hour), "city_nrmse": rmse / c * 100})
+        y = g["power_mw"].astype(float).values
+        p = g["power_pred"].astype(float).values
+        c = g["capacity_mw"].astype(float).values
+        # Only use rows where power_mw > 0 (consistent with reference CSV evaluation)
+        mask = np.isfinite(y) & np.isfinite(p) & np.isfinite(c) & (c > 0)
+        if not mask.any():
+            city_rows.append({"hour": int(hour), "city_nrmse_pct": None})
+            continue
+        city_actual = float(np.nansum(y[mask]))
+        city_pred = float(np.nansum(p[mask]))
+        city_cap = float(np.nansum(c[mask]))
+        if city_cap <= 0:
+            city_rows.append({"hour": int(hour), "city_nrmse_pct": None})
+            continue
+        city_nrmse = float(np.abs(city_actual - city_pred)) / city_cap * 100
+        city_rows.append({"hour": int(hour), "city_nrmse_pct": round(city_nrmse, 3)})
     city_hour = pd.DataFrame(city_rows)
 
     # Sample count
     rows_hour = eval_df.groupby("hour").size().reset_index(name="rows")
 
-    hourly = rows_hour.merge(site_avg, on="hour", how="left").merge(city_hour[["hour", "city_nrmse"]], on="hour", how="left")
-    hourly = hourly.rename(columns={"site_nrmse_mean_pct": "site_nrmse_mean_pct", "city_nrmse": "city_nrmse_pct"})
+    hourly = rows_hour.merge(site_avg, on="hour", how="left").merge(city_hour[["hour", "city_nrmse_pct"]], on="hour", how="left")
+    hourly = hourly.rename(columns={"site_nrmse_mean_pct": "site_nrmse_mean_pct", "city_nrmse_pct": "city_nrmse_pct"})
     hourly = hourly.sort_values("hour")
     return hourly
 
