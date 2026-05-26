@@ -142,6 +142,14 @@ def fmt(v, digits=4):
     return f"{v:.{digits}f}"
 
 
+def pick_value(row, candidates, default="-"):
+    """Pick the first non-null value from row using candidate column names."""
+    for c in candidates:
+        if c in row and pd.notna(row[c]):
+            return row[c]
+    return default
+
+
 # =============================================================================
 # Section 3: Data Source Integrity
 # =============================================================================
