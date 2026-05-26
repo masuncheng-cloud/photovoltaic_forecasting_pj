@@ -686,14 +686,14 @@ tbody td {
 
   <div class="ctrl-group">
     <span class="ctrl-label">四季代表日：</span>
-    <button class="btn-seas" id="btn-spring" disabled>春季</button>
-    <button class="btn-seas" id="btn-summer" disabled>夏季</button>
-    <button class="btn-seas" id="btn-autumn" disabled>秋季</button>
-    <button class="btn-seas" id="btn-winter" disabled>冬季</button>
+    <button class="btn-season spring" id="btn-spring" disabled>春季</button>
+    <button class="btn-season summer" id="btn-summer" disabled>夏季</button>
+    <button class="btn-season autumn" id="btn-autumn" disabled>秋季</button>
+    <button class="btn-season winter" id="btn-winter" disabled>冬季</button>
   </div>
   <div class="divider"></div>
 
-  <button class="btn" id="btn-refresh">刷新</button>
+  <button class="btn btn-action" id="btn-refresh">刷新</button>
 </div>
 
 <!-- ===== METRICS CARDS ===== -->
@@ -714,7 +714,7 @@ tbody td {
   <div id="chart-title">全市总出力折线图</div>
   <svg id="line-chart"></svg>
   <div class="chart-actions">
-    <button id="reset-line-zoom" type="button">重置缩放</button>
+    <button class="btn btn-action btn-small" id="reset-line-zoom" type="button">重置缩放</button>
     <span id="line-zoom-info" class="zoom-info">滚轮缩放，拖拽平移，双击复位</span>
   </div>
 </div>
