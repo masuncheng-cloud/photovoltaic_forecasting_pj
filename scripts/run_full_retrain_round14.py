@@ -1,96 +1,114 @@
 #!/usr/bin/env python3
+# -*- coding: utf-8 -*-
 """
-Step 3: Run Full Retrain
-==========================
-执行完整训练流水线：
-  1. train_fixed.py（完整训练）
-  2. run_round10_best_guard_pipeline.py（最优保护 guard）
-  3. export_interactive_dashboard_data.py（页面数据）
-  4. 审计验证
+Round14 Step 3: 统一执行完整重训。
+
+依次运行：
+  1. train_fixed.py (完整训练流水线)
+  2. run_round10_best_guard_pipeline.py (best guard pipeline)
+  3. regenerate_chinese_metrics.py (中文指标)
+  4. compute_nrmse_reports_round10.py (NRMSE 报告)
+  5. export_interactive_dashboard_data.py (交互页面)
 
 日志写入：
   output/pv_pipeline/logs/round14_full_retrain.log
-
-执行：
-    python scripts/run_full_retrain_round14.py
-    # 后台运行：
-    nohup /home/mjj/anaconda3/bin/python3 scripts/run_full_retrain_round14.py \
-        >> output/pv_pipeline/logs/round14_full_retrain.log 2>&1 &
 """
+from __future__ import annotations
 
 import subprocess
 import sys
-import time
-from datetime import datetime
+import logging
 from pathlib import Path
+from datetime import datetime
 
 PROJECT_ROOT = Path(__file__).resolve().parents[1]
-LOG_DIR = PROJECT_ROOT / "output" / "pv_pipeline" / "logs"
-PYTHON = "/home/mjj/anaconda3/bin/python3"
+OUT = PROJECT_ROOT / "output" / "pv_pipeline"
+LOG_DIR = OUT / "logs"
+LOG_DIR.mkdir(parents=True, exist_ok=True)
 
 
-def log(msg: str):
-    ts = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-    line = f"[{ts}] {msg}"
-    print(line)
-    LOG_DIR.mkdir(parents=True, exist_ok=True)
-    with open(LOG_DIR / "round14_full_retrain.log", "a") as f:
-        f.write(line + "\n")
+def run(script: Path, desc: str, check: bool = True) -> None:
+    """执行单个脚本。"""
+    timestamp = datetime.now().strftime("%H:%M:%S")
+    log_file = LOG_DIR / "round14_full_retrain.log"
+    cmd = [sys.executable, str(script)]
 
+    msg = f"[{timestamp}] RUN: {' '.join(cmd)}"
+    print(msg)
+    with open(log_file, "a") as f:
+        f.write(msg + "\n")
+        f.flush()
 
-def run(script_path: str, description: str, timeout: int = 0):
-    log(f"=== START: {description} ===")
-    cmd = [PYTHON, str(PROJECT_ROOT / script_path)]
-    try:
-        if timeout > 0:
-            result = subprocess.run(cmd, cwd=PROJECT_ROOT, timeout=timeout, check=True)
-        else:
-            result = subprocess.run(cmd, cwd=PROJECT_ROOT, check=True)
-        log(f"=== DONE : {description} ===")
-        return True
-    except subprocess.TimeoutExpired:
-        log(f"=== TIMEOUT: {description} (>{timeout}s) ===")
-        return False
-    except subprocess.CalledProcessError as e:
-        log(f"=== FAILED: {description} (exit {e.returncode}) ===")
-        raise
+    result = subprocess.run(
+        cmd,
+        cwd=str(PROJECT_ROOT),
+        text=True,
+    )
+    if result.stdout:
+        with open(log_file, "a") as f:
+            f.write(result.stdout + "\n")
+    if result.stderr:
+        with open(log_file, "a") as f:
+            f.write("STDERR: " + result.stderr + "\n")
+
+    if check and result.returncode != 0:
+        print(f"[FAIL] {desc} 失败 (code={result.returncode})")
+        raise SystemExit(1)
+    print(f"[OK] {desc} 完成")
+    with open(log_file, "a") as f:
+        f.write(f"[{datetime.now().strftime('%H:%M:%S')}] OK: {desc}\n")
 
 
 def main():
-    start = time.time()
-    log("=" * 70)
-    log("Round14 Full Retrain Starting")
-    log("=" * 70)
+    print("=" * 70)
+    print("Round14 Step 3: 完整重新训练")
+    print(f"开始时间: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
+    print("=" * 70)
 
-    # Step 3a: Full training
-    ok = run("scripts/train_fixed.py", "Full Training (train_fixed.py)", timeout=0)
-    if not ok:
-        log("[FATAL] Training failed — stop here")
-        raise SystemExit(1)
+    log_file = LOG_DIR / "round14_full_retrain.log"
+    with open(log_file, "w") as f:
+        f.write(f"Round14 Full Retrain started at {datetime.now().isoformat()}\n")
 
-    elapsed = time.time() - start
-    log(f"Training done in {elapsed/60:.1f} min")
-
-    # Step 3b: Best guard pipeline
-    run("scripts/run_round10_best_guard_pipeline.py", "Best Guard Pipeline", timeout=3600)
-
-    # Step 3c: Dashboard export
+    # Step 3a: 完整训练流水线
     run(
-        "scripts/export_interactive_dashboard_data.py",
-        "Dashboard Data Export",
-        timeout=600,
+        PROJECT_ROOT / "scripts" / "train_fixed.py",
+        "train_fixed.py (完整训练)",
     )
 
-    # Step 3d: Audit
+    # Step 3b: best guard pipeline
     run(
-        "scripts/audit_training_process_and_results.py",
-        "Audit Verification",
-        timeout=300,
+        PROJECT_ROOT / "scripts" / "run_round10_best_guard_pipeline.py",
+        "run_round10_best_guard_pipeline.py",
     )
 
-    total = time.time() - start
-    log(f"=== Round14 Full Retrain Complete in {total/60:.1f} min ===")
-    print(f"\n[DONE] Full retrain completed in {total/60:.1f} minutes")
+    # Step 3c: 中文指标
+    run(
+        PROJECT_ROOT / "scripts" / "regenerate_chinese_metrics.py",
+        "regenerate_chinese_metrics.py",
+    )
+
+    # Step 3d: NRMSE 报告
+    run(
+        PROJECT_ROOT / "scripts" / "compute_nrmse_reports_round10.py",
+        "compute_nrmse_reports_round10.py",
+    )
+
+    # Step 3e: 交互页面
+    run(
+        PROJECT_ROOT / "scripts" / "export_interactive_dashboard_data.py",
+        "export_interactive_dashboard_data.py",
+    )
+
+    # Step 3f: 审计
+    run(
+        PROJECT_ROOT / "scripts" / "audit_training_process_and_results.py",
+        "audit_training_process_and_results.py",
+    )
+
+    print()
+    print("=" * 70)
+    print(f"Round14 完整重训完成: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
+    print("=" * 70)
 
 
 if __name__ == "__main__":

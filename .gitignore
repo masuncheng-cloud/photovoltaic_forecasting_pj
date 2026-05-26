@@ -37,6 +37,14 @@ output/pv_pipeline/reorganize_back40.py
 output/pv_pipeline/reorganize_cols.py
 catboost_info/
 
+# Archive nested output/docs — these contain copies of large pkl/metrics/docs
+output/pv_pipeline/archive_round7/
+output/pv_pipeline/archive_round11/
+output/pv_pipeline/archive_round14/output/
+output/pv_pipeline/archive_round14/docs/
+output/pv_pipeline/verified_backup_round14/output/
+output/pv_pipeline/verified_backup_round14/docs/
+
 # Keep lightweight outputs
 !output/
 !output/pv_pipeline/

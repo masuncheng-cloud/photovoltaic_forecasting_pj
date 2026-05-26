@@ -1,32 +1,40 @@
 {
   "accepted": true,
-  "reason": "all checks passed",
-  "current_overall_nrmse": 19.710496,
-  "backup_overall_nrmse": 19.710496,
-  "current_midday_site_nrmse": 14.480563,
-  "backup_midday_site_nrmse": 14.480563,
-  "current_mae_mw": 0.58932,
-  "backup_mae_mw": 0.58932,
-  "current_rmse_mw": 1.204699,
-  "backup_rmse_mw": 1.204699,
-  "current_bias_pct": -1.406471,
-  "backup_bias_pct": -1.406471,
-  "current_pred_actual_ratio": 0.985935,
-  "backup_pred_actual_ratio": 0.985935,
-  "current_rows": 68888,
-  "backup_rows": 68888,
-  "current_n_sites": 53,
-  "backup_n_sites": 53,
-  "current_midday_city_nrmse": 2.420756,
-  "backup_midday_city_nrmse": 2.420756,
   "restored_from_backup": false,
-  "retrain_hours": 0.47,
-  "audit_grade": "A",
-  "final_equals_best": true,
-  "thresholds": {
-    "overall_nrmse_pp": 0.05,
-    "midday_site_nrmse_pp": 0.05,
-    "mae_mw": 0.005,
-    "rmse_mw": 0.005
-  }
+  "reason": "all checks passed",
+  "current": {
+    "rows": 68888,
+    "n_sites": 53,
+    "actual": 93382.49,
+    "pred": 92069.092585,
+    "ratio": 0.985935,
+    "bias": -1.406471,
+    "nrmse": 19.710496,
+    "mae": 0.58932,
+    "rmse": 1.204699,
+    "nrmse_midday": 22.086401,
+    "mae_midday": 0.72492,
+    "rmse_midday": 1.349913
+  },
+  "backup": {
+    "rows": 68888,
+    "n_sites": 53,
+    "actual": 93382.49,
+    "pred": 92069.092585,
+    "ratio": 0.985935,
+    "bias": -1.406471,
+    "nrmse": 19.710496,
+    "mae": 0.58932,
+    "rmse": 1.204699,
+    "nrmse_midday": 22.086401,
+    "mae_midday": 0.72492,
+    "rmse_midday": 1.349913
+  },
+  "checks_passed": [
+    "NRMSE 不高于备份+0.05pp",
+    "10-14 NRMSE 不高于备份+0.05pp",
+    "MAE 不高于备份+0.005MW",
+    "RMSE 不高于备份+0.005MW"
+  ],
+  "checks_failed": []
 }
