@@ -1,0 +1,32 @@
+{
+  "accepted": false,
+  "reason": "current final PKL does not exist | final != best (power_pred mismatch)",
+  "current_overall_nrmse": null,
+  "backup_overall_nrmse": 19.710496,
+  "current_midday_site_nrmse": null,
+  "backup_midday_site_nrmse": 14.480563,
+  "current_mae_mw": null,
+  "backup_mae_mw": 0.58932,
+  "current_rmse_mw": null,
+  "backup_rmse_mw": 1.204699,
+  "current_bias_pct": null,
+  "backup_bias_pct": -1.406471,
+  "current_pred_actual_ratio": null,
+  "backup_pred_actual_ratio": 0.985935,
+  "current_rows": null,
+  "backup_rows": 68888,
+  "current_n_sites": null,
+  "backup_n_sites": 53,
+  "current_midday_city_nrmse": null,
+  "backup_midday_city_nrmse": 2.420756,
+  "restored_from_backup": true,
+  "retrain_hours": 15.61,
+  "audit_grade": "A",
+  "final_equals_best": false,
+  "thresholds": {
+    "overall_nrmse_pp": 0.05,
+    "midday_site_nrmse_pp": 0.05,
+    "mae_mw": 0.005,
+    "rmse_mw": 0.005
+  }
+}

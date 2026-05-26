@@ -1,0 +1,3 @@
+metric,current,backup,delta,threshold,passed,exceeded
+final_equals_best,False,True,,,False,True
+audit_grade_A,True,True,,,True,False
