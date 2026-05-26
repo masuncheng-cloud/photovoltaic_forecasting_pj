@@ -146,7 +146,8 @@ def fmt(v, digits=4):
 # Section 3: Data Source Integrity
 # =============================================================================
 
-def check_data_sources(root: Path) -> tuple[pd.DataFrame, list[dict]]:
+def check_data_sources(root: Path) -> tuple[pd.DataFrame, str, int, int, list]:
+    """Returns (df, status, fail_count, warn_count, info_entries)."""
     print("\n=== Section 3: Data Source Integrity ===")
     metrics_dir = root / "metrics"
     tables_dir = root / "tables"
@@ -874,7 +875,7 @@ def main():
     print("=" * 70)
 
     # Run all checks
-    data_result, data_status = check_data_sources(root)
+    data_result, data_status, data_fails, data_warns, data_info_entries = check_data_sources(root)
     site_result, site_status = check_site_mapping(root)
     split_result, split_status = check_split_integrity(root)
     phys_result, phys_status = check_physical_range(root)
@@ -883,13 +884,14 @@ def main():
     page_result, page_status = check_report_page_consistency(root)
     key_results, key_status, key_issues = check_8_key_items(root)
 
-    # Determine overall grade
+    # Determine overall grade (INFO does NOT affect warn_count)
     fail_count = sum(1 for s in [data_status, site_status, split_status, phys_status,
                                    fb_status, metrics_status, page_status, key_status]
                      if s == "FAIL")
     warn_count = sum(1 for s in [data_status, site_status, split_status, phys_status,
                                    fb_status, metrics_status, page_status, key_status]
                       if s == "WARN")
+    info_count = len(data_info_entries)
 
     if fail_count > 0:
         grade = "C"  # Cannot deliver
