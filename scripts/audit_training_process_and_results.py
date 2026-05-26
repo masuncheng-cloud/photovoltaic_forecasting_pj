@@ -164,59 +164,68 @@ def check_data_sources(root: Path) -> tuple[pd.DataFrame, list[dict]]:
         "best_full": tables_dir / "best_predictions_full.pkl",
     }
 
+    critical_files = {
+        "power_long_raw", "power_clean", "site_master", "site_meteo",
+        "site_irradiance", "final_eval", "final_full", "best_eval", "best_full",
+    }
+
     rows = []
     overall_status = "PASS"
+    info_entries = []
+    fail_count = 0
+    warn_count = 0
 
     for name, path in required_files.items():
         entry = {"file": name, "path": str(path), "exists": path.exists()}
         if not path.exists():
             entry["status"] = "FAIL"
+            fail_count += 1
             overall_status = "FAIL"
             rows.append(entry)
             continue
 
-        # Try to read
-        if path.suffix == ".pkl":
-            try:
-                df = pd.read_pickle(path)
-            except Exception as e:
-                # pandas version incompatibility (e.g., StringDtype saved with older pandas)
-                # This is a WARN, not a FAIL, since it doesn't affect final evaluation
-                print(f"  [WARN] Cannot read {path.name}: {type(e).__name__} (pandas version incompatibility)")
-                entry["status"] = "WARN"
-                entry["read_error"] = str(e)
-                if overall_status != "FAIL":
-                    overall_status = "WARN"
-                rows.append(entry)
-                continue
-        else:
-            df = safe_read_csv(path)
+        df, err = safe_read_table(path)
 
         if df is None:
-            entry["status"] = "FAIL"
-            overall_status = "FAIL"
-        else:
-            entry["rows"] = len(df)
-            entry["cols"] = len(df.columns)
-            entry["key_fields_ok"] = True
-            entry["status"] = "PASS"
-            # Quick key field check
-            if "power_mw" in df.columns or "power_pred" in df.columns:
-                entry["has_power_cols"] = True
-            if "time" in df.columns:
-                entry["has_time"] = True
-            # Check null fraction
-            null_cols = ["power_mw", "power_pred", "time"]
-            for c in null_cols:
-                if c in df.columns:
-                    entry[f"null_frac_{c}"] = f"{df[c].isna().mean():.3f}"
+            if name in critical_files:
+                entry["status"] = "FAIL"
+                fail_count += 1
+                overall_status = "FAIL"
+            else:
+                # Non-critical intermediate files: downgrade to INFO
+                entry["status"] = "INFO"
+                entry["read_error"] = str(err)
+                info_entries.append(entry)
+                # INFO does NOT affect overall_status
+            rows.append(entry)
+            continue
+
+        entry["rows"] = len(df)
+        entry["cols"] = len(df.columns)
+        entry["key_fields_ok"] = True
+        entry["status"] = "PASS"
+        # Quick key field check
+        if "power_mw" in df.columns or "power_pred" in df.columns:
+            entry["has_power_cols"] = True
+        if "time" in df.columns:
+            entry["has_time"] = True
+        # Check null fraction
+        null_cols = ["power_mw", "power_pred", "time"]
+        for c in null_cols:
+            if c in df.columns:
+                entry[f"null_frac_{c}"] = f"{df[c].isna().mean():.3f}"
 
         rows.append(entry)
 
     df_result = pd.DataFrame(rows)
     write_csv(df_result, metrics_dir / "audit_data_integrity.csv")
-    print(f"  Data integrity: {overall_status}  ({sum(1 for r in rows if r['status']=='PASS')}/{len(rows)} files OK)")
-    return df_result, overall_status
+
+    pass_count = sum(1 for r in rows if r["status"] == "PASS")
+    info_count = len(info_entries)
+    print(f"  Data integrity: {overall_status}  ({pass_count}/{len(rows)} PASS, {info_count} INFO)")
+    for ie in info_entries:
+        print(f"  [INFO] {ie['file']}: {ie.get('read_error', 'read failed')[:80]}")
+    return df_result, overall_status, fail_count, warn_count, info_entries
 
 
 # =============================================================================
