@@ -18,7 +18,7 @@ interactive_dashboard_index_exists,True,output/pv_pipeline/interactive_dashboard
 full_history_rows_ge_20000,True,max_full_history_rows=28464,IMPORTANT
 archive_round15_manifest_exists,True,/home/ac/data16t/msc/photovoltaic_forecasting_pj/output/pv_pipeline/archive_round15/archive_manifest.csv,IMPORTANT
 backup_round14_manifest_exists,True,/home/ac/data16t/msc/photovoltaic_forecasting_pj/output/pv_pipeline/verified_backup_round14/backup_manifest.csv,IMPORTANT
-zip_exists,False,/home/ac/data16t/msc/photovoltaic_forecasting_pj/dist/photovoltaic_forecasting_pj_round15_delivery.zip not found — run build script first,IMPORTANT
-zip_exclude_git,True,zip does not exist yet,INFO
-zip_exclude_macosx,True,zip does not exist yet,INFO
-zip_exclude_test_push_files,True,zip does not exist yet,INFO
+zip_exists,True,/home/ac/data16t/msc/photovoltaic_forecasting_pj/dist/photovoltaic_forecasting_pj_round15_delivery.zip,IMPORTANT
+zip_exclude_git,True,.git/ in zip: False,IMPORTANT
+zip_exclude_macosx,True,__MACOSX/ in zip: False,IMPORTANT
+zip_exclude_test_push_files,True,test files in zip: [],IMPORTANT
