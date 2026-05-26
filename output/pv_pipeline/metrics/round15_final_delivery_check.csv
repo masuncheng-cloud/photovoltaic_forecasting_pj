@@ -1,0 +1,24 @@
+check_name,passed,detail,severity
+final_eval_readable,True,"tables/distributed_predictions_final_eval.pkl readable, 68,888 rows",CRITICAL
+final_full_readable,True,"tables/distributed_predictions_final_full.pkl readable, 1,172,180 rows",CRITICAL
+best_eval_readable,True,"tables/best_predictions_eval.pkl readable, 68,888 rows",CRITICAL
+best_full_readable,True,"tables/best_predictions_full.pkl readable, 1,172,180 rows",CRITICAL
+final_equals_best,True,max power_pred diff=0.00000000,CRITICAL
+audit_grade_a,True,grade=A,CRITICAL
+audit_fail_zero,True,fail_count=0,CRITICAL
+audit_warn_zero,True,warn_count=0,CRITICAL
+project_report_exists,True,"光伏功率预测项目.md exists, 5,033 chars",CRITICAL
+project_report_no_wape_main_metric,True,WAPE not found in report,CRITICAL
+project_report_no_mape_main_metric,True,MAPE not found in report,CRITICAL
+project_report_has_raw_power_stats,True,Section 1.2 has power stats table,IMPORTANT
+project_report_no_lightgbm_claim_if_missing_dep,True,LightGBM claim removed,IMPORTANT
+project_report_test_usage_clear,True,Test set usage clarified,IMPORTANT
+hourly_table_has_14_rows,True,"hours=[6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19], rows=14",IMPORTANT
+interactive_dashboard_index_exists,True,output/pv_pipeline/interactive_dashboard/index.json,IMPORTANT
+full_history_rows_ge_20000,False,read failed: 'list' object has no attribute 'get',IMPORTANT
+archive_round15_manifest_exists,True,/home/ac/data16t/msc/photovoltaic_forecasting_pj/output/pv_pipeline/archive_round15/archive_manifest.csv,IMPORTANT
+backup_round14_manifest_exists,True,/home/ac/data16t/msc/photovoltaic_forecasting_pj/output/pv_pipeline/verified_backup_round14/backup_manifest.csv,IMPORTANT
+zip_exists,False,/home/ac/data16t/msc/photovoltaic_forecasting_pj/dist/photovoltaic_forecasting_pj_round15_delivery.zip not found — run build script first,IMPORTANT
+zip_exclude_git,True,zip does not exist yet,INFO
+zip_exclude_macosx,True,zip does not exist yet,INFO
+zip_exclude_test_push_files,True,zip does not exist yet,INFO

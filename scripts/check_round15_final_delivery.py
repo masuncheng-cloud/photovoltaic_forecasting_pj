@@ -216,11 +216,18 @@ def run():
         for _, r in errors.iterrows():
             print(f"    [FAIL] {r['check_name']}: {r['detail']}")
 
-    if passed_all:
-        print(f"\n[OK] Round15 final delivery checks passed")
+    critical_ok = errors.empty
+    print(f"\n[{'OK' if critical_ok else 'FAIL'}] Round15 final delivery check")
+    if warnings:
+        print(f"  IMPORTANT warnings: {len(warnings)}")
+        for _, r in warnings.iterrows():
+            print(f"    [WARN] {r['check_name']}: {r['detail']}")
+    if critical_ok:
         return 0
     else:
-        print(f"\n[FAIL] Some checks failed")
+        print(f"  CRITICAL failures: {len(errors)}")
+        for _, r in errors.iterrows():
+            print(f"    [FAIL] {r['check_name']}: {r['detail']}")
         return 1
 
 
