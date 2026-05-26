@@ -15,6 +15,7 @@ IMPORTANT: Do NOT use WAPE or MAPE as primary metrics. Use NRMSE as the main met
 """
 
 import json
+import sys
 from pathlib import Path
 
 import numpy as np
@@ -191,7 +192,7 @@ def generate_report(data: dict, root: Path) -> str:
     lines.append("### 1.2 原始功率数据量\n")
     power_stats = get_power_raw_stats(root)
     if power_stats:
-        lines.append(f"原始功率长表 `power_long_raw.pkl` 共 {power_stats['total_rows']:,} 行，其中分布式 {power_stats['dist_total']:,} 行。"))
+        lines.append(f"原始功率长表 `power_long_raw.pkl` 共 {power_stats['total_rows']:,} 行，其中分布式 {power_stats['dist_total']:,} 行。")
         lines.append("")
         lines.append("| 类型 | 总行数（行） | 非空功率行数（行） | 正功率行数（行） | 0 值行数（行） | 0 值占非空比例（%） |")
         lines.append("|:---|:---:|:---:|:---:|:---:|:---:|")
