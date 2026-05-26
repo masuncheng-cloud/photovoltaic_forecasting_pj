@@ -198,7 +198,7 @@ def main():
 
     # --- docs ---
     print("Scanning docs/ ...")
-    docs_root = ROOT.parent / "docs"
+    docs_root = PROJECT_ROOT / "docs"
     doc_files = []
     for p in STALE_DOC_PATTERNS:
         for fp in docs_root.glob(p):
@@ -217,7 +217,7 @@ def main():
 
     # --- root stale txt files ---
     print("Scanning project root ...")
-    project_root = ROOT.parent
+    project_root = PROJECT_ROOT
     root_files = []
     for fn in STALE_ROOT_FILES:
         fp = project_root / fn
