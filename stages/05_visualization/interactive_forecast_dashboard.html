@@ -65,21 +65,66 @@ select, input[type="date"], input[type="number"] {
 input[type="number"] { width: 60px; }
 
 .btn {
-  padding: 5px 12px;
-  border: 1px solid #3182ce;
-  background: #3182ce;
-  color: #fff;
-  border-radius: 4px;
+  height: 36px;
+  border: 1px solid #2f80d1;
+  border-radius: 6px;
+  background: linear-gradient(180deg, #3b8ed8 0%, #2f80d1 100%);
+  color: #ffffff;
+  padding: 0 14px;
+  font-size: 13px;
+  font-weight: 600;
   cursor: pointer;
-  font-size: 12px;
-  font-weight: 500;
-  transition: background 0.15s;
+  transition: transform 0.08s ease, box-shadow 0.15s ease, background 0.15s ease;
+  box-shadow: 0 1px 2px rgba(15, 23, 42, 0.12);
 }
-.btn:hover { background: #2b6cb0; }
-.btn:disabled { background: #cbd5e0; border-color: #cbd5e0; cursor: not-allowed; }
-.btn-seas { padding: 4px 10px; font-size: 12px; border-color: #38a169; background: #38a169; }
-.btn-seas:hover { background: #2f855a; }
-.btn-seas:disabled { background: #cbd5e0; border-color: #cbd5e0; cursor: not-allowed; }
+
+.btn:hover {
+  background: linear-gradient(180deg, #4699e2 0%, #2b75be 100%);
+  box-shadow: 0 3px 8px rgba(49, 130, 206, 0.22);
+}
+
+.btn:active {
+  transform: translateY(1px);
+}
+
+.btn:disabled {
+  background: #e2e8f0;
+  border-color: #cbd5e1;
+  color: #94a3b8;
+  cursor: not-allowed;
+  box-shadow: none;
+}
+
+.btn-seas {
+  height: 36px;
+  border: 1px solid #2f80d1;
+  border-radius: 6px;
+  background: linear-gradient(180deg, #3b8ed8 0%, #2f80d1 100%);
+  color: #ffffff;
+  padding: 0 14px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: transform 0.08s ease, box-shadow 0.15s ease, background 0.15s ease;
+  box-shadow: 0 1px 2px rgba(15, 23, 42, 0.12);
+}
+
+.btn-seas:hover:not(:disabled) {
+  background: linear-gradient(180deg, #4699e2 0%, #2b75be 100%);
+  box-shadow: 0 3px 8px rgba(49, 130, 206, 0.22);
+}
+
+.btn-seas:active:not(:disabled) {
+  transform: translateY(1px);
+}
+
+.btn-seas:disabled {
+  background: #e2e8f0;
+  border-color: #cbd5e1;
+  color: #94a3b8;
+  cursor: not-allowed;
+  box-shadow: none;
+}
 
 .divider { width: 1px; height: 24px; background: #dde3ec; margin: 0 4px; }
 
@@ -437,6 +482,54 @@ tbody td {
 .zoom-info {
   font-size: 12px;
   color: #64748b;
+}
+
+.select-control,
+#site-select,
+#start-hour,
+#end-hour {
+  height: 36px;
+  border: 1px solid #cbd5e1;
+  border-radius: 6px;
+  background: #ffffff;
+  color: #1f2937;
+  padding: 0 10px;
+  font-size: 13px;
+  font-weight: 500;
+  outline: none;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease, background 0.15s ease;
+}
+
+.select-control:focus,
+#site-select:focus,
+#start-hour:focus,
+#end-hour:focus {
+  border-color: #3182ce;
+  box-shadow: 0 0 0 3px rgba(49, 130, 206, 0.16);
+}
+
+.date-combo {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 2px;
+  border-radius: 8px;
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+}
+
+.date-year { width: 82px; }
+.date-month,
+.date-day { width: 62px; }
+
+.date-unit {
+  font-size: 12px;
+  color: #64748b;
+  margin-right: 2px;
+}
+
+.hidden-date-input {
+  display: none;
 }
 
 @media (max-width: 900px) {
@@ -2151,9 +2244,7 @@ document.addEventListener("DOMContentLoaded", () => {
     refreshAll();
   });
 
-  // Date/hours
-  document.getElementById("start-date").addEventListener("change", e => { state.startDate = e.target.value; refreshAll(); });
-  document.getElementById("end-date").addEventListener("change", e => { state.endDate = e.target.value; refreshAll(); });
+  // Date/hours — date changes handled by bindDateComboEvents()
   document.getElementById("start-hour").addEventListener("change", e => { state.startHour = parseInt(e.target.value) || 0; refreshAll(); });
   document.getElementById("end-hour").addEventListener("change", e => { state.endHour = parseInt(e.target.value) || 23; refreshAll(); });
 
