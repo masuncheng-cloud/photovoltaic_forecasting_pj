@@ -967,6 +967,20 @@ function setDateComboValue(prefix, dateStr) {
   populateDayOptions(prefix, parts.year, parts.month, parts.day);
 }
 
+function bindHelpTooltips() {
+  document.querySelectorAll("[data-help]").forEach(el => {
+    el.addEventListener("mouseenter", e => {
+      const tip = document.getElementById("tooltip");
+      if (!tip) return;
+      tip.innerHTML = `<div style="max-width:260px;line-height:1.6">${el.dataset.help}</div>`;
+      tip.style.display = "block";
+      moveTooltip(e);
+    });
+    el.addEventListener("mousemove", moveTooltip);
+    el.addEventListener("mouseleave", hideTooltip);
+  });
+}
+
 function bindDateComboEvents() {
   if (dateComboBound) return;
   dateComboBound = true;
@@ -2292,6 +2306,7 @@ document.addEventListener("DOMContentLoaded", () => {
     onScopeChange();
     bindLineZoomEvents();
     bindDateComboEvents();
+    bindHelpTooltips();
     refreshAll();
   }).catch(err => {
     const loading = document.getElementById("loading");
