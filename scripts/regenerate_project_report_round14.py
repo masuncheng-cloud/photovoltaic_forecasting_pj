@@ -22,7 +22,7 @@ import numpy as np
 import pandas as pd
 
 PROJECT_ROOT = Path("/home/ac/data16t/msc/photovoltaic_forecasting_pj")
-sys.path_insert(0, str(PROJECT_ROOT))
+sys.path.insert(0, str(PROJECT_ROOT))
 
 # =============================================================================
 # Pandas StringDtype pickle compatibility patch
