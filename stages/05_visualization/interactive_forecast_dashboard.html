@@ -2277,6 +2277,8 @@ document.addEventListener("DOMContentLoaded", () => {
     state.endDate = closest.date;
     state.startHour = 10;
     state.endHour = 14;
+    setDateComboValue("start", state.startDate);
+    setDateComboValue("end", state.endDate);
     document.getElementById("start-date").value = state.startDate;
     document.getElementById("end-date").value = state.endDate;
     document.getElementById("start-hour").value = 10;
@@ -2298,6 +2300,8 @@ document.addEventListener("DOMContentLoaded", () => {
       state.endDate = season.date;
       state.startHour = 6;
       state.endHour = 19;
+      setDateComboValue("start", state.startDate);
+      setDateComboValue("end", state.endDate);
       document.getElementById("start-date").value = state.startDate;
       document.getElementById("end-date").value = state.endDate;
       document.getElementById("start-hour").value = 6;
