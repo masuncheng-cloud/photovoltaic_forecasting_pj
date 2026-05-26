@@ -478,9 +478,19 @@ tbody td {
 
   <div class="ctrl-group">
     <span class="ctrl-label">日期：</span>
-    <input type="date" id="start-date">
+    <div class="date-combo" data-role="start">
+      <select id="start-year" class="select-control date-year"></select><span class="date-unit">年</span>
+      <select id="start-month" class="select-control date-month"></select><span class="date-unit">月</span>
+      <select id="start-day" class="select-control date-day"></select><span class="date-unit">日</span>
+    </div>
+    <input type="date" id="start-date" class="hidden-date-input">
     <span class="ctrl-label">至</span>
-    <input type="date" id="end-date">
+    <div class="date-combo" data-role="end">
+      <select id="end-year" class="select-control date-year"></select><span class="date-unit">年</span>
+      <select id="end-month" class="select-control date-month"></select><span class="date-unit">月</span>
+      <select id="end-day" class="select-control date-day"></select><span class="date-unit">日</span>
+    </div>
+    <input type="date" id="end-date" class="hidden-date-input">
   </div>
   <div class="divider"></div>
 
@@ -686,6 +696,145 @@ let lineZoom = {
   dragStartEndIndex: -1,
   bound: false,
 };
+
+// ============================================================
+// DATE COMBO (YMD DROPDOWNS)
+// ============================================================
+let dateComboBound = false;
+
+function parseDateParts(dateStr) {
+  const [y, m, d] = String(dateStr || "").split("-").map(x => parseInt(x, 10));
+  return {
+    year: Number.isFinite(y) ? y : 2025,
+    month: Number.isFinite(m) ? m : 1,
+    day: Number.isFinite(d) ? d : 1,
+  };
+}
+
+function pad2(n) {
+  return String(n).padStart(2, "0");
+}
+
+function daysInMonth(year, month) {
+  return new Date(year, month, 0).getDate();
+}
+
+function buildDateString(year, month, day) {
+  return `${year}-${pad2(month)}-${pad2(day)}`;
+}
+
+function populateDayOptions(prefix, year, month, selectedDay) {
+  const dayEl = document.getElementById(`${prefix}-day`);
+  if (!dayEl) return;
+
+  const maxDay = daysInMonth(year, month);
+  const safeDay = Math.min(Math.max(1, selectedDay || 1), maxDay);
+
+  dayEl.innerHTML = "";
+  for (let d = 1; d <= maxDay; d++) {
+    const opt = document.createElement("option");
+    opt.value = d;
+    opt.textContent = pad2(d);
+    dayEl.appendChild(opt);
+  }
+  dayEl.value = safeDay;
+}
+
+function populateDateCombo(prefix, dateStr, minDate, maxDate) {
+  const yearEl = document.getElementById(`${prefix}-year`);
+  const monthEl = document.getElementById(`${prefix}-month`);
+  const dayEl = document.getElementById(`${prefix}-day`);
+  if (!yearEl || !monthEl || !dayEl) return;
+
+  const minParts = parseDateParts(minDate);
+  const maxParts = parseDateParts(maxDate);
+  const cur = parseDateParts(dateStr);
+
+  yearEl.innerHTML = "";
+  for (let y = minParts.year; y <= maxParts.year; y++) {
+    const opt = document.createElement("option");
+    opt.value = y;
+    opt.textContent = y;
+    yearEl.appendChild(opt);
+  }
+  yearEl.value = cur.year;
+
+  monthEl.innerHTML = "";
+  for (let m = 1; m <= 12; m++) {
+    const opt = document.createElement("option");
+    opt.value = m;
+    opt.textContent = pad2(m);
+    monthEl.appendChild(opt);
+  }
+  monthEl.value = cur.month;
+
+  populateDayOptions(prefix, cur.year, cur.month, cur.day);
+}
+
+function getDateComboValue(prefix) {
+  const year = parseInt(document.getElementById(`${prefix}-year`)?.value, 10);
+  const month = parseInt(document.getElementById(`${prefix}-month`)?.value, 10);
+  const day = parseInt(document.getElementById(`${prefix}-day`)?.value, 10);
+  return buildDateString(year, month, day);
+}
+
+function setDateComboValue(prefix, dateStr) {
+  const parts = parseDateParts(dateStr);
+  const yearEl = document.getElementById(`${prefix}-year`);
+  const monthEl = document.getElementById(`${prefix}-month`);
+  const dayEl = document.getElementById(`${prefix}-day`);
+  if (!yearEl || !monthEl || !dayEl) return;
+
+  yearEl.value = parts.year;
+  monthEl.value = parts.month;
+  populateDayOptions(prefix, parts.year, parts.month, parts.day);
+}
+
+function bindDateComboEvents() {
+  if (dateComboBound) return;
+  dateComboBound = true;
+
+  ["start", "end"].forEach(prefix => {
+    const yearEl = document.getElementById(`${prefix}-year`);
+    const monthEl = document.getElementById(`${prefix}-month`);
+    const dayEl = document.getElementById(`${prefix}-day`);
+    if (!yearEl || !monthEl || !dayEl) return;
+
+    function applyDateChange() {
+      state.startDate = getDateComboValue("start");
+      state.endDate = getDateComboValue("end");
+
+      if (state.startDate > state.endDate) {
+        if (prefix === "start") {
+          state.endDate = state.startDate;
+          setDateComboValue("end", state.endDate);
+        } else {
+          state.startDate = state.endDate;
+          setDateComboValue("start", state.startDate);
+        }
+      }
+
+      const startInput = document.getElementById("start-date");
+      const endInput = document.getElementById("end-date");
+      if (startInput) startInput.value = state.startDate;
+      if (endInput) endInput.value = state.endDate;
+
+      refreshAll();
+    }
+
+    function onYearMonthChange() {
+      const year = parseInt(yearEl.value, 10);
+      const month = parseInt(monthEl.value, 10);
+      const oldDay = parseInt(dayEl.value, 10);
+      populateDayOptions(prefix, year, month, oldDay);
+      applyDateChange();
+    }
+
+    yearEl.addEventListener("change", onYearMonthChange);
+    monthEl.addEventListener("change", onYearMonthChange);
+    dayEl.addEventListener("change", applyDateChange);
+  });
+}
 
 // ============================================================
 // DATA LOADING
