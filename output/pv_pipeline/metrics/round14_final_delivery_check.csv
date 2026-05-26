@@ -3,7 +3,7 @@ core_final_eval_readable,True,rows=68888
 core_best_eval_readable,True,rows=68888
 final_equals_best,True,max_diff=0.00000000
 audit_grade_a,True,grade=A
-project_report_exists,True,"size=7,450 bytes"
+project_report_exists,True,"size=7,446 bytes"
 project_report_no_wape,True,"NRMSE is main metric, no WAPE/MAPE"
 hourly_table_14_rows,True,"rows=14, hours=[6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19]"
 dashboard_index_exists,True,size=656 bytes
