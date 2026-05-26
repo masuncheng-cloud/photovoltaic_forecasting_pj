@@ -225,51 +225,46 @@ def generate_report(data: dict, root: Path) -> str:
     # =========================================================================
     lines.append("---\n")
     lines.append("## 二、训练流程简述\n")
-    lines.append("""
-### 2.1 流水线版本演进
 
-训练流程包含三个主要版本阶段的逐步优化：
+    lines.append("### 2.1 流水线版本演进\n")
+    lines.append("训练流程包含三个主要版本阶段的逐步优化：\n")
+    lines.append("```")
+    lines.append("V0 (基线)")
+    lines.append("  └─ 使用分布式训练数据 (distributed_train_table_v159.pkl)")
+    lines.append("  └─ 基础特征工程：辐照度、功率、温度、湿度等")
+    lines.append("  └─ 输出：distributed_predictions.pkl")
+    lines.append("")
+    lines.append("V1 (特征增强)")
+    lines.append("  └─ 在 V0 基础上增加 inverse（逆功率）、blend（辐照度混合）特征")
+    lines.append("  └─ 训练 blend 混合模型")
+    lines.append("  └─ 增强 dawn/dusk 时刻的相对误差修正")
+    lines.append("  └─ 输出：distributed_predictions_v159_fix.pkl")
+    lines.append("")
+    lines.append("MiddaySiteCalibrated (正午站点校准)")
+    lines.append("  └─ 针对 10-14 时段独立训练专用模型")
+    lines.append("  └─ 对所有站点应用 site-level NRMSE 校准")
+    lines.append("  └─ 缓解正午高辐照度区间的系统性偏差")
+    lines.append("")
+    lines.append("Final (最终版本)")
+    lines.append("  └─ 在 MiddaySiteCalibrated 基础上进一步验证")
+    lines.append("  └─ 逐小时选择最优版本（V0 / V1 / Midday）")
+    lines.append("  └─ 通过 final_guard 守卫机制确保指标不劣化")
+    lines.append("  └─ 输出：distributed_predictions_final_eval/full.pkl")
+    lines.append("```\n")
 
-```
-V0 (基线)
-  └─ 使用分布式训练数据 (distributed_train_table_v159.pkl)
-  └─ 基础特征工程：辐照度、功率、温度、湿度等
-  └─ 输出：distributed_predictions.pkl
+    lines.append("### 2.2 核心指标定义\n")
+    lines.append("- **NRMSE（%）**：主要评估指标，NRMSE = RMSE / mean(capacity_mw) × 100%")
+    lines.append("  - 按站点装机容量归一化，消除不同规模站点间的不可比性")
+    lines.append("- **MAE（MW）**：平均绝对误差，直接反映预测与实际功率的平均偏差")
+    lines.append("- **RMSE（MW）**：均方根误差，对大误差更敏感")
+    lines.append("- **bias（%）**：（预测总量 - 实际总量）/ 实际总量 × 100%，反映系统性高估/低估")
+    lines.append("- **城市NRMSE（%）**：|sum(pred) - sum(actual)| / sum(capacity_mw) × 100%\n")
 
-V1 (特征增强)
-  └─ 在 V0 基础上增加 inverse（逆功率）、blend（辐照度混合）特征
-  └─ 训练 blend 混合模型
-  └─ 增强 dawn/dusk 时刻的相对误差修正
-  └─ 输出：distributed_predictions_v159_fix.pkl
-
-MiddaySiteCalibrated (正午站点校准)
-  └─ 针对 10-14 时段独立训练专用模型
-  └─ 对所有站点应用 site-level NRMSE 校准
-  └─ 缓解正午高辐照度区间的系统性偏差
-
-Final (最终版本)
-  └─ 在 MiddaySiteCalibrated 基础上进一步验证
-  └─ 逐小时选择最优版本（V0 / V1 / Midday）
-  └─ 通过 final_guard 守卫机制确保指标不劣化
-  └─ 输出：distributed_predictions_final_eval/full.pkl
-```
-
-### 2.2 核心指标定义
-
-- **NRMSE（%）**：主要评估指标，NRMSE = RMSE / mean(capacity_mw) × 100%
-  - 按站点装机容量归一化，消除不同规模站点间的不可比性
-- **MAE（MW）**：平均绝对误差，直接反映预测与实际功率的平均偏差
-- **RMSE（MW）**：均方根误差，对大误差更敏感
-- **bias（%）**：（预测总量 - 实际总量）/ 实际总量 × 100%，反映系统性高估/低估
-- **城市NRMSE（%）**：|sum(pred) - sum(actual)| / sum(capacity_mw) × 100%
-
-### 2.3 版本选择策略
-
-每个预测小时从候选版本中选择最优版本：
-- 早间（6-8时）：优先 V0 或 V1
-- 正午（9-14时）：优先 MiddaySiteCalibrated
-- 晚间（15-19时）：综合评估后选择
-""")
+    lines.append("### 2.3 版本选择策略\n")
+    lines.append("每个预测小时从候选版本中选择最优版本：")
+    lines.append("- 早间（6-8时）：优先 V0 或 V1")
+    lines.append("- 正午（9-14时）：优先 MiddaySiteCalibrated")
+    lines.append("- 晚间（15-19时）：综合评估后选择\n")
 
     # =========================================================================
     # Section 3: Training Results
