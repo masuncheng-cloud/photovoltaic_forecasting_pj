@@ -264,6 +264,13 @@ tbody td {
   font-style: italic;
 }
 
+#typical-sites-note {
+  font-size: 11px;
+  color: #a0aec0;
+  margin: 6px 12px 10px;
+  line-height: 1.6;
+}
+
 /* ---- Footer ---- */
 #footer {
   font-size: 11px;
@@ -413,7 +420,7 @@ tbody td {
   margin-top: 8px;
 }
 
-#resetLineZoomBtn {
+#reset-line-zoom {
   border: 1px solid #cbd5e1;
   background: #ffffff;
   color: #334155;
@@ -423,7 +430,7 @@ tbody td {
   font-size: 13px;
 }
 
-#resetLineZoomBtn:hover {
+#reset-line-zoom:hover {
   background: #f8fafc;
 }
 
@@ -520,8 +527,8 @@ tbody td {
   <div id="chart-title">全市总出力折线图</div>
   <svg id="line-chart"></svg>
   <div class="chart-actions">
-    <button id="resetLineZoomBtn" type="button">重置缩放</button>
-    <span id="lineChartZoomInfo" class="zoom-info">滚轮缩放，拖拽平移，双击复位</span>
+    <button id="reset-line-zoom" type="button">重置缩放</button>
+    <span id="line-zoom-info" class="zoom-info">滚轮缩放，拖拽平移，双击复位</span>
   </div>
 </div>
 
@@ -533,13 +540,14 @@ tbody td {
     <thead>
       <tr>
         <th>类别</th><th>站点ID</th><th>站点名称</th><th>容量 MW</th>
-        <th>样本数</th><th>正功率样本</th><th>零值占比%</th>
+        <th>全量历史样本数</th><th>全量正功率样本</th><th>全量零值占比%</th>
         <th>MAE MW</th><th>RMSE MW</th><th>NRMSE %</th><th>pred/actual</th>
       </tr>
     </thead>
     <tbody></tbody>
   </table>
   </div>
+  <div id="typical-sites-note">说明：全量历史样本数来自 distributed_predictions_final_full.pkl，包含该站点所有小时、所有 split 的记录，不限制 6-19 点，也不限制是否为正功率。MAE、RMSE、NRMSE 和 pred/actual 仍按测试集 6-19 点计算。</div>
 </div>
 
 <!-- ===== HOURLY PREDICTION PANEL ===== -->
@@ -667,18 +675,17 @@ let state = {
 };
 
 // Line chart zoom state
-let gCurrentLineRows = [];
+let gLineRowsFull = [];
 
-let lineChartView = {
-  startIndex: null,
-  endIndex: null,
+let lineZoom = {
+  startIndex: 0,
+  endIndex: -1,
   isDragging: false,
   dragStartX: 0,
-  dragStartStartIndex: null,
-  dragStartEndIndex: null,
+  dragStartStartIndex: 0,
+  dragStartEndIndex: -1,
+  bound: false,
 };
-
-let lineChartZoomBound = false;
 
 // ============================================================
 // DATA LOADING
@@ -895,156 +902,238 @@ function updateMetricsCards(metrics, rows) {
 // ============================================================
 // LINE CHART ZOOM FUNCTIONS
 // ============================================================
-function resetLineChartZoom() {
-  if (!gCurrentLineRows || !gCurrentLineRows.length) {
-    lineChartView.startIndex = null;
-    lineChartView.endIndex = null;
-    updateLineChartZoomInfo();
-    return;
-  }
-  lineChartView.startIndex = 0;
-  lineChartView.endIndex = gCurrentLineRows.length - 1;
-  drawLineChart();
-  updateLineChartZoomInfo();
+function setLineRows(rows) {
+  gLineRowsFull = Array.isArray(rows)
+    ? [...rows].sort((a, b) => String(a.time || "").localeCompare(String(b.time || "")))
+    : [];
+
+  lineZoom.startIndex = 0;
+  lineZoom.endIndex = gLineRowsFull.length - 1;
 }
 
 function getVisibleLineRows() {
-  if (!gCurrentLineRows || !gCurrentLineRows.length) return [];
-  const n = gCurrentLineRows.length;
-  if (lineChartView.startIndex === null || lineChartView.endIndex === null) {
-    lineChartView.startIndex = 0;
-    lineChartView.endIndex = n - 1;
-  }
-  const start = Math.max(0, Math.min(n - 1, lineChartView.startIndex));
-  const end = Math.max(start, Math.min(n - 1, lineChartView.endIndex));
-  return gCurrentLineRows.slice(start, end + 1);
+  if (!Array.isArray(gLineRowsFull) || gLineRowsFull.length === 0) return [];
+
+  const n = gLineRowsFull.length;
+
+  let start = Number.isFinite(lineZoom.startIndex) ? lineZoom.startIndex : 0;
+  let end = Number.isFinite(lineZoom.endIndex) ? lineZoom.endIndex : n - 1;
+
+  start = Math.max(0, Math.min(n - 1, start));
+  end = Math.max(start, Math.min(n - 1, end));
+
+  lineZoom.startIndex = start;
+  lineZoom.endIndex = end;
+
+  return gLineRowsFull.slice(start, end + 1);
 }
 
-function handleLineChartWheel(event) {
-  if (!gCurrentLineRows || gCurrentLineRows.length < 2) return;
-  event.preventDefault();
-  const n = gCurrentLineRows.length;
-  if (lineChartView.startIndex === null || lineChartView.endIndex === null) {
-    lineChartView.startIndex = 0;
-    lineChartView.endIndex = n - 1;
+function redrawLineChartFromZoom() {
+  const rows = getVisibleLineRows();
+  drawLineChart(rows);
+  updateLineZoomInfo();
+}
+
+function resetLineZoom() {
+  if (!Array.isArray(gLineRowsFull) || gLineRowsFull.length === 0) {
+    lineZoom.startIndex = 0;
+    lineZoom.endIndex = -1;
+    drawLineChart([]);
+    updateLineZoomInfo();
+    return;
   }
+
+  lineZoom.startIndex = 0;
+  lineZoom.endIndex = gLineRowsFull.length - 1;
+  redrawLineChartFromZoom();
+}
+
+function handleLineWheel(event) {
+  if (!gLineRowsFull || gLineRowsFull.length < 2) return;
+  event.preventDefault();
+
+  const n = gLineRowsFull.length;
   const rect = event.currentTarget.getBoundingClientRect();
-  const mouseRatio = Math.min(1, Math.max(0, (event.clientX - rect.left) / Math.max(rect.width, 1)));
-  const start = lineChartView.startIndex;
-  const end = lineChartView.endIndex;
-  const currentWindow = end - start + 1;
+  const mouseRatio = Math.max(0, Math.min(1, (event.clientX - rect.left) / Math.max(rect.width, 1)));
+
+  const start = lineZoom.startIndex;
+  const end = lineZoom.endIndex;
+  const currentWindow = Math.max(1, end - start + 1);
+
   const zoomFactor = event.deltaY < 0 ? 0.8 : 1.25;
   let newWindow = Math.round(currentWindow * zoomFactor);
+
   const minWindow = Math.min(12, n);
   const maxWindow = n;
   newWindow = Math.max(minWindow, Math.min(maxWindow, newWindow));
+
   const anchorIndex = start + Math.round(mouseRatio * (currentWindow - 1));
   let newStart = Math.round(anchorIndex - mouseRatio * (newWindow - 1));
   let newEnd = newStart + newWindow - 1;
-  if (newStart < 0) { newStart = 0; newEnd = newWindow - 1; }
-  if (newEnd >= n) { newEnd = n - 1; newStart = n - newWindow; }
-  lineChartView.startIndex = newStart;
-  lineChartView.endIndex = newEnd;
-  drawLineChart();
-  updateLineChartZoomInfo();
-}
 
-function handleLineChartMouseDown(event) {
-  if (!gCurrentLineRows || gCurrentLineRows.length < 2) return;
-  if (lineChartView.startIndex === null || lineChartView.endIndex === null) {
-    lineChartView.startIndex = 0;
-    lineChartView.endIndex = gCurrentLineRows.length - 1;
+  if (newStart < 0) {
+    newStart = 0;
+    newEnd = newWindow - 1;
   }
-  lineChartView.isDragging = true;
-  lineChartView.dragStartX = event.clientX;
-  lineChartView.dragStartStartIndex = lineChartView.startIndex;
-  lineChartView.dragStartEndIndex = lineChartView.endIndex;
-  const chartEl = document.getElementById("line-chart");
-  if (chartEl) chartEl.style.cursor = "grabbing";
+
+  if (newEnd >= n) {
+    newEnd = n - 1;
+    newStart = n - newWindow;
+  }
+
+  lineZoom.startIndex = newStart;
+  lineZoom.endIndex = newEnd;
+
+  redrawLineChartFromZoom();
 }
 
-function handleLineChartMouseMove(event) {
-  if (!lineChartView.isDragging) return;
-  if (!gCurrentLineRows || !gCurrentLineRows.length) return;
-  const chartEl = document.getElementById("line-chart");
-  if (!chartEl) return;
-  const n = gCurrentLineRows.length;
-  const start = lineChartView.dragStartStartIndex;
-  const end = lineChartView.dragStartEndIndex;
-  const windowSize = end - start + 1;
-  const rect = chartEl.getBoundingClientRect();
-  const dx = event.clientX - lineChartView.dragStartX;
+function handleLineMouseDown(event) {
+  if (!gLineRowsFull || gLineRowsFull.length < 2) return;
+
+  lineZoom.isDragging = true;
+  lineZoom.dragStartX = event.clientX;
+  lineZoom.dragStartStartIndex = lineZoom.startIndex;
+  lineZoom.dragStartEndIndex = lineZoom.endIndex;
+
+  const svg = document.getElementById("line-chart");
+  if (svg) svg.style.cursor = "grabbing";
+}
+
+function handleLineMouseMove(event) {
+  if (!lineZoom.isDragging) return;
+  if (!gLineRowsFull || !gLineRowsFull.length) return;
+
+  const svg = document.getElementById("line-chart");
+  if (!svg) return;
+
+  const n = gLineRowsFull.length;
+  const start = lineZoom.dragStartStartIndex;
+  const end = lineZoom.dragStartEndIndex;
+  const windowSize = Math.max(1, end - start + 1);
+
+  const rect = svg.getBoundingClientRect();
+  const dx = event.clientX - lineZoom.dragStartX;
   const pointsPerPixel = windowSize / Math.max(rect.width, 1);
   const shift = Math.round(-dx * pointsPerPixel);
+
   let newStart = start + shift;
   let newEnd = end + shift;
-  if (newStart < 0) { newStart = 0; newEnd = windowSize - 1; }
-  if (newEnd >= n) { newEnd = n - 1; newStart = n - windowSize; }
-  lineChartView.startIndex = newStart;
-  lineChartView.endIndex = newEnd;
-  drawLineChart();
-  updateLineChartZoomInfo();
+
+  if (newStart < 0) {
+    newStart = 0;
+    newEnd = windowSize - 1;
+  }
+
+  if (newEnd >= n) {
+    newEnd = n - 1;
+    newStart = n - windowSize;
+  }
+
+  lineZoom.startIndex = newStart;
+  lineZoom.endIndex = newEnd;
+
+  redrawLineChartFromZoom();
 }
 
-function handleLineChartMouseUp() {
-  lineChartView.isDragging = false;
-  const chartEl = document.getElementById("line-chart");
-  if (chartEl) chartEl.style.cursor = "grab";
+function handleLineMouseUp() {
+  lineZoom.isDragging = false;
+  const svg = document.getElementById("line-chart");
+  if (svg) svg.style.cursor = "grab";
 }
 
-function updateLineChartZoomInfo() {
-  const el = document.getElementById("lineChartZoomInfo");
+function updateLineZoomInfo() {
+  const el = document.getElementById("line-zoom-info");
   if (!el) return;
-  if (!gCurrentLineRows || !gCurrentLineRows.length) {
+
+  if (!gLineRowsFull || !gLineRowsFull.length) {
     el.textContent = "暂无数据";
     return;
   }
-  const n = gCurrentLineRows.length;
-  const start = lineChartView.startIndex ?? 0;
-  const end = lineChartView.endIndex ?? (n - 1);
-  const a = gCurrentLineRows[start];
-  const b = gCurrentLineRows[end];
-  const startTime = a.time || a.date || "";
-  const endTime = b.time || b.date || "";
-  el.textContent = `当前显示 ${start + 1}-${end + 1} / ${n} 点，${startTime} ~ ${endTime}；滚轮缩放，拖拽平移，双击复位`;
+
+  const n = gLineRowsFull.length;
+  const start = Math.max(0, Math.min(n - 1, lineZoom.startIndex ?? 0));
+  const end = Math.max(start, Math.min(n - 1, lineZoom.endIndex ?? (n - 1)));
+  const a = gLineRowsFull[start];
+  const b = gLineRowsFull[end];
+
+  el.textContent = `当前显示 ${start + 1}-${end + 1} / ${n} 点，${a.time || ""} ~ ${b.time || ""}；滚轮缩放，拖拽平移，双击复位`;
 }
 
-function bindLineChartZoomEvents() {
-  if (lineChartZoomBound) return;
-  lineChartZoomBound = true;
-  const chartEl = document.getElementById("line-chart");
-  if (!chartEl) return;
-  chartEl.addEventListener("wheel", handleLineChartWheel, { passive: false });
-  chartEl.addEventListener("mousedown", handleLineChartMouseDown);
-  chartEl.addEventListener("dblclick", resetLineChartZoom);
-  window.addEventListener("mousemove", handleLineChartMouseMove);
-  window.addEventListener("mouseup", handleLineChartMouseUp);
-  const resetBtn = document.getElementById("resetLineZoomBtn");
-  if (resetBtn) resetBtn.addEventListener("click", resetLineChartZoom);
+function bindLineZoomEvents() {
+  if (lineZoom.bound) return;
+  lineZoom.bound = true;
+
+  const svg = document.getElementById("line-chart");
+  if (!svg) return;
+
+  svg.addEventListener("wheel", handleLineWheel, { passive: false });
+  svg.addEventListener("mousedown", handleLineMouseDown);
+  svg.addEventListener("dblclick", resetLineZoom);
+
+  window.addEventListener("mousemove", handleLineMouseMove);
+  window.addEventListener("mouseup", handleLineMouseUp);
+
+  const btn = document.getElementById("reset-line-zoom");
+  if (btn) btn.addEventListener("click", resetLineZoom);
 }
 
 // ============================================================
 // LINE CHART (SVG)
 // ============================================================
-function drawLineChart() {
+function getActualValue(r) {
+  const v = r.actual_mw ?? r.power_mw ?? r.actual ?? r.y_true ?? 0;
+  const n = Number(v);
+  return Number.isFinite(n) ? n : 0;
+}
+
+function getPredValue(r) {
+  const v = r.pred_mw ?? r.power_pred ?? r.pred ?? r.y_pred ?? 0;
+  const n = Number(v);
+  return Number.isFinite(n) ? n : 0;
+}
+
+function drawLineChart(rows) {
   const svg = document.getElementById("line-chart");
   const title = document.getElementById("chart-title");
   const isSite = state.scope === "site";
 
-  title.textContent = isSite
-    ? "站点 " + (state.siteId || "") + " 功率曲线"
-    : "全市总出力折线图";
-
-  svg.innerHTML = "";
-
-  if (!gCurrentLineRows || gCurrentLineRows.length === 0) {
-    svg.setAttribute("height", "100");
+  if (!svg) {
+    console.error("line-chart svg not found");
     return;
   }
 
-  const rows = getVisibleLineRows();
+  if (title) {
+    title.textContent = isSite
+      ? "站点 " + (state.siteId || "") + " 功率曲线"
+      : "全市总出力折线图";
+  }
 
-  const W = svg.parentElement.clientWidth - 28;
+  svg.innerHTML = "";
+
+  rows = Array.isArray(rows) ? rows.filter(Boolean) : [];
+
+  if (!rows.length) {
+    svg.setAttribute("viewBox", "0 0 1000 160");
+    svg.setAttribute("width", "100%");
+    svg.setAttribute("height", "160");
+    const empty = svgNS("text", {
+      x: 24,
+      y: 48,
+      fill: "#94a3b8",
+      "font-size": "14",
+    });
+    empty.textContent = "当前筛选条件下暂无折线图数据";
+    svg.appendChild(empty);
+    return;
+  }
+
+  rows = [...rows].sort((a, b) => String(a.time || "").localeCompare(String(b.time || "")));
+
+  const parentWidth = svg.parentElement
+    ? Math.max(svg.parentElement.getBoundingClientRect().width, 360)
+    : 1200;
+
+  const W = Math.max(720, Math.floor(parentWidth - 28));
   const H = 340;
   const ML = 56, MR = 24, MT = 16, MB = 46;
   const cw = W - ML - MR;
@@ -1054,35 +1143,45 @@ function drawLineChart() {
   svg.setAttribute("width", W);
   svg.setAttribute("height", H);
 
-  // Sort by time
-  rows = [...rows].sort((a, b) => a.time.localeCompare(b.time));
-
-  // X scale: map index to pixel (after sort so n reflects visible rows)
   const n = rows.length;
   const xOf = i => ML + (i / Math.max(n - 1, 1)) * cw;
 
-  const actuals = rows.map(r => r.actual_mw || 0);
-  const preds = rows.map(r => r.pred_mw || 0);
+  const actuals = rows.map(getActualValue);
+  const preds = rows.map(getPredValue);
 
-  const allVals = [...actuals, ...preds];
-  const maxV = Math.max(...allVals.filter(v => isFinite(v))) * 1.08 || 100;
+  const finiteVals = [...actuals, ...preds].filter(v => Number.isFinite(v));
+  const maxRaw = finiteVals.length ? Math.max(...finiteVals) : 100;
+  const maxV = Math.max(1, maxRaw * 1.08);
   const minV = 0;
 
-  // Y scale
   const yOf = v => MT + ch - ((v - minV) / (maxV - minV)) * ch;
 
-  // Build polyline points string
   function buildPath(vals) {
-    return vals.map((v, i) => `${xOf(i).toFixed(1)},${yOf(isFinite(v) ? v : 0).toFixed(1)}`).join(" ");
+    return vals.map((v, i) => {
+      const x = xOf(i);
+      const y = yOf(Number.isFinite(v) ? v : 0);
+      if (!Number.isFinite(x) || !Number.isFinite(y)) return null;
+      return `${x.toFixed(1)},${y.toFixed(1)}`;
+    }).filter(Boolean).join(" ");
   }
 
-  // X-axis: show date labels at intervals
+  const predPoints = buildPath(preds);
+  const actualPoints = buildPath(actuals);
+
+  if (!predPoints && !actualPoints) {
+    const msg = svgNS("text", {
+      x: 24,
+      y: 48,
+      fill: "#e53e3e",
+      "font-size": "13",
+    });
+    msg.textContent = "折线图数据存在，但坐标生成失败，请检查 actual_mw / pred_mw 字段";
+    svg.appendChild(msg);
+    return;
+  }
+
   const xLabels = buildXLabels(rows);
-
-  // Y-axis grid lines
   const gridLines = buildYGrid(minV, maxV);
-
-  // Group for all content
   const g = svgNS("g");
 
   // Grid
@@ -1093,7 +1192,6 @@ function drawLineChart() {
       stroke: "#e8edf2", "stroke-width": 1,
     });
     g.appendChild(line);
-    // Y label
     const text = svgNS("text", {
       x: (ML - 6).toFixed(1), y: (parseFloat(y) + 4).toFixed(1),
       "text-anchor": "end", fill: "#a0aec0", "font-size": "11",
@@ -1113,7 +1211,7 @@ function drawLineChart() {
 
   // Prediction line (orange, behind)
   const predPath = svgNS("polyline", {
-    points: buildPath(preds),
+    points: predPoints,
     fill: "none", stroke: "#f6ad55", "stroke-width": 1.6,
     "stroke-opacity": 0.85, "stroke-linejoin": "round",
   });
@@ -1121,7 +1219,7 @@ function drawLineChart() {
 
   // Actual line (blue, front)
   const actualPath = svgNS("polyline", {
-    points: buildPath(actuals),
+    points: actualPoints,
     fill: "none", stroke: "#3182ce", "stroke-width": 1.8,
     "stroke-opacity": 0.9, "stroke-linejoin": "round",
   });
@@ -1246,7 +1344,8 @@ function drawScatterChart(data) {
   const svg = document.getElementById("scatter-chart");
   svg.innerHTML = "";
 
-  const W = svg.parentElement.clientWidth - 28;
+  const parentW = svg.parentElement ? svg.parentElement.clientWidth : 0;
+  const W = Math.max(360, parentW) - 28;
   const H = 360;
   const ML = 60, MR = 28, MT = 16, MB = 50;
   const cw = W - ML - MR;
@@ -1567,13 +1666,13 @@ function buildSitesTable() {
       <td>${s.site_id}</td>
       <td style="text-align:left;max-width:160px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${s.site_name || ""}</td>
       <td>${fmt2(s.capacity_mw)}</td>
-      <td>${s.rows.toLocaleString()}</td>
-      <td>${s.positive_rows.toLocaleString()}</td>
-      <td>${fmt2(s.zero_ratio_pct)}</td>
+      <td>${fmtInt(s.full_history_rows)}</td>
+      <td>${fmtInt(s.full_history_positive_rows)}</td>
+      <td>${fmt2(s.full_history_zero_ratio_pct)}</td>
       <td>${fmt2(s.mae_mw)}</td>
       <td>${fmt2(s.rmse_mw)}</td>
       <td>${fmt2(s.nrmse_pct)}</td>
-      <td>${fmt2(s.pred_actual_ratio)}</td>
+      <td>${formatRatio(s.pred_actual_ratio)}</td>
     `;
     tr.addEventListener("click", () => selectSite(s.site_id));
     tbody.appendChild(tr);
@@ -1606,8 +1705,11 @@ async function refreshAll() {
   const isSite = state.scope === "site";
   const m = computeMetrics(rows, isSite);
   updateMetricsCards(m, rows);
-  gCurrentLineRows = rows;
-  resetLineChartZoom();
+
+  setLineRows(rows);
+  console.info("[line-chart] full rows:", gLineRowsFull.length);
+  resetLineZoom();
+
   drawHourlyNrmseChart();
   if (!isSite) drawScatterChart(gScatterSite);
 }
@@ -1645,6 +1747,14 @@ function fmtNum(v, digits = 2) {
   return n.toFixed(digits);
 }
 
+function formatRatio(v) {
+  const x = Number(v);
+  if (!Number.isFinite(x)) return "-";
+  if (Math.abs(x) > 99) return "-";
+  if (x < 0) return "-";
+  return x.toFixed(2);
+}
+
 // ============================================================
 // HOURLY PREDICTION CHART + TABLE
 // ============================================================
@@ -1659,7 +1769,8 @@ function drawHourlyNrmseChart() {
     return;
   }
 
-  const W = svg.parentElement.clientWidth - 28;
+  const parentW = svg.parentElement ? svg.parentElement.clientWidth : 0;
+  const W = Math.max(360, parentW) - 28;
   const H = 300;
   const ML = 52, MR = 20, MT = 20, MB = 40;
   const cw = W - ML - MR;
@@ -1830,13 +1941,36 @@ function renderHourlySummaryTable() {
 // EVENT LISTENERS
 // ============================================================
 document.addEventListener("DOMContentLoaded", () => {
+  // Prevent fetch from failing when opened via file://
+  if (window.location.protocol === "file:") {
+    const loading = document.getElementById("loading");
+    if (loading) {
+      loading.innerHTML = `
+        页面不能直接双击打开。请在项目根目录运行：
+        <br><code>python -m http.server 8060</code>
+        <br>然后访问：
+        <br><code>http://127.0.0.1:8060/stages/05_visualization/interactive_forecast_dashboard.html</code>
+      `;
+    }
+    return;
+  }
+
   loadAll().then(() => {
     buildSitesTable();
     onScopeChange();
+    bindLineZoomEvents();
     refreshAll();
-    bindLineChartZoomEvents();
   }).catch(err => {
-    document.getElementById("loading").textContent = "加载失败: " + err.message;
+    const loading = document.getElementById("loading");
+    if (loading) {
+      loading.innerHTML = `
+        加载失败：${err.message}<br>
+        请确认：<br>
+        1. 已在项目根目录启动 <code>python -m http.server 8060</code><br>
+        2. 当前访问地址是 <code>/stages/05_visualization/interactive_forecast_dashboard.html</code><br>
+        3. <code>output/pv_pipeline/interactive_dashboard/index.json</code> 存在
+      `;
+    }
     console.error(err);
   });
 
@@ -1946,7 +2080,8 @@ document.addEventListener("DOMContentLoaded", () => {
   window.addEventListener("resize", () => {
     clearTimeout(resizeTimer);
     resizeTimer = setTimeout(() => {
-      drawLineChart();
+      drawLineChart(getVisibleLineRows());
+      updateLineZoomInfo();
       drawHourlyNrmseChart();
       if (state.scope !== "site") drawScatterChart(gScatterSite);
     }, 200);

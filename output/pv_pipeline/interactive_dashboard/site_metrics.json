@@ -14,7 +14,14 @@
     "bias_pct": -9.954,
     "pred_actual_ratio": 0.9005,
     "category": "other",
-    "category_label": "其他"
+    "category_label": "其他",
+    "full_history_rows": 8053,
+    "full_history_non_null_rows": 8053,
+    "full_history_positive_rows": 4001,
+    "full_history_zero_rows": 4052,
+    "full_history_zero_ratio_pct": 50.3167,
+    "full_history_start_date": "2025-04-30",
+    "full_history_end_date": "2026-03-31"
   },
   {
     "site_id": "S003",
@@ -31,7 +38,14 @@
     "bias_pct": 20.2092,
     "pred_actual_ratio": 1.2021,
     "category": "other",
-    "category_label": "其他"
+    "category_label": "其他",
+    "full_history_rows": 22622,
+    "full_history_non_null_rows": 22622,
+    "full_history_positive_rows": 7350,
+    "full_history_zero_rows": 15272,
+    "full_history_zero_ratio_pct": 67.5095,
+    "full_history_start_date": "2023-09-01",
+    "full_history_end_date": "2026-03-31"
   },
   {
     "site_id": "S004",
@@ -48,7 +62,14 @@
     "bias_pct": 4.8421,
     "pred_actual_ratio": 1.0484,
     "category": "other",
-    "category_label": "其他"
+    "category_label": "其他",
+    "full_history_rows": 8193,
+    "full_history_non_null_rows": 8193,
+    "full_history_positive_rows": 3711,
+    "full_history_zero_rows": 4482,
+    "full_history_zero_ratio_pct": 54.7052,
+    "full_history_start_date": "2025-04-24",
+    "full_history_end_date": "2026-03-31"
   },
   {
     "site_id": "S006",
@@ -65,7 +86,14 @@
     "bias_pct": 79.043,
     "pred_actual_ratio": 1.7904,
     "category": "other",
-    "category_label": "其他"
+    "category_label": "其他",
+    "full_history_rows": 8095,
+    "full_history_non_null_rows": 8095,
+    "full_history_positive_rows": 2914,
+    "full_history_zero_rows": 5181,
+    "full_history_zero_ratio_pct": 64.0025,
+    "full_history_start_date": "2025-04-28",
+    "full_history_end_date": "2026-03-31"
   },
   {
     "site_id": "S007",
@@ -82,7 +110,14 @@
     "bias_pct": 1.8754,
     "pred_actual_ratio": 1.0188,
     "category": "other",
-    "category_label": "其他"
+    "category_label": "其他",
+    "full_history_rows": 28464,
+    "full_history_non_null_rows": 28464,
+    "full_history_positive_rows": 13737,
+    "full_history_zero_rows": 14727,
+    "full_history_zero_ratio_pct": 51.739,
+    "full_history_start_date": "2023-01-01",
+    "full_history_end_date": "2026-03-31"
   },
   {
     "site_id": "S008",
@@ -99,7 +134,14 @@
     "bias_pct": -1.9111,
     "pred_actual_ratio": 0.9809,
     "category": "other",
-    "category_label": "其他"
+    "category_label": "其他",
+    "full_history_rows": 8748,
+    "full_history_non_null_rows": 8748,
+    "full_history_positive_rows": 4387,
+    "full_history_zero_rows": 4361,
+    "full_history_zero_ratio_pct": 49.8514,
+    "full_history_start_date": "2025-04-01",
+    "full_history_end_date": "2026-03-31"
   },
   {
     "site_id": "S009",
@@ -116,7 +158,14 @@
     "bias_pct": 4.5255,
     "pred_actual_ratio": 1.0453,
     "category": "other",
-    "category_label": "其他"
+    "category_label": "其他",
+    "full_history_rows": 12639,
+    "full_history_non_null_rows": 12639,
+    "full_history_positive_rows": 6015,
+    "full_history_zero_rows": 6624,
+    "full_history_zero_ratio_pct": 52.4092,
+    "full_history_start_date": "2024-10-21",
+    "full_history_end_date": "2026-03-31"
   },
   {
     "site_id": "S010",
@@ -133,7 +182,14 @@
     "bias_pct": 0.4742,
     "pred_actual_ratio": 1.0047,
     "category": "normal",
-    "category_label": "相对正确"
+    "category_label": "相对正确",
+    "full_history_rows": 28464,
+    "full_history_non_null_rows": 28464,
+    "full_history_positive_rows": 13857,
+    "full_history_zero_rows": 14607,
+    "full_history_zero_ratio_pct": 51.3175,
+    "full_history_start_date": "2023-01-01",
+    "full_history_end_date": "2026-03-31"
   },
   {
     "site_id": "S011",
@@ -150,7 +206,14 @@
     "bias_pct": -0.741,
     "pred_actual_ratio": 0.9926,
     "category": "best",
-    "category_label": "预测最好"
+    "category_label": "预测最好",
+    "full_history_rows": 28464,
+    "full_history_non_null_rows": 28464,
+    "full_history_positive_rows": 13929,
+    "full_history_zero_rows": 14535,
+    "full_history_zero_ratio_pct": 51.0645,
+    "full_history_start_date": "2023-01-01",
+    "full_history_end_date": "2026-03-31"
   },
   {
     "site_id": "S012",
@@ -167,7 +230,14 @@
     "bias_pct": 56.238,
     "pred_actual_ratio": 1.5624,
     "category": "low_sample",
-    "category_label": "样本少"
+    "category_label": "样本少",
+    "full_history_rows": 8049,
+    "full_history_non_null_rows": 8049,
+    "full_history_positive_rows": 3143,
+    "full_history_zero_rows": 4906,
+    "full_history_zero_ratio_pct": 60.9517,
+    "full_history_start_date": "2025-04-30",
+    "full_history_end_date": "2026-03-31"
   },
   {
     "site_id": "S014",
@@ -184,7 +254,14 @@
     "bias_pct": 9.5966,
     "pred_actual_ratio": 1.096,
     "category": "other",
-    "category_label": "其他"
+    "category_label": "其他",
+    "full_history_rows": 8054,
+    "full_history_non_null_rows": 8054,
+    "full_history_positive_rows": 3279,
+    "full_history_zero_rows": 4775,
+    "full_history_zero_ratio_pct": 59.2873,
+    "full_history_start_date": "2025-04-30",
+    "full_history_end_date": "2026-03-31"
   },
   {
     "site_id": "S016",
@@ -201,7 +278,14 @@
     "bias_pct": 7.9687,
     "pred_actual_ratio": 1.0797,
     "category": "other",
-    "category_label": "其他"
+    "category_label": "其他",
+    "full_history_rows": 8064,
+    "full_history_non_null_rows": 8064,
+    "full_history_positive_rows": 3409,
+    "full_history_zero_rows": 4655,
+    "full_history_zero_ratio_pct": 57.7257,
+    "full_history_start_date": "2025-04-30",
+    "full_history_end_date": "2026-03-31"
   },
   {
     "site_id": "S017",
@@ -218,7 +302,14 @@
     "bias_pct": 10.0032,
     "pred_actual_ratio": 1.1,
     "category": "other",
-    "category_label": "其他"
+    "category_label": "其他",
+    "full_history_rows": 28464,
+    "full_history_non_null_rows": 28464,
+    "full_history_positive_rows": 6844,
+    "full_history_zero_rows": 21620,
+    "full_history_zero_ratio_pct": 75.9556,
+    "full_history_start_date": "2023-01-01",
+    "full_history_end_date": "2026-03-31"
   },
   {
     "site_id": "S018",
@@ -235,7 +326,14 @@
     "bias_pct": 1.3636,
     "pred_actual_ratio": 1.0136,
     "category": "other",
-    "category_label": "其他"
+    "category_label": "其他",
+    "full_history_rows": 18254,
+    "full_history_non_null_rows": 18254,
+    "full_history_positive_rows": 8631,
+    "full_history_zero_rows": 9623,
+    "full_history_zero_ratio_pct": 52.7172,
+    "full_history_start_date": "2024-03-01",
+    "full_history_end_date": "2026-03-31"
   },
   {
     "site_id": "S019",
@@ -252,7 +350,14 @@
     "bias_pct": -4.6284,
     "pred_actual_ratio": 0.9537,
     "category": "worst",
-    "category_label": "预测最差"
+    "category_label": "预测最差",
+    "full_history_rows": 28464,
+    "full_history_non_null_rows": 28464,
+    "full_history_positive_rows": 13435,
+    "full_history_zero_rows": 15029,
+    "full_history_zero_ratio_pct": 52.8,
+    "full_history_start_date": "2023-01-01",
+    "full_history_end_date": "2026-03-31"
   },
   {
     "site_id": "S020",
@@ -269,7 +374,14 @@
     "bias_pct": 1.1837,
     "pred_actual_ratio": 1.0118,
     "category": "other",
-    "category_label": "其他"
+    "category_label": "其他",
+    "full_history_rows": 11040,
+    "full_history_non_null_rows": 11040,
+    "full_history_positive_rows": 5231,
+    "full_history_zero_rows": 5809,
+    "full_history_zero_ratio_pct": 52.6178,
+    "full_history_start_date": "2024-12-27",
+    "full_history_end_date": "2026-03-31"
   },
   {
     "site_id": "S021",
@@ -286,7 +398,14 @@
     "bias_pct": -4.6785,
     "pred_actual_ratio": 0.9532,
     "category": "other",
-    "category_label": "其他"
+    "category_label": "其他",
+    "full_history_rows": 8552,
+    "full_history_non_null_rows": 8552,
+    "full_history_positive_rows": 3759,
+    "full_history_zero_rows": 4793,
+    "full_history_zero_ratio_pct": 56.0454,
+    "full_history_start_date": "2025-04-09",
+    "full_history_end_date": "2026-03-31"
   },
   {
     "site_id": "S022",
@@ -303,7 +422,14 @@
     "bias_pct": 4.0162,
     "pred_actual_ratio": 1.0402,
     "category": "other",
-    "category_label": "其他"
+    "category_label": "其他",
+    "full_history_rows": 28464,
+    "full_history_non_null_rows": 28464,
+    "full_history_positive_rows": 13111,
+    "full_history_zero_rows": 15353,
+    "full_history_zero_ratio_pct": 53.9383,
+    "full_history_start_date": "2023-01-01",
+    "full_history_end_date": "2026-03-31"
   },
   {
     "site_id": "S023",
@@ -320,7 +446,14 @@
     "bias_pct": 0.4754,
     "pred_actual_ratio": 1.0048,
     "category": "best",
-    "category_label": "预测最好"
+    "category_label": "预测最好",
+    "full_history_rows": 28464,
+    "full_history_non_null_rows": 28464,
+    "full_history_positive_rows": 13209,
+    "full_history_zero_rows": 15255,
+    "full_history_zero_ratio_pct": 53.594,
+    "full_history_start_date": "2023-01-01",
+    "full_history_end_date": "2026-03-31"
   },
   {
     "site_id": "S024",
@@ -337,7 +470,14 @@
     "bias_pct": 0.0694,
     "pred_actual_ratio": 1.0007,
     "category": "normal",
-    "category_label": "相对正确"
+    "category_label": "相对正确",
+    "full_history_rows": 23480,
+    "full_history_non_null_rows": 23480,
+    "full_history_positive_rows": 10256,
+    "full_history_zero_rows": 13224,
+    "full_history_zero_ratio_pct": 56.3203,
+    "full_history_start_date": "2023-07-27",
+    "full_history_end_date": "2026-03-31"
   },
   {
     "site_id": "S025",
@@ -354,7 +494,14 @@
     "bias_pct": 0.7272,
     "pred_actual_ratio": 1.0073,
     "category": "other",
-    "category_label": "其他"
+    "category_label": "其他",
+    "full_history_rows": 16495,
+    "full_history_non_null_rows": 16495,
+    "full_history_positive_rows": 7371,
+    "full_history_zero_rows": 9124,
+    "full_history_zero_ratio_pct": 55.3137,
+    "full_history_start_date": "2024-05-13",
+    "full_history_end_date": "2026-03-31"
   },
   {
     "site_id": "S028",
@@ -371,7 +518,14 @@
     "bias_pct": -0.6698,
     "pred_actual_ratio": 0.9933,
     "category": "other",
-    "category_label": "其他"
+    "category_label": "其他",
+    "full_history_rows": 12639,
+    "full_history_non_null_rows": 12639,
+    "full_history_positive_rows": 5632,
+    "full_history_zero_rows": 7007,
+    "full_history_zero_ratio_pct": 55.4395,
+    "full_history_start_date": "2024-10-21",
+    "full_history_end_date": "2026-03-31"
   },
   {
     "site_id": "S030",
@@ -388,7 +542,14 @@
     "bias_pct": 0.4993,
     "pred_actual_ratio": 1.005,
     "category": "normal",
-    "category_label": "相对正确"
+    "category_label": "相对正确",
+    "full_history_rows": 28464,
+    "full_history_non_null_rows": 28464,
+    "full_history_positive_rows": 13753,
+    "full_history_zero_rows": 14711,
+    "full_history_zero_ratio_pct": 51.6828,
+    "full_history_start_date": "2023-01-01",
+    "full_history_end_date": "2026-03-31"
   },
   {
     "site_id": "S031",
@@ -405,7 +566,14 @@
     "bias_pct": -0.7508,
     "pred_actual_ratio": 0.9925,
     "category": "best",
-    "category_label": "预测最好"
+    "category_label": "预测最好",
+    "full_history_rows": 28464,
+    "full_history_non_null_rows": 28464,
+    "full_history_positive_rows": 12550,
+    "full_history_zero_rows": 15914,
+    "full_history_zero_ratio_pct": 55.9092,
+    "full_history_start_date": "2023-01-01",
+    "full_history_end_date": "2026-03-31"
   },
   {
     "site_id": "S032",
@@ -422,7 +590,14 @@
     "bias_pct": -13.1294,
     "pred_actual_ratio": 0.8687,
     "category": "other",
-    "category_label": "其他"
+    "category_label": "其他",
+    "full_history_rows": 20160,
+    "full_history_non_null_rows": 20160,
+    "full_history_positive_rows": 8960,
+    "full_history_zero_rows": 11200,
+    "full_history_zero_ratio_pct": 55.5556,
+    "full_history_start_date": "2023-12-13",
+    "full_history_end_date": "2026-03-31"
   },
   {
     "site_id": "S033",
@@ -439,7 +614,14 @@
     "bias_pct": -0.1404,
     "pred_actual_ratio": 0.9986,
     "category": "other",
-    "category_label": "其他"
+    "category_label": "其他",
+    "full_history_rows": 9225,
+    "full_history_non_null_rows": 9225,
+    "full_history_positive_rows": 4500,
+    "full_history_zero_rows": 4725,
+    "full_history_zero_ratio_pct": 51.2195,
+    "full_history_start_date": "2025-03-12",
+    "full_history_end_date": "2026-03-31"
   },
   {
     "site_id": "S034",
@@ -456,7 +638,14 @@
     "bias_pct": 4.2316,
     "pred_actual_ratio": 1.0423,
     "category": "low_sample",
-    "category_label": "样本少"
+    "category_label": "样本少",
+    "full_history_rows": 7503,
+    "full_history_non_null_rows": 7503,
+    "full_history_positive_rows": 3126,
+    "full_history_zero_rows": 4377,
+    "full_history_zero_ratio_pct": 58.3367,
+    "full_history_start_date": "2025-05-23",
+    "full_history_end_date": "2026-03-31"
   },
   {
     "site_id": "S035",
@@ -473,7 +662,14 @@
     "bias_pct": 0.133,
     "pred_actual_ratio": 1.0013,
     "category": "normal",
-    "category_label": "相对正确"
+    "category_label": "相对正确",
+    "full_history_rows": 22008,
+    "full_history_non_null_rows": 22008,
+    "full_history_positive_rows": 9926,
+    "full_history_zero_rows": 12082,
+    "full_history_zero_ratio_pct": 54.8982,
+    "full_history_start_date": "2023-09-27",
+    "full_history_end_date": "2026-03-31"
   },
   {
     "site_id": "S037",
@@ -490,7 +686,14 @@
     "bias_pct": 187.2518,
     "pred_actual_ratio": 2.8725,
     "category": "worst",
-    "category_label": "预测最差"
+    "category_label": "预测最差",
+    "full_history_rows": 8096,
+    "full_history_non_null_rows": 8096,
+    "full_history_positive_rows": 1648,
+    "full_history_zero_rows": 6448,
+    "full_history_zero_ratio_pct": 79.6443,
+    "full_history_start_date": "2025-04-28",
+    "full_history_end_date": "2026-03-31"
   },
   {
     "site_id": "S038",
@@ -507,7 +710,14 @@
     "bias_pct": 0.1589,
     "pred_actual_ratio": 1.0016,
     "category": "other",
-    "category_label": "其他"
+    "category_label": "其他",
+    "full_history_rows": 8054,
+    "full_history_non_null_rows": 8054,
+    "full_history_positive_rows": 3518,
+    "full_history_zero_rows": 4536,
+    "full_history_zero_ratio_pct": 56.3198,
+    "full_history_start_date": "2025-04-30",
+    "full_history_end_date": "2026-03-31"
   },
   {
     "site_id": "S039",
@@ -524,7 +734,14 @@
     "bias_pct": 15.8637,
     "pred_actual_ratio": 1.1586,
     "category": "low_sample",
-    "category_label": "样本少"
+    "category_label": "样本少",
+    "full_history_rows": 8049,
+    "full_history_non_null_rows": 8049,
+    "full_history_positive_rows": 3768,
+    "full_history_zero_rows": 4281,
+    "full_history_zero_ratio_pct": 53.1867,
+    "full_history_start_date": "2025-04-30",
+    "full_history_end_date": "2026-03-31"
   },
   {
     "site_id": "S040",
@@ -541,7 +758,14 @@
     "bias_pct": -0.9156,
     "pred_actual_ratio": 0.9908,
     "category": "other",
-    "category_label": "其他"
+    "category_label": "其他",
+    "full_history_rows": 8520,
+    "full_history_non_null_rows": 8520,
+    "full_history_positive_rows": 3876,
+    "full_history_zero_rows": 4644,
+    "full_history_zero_ratio_pct": 54.507,
+    "full_history_start_date": "2025-04-11",
+    "full_history_end_date": "2026-03-31"
   },
   {
     "site_id": "S041",
@@ -558,7 +782,14 @@
     "bias_pct": -1.6172,
     "pred_actual_ratio": 0.9838,
     "category": "other",
-    "category_label": "其他"
+    "category_label": "其他",
+    "full_history_rows": 19752,
+    "full_history_non_null_rows": 19752,
+    "full_history_positive_rows": 9324,
+    "full_history_zero_rows": 10428,
+    "full_history_zero_ratio_pct": 52.7947,
+    "full_history_start_date": "2023-12-30",
+    "full_history_end_date": "2026-03-31"
   },
   {
     "site_id": "S042",
@@ -575,7 +806,14 @@
     "bias_pct": 0.2864,
     "pred_actual_ratio": 1.0029,
     "category": "normal",
-    "category_label": "相对正确"
+    "category_label": "相对正确",
+    "full_history_rows": 11865,
+    "full_history_non_null_rows": 11865,
+    "full_history_positive_rows": 5298,
+    "full_history_zero_rows": 6567,
+    "full_history_zero_ratio_pct": 55.3477,
+    "full_history_start_date": "2024-11-22",
+    "full_history_end_date": "2026-03-31"
   },
   {
     "site_id": "S044",
@@ -592,7 +830,14 @@
     "bias_pct": 326.8789,
     "pred_actual_ratio": 4.2688,
     "category": "worst",
-    "category_label": "预测最差"
+    "category_label": "预测最差",
+    "full_history_rows": 9416,
+    "full_history_non_null_rows": 9416,
+    "full_history_positive_rows": 1229,
+    "full_history_zero_rows": 8187,
+    "full_history_zero_ratio_pct": 86.9477,
+    "full_history_start_date": "2025-03-04",
+    "full_history_end_date": "2026-03-31"
   },
   {
     "site_id": "S045",
@@ -609,7 +854,14 @@
     "bias_pct": 75.903,
     "pred_actual_ratio": 1.759,
     "category": "worst",
-    "category_label": "预测最差"
+    "category_label": "预测最差",
+    "full_history_rows": 9129,
+    "full_history_non_null_rows": 9129,
+    "full_history_positive_rows": 2457,
+    "full_history_zero_rows": 6672,
+    "full_history_zero_ratio_pct": 73.0858,
+    "full_history_start_date": "2025-03-16",
+    "full_history_end_date": "2026-03-31"
   },
   {
     "site_id": "S046",
@@ -626,7 +878,14 @@
     "bias_pct": -0.5676,
     "pred_actual_ratio": 0.9943,
     "category": "other",
-    "category_label": "其他"
+    "category_label": "其他",
+    "full_history_rows": 11288,
+    "full_history_non_null_rows": 11288,
+    "full_history_positive_rows": 5275,
+    "full_history_zero_rows": 6013,
+    "full_history_zero_ratio_pct": 53.269,
+    "full_history_start_date": "2024-12-16",
+    "full_history_end_date": "2026-03-31"
   },
   {
     "site_id": "S047",
@@ -643,7 +902,14 @@
     "bias_pct": -2.4635,
     "pred_actual_ratio": 0.9754,
     "category": "best",
-    "category_label": "预测最好"
+    "category_label": "预测最好",
+    "full_history_rows": 25128,
+    "full_history_non_null_rows": 25128,
+    "full_history_positive_rows": 11695,
+    "full_history_zero_rows": 13433,
+    "full_history_zero_ratio_pct": 53.4583,
+    "full_history_start_date": "2023-05-20",
+    "full_history_end_date": "2026-03-31"
   },
   {
     "site_id": "S048",
@@ -660,7 +926,14 @@
     "bias_pct": 8.9887,
     "pred_actual_ratio": 1.0899,
     "category": "other",
-    "category_label": "其他"
+    "category_label": "其他",
+    "full_history_rows": 8053,
+    "full_history_non_null_rows": 8053,
+    "full_history_positive_rows": 3190,
+    "full_history_zero_rows": 4863,
+    "full_history_zero_ratio_pct": 60.3874,
+    "full_history_start_date": "2025-04-30",
+    "full_history_end_date": "2026-03-31"
   },
   {
     "site_id": "S049",
@@ -677,7 +950,14 @@
     "bias_pct": -0.4039,
     "pred_actual_ratio": 0.996,
     "category": "best",
-    "category_label": "预测最好"
+    "category_label": "预测最好",
+    "full_history_rows": 28464,
+    "full_history_non_null_rows": 28464,
+    "full_history_positive_rows": 13216,
+    "full_history_zero_rows": 15248,
+    "full_history_zero_ratio_pct": 53.5694,
+    "full_history_start_date": "2023-01-01",
+    "full_history_end_date": "2026-03-31"
   },
   {
     "site_id": "S050",
@@ -694,7 +974,14 @@
     "bias_pct": 22.7511,
     "pred_actual_ratio": 1.2275,
     "category": "low_sample",
-    "category_label": "样本少"
+    "category_label": "样本少",
+    "full_history_rows": 8049,
+    "full_history_non_null_rows": 8049,
+    "full_history_positive_rows": 3940,
+    "full_history_zero_rows": 4109,
+    "full_history_zero_ratio_pct": 51.0498,
+    "full_history_start_date": "2025-04-30",
+    "full_history_end_date": "2026-03-31"
   },
   {
     "site_id": "S051",
@@ -711,7 +998,14 @@
     "bias_pct": 15.0977,
     "pred_actual_ratio": 1.151,
     "category": "other",
-    "category_label": "其他"
+    "category_label": "其他",
+    "full_history_rows": 8054,
+    "full_history_non_null_rows": 8054,
+    "full_history_positive_rows": 3452,
+    "full_history_zero_rows": 4602,
+    "full_history_zero_ratio_pct": 57.1393,
+    "full_history_start_date": "2025-04-30",
+    "full_history_end_date": "2026-03-31"
   },
   {
     "site_id": "S052",
@@ -728,7 +1022,14 @@
     "bias_pct": -16.01,
     "pred_actual_ratio": 0.8399,
     "category": "other",
-    "category_label": "其他"
+    "category_label": "其他",
+    "full_history_rows": 14136,
+    "full_history_non_null_rows": 14136,
+    "full_history_positive_rows": 6610,
+    "full_history_zero_rows": 7526,
+    "full_history_zero_ratio_pct": 53.24,
+    "full_history_start_date": "2024-08-20",
+    "full_history_end_date": "2026-03-31"
   },
   {
     "site_id": "S053",
@@ -745,7 +1046,14 @@
     "bias_pct": -11.433,
     "pred_actual_ratio": 0.8857,
     "category": "other",
-    "category_label": "其他"
+    "category_label": "其他",
+    "full_history_rows": 28464,
+    "full_history_non_null_rows": 28464,
+    "full_history_positive_rows": 14929,
+    "full_history_zero_rows": 13535,
+    "full_history_zero_ratio_pct": 47.5513,
+    "full_history_start_date": "2023-01-01",
+    "full_history_end_date": "2026-03-31"
   },
   {
     "site_id": "S054",
@@ -762,7 +1070,14 @@
     "bias_pct": 9.932,
     "pred_actual_ratio": 1.0993,
     "category": "other",
-    "category_label": "其他"
+    "category_label": "其他",
+    "full_history_rows": 10568,
+    "full_history_non_null_rows": 10568,
+    "full_history_positive_rows": 4664,
+    "full_history_zero_rows": 5904,
+    "full_history_zero_ratio_pct": 55.8668,
+    "full_history_start_date": "2025-01-15",
+    "full_history_end_date": "2026-03-31"
   },
   {
     "site_id": "S055",
@@ -779,7 +1094,14 @@
     "bias_pct": 88.4276,
     "pred_actual_ratio": 1.8843,
     "category": "low_sample",
-    "category_label": "样本少"
+    "category_label": "样本少",
+    "full_history_rows": 8049,
+    "full_history_non_null_rows": 8049,
+    "full_history_positive_rows": 2795,
+    "full_history_zero_rows": 5254,
+    "full_history_zero_ratio_pct": 65.2752,
+    "full_history_start_date": "2025-04-30",
+    "full_history_end_date": "2026-03-31"
   },
   {
     "site_id": "S056",
@@ -796,7 +1118,14 @@
     "bias_pct": 8.4221,
     "pred_actual_ratio": 1.0842,
     "category": "other",
-    "category_label": "其他"
+    "category_label": "其他",
+    "full_history_rows": 8193,
+    "full_history_non_null_rows": 8193,
+    "full_history_positive_rows": 3472,
+    "full_history_zero_rows": 4721,
+    "full_history_zero_ratio_pct": 57.6224,
+    "full_history_start_date": "2025-04-24",
+    "full_history_end_date": "2026-03-31"
   },
   {
     "site_id": "S058",
@@ -813,7 +1142,14 @@
     "bias_pct": -5.7196,
     "pred_actual_ratio": 0.9428,
     "category": "other",
-    "category_label": "其他"
+    "category_label": "其他",
+    "full_history_rows": 28464,
+    "full_history_non_null_rows": 28464,
+    "full_history_positive_rows": 14436,
+    "full_history_zero_rows": 14028,
+    "full_history_zero_ratio_pct": 49.2833,
+    "full_history_start_date": "2023-01-01",
+    "full_history_end_date": "2026-03-31"
   },
   {
     "site_id": "S059",
@@ -830,7 +1166,14 @@
     "bias_pct": -4.797,
     "pred_actual_ratio": 0.952,
     "category": "other",
-    "category_label": "其他"
+    "category_label": "其他",
+    "full_history_rows": 28464,
+    "full_history_non_null_rows": 28464,
+    "full_history_positive_rows": 13752,
+    "full_history_zero_rows": 14712,
+    "full_history_zero_ratio_pct": 51.6863,
+    "full_history_start_date": "2023-01-01",
+    "full_history_end_date": "2026-03-31"
   },
   {
     "site_id": "S060",
@@ -847,7 +1190,14 @@
     "bias_pct": 4.4928,
     "pred_actual_ratio": 1.0449,
     "category": "other",
-    "category_label": "其他"
+    "category_label": "其他",
+    "full_history_rows": 8304,
+    "full_history_non_null_rows": 8304,
+    "full_history_positive_rows": 3921,
+    "full_history_zero_rows": 4383,
+    "full_history_zero_ratio_pct": 52.7818,
+    "full_history_start_date": "2025-04-20",
+    "full_history_end_date": "2026-03-31"
   },
   {
     "site_id": "S061",
@@ -864,7 +1214,14 @@
     "bias_pct": 0.7764,
     "pred_actual_ratio": 1.0078,
     "category": "other",
-    "category_label": "其他"
+    "category_label": "其他",
+    "full_history_rows": 8193,
+    "full_history_non_null_rows": 8193,
+    "full_history_positive_rows": 3854,
+    "full_history_zero_rows": 4339,
+    "full_history_zero_ratio_pct": 52.9598,
+    "full_history_start_date": "2025-04-24",
+    "full_history_end_date": "2026-03-31"
   },
   {
     "site_id": "S062",
@@ -881,7 +1238,14 @@
     "bias_pct": -0.7812,
     "pred_actual_ratio": 0.9922,
     "category": "other",
-    "category_label": "其他"
+    "category_label": "其他",
+    "full_history_rows": 28464,
+    "full_history_non_null_rows": 28464,
+    "full_history_positive_rows": 12136,
+    "full_history_zero_rows": 16328,
+    "full_history_zero_ratio_pct": 57.3637,
+    "full_history_start_date": "2023-01-01",
+    "full_history_end_date": "2026-03-31"
   },
   {
     "site_id": "S063",
@@ -898,7 +1262,14 @@
     "bias_pct": -7.2314,
     "pred_actual_ratio": 0.9277,
     "category": "other",
-    "category_label": "其他"
+    "category_label": "其他",
+    "full_history_rows": 8052,
+    "full_history_non_null_rows": 8052,
+    "full_history_positive_rows": 3479,
+    "full_history_zero_rows": 4573,
+    "full_history_zero_ratio_pct": 56.7933,
+    "full_history_start_date": "2025-04-30",
+    "full_history_end_date": "2026-03-31"
   },
   {
     "site_id": "S064",
@@ -915,7 +1286,14 @@
     "bias_pct": 0.571,
     "pred_actual_ratio": 1.0057,
     "category": "other",
-    "category_label": "其他"
+    "category_label": "其他",
+    "full_history_rows": 28464,
+    "full_history_non_null_rows": 28464,
+    "full_history_positive_rows": 12642,
+    "full_history_zero_rows": 15822,
+    "full_history_zero_ratio_pct": 55.586,
+    "full_history_start_date": "2023-01-01",
+    "full_history_end_date": "2026-03-31"
   },
   {
     "site_id": "S065",
@@ -932,7 +1310,14 @@
     "bias_pct": 2.1667,
     "pred_actual_ratio": 1.0217,
     "category": "other",
-    "category_label": "其他"
+    "category_label": "其他",
+    "full_history_rows": 28464,
+    "full_history_non_null_rows": 28464,
+    "full_history_positive_rows": 14161,
+    "full_history_zero_rows": 14303,
+    "full_history_zero_ratio_pct": 50.2494,
+    "full_history_start_date": "2023-01-01",
+    "full_history_end_date": "2026-03-31"
   },
   {
     "site_id": "S066",
@@ -949,7 +1334,14 @@
     "bias_pct": -1.4305,
     "pred_actual_ratio": 0.9857,
     "category": "other",
-    "category_label": "其他"
+    "category_label": "其他",
+    "full_history_rows": 14904,
+    "full_history_non_null_rows": 14904,
+    "full_history_positive_rows": 6957,
+    "full_history_zero_rows": 7947,
+    "full_history_zero_ratio_pct": 53.3213,
+    "full_history_start_date": "2024-07-19",
+    "full_history_end_date": "2026-03-31"
   },
   {
     "site_id": "S068",
@@ -966,7 +1358,14 @@
     "bias_pct": 2.2463,
     "pred_actual_ratio": 1.0225,
     "category": "other",
-    "category_label": "其他"
+    "category_label": "其他",
+    "full_history_rows": 28464,
+    "full_history_non_null_rows": 28464,
+    "full_history_positive_rows": 12803,
+    "full_history_zero_rows": 15661,
+    "full_history_zero_ratio_pct": 55.0204,
+    "full_history_start_date": "2023-01-01",
+    "full_history_end_date": "2026-03-31"
   },
   {
     "site_id": "S069",
@@ -983,7 +1382,14 @@
     "bias_pct": 159319932377850.06,
     "pred_actual_ratio": 1593199323778.5007,
     "category": "other",
-    "category_label": "其他"
+    "category_label": "其他",
+    "full_history_rows": 8052,
+    "full_history_non_null_rows": 8052,
+    "full_history_positive_rows": 0,
+    "full_history_zero_rows": 8052,
+    "full_history_zero_ratio_pct": 100.0,
+    "full_history_start_date": "2025-04-30",
+    "full_history_end_date": "2026-03-31"
   },
   {
     "site_id": "S070",
@@ -1000,7 +1406,14 @@
     "bias_pct": 0.8435,
     "pred_actual_ratio": 1.0084,
     "category": "other",
-    "category_label": "其他"
+    "category_label": "其他",
+    "full_history_rows": 28464,
+    "full_history_non_null_rows": 28464,
+    "full_history_positive_rows": 13072,
+    "full_history_zero_rows": 15392,
+    "full_history_zero_ratio_pct": 54.0753,
+    "full_history_start_date": "2023-01-01",
+    "full_history_end_date": "2026-03-31"
   },
   {
     "site_id": "S071",
@@ -1017,7 +1430,14 @@
     "bias_pct": 7.3801,
     "pred_actual_ratio": 1.0738,
     "category": "other",
-    "category_label": "其他"
+    "category_label": "其他",
+    "full_history_rows": 28464,
+    "full_history_non_null_rows": 28464,
+    "full_history_positive_rows": 11431,
+    "full_history_zero_rows": 17033,
+    "full_history_zero_ratio_pct": 59.8405,
+    "full_history_start_date": "2023-01-01",
+    "full_history_end_date": "2026-03-31"
   },
   {
     "site_id": "S072",
@@ -1034,7 +1454,14 @@
     "bias_pct": -2.8828,
     "pred_actual_ratio": 0.9712,
     "category": "other",
-    "category_label": "其他"
+    "category_label": "其他",
+    "full_history_rows": 22008,
+    "full_history_non_null_rows": 22008,
+    "full_history_positive_rows": 10178,
+    "full_history_zero_rows": 11830,
+    "full_history_zero_ratio_pct": 53.7532,
+    "full_history_start_date": "2023-09-27",
+    "full_history_end_date": "2026-03-31"
   },
   {
     "site_id": "S073",
@@ -1051,7 +1478,14 @@
     "bias_pct": -4.3028,
     "pred_actual_ratio": 0.957,
     "category": "other",
-    "category_label": "其他"
+    "category_label": "其他",
+    "full_history_rows": 20101,
+    "full_history_non_null_rows": 20101,
+    "full_history_positive_rows": 9355,
+    "full_history_zero_rows": 10746,
+    "full_history_zero_ratio_pct": 53.46,
+    "full_history_start_date": "2023-12-15",
+    "full_history_end_date": "2026-03-31"
   },
   {
     "site_id": "S074",
@@ -1068,7 +1502,14 @@
     "bias_pct": -0.1933,
     "pred_actual_ratio": 0.9981,
     "category": "other",
-    "category_label": "其他"
+    "category_label": "其他",
+    "full_history_rows": 10881,
+    "full_history_non_null_rows": 10881,
+    "full_history_positive_rows": 5194,
+    "full_history_zero_rows": 5687,
+    "full_history_zero_ratio_pct": 52.2654,
+    "full_history_start_date": "2025-01-02",
+    "full_history_end_date": "2026-03-31"
   },
   {
     "site_id": "S075",
@@ -1085,7 +1526,14 @@
     "bias_pct": 4.1776,
     "pred_actual_ratio": 1.0418,
     "category": "other",
-    "category_label": "其他"
+    "category_label": "其他",
+    "full_history_rows": 9146,
+    "full_history_non_null_rows": 9146,
+    "full_history_positive_rows": 4241,
+    "full_history_zero_rows": 4905,
+    "full_history_zero_ratio_pct": 53.63,
+    "full_history_start_date": "2025-03-14",
+    "full_history_end_date": "2026-03-31"
   },
   {
     "site_id": "S076",
@@ -1102,7 +1550,14 @@
     "bias_pct": 70.3253,
     "pred_actual_ratio": 1.7033,
     "category": "other",
-    "category_label": "其他"
+    "category_label": "其他",
+    "full_history_rows": 8054,
+    "full_history_non_null_rows": 8054,
+    "full_history_positive_rows": 1808,
+    "full_history_zero_rows": 6246,
+    "full_history_zero_ratio_pct": 77.5515,
+    "full_history_start_date": "2025-04-30",
+    "full_history_end_date": "2026-03-31"
   },
   {
     "site_id": "S077",
@@ -1119,7 +1574,14 @@
     "bias_pct": 23.1294,
     "pred_actual_ratio": 1.2313,
     "category": "other",
-    "category_label": "其他"
+    "category_label": "其他",
+    "full_history_rows": 28464,
+    "full_history_non_null_rows": 28464,
+    "full_history_positive_rows": 5483,
+    "full_history_zero_rows": 22981,
+    "full_history_zero_ratio_pct": 80.7371,
+    "full_history_start_date": "2023-01-01",
+    "full_history_end_date": "2026-03-31"
   },
   {
     "site_id": "S115",
@@ -1136,7 +1598,14 @@
     "bias_pct": -5.1046,
     "pred_actual_ratio": 0.949,
     "category": "worst",
-    "category_label": "预测最差"
+    "category_label": "预测最差",
+    "full_history_rows": 28464,
+    "full_history_non_null_rows": 28464,
+    "full_history_positive_rows": 12584,
+    "full_history_zero_rows": 15880,
+    "full_history_zero_ratio_pct": 55.7898,
+    "full_history_start_date": "2023-01-01",
+    "full_history_end_date": "2026-03-31"
   },
   {
     "site_id": "S116",
@@ -1153,6 +1622,13 @@
     "bias_pct": -8.6709,
     "pred_actual_ratio": 0.9133,
     "category": "other",
-    "category_label": "其他"
+    "category_label": "其他",
+    "full_history_rows": 28464,
+    "full_history_non_null_rows": 28464,
+    "full_history_positive_rows": 14018,
+    "full_history_zero_rows": 14446,
+    "full_history_zero_ratio_pct": 50.7518,
+    "full_history_start_date": "2023-01-01",
+    "full_history_end_date": "2026-03-31"
   }
 ]

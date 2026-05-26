@@ -233,6 +233,32 @@ def export_site_series(df, site_names, dashboard_root):
 
 def export_site_metrics(df, site_names, dashboard_root):
     """Export site_metrics.json with per-site statistics and categories."""
+    # Full-history stats (no filters: no split, no hour, no sign restriction)
+    full_df = df.copy()
+    if "time" in full_df.columns and not pd.api.types.is_datetime64_any_dtype(full_df["time"]):
+        full_df["time"] = pd.to_datetime(full_df["time"], errors="coerce")
+
+    full_hist = (
+        full_df.groupby("site_id")
+        .agg(
+            full_history_rows=("site_id", "size"),
+            full_history_non_null_rows=("power_mw", lambda s: int(s.notna().sum())),
+            full_history_positive_rows=("power_mw", lambda s: int((s.fillna(0) > 0).sum())),
+            full_history_zero_rows=("power_mw", lambda s: int((s.fillna(0) == 0).sum())),
+            full_history_start_date=("time", "min"),
+            full_history_end_date=("time", "max"),
+        )
+        .reset_index()
+    )
+    full_hist["full_history_zero_ratio_pct"] = (
+        full_hist["full_history_zero_rows"]
+        / full_hist["full_history_rows"].clip(lower=1)
+        * 100
+    ).round(4)
+    full_hist["full_history_start_date"] = full_hist["full_history_start_date"].dt.strftime("%Y-%m-%d")
+    full_hist["full_history_end_date"] = full_hist["full_history_end_date"].dt.strftime("%Y-%m-%d")
+
+    # Daytime test-set stats (for MAE/RMSE/NRMSE)
     df_f = df[
         df["split"].isin(["train", "valid", "test"])
         & df["hour"].between(6, 19)
@@ -275,8 +301,14 @@ def export_site_metrics(df, site_names, dashboard_root):
         })
 
     metrics_df = pd.DataFrame(rows)
+    # Merge full-history fields
+    metrics_df = metrics_df.merge(full_hist[[
+        "site_id", "full_history_rows", "full_history_non_null_rows",
+        "full_history_positive_rows", "full_history_zero_rows",
+        "full_history_zero_ratio_pct", "full_history_start_date", "full_history_end_date",
+    ]], on="site_id", how="left")
 
-    # --- Typical site classification ---
+    # --- Typical site classification (uses daytime test rows for consistent comparison) ---
     rows_q20 = np.percentile(metrics_df["rows"], 20)
     min_rows = max(200, rows_q20)
 
@@ -332,6 +364,9 @@ def export_site_metrics(df, site_names, dashboard_root):
         "rows", "positive_rows", "zero_rows", "zero_ratio_pct",
         "mae_mw", "rmse_mw", "nrmse_pct", "bias_pct",
         "pred_actual_ratio", "category", "category_label",
+        "full_history_rows", "full_history_non_null_rows",
+        "full_history_positive_rows", "full_history_zero_rows",
+        "full_history_zero_ratio_pct", "full_history_start_date", "full_history_end_date",
     ]
     metrics_df = metrics_df[out_cols]
 
