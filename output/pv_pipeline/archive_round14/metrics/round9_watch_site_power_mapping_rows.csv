@@ -1,0 +1,8 @@
+﻿power_alias,power_name_norm,file_dev_type,dev_type,site_id,match_method,match_score
+林洋伊山光伏电站总出力值,林洋伊山,分布式,分布式,S116,exact_norm,1.0
+首耀新海光伏总出力值,首耀新海光伏,分布式,分布式,S019,exact_norm,1.0
+鹰游新立成总出力值,鹰游新立成,分布式,分布式,S053,exact_norm,1.0
+华能中林总出力值,华能中林,分布式,分布式,S032,fuzzy,0.8
+泰富如意情光伏总出力值,泰富如意情光伏,分布式,分布式,S012,exact_norm,1.0
+沐恒曲阳光伏总出力值,沐恒曲阳光伏,分布式,分布式,S055,exact_norm,1.0
+沐恒东海产业园光伏总出力值,沐恒东海产业园光伏,分布式,分布式,S050,exact_norm,1.0
