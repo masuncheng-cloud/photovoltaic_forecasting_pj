@@ -144,9 +144,12 @@ def run():
                       str(dash_index.relative_to(PROJECT_ROOT)), "IMPORTANT"))
 
     try:
-        scatter = json.loads((ROOT / "interactive_dashboard/scatter_site_sample_nrmse.json")
-                             .read_text(encoding="utf-8"))
-        max_fh = scatter.get("max_full_history_rows", 0)
+        scatter_raw = json.loads((ROOT / "interactive_dashboard/scatter_site_sample_nrmse.json")
+                                .read_text(encoding="utf-8"))
+        if isinstance(scatter_raw, list):
+            max_fh = max((s.get("full_history_rows", 0) for s in scatter_raw), default=0)
+        else:
+            max_fh = scatter_raw.get("max_full_history_rows", 0)
         rows.append(check("full_history_rows_ge_20000", max_fh >= 20000,
                           f"max_full_history_rows={max_fh}", "IMPORTANT"))
     except Exception as e:
@@ -211,14 +214,14 @@ def run():
     print(f"  Failed (IMPORTANT): {len(warnings)}")
     print(f"  Output: {OUT_CSV}")
 
-    if errors:
+    if not errors.empty:
         print(f"\n  CRITICAL failures:")
         for _, r in errors.iterrows():
             print(f"    [FAIL] {r['check_name']}: {r['detail']}")
 
     critical_ok = errors.empty
     print(f"\n[{'OK' if critical_ok else 'FAIL'}] Round15 final delivery check")
-    if warnings:
+    if not warnings.empty:
         print(f"  IMPORTANT warnings: {len(warnings)}")
         for _, r in warnings.iterrows():
             print(f"    [WARN] {r['check_name']}: {r['detail']}")
