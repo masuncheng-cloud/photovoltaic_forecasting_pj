@@ -19,7 +19,7 @@ REPORT_PATH = PROJECT_ROOT / "光伏功率预测项目.md"
 def _patch_string_dtype():
     """Monkey-patch StringDtype.__init__ for pandas version compatibility."""
     import pandas
-    sd = pandas.api.types.StringDtype
+    sd = pandas.StringDtype
     orig = sd.__init__
     def patched(self, storage=None, validate=True):
         try:
@@ -78,8 +78,10 @@ def compute_raw_power_stats():
     total_rows = len(df)
     alias_count = len(df.columns)
     non_null_rows = int(df[power_col].notna().sum()) if power_col else 0
-    positive_rows = int((df[power_col] > 0).sum()) if power_col else 0
-    zero_rows = int((df[power_col] == 0).sum()) if power_col else 0
+    # Convert to numeric to handle string columns
+    power_numeric = pd.to_numeric(df[power_col], errors="coerce")
+    positive_rows = int((power_numeric > 0).sum())
+    zero_rows = int((power_numeric == 0).sum())
     zero_ratio = zero_rows / non_null_rows * 100 if non_null_rows > 0 else 0
 
     time_range = "未知"
