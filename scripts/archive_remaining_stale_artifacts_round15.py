@@ -19,6 +19,7 @@ from datetime import datetime
 from pathlib import Path
 
 ROOT = Path("output/pv_pipeline")
+PROJECT_ROOT = ROOT.parent
 ARCHIVE = ROOT / "archive_round15"
 
 # Files that must NEVER be archived
