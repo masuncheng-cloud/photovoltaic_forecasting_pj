@@ -872,8 +872,14 @@ async function loadAll() {
   // Set date range defaults
   state.startDate = idx.default_start_date || idx.min_date;
   state.endDate = idx.default_end_date || idx.max_date;
-  document.getElementById("start-date").value = state.startDate;
-  document.getElementById("end-date").value = state.endDate;
+
+  const startInput = document.getElementById("start-date");
+  const endInput = document.getElementById("end-date");
+  if (startInput) startInput.value = state.startDate;
+  if (endInput) endInput.value = state.endDate;
+
+  populateDateCombo("start", state.startDate, idx.min_date, idx.max_date);
+  populateDateCombo("end", state.endDate, idx.min_date, idx.max_date);
 
   // Populate site select
   populateSiteSelect(metrics);
@@ -2108,6 +2114,7 @@ document.addEventListener("DOMContentLoaded", () => {
     buildSitesTable();
     onScopeChange();
     bindLineZoomEvents();
+    bindDateComboEvents();
     refreshAll();
   }).catch(err => {
     const loading = document.getElementById("loading");
