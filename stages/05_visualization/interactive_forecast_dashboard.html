@@ -26,28 +26,37 @@ h1 {
 
 /* ---- Control Area ---- */
 #controls {
-  background: #fff;
-  border: 1px solid #dde3ec;
-  border-radius: 6px;
-  padding: 14px 16px;
-  margin-bottom: 14px;
   display: flex;
   flex-wrap: wrap;
-  gap: 10px;
+  gap: 10px 12px;
   align-items: center;
+  background: #ffffff;
+  border: 1px solid #d8e2ee;
+  border-radius: 8px;
+  padding: 10px 14px;
+  margin-bottom: 14px;
+  box-shadow: 0 1px 2px rgba(15, 23, 42, 0.04);
 }
 
 .ctrl-group {
   display: flex;
   align-items: center;
-  gap: 6px;
+  gap: 7px;
+  flex-wrap: wrap;
+  flex-shrink: 0;
 }
 
 .ctrl-label {
-  font-weight: 500;
-  color: #4a5568;
-  font-size: 12px;
-  white-space: nowrap;
+  font-size: 13px;
+  font-weight: 600;
+  color: #334155;
+  line-height: 32px;
+}
+
+.divider {
+  width: 1px;
+  height: 24px;
+  background: #e2e8f0;
 }
 
 .ctrl-group label { display: flex; align-items: center; gap: 4px; cursor: pointer; }
@@ -488,14 +497,16 @@ tbody td {
 #site-select,
 #start-hour,
 #end-hour {
-  height: 36px;
+  height: 32px;
+  min-height: 32px;
   border: 1px solid #cbd5e1;
   border-radius: 6px;
   background: #ffffff;
   color: #1f2937;
-  padding: 0 10px;
+  padding: 0 8px;
   font-size: 13px;
   font-weight: 500;
+  line-height: 30px;
   outline: none;
   transition: border-color 0.15s ease, box-shadow 0.15s ease, background 0.15s ease;
 }
@@ -511,21 +522,30 @@ tbody td {
 .date-combo {
   display: inline-flex;
   align-items: center;
-  gap: 4px;
-  padding: 2px;
+  gap: 3px;
+  padding: 2px 4px;
   border-radius: 8px;
   background: #f8fafc;
   border: 1px solid #e2e8f0;
+  height: 38px;
+  flex-shrink: 0;
 }
 
-.date-year { width: 82px; }
+.date-year { width: 76px; }
+
 .date-month,
-.date-day { width: 62px; }
+.date-day { width: 56px; }
 
 .date-unit {
   font-size: 12px;
   color: #64748b;
-  margin-right: 2px;
+  margin-right: 1px;
+  line-height: 1;
+}
+
+#typical-group,
+#site-select-group {
+  flex-shrink: 0;
 }
 
 .hidden-date-input {
