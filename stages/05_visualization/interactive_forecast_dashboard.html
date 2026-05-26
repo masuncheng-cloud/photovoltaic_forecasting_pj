@@ -399,6 +399,39 @@ tbody td {
   font-style: italic;
 }
 
+#line-chart {
+  cursor: grab;
+  user-select: none;
+  touch-action: none;
+}
+
+.chart-actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-top: 8px;
+}
+
+#resetLineZoomBtn {
+  border: 1px solid #cbd5e1;
+  background: #ffffff;
+  color: #334155;
+  border-radius: 6px;
+  padding: 6px 10px;
+  cursor: pointer;
+  font-size: 13px;
+}
+
+#resetLineZoomBtn:hover {
+  background: #f8fafc;
+}
+
+.zoom-info {
+  font-size: 12px;
+  color: #64748b;
+}
+
 @media (max-width: 900px) {
   .hourly-grid {
     grid-template-columns: 1fr;
@@ -486,6 +519,10 @@ tbody td {
 <div id="chart-container">
   <div id="chart-title">全市总出力折线图</div>
   <svg id="line-chart"></svg>
+  <div class="chart-actions">
+    <button id="resetLineZoomBtn" type="button">重置缩放</button>
+    <span id="lineChartZoomInfo" class="zoom-info">滚轮缩放，拖拽平移，双击复位</span>
+  </div>
 </div>
 
 <!-- ===== TYPICAL SITES TABLE ===== -->
@@ -1019,6 +1056,10 @@ function drawLineChart() {
 
   // Sort by time
   rows = [...rows].sort((a, b) => a.time.localeCompare(b.time));
+
+  // X scale: map index to pixel (after sort so n reflects visible rows)
+  const n = rows.length;
+  const xOf = i => ML + (i / Math.max(n - 1, 1)) * cw;
 
   const actuals = rows.map(r => r.actual_mw || 0);
   const preds = rows.map(r => r.pred_mw || 0);
