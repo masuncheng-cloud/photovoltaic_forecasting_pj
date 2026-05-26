@@ -1,10 +1,11 @@
 {
-  "grade": "B",
-  "grade_description": "可内部演示，需说明风险",
+  "grade": "A",
+  "grade_description": "可阶段性交付，训练过程与结果通过严谨性验证",
   "fail_count": 0,
-  "warn_count": 1,
+  "warn_count": 0,
+  "info_count": 0,
   "module_results": {
-    "data_integrity": "WARN",
+    "data_integrity": "PASS",
     "site_mapping": "PASS",
     "split_integrity": "PASS",
     "physical_range": "PASS",
@@ -30,5 +31,6 @@
   "computed_overall_nrmse": 19.7105,
   "reference_nrmse": 19.710496,
   "final_equals_best": true,
-  "max_full_history_rows": null
+  "max_full_history_rows": 28464,
+  "noncritical_info": []
 }
