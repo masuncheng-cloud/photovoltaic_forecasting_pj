@@ -1,0 +1,72 @@
+[
+  {
+    "threshold_pct": 5,
+    "qualified_sites": 0,
+    "total_sites": 68,
+    "qualified_ratio_pct": 0.0,
+    "min_full_history_rows": null,
+    "p25_full_history_rows": null,
+    "median_full_history_rows": null,
+    "p75_full_history_rows": null,
+    "max_full_history_rows": null,
+    "median_full_history_positive_rows": null,
+    "median_train_valid_positive_rows": null,
+    "note": "经验估计：在当前数据和当前模型下，达到指定NRMSE阈值的站点通常具备的全量历史样本量分布。样本量不是唯一决定因素，容量、站点映射、异常0值、限电、遮挡和气象插值都会影响最终NRMSE。"
+  },
+  {
+    "threshold_pct": 10,
+    "qualified_sites": 35,
+    "total_sites": 68,
+    "qualified_ratio_pct": 51.47,
+    "min_full_history_rows": 8053,
+    "p25_full_history_rows": 9225,
+    "median_full_history_rows": 22008,
+    "p75_full_history_rows": 28464,
+    "max_full_history_rows": 28464,
+    "median_full_history_positive_rows": 8631,
+    "median_train_valid_positive_rows": 6502,
+    "note": "经验估计：在当前数据和当前模型下，达到指定NRMSE阈值的站点通常具备的全量历史样本量分布。样本量不是唯一决定因素，容量、站点映射、异常0值、限电、遮挡和气象插值都会影响最终NRMSE。"
+  },
+  {
+    "threshold_pct": 15,
+    "qualified_sites": 56,
+    "total_sites": 68,
+    "qualified_ratio_pct": 82.35,
+    "min_full_history_rows": 7503,
+    "p25_full_history_rows": 8193,
+    "median_full_history_rows": 14136,
+    "p75_full_history_rows": 28464,
+    "max_full_history_rows": 28464,
+    "median_full_history_positive_rows": 6015,
+    "median_train_valid_positive_rows": 4368,
+    "note": "经验估计：在当前数据和当前模型下，达到指定NRMSE阈值的站点通常具备的全量历史样本量分布。样本量不是唯一决定因素，容量、站点映射、异常0值、限电、遮挡和气象插值都会影响最终NRMSE。"
+  },
+  {
+    "threshold_pct": 20,
+    "qualified_sites": 61,
+    "total_sites": 68,
+    "qualified_ratio_pct": 89.71,
+    "min_full_history_rows": 7503,
+    "p25_full_history_rows": 8193,
+    "median_full_history_rows": 14136,
+    "p75_full_history_rows": 28464,
+    "max_full_history_rows": 28464,
+    "median_full_history_positive_rows": 6015,
+    "median_train_valid_positive_rows": 4368,
+    "note": "经验估计：在当前数据和当前模型下，达到指定NRMSE阈值的站点通常具备的全量历史样本量分布。样本量不是唯一决定因素，容量、站点映射、异常0值、限电、遮挡和气象插值都会影响最终NRMSE。"
+  },
+  {
+    "threshold_pct": 25,
+    "qualified_sites": 66,
+    "total_sites": 68,
+    "qualified_ratio_pct": 97.06,
+    "min_full_history_rows": 7503,
+    "p25_full_history_rows": 8193,
+    "median_full_history_rows": 12639,
+    "p75_full_history_rows": 28464,
+    "max_full_history_rows": 28464,
+    "median_full_history_positive_rows": 5632,
+    "median_train_valid_positive_rows": 3764,
+    "note": "经验估计：在当前数据和当前模型下，达到指定NRMSE阈值的站点通常具备的全量历史样本量分布。样本量不是唯一决定因素，容量、站点映射、异常0值、限电、遮挡和气象插值都会影响最终NRMSE。"
+  }
+]
