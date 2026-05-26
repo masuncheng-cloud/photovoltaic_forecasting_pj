@@ -965,8 +965,12 @@ def main():
         "|:---|:---:|:---|",
     ]
 
+    data_integrity_note = {
+        "PASS": "所有文件可读",
+        "INFO": f"所有关键文件可读；{len(data_info_entries)} 个非关键中间文件因 pandas 版本不兼容无法读取（不影响 final 结果）",
+    }.get(data_status, "部分文件缺失或不可读")
     module_notes = {
-        "data_integrity": f"{data_status} — {'所有文件可读' if data_status=='PASS' else '部分文件缺失或不可读'}",
+        "data_integrity": f"{data_status} — {data_integrity_note}",
         "site_mapping": f"{site_status} — {'站点映射正常' if site_status=='PASS' else '存在映射异常'}",
         "split_integrity": f"{split_status} — {'train/valid/test 时间顺序正确' if split_status=='PASS' else '存在时间重叠'}",
         "physical_range": f"{phys_status} — {'预测值无越界' if phys_status=='PASS' else '存在物理越界'}",
@@ -1021,9 +1025,11 @@ def main():
         for _, r in hourly_df.iterrows():
             h = int(r.get("hour", 0))
             rows_v = int(r.get("rows", 0))
-            site_v = fmt(r.get("site_nrmse_mean_pct_computed"), 2)
-            city_v = fmt(r.get("city_nrmse_pct_computed"), 3)
-            md_lines.append(f"| **{h}** | {rows_v:,} | {site_v} | {city_v} |")
+            site_nrmse = pick_value(r, ["computed_site_nrmse_mean_pct", "site_nrmse_mean_pct"], default=None)
+            city_nrmse = pick_value(r, ["computed_city_nrmse_pct", "city_nrmse_pct"], default=None)
+            site_text = "-" if site_nrmse == "-" else f"{float(site_nrmse):.2f}"
+            city_text = "-" if city_nrmse == "-" else f"{float(city_nrmse):.3f}"
+            md_lines.append(f"| **{h}** | {rows_v:,} | {site_text} | {city_text} |")
 
     md_lines += [
         "",
