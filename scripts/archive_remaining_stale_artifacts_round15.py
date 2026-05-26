@@ -18,8 +18,8 @@ import shutil
 from datetime import datetime
 from pathlib import Path
 
-ROOT = Path("output/pv_pipeline")
-PROJECT_ROOT = ROOT.parent
+PROJECT_ROOT = Path(__file__).resolve().parents[1]
+ROOT = PROJECT_ROOT / "output" / "pv_pipeline"
 ARCHIVE = ROOT / "archive_round15"
 
 # Files that must NEVER be archived
