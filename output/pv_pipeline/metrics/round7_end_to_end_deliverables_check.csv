@@ -13,7 +13,7 @@ output/pv_pipeline/metrics/final_version_selection_by_hour.csv,True,True,0.002,O
 output/pv_pipeline/metrics/分布式光伏预测_逐小时平均NRMSE.csv,True,True,0.0,OK,
 output/pv_pipeline/metrics/round6_watch_site_diagnosis.csv,True,True,0.001,OK,
 output/pv_pipeline/metrics/round7_final_overall_metrics.csv,True,True,0.0,OK,
-output/pv_pipeline/docs/当前最终结果摘要.md,True,True,0.007,OK,
+output/pv_pipeline/docs/当前最终结果摘要.md,True,True,0.008,OK,
 final_eval_rows,True,True,0.0,OK,68888
 final_eval_site_count,True,True,0.0,OK,53
 final_eval_hour_range,True,True,0.0,OK,6-19
