@@ -644,10 +644,10 @@ tbody td {
 
   <div class="ctrl-group" id="typical-group">
     <span class="ctrl-label">典型站点：</span>
-    <button class="btn" id="btn-best">预测最好</button>
-    <button class="btn" id="btn-worst">预测最差</button>
-    <button class="btn" id="btn-normal">相对正确</button>
-    <button class="btn" id="btn-low">样本少</button>
+    <button class="btn btn-best" id="btn-best">预测最好</button>
+    <button class="btn btn-worst" id="btn-worst">预测最差</button>
+    <button class="btn btn-normal" id="btn-normal">相对正确</button>
+    <button class="btn btn-low" id="btn-low">样本少</button>
   </div>
   <div class="divider"></div>
 
@@ -678,7 +678,9 @@ tbody td {
   <div class="divider"></div>
 
   <div class="ctrl-group">
-    <button class="btn" id="btn-midday">连云港全市10-14</button>
+    <button class="btn btn-topic" id="btn-midday"
+      data-help="切换到全市视角，并聚焦典型日期的10-14点正午高出力时段，用于查看峰值时段真实功率与预测功率的贴合情况。"
+    >连云港全市10-14</button>
   </div>
   <div class="divider"></div>
 
