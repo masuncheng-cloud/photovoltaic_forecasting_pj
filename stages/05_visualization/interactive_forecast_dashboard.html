@@ -73,66 +73,128 @@ select, input[type="date"], input[type="number"] {
 
 input[type="number"] { width: 60px; }
 
-.btn {
-  height: 36px;
-  border: 1px solid #2f80d1;
-  border-radius: 6px;
-  background: linear-gradient(180deg, #3b8ed8 0%, #2f80d1 100%);
-  color: #ffffff;
-  padding: 0 14px;
-  font-size: 13px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: transform 0.08s ease, box-shadow 0.15s ease, background 0.15s ease;
-  box-shadow: 0 1px 2px rgba(15, 23, 42, 0.12);
-}
-
-.btn:hover {
-  background: linear-gradient(180deg, #4699e2 0%, #2b75be 100%);
-  box-shadow: 0 3px 8px rgba(49, 130, 206, 0.22);
-}
-
-.btn:active {
-  transform: translateY(1px);
-}
-
-.btn:disabled {
-  background: #e2e8f0;
-  border-color: #cbd5e1;
-  color: #94a3b8;
-  cursor: not-allowed;
-  box-shadow: none;
-}
-
+/* ---- BUTTON SYSTEM ---- */
+.btn,
 .btn-seas {
-  height: 36px;
-  border: 1px solid #2f80d1;
+  height: 32px;
+  min-height: 32px;
   border-radius: 6px;
-  background: linear-gradient(180deg, #3b8ed8 0%, #2f80d1 100%);
-  color: #ffffff;
-  padding: 0 14px;
+  padding: 0 12px;
   font-size: 13px;
   font-weight: 600;
+  line-height: 30px;
   cursor: pointer;
-  transition: transform 0.08s ease, box-shadow 0.15s ease, background 0.15s ease;
-  box-shadow: 0 1px 2px rgba(15, 23, 42, 0.12);
+  border: 1px solid transparent;
+  transition: transform 0.08s ease, box-shadow 0.15s ease, background 0.15s ease, border-color 0.15s ease;
+  box-shadow: 0 1px 2px rgba(15, 23, 42, 0.10);
 }
 
+.btn:hover,
 .btn-seas:hover:not(:disabled) {
-  background: linear-gradient(180deg, #4699e2 0%, #2b75be 100%);
-  box-shadow: 0 3px 8px rgba(49, 130, 206, 0.22);
+  transform: translateY(-1px);
+  box-shadow: 0 3px 8px rgba(15, 23, 42, 0.16);
 }
 
+.btn:active,
 .btn-seas:active:not(:disabled) {
-  transform: translateY(1px);
+  transform: translateY(0);
+  box-shadow: 0 1px 2px rgba(15, 23, 42, 0.10);
 }
 
+.btn:disabled,
 .btn-seas:disabled {
-  background: #e2e8f0;
-  border-color: #cbd5e1;
-  color: #94a3b8;
+  background: #e2e8f0 !important;
+  border-color: #cbd5e1 !important;
+  color: #94a3b8 !important;
   cursor: not-allowed;
   box-shadow: none;
+}
+
+/* 典型站点按钮 */
+.btn-site {
+  background: #edf5ff;
+  border-color: #bfdbfe;
+  color: #1d4ed8;
+}
+.btn-site:hover {
+  background: #dbeafe;
+  border-color: #93c5fd;
+}
+.btn-best {
+  background: #ecfdf5;
+  border-color: #a7f3d0;
+  color: #047857;
+}
+.btn-best:hover { background: #d1fae5; border-color: #86efac; }
+.btn-worst {
+  background: #fef2f2;
+  border-color: #fecaca;
+  color: #b91c1c;
+}
+.btn-worst:hover { background: #fee2e2; border-color: #fca5a5; }
+.btn-normal {
+  background: #eff6ff;
+  border-color: #bfdbfe;
+  color: #1d4ed8;
+}
+.btn-normal:hover { background: #dbeafe; border-color: #93c5fd; }
+.btn-low {
+  background: #f8fafc;
+  border-color: #cbd5e1;
+  color: #475569;
+}
+.btn-low:hover { background: #f1f5f9; border-color: #94a3b8; }
+
+/* 10-14 专题按钮 */
+.btn-topic {
+  background: #f5f3ff;
+  border-color: #c4b5fd;
+  color: #6d28d9;
+}
+.btn-topic:hover { background: #ede9fe; border-color: #a78bfa; }
+
+/* 四季按钮 */
+.btn-season.spring {
+  background: #ecfdf5;
+  border-color: #86efac;
+  color: #15803d;
+}
+.btn-season.summer {
+  background: #fff7ed;
+  border-color: #fdba74;
+  color: #c2410c;
+}
+.btn-season.autumn {
+  background: #fefce8;
+  border-color: #fde68a;
+  color: #a16207;
+}
+.btn-season.winter {
+  background: #ecfeff;
+  border-color: #67e8f9;
+  color: #0e7490;
+}
+
+/* 刷新/重置操作按钮 */
+.btn-action,
+#reset-line-zoom {
+  background: #f8fafc;
+  border-color: #cbd5e1;
+  color: #334155;
+}
+.btn-action:hover,
+#reset-line-zoom:hover {
+  background: #f1f5f9;
+  border-color: #94a3b8;
+}
+
+/* 小按钮 */
+.btn-small {
+  height: 28px;
+  min-height: 28px;
+  line-height: 26px;
+  padding: 0 10px;
+  font-size: 12px;
 }
 
 .divider { width: 1px; height: 24px; background: #dde3ec; margin: 0 4px; }
