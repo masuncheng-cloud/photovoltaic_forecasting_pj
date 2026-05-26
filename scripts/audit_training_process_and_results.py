@@ -31,6 +31,71 @@ warnings.filterwarnings("ignore")
 
 
 # =============================================================================
+# Pandas StringDtype pickle compatibility patch
+# =============================================================================
+
+def patch_pandas_string_dtype_pickle():
+    """Patch pandas StringDtype pickle compatibility for older artifacts.
+
+    Older pandas (e.g. 2.x) saved StringDtype objects with 3 arguments to __init__,
+    but newer pandas (e.g. 3.x) changed the signature. This patch makes old pickles
+    loadable again by catching TypeError during __init__ and retrying with fewer args.
+    """
+    try:
+        from pandas import StringDtype
+
+        original_init = getattr(StringDtype, "__init__", None)
+
+        def _patched_init__(self, storage=None, na_value=None):
+            try:
+                if original_init is not None:
+                    original_init(self, storage=storage, na_value=na_value)
+            except TypeError:
+                try:
+                    original_init(self, storage=storage)
+                except TypeError:
+                    try:
+                        original_init(self)
+                    except TypeError:
+                        pass
+
+        if not getattr(StringDtype, "_pv_pickle_patch_applied", False):
+            StringDtype.__init__ = _patched_init__
+            StringDtype._pv_pickle_patch_applied = True
+    except Exception:
+        pass
+
+
+def safe_read_table(path: Path) -> tuple[pd.DataFrame | None, str | None]:
+    """Safely read a table file with pandas, applying compatibility patches as needed.
+
+    Returns:
+        (df, None) on success
+        (None, error_message) on failure
+    """
+    if not path.exists():
+        return None, f"missing: {path}"
+
+    try:
+        if path.suffix.lower() in [".csv"]:
+            return pd.read_csv(path), None
+        if path.suffix.lower() in [".json"]:
+            return pd.read_json(path), None
+        if path.suffix.lower() in [".pkl", ".pickle"]:
+            try:
+                return pd.read_pickle(path), None
+            except Exception as e1:
+                patch_pandas_string_dtype_pickle()
+                try:
+                    return pd.read_pickle(path), None
+                except Exception as e2:
+                    return None, f"{type(e1).__name__}: {e1}; after patch: {type(e2).__name__}: {e2}"
+        return None, f"unsupported file suffix: {path.suffix}"
+    except Exception as e:
+        return None, f"{type(e).__name__}: {e}"
+
+
+# =============================================================================
 # Helpers
 # =============================================================================
 
