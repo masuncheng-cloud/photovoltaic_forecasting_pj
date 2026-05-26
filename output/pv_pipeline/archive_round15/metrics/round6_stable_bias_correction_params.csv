@@ -1,0 +1,6 @@
+﻿site_id,hour,train_rows,valid_rows,bias_class,train_ratio,valid_ratio,k_raw_train,k_final,valid_before_nrmse_pct,valid_after_nrmse_pct,valid_improvement_pp
+S017,10,330,62,stable_under_prediction,0.5191,0.5321,1.45,1.2475,30.4949,26.8767,3.6182
+S017,11,333,62,stable_under_prediction,0.5314,0.5565,1.45,1.2475,32.9221,29.1219,3.8002
+S017,12,335,62,stable_under_prediction,0.5464,0.5909,1.45,1.2475,32.2758,28.336,3.9398
+S017,13,336,62,stable_under_prediction,0.5351,0.5868,1.45,1.2475,31.4297,27.0088,4.4209
+S017,14,337,62,stable_under_prediction,0.5299,0.5942,1.45,1.2475,27.86,24.0898,3.7702

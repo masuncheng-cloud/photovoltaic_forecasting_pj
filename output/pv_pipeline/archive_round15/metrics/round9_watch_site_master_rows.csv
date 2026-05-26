@@ -1,0 +1,8 @@
+﻿site_full_name,site_short_name,dev_type,scheduler_type,capacity_mw,design_capacity_mw,lon,lat,county,install_type_raw,commission_date,station_status,group_name,tracking_type,cell_type,grid_mode,source_name,site_name_norm,install_group,coastal_flag,capacity_bucket,src_priority,site_id,has_geo
+泰富如意情光伏电站,泰富如意情光伏,分布式,地调,17.55,17.55,118.697846,34.507682,东海县,屋顶,2025-04-30,运行,无,固定式,单晶硅,自发自用余电上网,dist_ledger,泰富如意情光伏,rooftop,0,medium,0,S012,1
+首耀新海光伏电站,首耀新海光伏,分布式,地调,3.0,3.0,119.25,34.53028,海州区,屋顶,2017-12-30,运行,连云港市首耀新能源科技有限公司,固定式,单晶硅,全额上网,dist_ledger,首耀新海光伏,rooftop,0,small,0,S019,1
+华能中林光伏电站,华能中林光伏,分布式,地调,9.335,9.335,119.767511,32.488611,灌云县,屋顶,2023-12-13,运行,华能集团,固定式,单晶硅,自发自用余电上网,dist_ledger,华能中林光伏,rooftop,0,medium,0,S032,1
+沐恒东海产业园光伏电站,沐恒东海产业园光伏,分布式,地调,2.55,2.55,118.710548,34.510364,东海县,屋顶,2025-04-30,运行,无,固定式,单晶硅,全额上网,dist_ledger,沐恒东海产业园光伏,rooftop,0,small,0,S050,1
+鹰游新立成光伏发电站,鹰游新立成光伏电站,分布式,地调,13.33,13.33,119.25,34.26,灌云县,屋顶,2022-12-31,运行,,固定式,单晶硅,自发自用余电上网,dist_ledger,鹰游新立成,rooftop,0,medium,0,S053,1
+沐恒曲阳光伏电站,沐恒曲阳光伏,分布式,地调,4.0,4.0,118.743347,34.457824,东海县,屋顶,2025-04-29,运行,无,固定式,单晶硅,全额上网,dist_ledger,沐恒曲阳光伏,rooftop,0,small,0,S055,1
+林洋伊山光伏发电站,林洋伊山光伏电站,分布式,非统调,22.0,,,,灌云县,,,,,,,,dist_change,林洋伊山,unknown,0,large,1,S116,0

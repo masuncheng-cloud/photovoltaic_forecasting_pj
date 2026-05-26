@@ -1,0 +1,13 @@
+﻿site_id,rows,nonnull_power_rows,positive_power_rows,zero_rows,zero_ratio_pct,capacity_mw,p95_power_mw,p99_power_mw,max_power_mw,p99_over_capacity,max_over_capacity,eval_pred_actual_ratio,midday_eval_rows,midday_site_nrmse_pct,midday_pred_actual_ratio,midday_bias_pct,is_watch_site,diagnostic_flags
+S012,8049,8049,3143,4906,60.95,17.55,8.928,10.3516,12.36,0.5898,0.7043,1.3938,545.0,27.449,3.012,201.1964,True,midday_prediction_over_high
+S055,8049,8049,2795,5254,65.28,4.0,2.033,2.44,2.73,0.61,0.6825,1.5804,568.0,26.3281,2.6769,167.6918,True,midday_prediction_over_high
+S050,8049,8049,3940,4109,51.05,2.55,1.42,1.62,1.95,0.6353,0.7647,1.2965,609.0,24.0267,2.0003,100.0281,True,midday_prediction_over_high
+S032,20160,20160,8960,11200,55.56,9.335,5.18,6.69,7.9,0.7167,0.8463,0.8997,610.0,22.0531,0.5125,-48.7481,True,midday_prediction_too_low
+S052,14136,14136,6610,7526,53.24,6.08,3.8555,4.9582,6.08,0.8155,1.0,0.7432,610.0,19.4346,0.5891,-41.0853,False,midday_prediction_too_low
+S017,28464,28464,6844,21620,75.96,0.954,0.62,0.75,0.92,0.7862,0.9644,0.5465,605.0,5.8971,1.0713,7.1291,False,zero_ratio_high
+S037,8096,8096,1648,6448,79.64,5.946,3.6965,4.2812,4.59,0.72,0.7719,1.048,,,,,False,zero_ratio_high
+S044,9416,9416,1229,8187,86.95,8.492,5.676,6.5732,7.07,0.774,0.8325,1.0389,,,,,False,zero_ratio_high
+S045,9129,9129,2457,6672,73.09,2.915,2.59,2.9,2.9,0.9949,0.9949,0.9116,,,,,False,zero_ratio_high
+S069,8052,8052,0,8052,100.0,3.0,,,,,,,,,,,False,zero_ratio_high
+S076,8054,8054,1808,6246,77.55,5.0,4.4465,4.86,5.0,0.972,1.0,0.9615,,,,,False,zero_ratio_high
+S077,28464,28464,5483,22981,80.74,0.901,0.59,0.66,0.75,0.7325,0.8324,0.7671,,,,,False,zero_ratio_high
