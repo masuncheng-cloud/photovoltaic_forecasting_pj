@@ -1606,7 +1606,8 @@ async function refreshAll() {
   const isSite = state.scope === "site";
   const m = computeMetrics(rows, isSite);
   updateMetricsCards(m, rows);
-  drawLineChart(rows);
+  gCurrentLineRows = rows;
+  resetLineChartZoom();
   drawHourlyNrmseChart();
   if (!isSite) drawScatterChart(gScatterSite);
 }
@@ -1833,6 +1834,7 @@ document.addEventListener("DOMContentLoaded", () => {
     buildSitesTable();
     onScopeChange();
     refreshAll();
+    bindLineChartZoomEvents();
   }).catch(err => {
     document.getElementById("loading").textContent = "加载失败: " + err.message;
     console.error(err);
@@ -1943,9 +1945,8 @@ document.addEventListener("DOMContentLoaded", () => {
   let resizeTimer;
   window.addEventListener("resize", () => {
     clearTimeout(resizeTimer);
-    resizeTimer = setTimeout(async () => {
-      const rows = await getFilteredRows();
-      drawLineChart(rows);
+    resizeTimer = setTimeout(() => {
+      drawLineChart();
       drawHourlyNrmseChart();
       if (state.scope !== "site") drawScatterChart(gScatterSite);
     }, 200);
