@@ -316,14 +316,11 @@ def generate_report(data: dict, root: Path) -> str:
         lines.append("")
 
     lines.append("### 3.3 版本选择说明\n")
-    lines.append("""
-各小时使用最优版本：
-- **6-8时（早间）**：使用 V1 基础版本，结合 dawn/dusk 修正
-- **9-14时（正午）**：使用 MiddaySiteCalibrated 专用版本，针对高辐照度优化
-- **15-19时（晚间）**：综合 V0/V1/Midday 版本选择最优结果
-
-最终版本通过 `final_guard` 守卫机制验证：只有当候选版本在测试集上的整体 NRMSE 不超过当前 best 0.1pp 时才允许替换，确保模型质量不退化。
-""")
+    lines.append("各小时使用最优版本：")
+    lines.append("- **6-8时（早间）**：使用 V1 基础版本，结合 dawn/dusk 修正")
+    lines.append("- **9-14时（正午）**：使用 MiddaySiteCalibrated 专用版本，针对高辐照度优化")
+    lines.append("- **15-19时（晚间）**：综合 V0/V1/Midday 版本选择最优结果\n")
+    lines.append("最终版本通过 `final_guard` 守卫机制验证：只有当候选版本在测试集上的整体 NRMSE 不超过当前 best 0.1pp 时才允许替换，确保模型质量不退化。\n")
 
     # =========================================================================
     # Section 4: Visualization
