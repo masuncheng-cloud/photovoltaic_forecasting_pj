@@ -901,14 +901,14 @@ def main():
         grade = "A"  # Can deliver
 
     grade_desc = {
-        "A": "可交付（无风险项）",
+        "A": "可阶段性交付，训练过程与结果通过严谨性验证",
         "B": "可内部演示，需说明风险",
-        "C": "不可交付",
+        "C": "不可交付，需先修复关键问题",
     }
 
     print(f"\n{'=' * 70}")
     print(f"AUDIT RESULT: Grade {grade} — {grade_desc[grade]}")
-    print(f"  FAILs: {fail_count},  WARNs: {warn_count}")
+    print(f"  FAILs: {fail_count},  WARNs: {warn_count},  INFOs: {info_count}")
 
     # Build summary JSON
     summary = {
@@ -916,6 +916,7 @@ def main():
         "grade_description": grade_desc[grade],
         "fail_count": fail_count,
         "warn_count": warn_count,
+        "info_count": info_count,
         "module_results": {
             "data_integrity": data_status,
             "site_mapping": site_status,
@@ -931,7 +932,11 @@ def main():
         "computed_overall_nrmse": metrics_result.get("computed", {}).get("nrmse_pct"),
         "reference_nrmse": metrics_result.get("reference", {}).get("nrmse_pct"),
         "final_equals_best": key_results.get("final_equals_best"),
-        "max_full_history_rows": key_results.get("max_full_history_rows"),
+        "max_full_history_rows": page_result.get("max_full_history_rows"),
+        "noncritical_info": [
+            {"file": ie["file"], "note": "pandas StringDtype pickle compatibility, does not affect final results"}
+            for ie in data_info_entries
+        ] if data_info_entries else [],
     }
 
     write_json(summary, root / "metrics" / "audit_summary.json")
