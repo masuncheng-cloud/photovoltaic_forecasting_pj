@@ -1,0 +1,14 @@
+check_item,passed,detail
+core_final_eval_readable,True,rows=68888
+core_best_eval_readable,True,rows=68888
+final_equals_best,True,max_diff=0.00000000
+audit_grade_a,True,grade=A
+project_report_exists,True,"size=7,450 bytes"
+project_report_no_wape,True,"NRMSE is main metric, no WAPE/MAPE"
+hourly_table_14_rows,True,"rows=14, hours=[6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19]"
+dashboard_index_exists,True,size=656 bytes
+max_full_history_ge_20000,True,"max_full_history_rows=28,464"
+archive_manifest_exists,True,"size=18,035 bytes"
+backup_manifest_exists,True,"size=4,998 bytes"
+round14_decision_exists,True,size=919 bytes
+round14_decision_accepted,False,"accepted=False, reason=current final PKL does not exist | final != best (power_pred"

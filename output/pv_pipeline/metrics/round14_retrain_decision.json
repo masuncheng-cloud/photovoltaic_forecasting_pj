@@ -20,7 +20,7 @@
   "current_midday_city_nrmse": null,
   "backup_midday_city_nrmse": 2.420756,
   "restored_from_backup": true,
-  "retrain_hours": 15.61,
+  "retrain_hours": 7.93,
   "audit_grade": "A",
   "final_equals_best": false,
   "thresholds": {
