@@ -1246,6 +1246,9 @@ async function loadAll() {
     panel.style.display = gInvalidZeroSites && gInvalidZeroSites.length ? "block" : "none";
   }
 
+  // Render data integrity status note
+  renderDataIntegrityNote();
+
   document.getElementById("loading").style.display = "none";
 }
 
