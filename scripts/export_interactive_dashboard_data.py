@@ -1000,11 +1000,11 @@ def export_hourly_prediction_summary(output_root, dashboard_root, final_df=None)
 
 def export_scatter_site_hour(df, site_names, metrics_df, dashboard_root):
     """Export scatter_site_hour.json: each point = site_id + hour."""
-    df_f = df[
-        df["split"].isin(["train", "valid", "test"])
-        & df["hour"].between(6, 19)
-        & df["power_mw"].notna()
-        & df["power_pred"].notna()
+    df_f = build_history_frame(df)
+    df_f = df_f[
+        df_f["hour"].between(6, 19)
+        & df_f["power_mw"].notna()
+        & df_f["power_pred"].notna()
     ].copy()
 
     # Build category label lookup
