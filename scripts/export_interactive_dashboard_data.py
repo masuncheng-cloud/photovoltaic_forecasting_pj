@@ -803,6 +803,28 @@ def export_sample_requirement_summary(scatter_data, dashboard_root):
     return results
 
 
+def export_invalid_zero_sites(metrics_df, dashboard_root):
+    """Export invalid_zero_sites.json: sites with zero_ratio >= 99.999% or no positive rows."""
+    invalid = metrics_df[metrics_df.get("is_all_zero_history", pd.Series(False)) == True].copy()
+
+    cols = [
+        "site_id", "site_name", "county", "capacity_mw",
+        "full_history_rows", "full_history_positive_rows",
+        "full_history_zero_rows", "full_history_zero_ratio_pct",
+        "full_history_start_date", "full_history_end_date",
+        "rows", "positive_rows",  # test 6-19h stats
+        "mae_mw", "rmse_mw", "nrmse_pct", "pred_actual_ratio",
+    ]
+    cols = [c for c in cols if c in invalid.columns]
+
+    records = invalid[cols].to_dict(orient="records")
+    out_path = Path(dashboard_root) / "invalid_zero_sites.json"
+    with open(out_path, "w", encoding="utf-8") as f:
+        json.dump(records, f, ensure_ascii=False, indent=2)
+    print(f"  [OK] invalid_zero_sites.json ({len(records)} sites)")
+    return records
+
+
 def export_sample_requirement_bins(scatter_data, dashboard_root):
     """Export sample_requirement_bins.json using full_history_rows as binning key."""
     bins_def = [
