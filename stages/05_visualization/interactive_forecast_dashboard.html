@@ -666,6 +666,7 @@ tbody td {
       <select id="end-day" class="select-control date-day"></select><span class="date-unit">日</span>
     </div>
     <input type="date" id="end-date" class="hidden-date-input">
+    <span id="date-range-message" class="date-error" style="display:none;"></span>
   </div>
   <div class="divider"></div>
 
@@ -1011,23 +1012,17 @@ function bindDateComboEvents() {
     if (!yearEl || !monthEl || !dayEl) return;
 
     function applyDateChange() {
-      state.startDate = getDateComboValue("start");
-      state.endDate = getDateComboValue("end");
-
-      if (state.startDate > state.endDate) {
-        if (prefix === "start") {
-          state.endDate = state.startDate;
-          setDateComboValue("end", state.endDate);
-        } else {
-          state.startDate = state.endDate;
-          setDateComboValue("start", state.startDate);
-        }
+      if (prefix === "start") {
+        state.startDate = getDateComboValue("start");
+      } else {
+        state.endDate = getDateComboValue("end");
       }
 
-      const startInput = document.getElementById("start-date");
-      const endInput = document.getElementById("end-date");
-      if (startInput) startInput.value = state.startDate;
-      if (endInput) endInput.value = state.endDate;
+      syncHiddenDateInputs();
+
+      if (!validateDateRange(true)) {
+        return;
+      }
 
       refreshAll();
     }
