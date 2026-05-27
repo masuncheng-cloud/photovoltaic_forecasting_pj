@@ -974,7 +974,9 @@ tbody td {
 
 <!-- ===== FOOTER ===== -->
 <div id="footer">
-  数据来源：output/pv_pipeline/tables/distributed_predictions_final_full.pkl 或 distributed_predictions_final_eval.pkl。<br>
+  当前折线图真实值 actual_mw 直接来自 distributed_predictions_final_full.pkl 的 power_mw；<br>
+  该字段与 power_clean.pkl 中同一站点、同一时间的 power_mw 一致。<br>
+  正式测试集指标来自 distributed_predictions_final_eval.pkl，通常排除非正功率样本，与 full 展示曲线的样本范围不同。<br>
   页面只用于展示当前 final/best 预测结果，不参与模型训练和模型选择。<br>
   注意：当前数据为小时粒度，sum(MW) 可近似理解为 MWh。
 </div>
