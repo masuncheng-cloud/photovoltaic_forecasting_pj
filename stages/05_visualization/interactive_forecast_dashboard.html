@@ -2154,13 +2154,15 @@ function onScopeChange() {
     const ok = ensureDefaultSiteSelected();
     if (!ok) {
       showStatusMessage("没有可用站点数据，无法展示单站点曲线");
-      return;
+      return false;
     }
   }
 
   if (!validateDateRange(true)) {
-    return;
+    return false;
   }
+
+  return true;
 }
 
 function showStatusMessage(msg) {
