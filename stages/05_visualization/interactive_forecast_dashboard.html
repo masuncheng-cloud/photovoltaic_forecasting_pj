@@ -1237,6 +1237,13 @@ async function loadAll() {
   renderHourlySummaryTable();
   drawHourlyNrmseChart();
 
+  // Render invalid zero sites panel
+  renderInvalidZeroSites();
+  const panel = document.getElementById("invalid-zero-panel");
+  if (panel) {
+    panel.style.display = gInvalidZeroSites && gInvalidZeroSites.length ? "block" : "none";
+  }
+
   document.getElementById("loading").style.display = "none";
 }
 
@@ -2178,6 +2185,51 @@ function moveTooltip(e) {
 
 function hideTooltip() {
   document.getElementById("tooltip").style.display = "none";
+}
+
+// ============================================================
+// INVALID ZERO SITES TABLE
+// ============================================================
+function renderInvalidZeroSites() {
+  const el = document.getElementById("invalid-zero-sites-table");
+  if (!el) return;
+
+  const rows = gInvalidZeroSites || [];
+  if (!rows.length) {
+    el.innerHTML = '<div class="empty-note">暂无无有效发电样本站点</div>';
+    return;
+  }
+
+  const html = `
+    <table>
+      <thead>
+        <tr>
+          <th>站点ID</th>
+          <th>站点名称</th>
+          <th>容量 MW</th>
+          <th>历史样本数（行）</th>
+          <th>正功率样本数（行）</th>
+          <th>0值占比（%）</th>
+          <th>说明</th>
+        </tr>
+      </thead>
+      <tbody>
+        ${rows.map(r => `
+          <tr>
+            <td>${r.site_id ?? "-"}</td>
+            <td>${r.site_name ?? "-"}</td>
+            <td>${fmt2(r.capacity_mw)}</td>
+            <td>${fmtInt(r.full_history_rows)}</td>
+            <td>${fmtInt(r.full_history_positive_rows)}</td>
+            <td>${fmt2(r.full_history_zero_ratio_pct)}</td>
+            <td>无有效正功率样本，不参与正常精度统计</td>
+          </tr>
+        `).join("")}
+      </tbody>
+    </table>
+  `;
+
+  el.innerHTML = html;
 }
 
 // ============================================================
