@@ -555,7 +555,7 @@ def export_season_days(df, dashboard_root):
             "pred_mwh": round(float(best_date["pred_mwh"]), 4),
             "n_sites": int(best_date["n_sites"]),
             "sample_count": int(best_date["sample_count"]),
-            "reason": f"选择 {str(best_date["date"])} (日发电量 {round(float(best_date["actual_mwh"]), 1)} MWh，接近季节中位数)",
+            "reason": f"选择 {str(best_date['date'])} (日发电量 {round(float(best_date['actual_mwh']), 1)} MWh，接近季节中位数)",
         })
 
     out_path = Path(dashboard_root) / "season_days.json"
