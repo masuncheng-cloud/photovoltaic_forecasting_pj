@@ -594,14 +594,14 @@ def build_site_name_lookup(sm_df):
 
 
 def export_scatter_site_sample_nrmse(df, site_names, sm_df, metrics_df, dashboard_root):
-    """Export scatter_site_sample_nrmse.json: each point = one site."""
-    # Split: train+valid for sample counts, test for NRMSE
-    tv = df[df["split"].isin(["train", "valid"])].copy()
-    test = df[df["split"].eq("test")].copy()
+    """Export scatter_site_sample_nrmse.json: each point = one site.
 
-    # ---- Full-history stats (all splits, all hours, no power filter) ----
-    full_hist = df.copy()
-    # time column is already datetime-like; just ensure datetime dtype for min/max
+    - Sample counts use train/valid/test only (no future).
+    - NRMSE uses test 6-19h.
+    - All-zero / no-positive sites are excluded from this file.
+    """
+    # ---- Full-history stats: train/valid/test only (no future) ----
+    full_hist = build_history_frame(df)
     full_hist["time"] = pd.to_datetime(full_hist["time"], errors="coerce")
     full_hist_agg = full_hist.groupby("site_id").agg(
         full_history_rows=("site_id", "size"),
@@ -615,7 +615,6 @@ def export_scatter_site_sample_nrmse(df, site_names, sm_df, metrics_df, dashboar
         full_hist_agg["full_history_zero_rows"] /
         full_hist_agg["full_history_rows"].clip(lower=1) * 100
     ).round(4)
-    # Convert date columns to string; min/max of datetime may return NaT for bad values
     full_hist_agg["full_history_start_date"] = (
         pd.to_datetime(full_hist_agg["full_history_start_date"], errors="coerce")
         .dt.strftime("%Y-%m-%d")
