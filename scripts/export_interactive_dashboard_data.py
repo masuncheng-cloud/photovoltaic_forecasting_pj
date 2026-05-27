@@ -1096,6 +1096,162 @@ def export_error_threshold_summary(scatter_data, dashboard_root):
     print(f"  [OK] error_threshold_summary.json")
 
 
+# ============================================================
+# DATA INTEGRITY VALIDATION
+# ============================================================
+def validate_dashboard_actual_values(df: pd.DataFrame, dashboard_root, output_root):
+    """校验 site_series/*.json 中的 actual_mw 与 final_full/power_mw 是否一致。"""
+    site_dir = Path(dashboard_root) / "site_series"
+    rows = []
+
+    if "time" in df.columns:
+        source = df.copy()
+        source["time"] = pd.to_datetime(source["time"], errors="coerce")
+    else:
+        raise ValueError("prediction df missing time column")
+
+    source = source[
+        source["split"].isin(["train", "valid", "test"])
+        & source["hour"].between(6, 19)
+        & source["power_mw"].notna()
+    ].copy()
+
+    source_key = source.set_index(["site_id", "time"])["power_mw"]
+
+    for path in sorted(site_dir.glob("*.json")):
+        site_id = path.stem
+        js = pd.read_json(path)
+        if js.empty:
+            rows.append({
+                "site_id": site_id,
+                "json_rows": 0,
+                "matched_rows": 0,
+                "missing_in_source": 0,
+                "max_abs_diff": None,
+                "status": "FAIL_EMPTY_JSON",
+            })
+            continue
+
+        js["time"] = pd.to_datetime(js["time"], errors="coerce")
+        js["site_id"] = site_id
+
+        merged = js[["site_id", "time", "actual_mw"]].merge(
+            source[["site_id", "time", "power_mw"]],
+            on=["site_id", "time"],
+            how="left",
+        )
+
+        missing = int(merged["power_mw"].isna().sum())
+        matched = int(merged["power_mw"].notna().sum())
+
+        if matched > 0:
+            diff = (merged["actual_mw"].astype(float) - merged["power_mw"].astype(float)).abs()
+            max_diff = float(diff.max())
+            bad_rows = int((diff > 1e-9).sum())
+        else:
+            max_diff = None
+            bad_rows = len(merged)
+
+        status = "PASS" if missing == 0 and bad_rows == 0 else "FAIL"
+
+        rows.append({
+            "site_id": site_id,
+            "json_rows": int(len(js)),
+            "matched_rows": matched,
+            "missing_in_source": missing,
+            "bad_value_rows": bad_rows,
+            "max_abs_diff": max_diff,
+            "status": status,
+        })
+
+    result = pd.DataFrame(rows)
+    metrics_path = Path(output_root) / "metrics" / "dashboard_actual_value_consistency.csv"
+    metrics_path.parent.mkdir(parents=True, exist_ok=True)
+    result.to_csv(metrics_path, index=False, encoding="utf-8-sig")
+
+    summary = {
+        "checked_at": pd.Timestamp.now().strftime("%Y-%m-%d %H:%M:%S"),
+        "source": "distributed_predictions_final_full.pkl power_mw",
+        "dashboard_site_series": "interactive_dashboard/site_series/*.json actual_mw",
+        "site_count": int(len(result)),
+        "fail_count": int((result["status"] != "PASS").sum()) if len(result) else 0,
+        "max_abs_diff": float(result["max_abs_diff"].dropna().max()) if result["max_abs_diff"].notna().any() else 0.0,
+        "status": "PASS" if len(result) and (result["status"] == "PASS").all() else "FAIL",
+    }
+
+    out_json = Path(dashboard_root) / "data_integrity_check.json"
+    with open(out_json, "w", encoding="utf-8") as f:
+        json.dump(summary, f, ensure_ascii=False, indent=2)
+
+    if summary["status"] != "PASS":
+        bad = result[result["status"] != "PASS"].head(10)
+        raise RuntimeError(
+            "Dashboard actual_mw differs from source power_mw. "
+            f"See {metrics_path}. Bad examples: {bad.to_dict(orient='records')}"
+        )
+
+    print(f"  [OK] dashboard actual value consistency: {summary['site_count']} sites, max_diff={summary['max_abs_diff']}")
+    return summary
+
+
+def validate_against_power_clean(dashboard_root, output_root):
+    """二次校验：与 power_clean.pkl 再做比对。"""
+    clean_path = Path(output_root) / "tables" / "power_clean.pkl"
+    if not clean_path.exists():
+        print(f"  [WARN] power_clean.pkl not found, skip clean validation")
+        return None
+
+    power_clean = pd.read_pickle(clean_path)
+    power_clean["time"] = pd.to_datetime(power_clean["time"], errors="coerce")
+    power_clean = power_clean[
+        power_clean["site_id"].notna()
+        & power_clean["time"].notna()
+        & power_clean["power_mw"].notna()
+    ].copy()
+
+    site_dir = Path(dashboard_root) / "site_series"
+    rows = []
+
+    for path in sorted(site_dir.glob("*.json")):
+        site_id = path.stem
+        js = pd.read_json(path)
+        if js.empty:
+            continue
+        js["time"] = pd.to_datetime(js["time"], errors="coerce")
+        js["site_id"] = site_id
+
+        clean_site = power_clean[power_clean["site_id"].astype(str).eq(site_id)]
+        merged = js[["site_id", "time", "actual_mw"]].merge(
+            clean_site[["site_id", "time", "power_mw"]],
+            on=["site_id", "time"],
+            how="left",
+        )
+
+        diff = (merged["actual_mw"].astype(float) - merged["power_mw"].astype(float)).abs()
+        rows.append({
+            "site_id": site_id,
+            "json_rows": len(js),
+            "matched_rows": int(merged["power_mw"].notna().sum()),
+            "missing_in_power_clean": int(merged["power_mw"].isna().sum()),
+            "max_abs_diff_power_clean": float(diff.max()) if diff.notna().any() else None,
+            "bad_rows": int((diff > 1e-9).sum()) if diff.notna().any() else len(js),
+        })
+
+    result = pd.DataFrame(rows)
+    out = Path(output_root) / "metrics" / "dashboard_vs_power_clean_consistency.csv"
+    result.to_csv(out, index=False, encoding="utf-8-sig")
+
+    bad = result[
+        (result["missing_in_power_clean"] > 0)
+        | (result["bad_rows"] > 0)
+    ]
+    if len(bad):
+        raise RuntimeError(f"Dashboard values differ from power_clean. See {out}")
+
+    print(f"  [OK] dashboard actual values match power_clean: {len(result)} sites")
+    return result
+
+
 def main():
     args = parse_args()
     dashboard_root = args.dashboard_root
