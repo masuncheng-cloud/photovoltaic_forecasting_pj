@@ -1165,6 +1165,44 @@ async function fetchJSON(url) {
 // ============================================================
 // SITE SELECT
 // ============================================================
+function getSiteId(row) {
+  return row?.site_id || row?.station_id || row?.id || "";
+}
+
+function getSiteCategory(row) {
+  return row?.category || row?.类别 || row?.type || "";
+}
+
+function getDefaultSiteId() {
+  const list = Array.isArray(gSiteMetrics) ? gSiteMetrics : [];
+  const best = list.find(row => {
+    const cat = String(getSiteCategory(row));
+    return cat === "best" && getSiteId(row);
+  });
+  if (best) return getSiteId(best);
+
+  const first = list.find(row => getSiteId(row));
+  return first ? getSiteId(first) : "";
+}
+
+function ensureDefaultSiteSelected() {
+  const sel = document.getElementById("site-select");
+  if (!sel) return false;
+
+  const current = sel.value || state.siteId || "";
+  if (current) {
+    state.siteId = current;
+    return true;
+  }
+
+  const def = getDefaultSiteId();
+  if (!def) return false;
+
+  sel.value = def;
+  state.siteId = def;
+  return true;
+}
+
 function populateSiteSelect(metrics) {
   const sel = document.getElementById("site-select");
   // Group by category for display
@@ -2111,6 +2149,29 @@ function onScopeChange() {
   const btnTypical = document.getElementById("btn-typical-midday");
   if (btnCurrent) btnCurrent.disabled = isSite;
   if (btnTypical) btnTypical.disabled = isSite;
+
+  if (isSite) {
+    const ok = ensureDefaultSiteSelected();
+    if (!ok) {
+      showStatusMessage("没有可用站点数据，无法展示单站点曲线");
+      return;
+    }
+  }
+
+  if (!validateDateRange(true)) {
+    return;
+  }
+}
+
+function showStatusMessage(msg) {
+  const el = document.getElementById("date-range-message");
+  if (el) {
+    el.textContent = msg;
+    el.style.display = "inline-flex";
+    el.style.color = "#b91c1c";
+    el.style.borderColor = "#fecaca";
+    el.style.background = "#fef2f2";
+  }
 }
 
 // ============================================================
