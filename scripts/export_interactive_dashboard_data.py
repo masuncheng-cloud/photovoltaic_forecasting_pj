@@ -146,14 +146,17 @@ def load_site_master(output_root):
 
 def export_index(df, site_names, dashboard_root):
     """Export index.json with overview metadata."""
-    dates = pd.to_datetime(df["date"]).dropna().unique()
+    history_df = build_history_frame(df)
+    dates = pd.to_datetime(history_df["date"]).dropna().unique()
     min_date = pd.to_datetime(dates).min().strftime("%Y-%m-%d")
     max_date = pd.to_datetime(dates).max().strftime("%Y-%m-%d")
 
-    # Overall stats
-    active = df[df["split"].isin(["train", "valid", "test"])]
-    active = active[active["hour"].between(6, 19)]
-    active = active[active["power_mw"].notna() & active["power_pred"].notna()]
+    # Overall stats — use history only, daytime, non-null
+    active = history_df[
+        history_df["hour"].between(6, 19)
+        & history_df["power_mw"].notna()
+        & history_df["power_pred"].notna()
+    ]
 
     index_data = {
         "title": "光伏功率预测交互式结果页面",
@@ -162,6 +165,7 @@ def export_index(df, site_names, dashboard_root):
             "output/pv_pipeline/tables/distributed_predictions_final_full.pkl "
             "或 distributed_predictions_final_eval.pkl"
         ),
+        "data_scope": "train/valid/test only; future excluded",
         "note": (
             "页面只用于展示当前 final/best 预测结果，不参与模型训练和模型选择。"
         ),
@@ -169,10 +173,11 @@ def export_index(df, site_names, dashboard_root):
         "max_date": max_date,
         "default_start_date": min_date,
         "default_end_date": max_date,
-        "total_rows": int(len(df)),
-        "total_sites": int(df["site_id"].nunique()),
+        "total_rows": int(len(history_df)),
+        "total_sites": int(history_df["site_id"].nunique()),
         "date_range": f"{min_date} ~ {max_date}",
         "hourly_prediction_summary": "hourly_prediction_summary.json",
+        "invalid_zero_sites": "invalid_zero_sites.json",
     }
 
     out_path = Path(dashboard_root) / "index.json"
@@ -183,12 +188,11 @@ def export_index(df, site_names, dashboard_root):
 
 def export_city_series(df, dashboard_root):
     """Export city_series.json with city-level aggregated data."""
-    # Apply standard filter
-    df_f = df[
-        df["split"].isin(["train", "valid", "test"])
-        & df["hour"].between(6, 19)
-        & df["power_mw"].notna()
-        & df["power_pred"].notna()
+    df_f = build_history_frame(df)
+    df_f = df_f[
+        df_f["hour"].between(6, 19)
+        & df_f["power_mw"].notna()
+        & df_f["power_pred"].notna()
     ].copy()
 
     city = df_f.groupby("time").agg(
@@ -231,11 +235,11 @@ def export_city_series(df, dashboard_root):
 
 def export_site_series(df, site_names, dashboard_root):
     """Export per-site time series JSON files."""
-    df_f = df[
-        df["split"].isin(["train", "valid", "test"])
-        & df["hour"].between(6, 19)
-        & df["power_mw"].notna()
-        & df["power_pred"].notna()
+    df_f = build_history_frame(df)
+    df_f = df_f[
+        df_f["hour"].between(6, 19)
+        & df_f["power_mw"].notna()
+        & df_f["power_pred"].notna()
     ].copy()
 
     site_dir = Path(dashboard_root) / "site_series"
