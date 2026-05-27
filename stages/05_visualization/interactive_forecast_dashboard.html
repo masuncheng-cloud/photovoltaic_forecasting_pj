@@ -1387,7 +1387,7 @@ function sumBy(rows, key) {
 
 function maxBy(rows, key) {
   if (!rows.length) return 0;
-  return Math.max(...rows.map(r => toNumber(r[key], 0)));
+  return Math.max(...rows.map(r => toNumber(r[key], 0));
 }
 
 function meanBy(rows, key) {
@@ -1408,12 +1408,12 @@ function computeMetrics(rows, scope) {
   // city_series: each row = one time point; sample_count = sites contributing at that time
   // site_series: each row = one site at one time; rows.length = sample count
   const sampleCount = scope === "city"
-    ? Math.round(sumBy(rows, "sample_count"))
+    ? Math.round(sumBy(rows, "sample_count")
     : rows.length;
 
   // n_sites in city_series = sites contributing at that time; take max across all time points
   const siteCount = scope === "city"
-    ? Math.max(1, Math.round(maxBy(rows, "n_sites")))
+    ? Math.max(1, Math.round(maxBy(rows, "n_sites")
     : 1;
 
   const errors = rows.map(r => toNumber(r.pred_mw) - toNumber(r.actual_mw));
@@ -1426,7 +1426,7 @@ function computeMetrics(rows, scope) {
   // NRMSE denominator: city uses capacity_sum_mw mean; site uses capacity_mw mean
   const capacityDenom = scope === "city"
     ? meanBy(rows, "capacity_sum_mw")
-    : meanBy(rows, "capacity_mw");
+    : meanBy(rows, "capacity_mw")
 
   const nrmsePct = capacityDenom > 0 ? rmse / capacityDenom * 100 : 0;
   const ratio = actualSafe ? pred / actualSafe : null;
