@@ -702,26 +702,32 @@ def export_scatter_site_sample_nrmse(df, site_names, sm_df, metrics_df, dashboar
 
     merged["category_label"] = merged["site_id"].map(lambda s: cat_map.get(s, "其他"))
 
+    # Mark and filter out all-zero / no-positive sites
+    merged["is_all_zero_history"] = merged.apply(is_all_zero_history, axis=1)
+    # keep for return so caller can use it; write only valid sites to file
+    valid_merged = merged[~merged["is_all_zero_history"]].copy()
+
     # Round numeric cols
     for col in ["test_mae_mw", "test_rmse_mw", "test_nrmse_pct", "test_bias_pct",
                 "test_pred_actual_ratio", "train_valid_zero_ratio_pct"]:
-        if col in merged.columns:
-            merged[col] = merged[col].round(4)
+        if col in valid_merged.columns:
+            valid_merged[col] = valid_merged[col].round(4)
     for col in ["capacity_mw"]:
-        if col in merged.columns:
-            merged[col] = merged[col].round(4)
+        if col in valid_merged.columns:
+            valid_merged[col] = valid_merged[col].round(4)
 
     # Sort: category then nrmse
     cat_order = {"预测最好": 0, "预测最差": 1, "相对正确": 2, "样本少": 3, "其他": 4}
-    merged["_cat_order"] = merged["category_label"].map(lambda c: cat_order.get(c, 5))
-    merged = merged.sort_values(["_cat_order", "test_nrmse_pct"]).drop(columns=["_cat_order"])
+    valid_merged["_cat_order"] = valid_merged["category_label"].map(lambda c: cat_order.get(c, 5))
+    valid_merged = valid_merged.sort_values(["_cat_order", "test_nrmse_pct"]).drop(columns=["_cat_order"])
 
-    records = merged.to_dict(orient="records")
+    # Return both: valid records and the full merged (with is_all_zero_history) for invalid_zero export
+    records = valid_merged.to_dict(orient="records")
     out_path = Path(dashboard_root) / "scatter_site_sample_nrmse.json"
     with open(out_path, "w", encoding="utf-8") as f:
         json.dump(records, f, ensure_ascii=False, indent=2)
-    print(f"  [OK] scatter_site_sample_nrmse.json ({len(records)} sites)")
-    return records
+    print(f"  [OK] scatter_site_sample_nrmse.json ({len(records)} valid sites, all-zero sites excluded)")
+    return merged  # return full merged so caller can extract invalid sites
 
 
 def export_sample_requirement_summary(scatter_data, dashboard_root):
@@ -729,7 +735,9 @@ def export_sample_requirement_summary(scatter_data, dashboard_root):
     thresholds = [5, 10, 15, 20, 25]
     total = len(scatter_data)
     notes_base = (
-        "经验估计：在当前数据和当前模型下，达到指定NRMSE阈值的站点通常具备的全量历史样本量分布。"
+        "经验估计：在当前数据和当前模型下，达到指定NRMSE阈值的站点通常具备的历史样本量分布。"
+        "历史样本量仅包含 train/valid/test，不包含 future；"
+        "0值占比100%或无正功率样本的站点已从统计中剔除。"
         "样本量不是唯一决定因素，容量、站点映射、异常0值、限电、遮挡和气象插值都会影响最终NRMSE。"
     )
     results = []
