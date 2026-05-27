@@ -1687,15 +1687,15 @@ function bindLineZoomEvents() {
 // LINE CHART (SVG)
 // ============================================================
 function getActualValue(r) {
-  const v = r.actual_mw ?? r.power_mw ?? r.actual ?? r.y_true ?? 0;
+  const v = r.actual_mw ?? r.power_mw ?? r.actual ?? r.y_true;
   const n = Number(v);
-  return Number.isFinite(n) ? n : 0;
+  return Number.isFinite(n) ? n : null;
 }
 
 function getPredValue(r) {
-  const v = r.pred_mw ?? r.power_pred ?? r.pred ?? r.y_pred ?? 0;
+  const v = r.pred_mw ?? r.power_pred ?? r.pred ?? r.y_pred;
   const n = Number(v);
-  return Number.isFinite(n) ? n : 0;
+  return Number.isFinite(n) ? n : null;
 }
 
 function drawLineChart(rows) {
