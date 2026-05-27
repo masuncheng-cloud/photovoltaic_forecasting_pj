@@ -2470,13 +2470,15 @@ document.addEventListener("DOMContentLoaded", () => {
   // Site select
   document.getElementById("site-select").addEventListener("change", e => {
     state.siteId = e.target.value;
-    state.scope = state.siteId ? "site" : "city";
     if (state.siteId) {
       document.querySelector('input[name="scope"][value="site"]').checked = true;
       state.scope = "site";
+    } else {
+      state.scope = "city";
     }
-    onScopeChange();
-    refreshAll();
+    if (onScopeChange() !== false) {
+      refreshAll();
+    }
   });
 
   // Date/hours — date changes handled by bindDateComboEvents()
