@@ -2134,9 +2134,11 @@ function selectSite(siteId) {
   document.querySelector('input[name="scope"][value="site"]').checked = true;
   state.scope = "site";
   state.siteId = siteId;
-  document.getElementById("site-select").value = siteId;
-  onScopeChange();
-  refreshAll();
+  const sel = document.getElementById("site-select");
+  if (sel) sel.value = siteId;
+  if (onScopeChange() !== false) {
+    refreshAll();
+  }
 }
 
 // ============================================================
@@ -2459,8 +2461,9 @@ document.addEventListener("DOMContentLoaded", () => {
   document.querySelectorAll('input[name="scope"]').forEach(r => {
     r.addEventListener("change", () => {
       state.scope = r.value;
-      onScopeChange();
-      refreshAll();
+      if (onScopeChange() !== false) {
+        refreshAll();
+      }
     });
   });
 
