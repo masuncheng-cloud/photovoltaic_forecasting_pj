@@ -2107,7 +2107,10 @@ function selectSite(siteId) {
 function onScopeChange() {
   const isSite = state.scope === "site";
   document.getElementById("site-select-group").style.display = isSite ? "flex" : "none";
-  document.getElementById("btn-midday").disabled = isSite;
+  const btnCurrent = document.getElementById("btn-current-midday");
+  const btnTypical = document.getElementById("btn-typical-midday");
+  if (btnCurrent) btnCurrent.disabled = isSite;
+  if (btnTypical) btnTypical.disabled = isSite;
 }
 
 // ============================================================
