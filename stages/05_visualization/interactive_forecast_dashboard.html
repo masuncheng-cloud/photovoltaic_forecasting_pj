@@ -197,6 +197,35 @@ input[type="number"] { width: 60px; }
   font-size: 12px;
 }
 
+/* 10-14 分类按钮 */
+.btn-purple {
+  background: #f5f3ff;
+  border-color: #c4b5fd;
+  color: #6d28d9;
+}
+.btn-purple:hover {
+  background: #ede9fe;
+  border-color: #8b5cf6;
+}
+
+.btn-indigo {
+  background: #eef2ff;
+  border-color: #a5b4fc;
+  color: #4338ca;
+}
+.btn-indigo:hover {
+  background: #e0e7ff;
+  border-color: #6366f1;
+}
+
+/* 提示文字 */
+.hint-text {
+  margin-top: 6px;
+  color: #64748b;
+  font-size: 13px;
+  line-height: 1.6;
+}
+
 .divider { width: 1px; height: 24px; background: #dde3ec; margin: 0 4px; }
 
 /* ---- Cards ---- */
@@ -692,9 +721,16 @@ tbody td {
   <div class="divider"></div>
 
   <div class="ctrl-group">
-    <button class="btn btn-topic" id="btn-midday"
-      data-help="切换到全市视角，并聚焦典型日期的10-14点正午高出力时段，用于查看峰值时段真实功率与预测功率的贴合情况。"
-    >连云港全市10-14</button>
+    <button
+      class="btn btn-purple"
+      id="btn-current-midday"
+      data-help="保持当前日期范围不变，仅切换为全市视角并筛选10-14点。"
+    >当前日期10-14</button>
+    <button
+      class="btn btn-indigo"
+      id="btn-typical-midday"
+      data-help="自动选择一个10-14点表现接近中位数的典型日期，并切换为全市10-14点。"
+    >典型日10-14</button>
   </div>
   <div class="divider"></div>
 
