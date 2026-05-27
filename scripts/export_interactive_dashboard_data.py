@@ -35,6 +35,47 @@ import sys
 if os.path.exists(PYTHON_BIN):
     sys.executable = PYTHON_BIN
 
+# ============================================================
+# SHARED FILTER FUNCTIONS
+# ============================================================
+HISTORY_SPLITS = ["train", "valid", "test"]
+EVAL_SPLIT = "test"
+EVAL_HOURS = list(range(6, 20))
+
+
+def build_history_frame(df: pd.DataFrame) -> pd.DataFrame:
+    """可视化历史展示口径：只保留 train/valid/test，不包含 future。"""
+    out = df[df["split"].isin(HISTORY_SPLITS)].copy()
+    if "time" in out.columns:
+        out["time"] = pd.to_datetime(out["time"], errors="coerce")
+    if "hour" not in out.columns:
+        out["hour"] = out["time"].dt.hour
+    if "date" not in out.columns:
+        out["date"] = out["time"].dt.strftime("%Y-%m-%d")
+    return out
+
+
+def build_eval_frame_for_dashboard(df: pd.DataFrame) -> pd.DataFrame:
+    """可视化评估口径：只用 test 集 6-19 点，有真实值和预测值。"""
+    out = build_history_frame(df)
+    out = out[
+        out["split"].eq(EVAL_SPLIT)
+        & out["hour"].isin(EVAL_HOURS)
+        & out["power_mw"].notna()
+        & out["power_pred"].notna()
+        & out["capacity_mw"].notna()
+        & (out["capacity_mw"] > 0)
+    ].copy()
+    return out
+
+
+def is_all_zero_history(row) -> bool:
+    """判断站点是否全0（正功率样本数为0或0值占比>=99.999%）。"""
+    return (
+        (row.get("full_history_positive_rows") or 0) <= 0
+        or (row.get("full_history_zero_ratio_pct") or 0) >= 99.999
+    )
+
 
 def parse_args():
     parser = argparse.ArgumentParser(description="Export interactive dashboard data")
