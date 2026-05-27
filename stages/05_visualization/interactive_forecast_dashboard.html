@@ -906,7 +906,7 @@ tbody td {
   </div>
   <svg id="scatter-chart"></svg>
   <div id="scatter-desc" style="font-size:11px;color:#718096;margin-top:6px;">
-    本图每个点代表一个站点。横轴为该站点在预测表中的全量历史记录数，纵轴为该站点在测试集上的最终 NRMSE。点越靠右表示历史数据越多，点越靠下表示预测精度越高。样本量不是唯一决定因素，容量、站点映射、异常0值、限电、遮挡和气象插值都会影响最终 NRMSE。
+    本图每个点代表一个具备有效发电样本的站点。横轴为该站点历史样本数（train/valid/test，不包含 future），纵轴为测试集 6-19 点 NRMSE。点越靠右表示历史数据越多，点越靠下表示预测精度越高。0 值占比 100% 或无正功率样本的站点不参与本图统计，单独列入下方"无有效发电样本站点"。样本量不是唯一决定因素，容量、站点映射、异常0值、限电、遮挡和气象插值都会影响最终 NRMSE。
   </div>
 
   <div id="sample-req-table-wrap" style="margin-top:12px;">
@@ -922,7 +922,7 @@ tbody td {
       </thead>
       <tbody></tbody>
     </table>
-    <div id="threshold-note">说明：这里统计的是单站点在预测表中的全量历史样本数，包含夜间、0值、训练集、验证集、测试集及 future 行；测试 NRMSE 仍只使用测试集 6-19 点计算。样本量不是唯一决定因素，容量、站点映射、异常0值、限电、遮挡和气象插值都会影响最终 NRMSE。</div>
+    <div id="threshold-note">说明：这里统计的是已达到不同 NRMSE 阈值的有效发电站点的历史样本量分布；历史样本量不包含 future；无正功率样本或 0 值占比 100% 的站点已剔除。样本量不是唯一决定因素，容量、站点映射、异常0值、限电、遮挡和气象插值都会影响最终 NRMSE。</div>
   </div>
 
   <div id="sample-bins-wrap" style="margin-top:12px;">
