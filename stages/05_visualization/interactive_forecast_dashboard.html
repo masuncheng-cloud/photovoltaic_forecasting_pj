@@ -2350,7 +2350,7 @@ async function refreshAll() {
   if (state.scope === "site") {
     const ok = ensureDefaultSiteSelected();
     if (!ok) {
-      updateMetricsCards({ samples: 0, sites: 0, actualSum: 0, predSum: 0, mae: 0, rmse: 0, nrmse: 0, bias: 0, ratio: 0 }, []);
+      updateMetricsCards([]);
       setLineRows([]);
       drawLineChart([]);
       updateLineZoomInfo();
@@ -2359,16 +2359,15 @@ async function refreshAll() {
   }
 
   const rows = await getFilteredRows();
-  const isSite = state.scope === "site";
-  const m = computeMetrics(rows, isSite);
-  updateMetricsCards(m, rows);
+  const m = computeMetrics(rows, state.scope);
+  updateMetricsCards(rows);
 
   setLineRows(rows);
   console.info("[line-chart] full rows:", gLineRowsFull.length);
   resetLineZoom();
 
   drawHourlyNrmseChart();
-  if (!isSite) drawScatterChart(gScatterSite);
+  if (state.scope !== "site") drawScatterChart(gScatterSite);
 }
 
 // ============================================================
