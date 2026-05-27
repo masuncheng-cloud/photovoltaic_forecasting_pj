@@ -1171,7 +1171,7 @@ def main():
     assert len(metrics_df) > 0, "site_metrics is empty"
     assert len(scatter_data) > 0, "scatter is empty"
     assert len(site_ids) > 0, "no site series files"
-    assert len(scatter_site) > 0, "scatter_site_sample_nrmse is empty"
+    assert isinstance(scatter_site, list) and len(scatter_site) > 0, "scatter_site_sample_nrmse is empty"
     assert len(sample_req_summary) == 5, f"expected 5 thresholds, got {len(sample_req_summary)}"
     assert len(sample_req_bins) > 0, "sample_requirement_bins is empty"
     assert "train_valid_positive_rows" in scatter_site[0], "missing train_valid_positive_rows field"
@@ -1187,6 +1187,17 @@ def main():
     assert "rows" in hourly_summary[0], "missing rows field"
     assert "site_nrmse_mean_pct" in hourly_summary[0], "missing site_nrmse_mean_pct field"
     assert "city_nrmse_pct" in hourly_summary[0], "missing city_nrmse_pct field"
+    # Verify future is excluded from city_series
+    future_in_city = any(r.get("split") == "future" for r in city.to_dict(orient="records"))
+    assert not future_in_city, "city_series still contains future rows"
+    # Verify all-zero sites excluded from scatter
+    bad_scatter = [
+        r for r in scatter_site
+        if (r.get("full_history_positive_rows") or 0) <= 0
+        or (r.get("full_history_zero_ratio_pct") or 0) >= 99.999
+    ]
+    assert not bad_scatter, f"scatter contains all-zero sites: {[r.get('site_id') for r in bad_scatter]}"
+    assert isinstance(invalid_zero_sites, list), "invalid_zero_sites.json not valid"
     total_actual = city["actual_mw"].sum()
     total_pred = city["pred_mw"].sum()
     assert total_actual > 0, "actual_mw all zero"
@@ -1194,23 +1205,22 @@ def main():
     print(f"  All assertions passed.")
 
     # Summary
-    dates = pd.to_datetime(df["date"]).dropna().unique()
-    min_date = pd.to_datetime(dates).min().strftime("%Y-%m-%d")
-    max_date = pd.to_datetime(dates).max().strftime("%Y-%m-%d")
+    history_df = build_history_frame(df)
+    history_dates = pd.to_datetime(history_df["date"]).dropna().unique()
+    min_date = pd.to_datetime(history_dates).min().strftime("%Y-%m-%d")
+    max_date = pd.to_datetime(history_dates).max().strftime("%Y-%m-%d")
     site_series_dir = Path(dashboard_root) / "site_series"
     site_series_count = len(list(site_series_dir.glob("*.json")))
-    dates = pd.to_datetime(df["date"]).dropna().unique()
-    min_date = pd.to_datetime(dates).min().strftime("%Y-%m-%d")
-    max_date = pd.to_datetime(dates).max().strftime("%Y-%m-%d")
 
     print(f"\n[OK] interactive dashboard data exported")
-    print(f"     rows        = {len(df[df['split'].isin(['train','valid','test']) & df['hour'].between(6,19)]):,}")
+    print(f"     rows        = {len(history_df[history_df['hour'].between(6,19)]):,}")
     print(f"     sites       = {len(site_ids)}")
     print(f"     date_range  = {min_date} ~ {max_date}")
     print(f"     city_series = {len(city):,} rows")
     print(f"     site_series = {site_series_count} files")
     print(f"     scatter_pts (site-hour) = {len(scatter_data)}")
     print(f"     scatter_pts (site)      = {len(scatter_site)}")
+    print(f"     invalid_zero_sites      = {len(invalid_zero_sites)}")
     print(f"     hourly_prediction_summary = {len(hourly_summary)} rows (6-19h)")
     print(f"\nDashboard root: {dashboard_root}")
     print(f"Run: python -m http.server 8060")
