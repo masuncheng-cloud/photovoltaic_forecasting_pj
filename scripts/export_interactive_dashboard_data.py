@@ -1360,6 +1360,16 @@ def main():
     assert total_pred > 0, "pred_mw all zero"
     print(f"  All assertions passed.")
 
+    # [11b] Validate dashboard actual_mw against source pkl
+    print("\n[11b] Validating dashboard actual values...")
+    integrity_summary = validate_dashboard_actual_values(df, dashboard_root, output_root)
+    assert integrity_summary["status"] == "PASS", f"integrity check failed: {integrity_summary}"
+    assert integrity_summary["max_abs_diff"] <= 1e-9, f"max_abs_diff too large: {integrity_summary['max_abs_diff']}"
+
+    # [11c] Secondary validation against power_clean.pkl
+    print("\n[11c] Validating against power_clean.pkl...")
+    validate_against_power_clean(dashboard_root, output_root)
+
     # Summary
     history_df = build_history_frame(df)
     history_dates = pd.to_datetime(history_df["date"]).dropna().unique()
