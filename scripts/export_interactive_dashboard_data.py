@@ -721,13 +721,13 @@ def export_scatter_site_sample_nrmse(df, site_names, sm_df, metrics_df, dashboar
     valid_merged["_cat_order"] = valid_merged["category_label"].map(lambda c: cat_order.get(c, 5))
     valid_merged = valid_merged.sort_values(["_cat_order", "test_nrmse_pct"]).drop(columns=["_cat_order"])
 
-    # Return both: valid records and the full merged (with is_all_zero_history) for invalid_zero export
+    # Return both: valid records (for downstream) and full merged df (for invalid_zero extraction)
     records = valid_merged.to_dict(orient="records")
     out_path = Path(dashboard_root) / "scatter_site_sample_nrmse.json"
     with open(out_path, "w", encoding="utf-8") as f:
         json.dump(records, f, ensure_ascii=False, indent=2)
     print(f"  [OK] scatter_site_sample_nrmse.json ({len(records)} valid sites, all-zero sites excluded)")
-    return merged  # return full merged so caller can extract invalid sites
+    return records  # valid records list for downstream use
 
 
 def export_sample_requirement_summary(scatter_data, dashboard_root):
