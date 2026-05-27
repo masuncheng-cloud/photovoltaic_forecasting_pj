@@ -981,6 +981,25 @@ function bindHelpTooltips() {
   });
 }
 
+function validateDateRange(showMessage = true) {
+  const msg = document.getElementById("date-range-message");
+  const valid = state.startDate <= state.endDate;
+
+  if (msg) {
+    msg.textContent = valid ? "" : "开始日期不能晚于结束日期";
+    msg.style.display = valid ? "none" : "inline-flex";
+  }
+
+  return valid;
+}
+
+function syncHiddenDateInputs() {
+  const startInput = document.getElementById("start-date");
+  const endInput = document.getElementById("end-date");
+  if (startInput) startInput.value = state.startDate;
+  if (endInput) endInput.value = state.endDate;
+}
+
 function bindDateComboEvents() {
   if (dateComboBound) return;
   dateComboBound = true;
