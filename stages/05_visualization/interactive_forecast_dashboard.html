@@ -2425,33 +2425,76 @@ document.addEventListener("DOMContentLoaded", () => {
   document.getElementById("btn-normal").addEventListener("click", () => selectTypical("normal"));
   document.getElementById("btn-low").addEventListener("click", () => selectTypical("low_sample"));
 
-  // Midday button
-  document.getElementById("btn-midday").addEventListener("click", () => {
-    // Find day with NRMSE closest to median in midday data
-    if (!gMiddayByDate || !gMiddayByDate.length) return;
-    const midNrmse = gMiddayByDate
-      .filter(d => d.nrmse_pct != null && isFinite(d.nrmse_pct))
-      .map(d => d.nrmse_pct);
-    const medianNrmse = midNrmse.sort((a, b) => a - b)[Math.floor(midNrmse.length / 2)] || 0;
-    const closest = gMiddayByDate
-      .filter(d => d.nrmse_pct != null)
-      .sort((a, b) => Math.abs(a.nrmse_pct - medianNrmse) - Math.abs(b.nrmse_pct - medianNrmse))[0];
-    if (!closest) return;
-    state.scope = "city";
-    document.querySelector('input[name="scope"][value="city"]').checked = true;
-    state.startDate = closest.date;
-    state.endDate = closest.date;
-    state.startHour = 10;
-    state.endHour = 14;
-    setDateComboValue("start", state.startDate);
-    setDateComboValue("end", state.endDate);
-    document.getElementById("start-date").value = state.startDate;
-    document.getElementById("end-date").value = state.endDate;
-    document.getElementById("start-hour").value = 10;
-    document.getElementById("end-hour").value = 14;
-    onScopeChange();
-    refreshAll();
-  });
+  // Midday buttons — current date range 10-14
+  const btnCurrentMidday = document.getElementById("btn-current-midday");
+  if (btnCurrentMidday) {
+    btnCurrentMidday.addEventListener("click", () => {
+      state.scope = "city";
+      state.startHour = 10;
+      state.endHour = 14;
+
+      const cityRadio = document.querySelector('input[name="scope"][value="city"]');
+      if (cityRadio) cityRadio.checked = true;
+
+      const startHourInput = document.getElementById("start-hour");
+      const endHourInput = document.getElementById("end-hour");
+      if (startHourInput) startHourInput.value = 10;
+      if (endHourInput) endHourInput.value = 14;
+
+      if (typeof onScopeChange === "function") onScopeChange();
+      if (!validateDateRange(true)) return;
+      refreshAll();
+    });
+  }
+
+  // Typical midday date
+  const btnTypicalMidday = document.getElementById("btn-typical-midday");
+  if (btnTypicalMidday) {
+    btnTypicalMidday.addEventListener("click", () => {
+      if (!gMiddayByDate || !gMiddayByDate.length) {
+        alert("没有可用的全市10-14典型日数据");
+        return;
+      }
+
+      const validDays = gMiddayByDate.filter(d => {
+        const v = Number(d.nrmse_pct);
+        return d.date && Number.isFinite(v);
+      });
+
+      if (!validDays.length) {
+        alert("没有可用的全市10-14典型日数据");
+        return;
+      }
+
+      const sortedVals = validDays.map(d => Number(d.nrmse_pct)).sort((a, b) => a - b);
+      const median = sortedVals[Math.floor(sortedVals.length / 2)];
+      const closest = validDays.slice().sort((a, b) =>
+        Math.abs(Number(a.nrmse_pct) - median) - Math.abs(Number(b.nrmse_pct) - median)
+      )[0];
+
+      state.scope = "city";
+      state.startDate = closest.date;
+      state.endDate = closest.date;
+      state.startHour = 10;
+      state.endHour = 14;
+
+      const cityRadio = document.querySelector('input[name="scope"][value="city"]');
+      if (cityRadio) cityRadio.checked = true;
+
+      setDateComboValue("start", state.startDate);
+      setDateComboValue("end", state.endDate);
+      syncHiddenDateInputs();
+
+      const startHourInput = document.getElementById("start-hour");
+      const endHourInput = document.getElementById("end-hour");
+      if (startHourInput) startHourInput.value = 10;
+      if (endHourInput) endHourInput.value = 14;
+
+      if (typeof onScopeChange === "function") onScopeChange();
+      validateDateRange(false);
+      refreshAll();
+    });
+  }
 
   // Season buttons
   ["spring", "summer", "autumn", "winter"].forEach(s => {
