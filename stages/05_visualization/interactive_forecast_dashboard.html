@@ -974,6 +974,7 @@ let gSampleReqBins = [];
 let gHourlySummary = [];
 let gSeasonDays = [];
 let gMiddayByDate = [];
+let gInvalidZeroSites = [];
 
 // In-memory site series cache
 const siteSeriesCache = {};
@@ -1173,7 +1174,7 @@ function bindDateComboEvents() {
 // DATA LOADING
 // ============================================================
 async function loadAll() {
-  const [idx, city, metrics, scatter, threshold, seasons, midday, scatterSite, sampleReq, sampleBins, hourly] = await Promise.all([
+  const [idx, city, metrics, scatter, threshold, seasons, midday, scatterSite, sampleReq, sampleBins, hourly, invalidZero] = await Promise.all([
     fetchJSON(DASHBOARD_BASE + "index.json"),
     fetchJSON(DASHBOARD_BASE + "city_series.json"),
     fetchJSON(DASHBOARD_BASE + "site_metrics.json"),
@@ -1186,6 +1187,10 @@ async function loadAll() {
     fetchJSON(DASHBOARD_BASE + "sample_requirement_bins.json"),
     fetchJSON(DASHBOARD_BASE + "hourly_prediction_summary.json").catch(() => {
       console.warn("hourly_prediction_summary.json not found");
+      return [];
+    }),
+    fetchJSON(DASHBOARD_BASE + "invalid_zero_sites.json").catch(() => {
+      console.warn("invalid_zero_sites.json not found");
       return [];
     }),
   ]);
@@ -1201,6 +1206,7 @@ async function loadAll() {
   gHourlySummary = hourly || [];
   gSeasonDays = seasons;
   gMiddayByDate = midday;
+  gInvalidZeroSites = invalidZero || [];
 
   // Set date range defaults
   state.startDate = idx.default_start_date || idx.min_date;
