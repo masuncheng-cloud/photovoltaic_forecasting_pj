@@ -278,8 +278,8 @@ def export_site_series(df, site_names, dashboard_root):
 
 def export_site_metrics(df, site_names, dashboard_root):
     """Export site_metrics.json with per-site statistics and categories."""
-    # Full-history stats (no filters: no split, no hour, no sign restriction)
-    full_df = df.copy()
+    # Full-history stats: train/valid/test only (no future), no hour/power filter
+    full_df = build_history_frame(df)
     if "time" in full_df.columns and not pd.api.types.is_datetime64_any_dtype(full_df["time"]):
         full_df["time"] = pd.to_datetime(full_df["time"], errors="coerce")
 
@@ -303,16 +303,11 @@ def export_site_metrics(df, site_names, dashboard_root):
     full_hist["full_history_start_date"] = full_hist["full_history_start_date"].dt.strftime("%Y-%m-%d")
     full_hist["full_history_end_date"] = full_hist["full_history_end_date"].dt.strftime("%Y-%m-%d")
 
-    # Daytime test-set stats (for MAE/RMSE/NRMSE)
-    df_f = df[
-        df["split"].isin(["train", "valid", "test"])
-        & df["hour"].between(6, 19)
-        & df["power_mw"].notna()
-        & df["power_pred"].notna()
-    ].copy()
+    # Daytime test-set stats for MAE/RMSE/NRMSE (test 6-19h, non-null)
+    eval_df = build_eval_frame_for_dashboard(df)
 
     rows = []
-    for sid, sdf in df_f.groupby("site_id"):
+    for sid, sdf in eval_df.groupby("site_id"):
         rows.append({
             "site_id": sid,
             "site_name": site_names.get(sid, sid) if site_names else sid,
@@ -353,12 +348,16 @@ def export_site_metrics(df, site_names, dashboard_root):
         "full_history_zero_ratio_pct", "full_history_start_date", "full_history_end_date",
     ]], on="site_id", how="left")
 
-    # --- Typical site classification (uses daytime test rows for consistent comparison) ---
+    # ---- Mark all-zero / no-positive sites ----
+    metrics_df["is_all_zero_history"] = metrics_df.apply(is_all_zero_history, axis=1)
+
+    # ---- Typical site classification (uses only valid sites, i.e. test 6-19h rows) ----
     rows_q20 = np.percentile(metrics_df["rows"], 20)
     min_rows = max(200, rows_q20)
 
-    best_candidates = metrics_df[
-        (metrics_df["rows"] >= min_rows) & (metrics_df["positive_rows"] >= 100)
+    valid_metrics_df = metrics_df[~metrics_df["is_all_zero_history"]].copy()
+    best_candidates = valid_metrics_df[
+        (valid_metrics_df["rows"] >= min_rows) & (valid_metrics_df["positive_rows"] >= 100)
     ].copy()
     best_candidates["_sort_nrmse"] = best_candidates["nrmse_pct"]
 
@@ -377,7 +376,7 @@ def export_site_metrics(df, site_names, dashboard_root):
     normal_df = normal_df.nsmallest(5, "_sort_ratio_diff")
 
     # low_sample: smallest rows
-    low_sample_df = metrics_df.nsmallest(5, "rows")
+    low_sample_df = valid_metrics_df.nsmallest(5, "rows")
 
     category_map = {}
     for _, row in best_df.iterrows():
@@ -389,7 +388,7 @@ def export_site_metrics(df, site_names, dashboard_root):
     for _, row in low_sample_df.iterrows():
         category_map[row["site_id"]] = ("low_sample", "样本少")
 
-    # Priority: low_sample > worst > best > normal
+    # Priority: low_sample > worst > best > normal; invalid_zero has its own bucket
     final_map = {}
     for sid in metrics_df["site_id"]:
         if sid in category_map:
@@ -397,7 +396,10 @@ def export_site_metrics(df, site_names, dashboard_root):
 
     for sid in metrics_df["site_id"]:
         if sid not in final_map:
-            final_map[sid] = ("other", "其他")
+            if metrics_df[metrics_df["site_id"] == sid]["is_all_zero_history"].iloc[0]:
+                final_map[sid] = ("invalid_zero", "无有效发电样本")
+            else:
+                final_map[sid] = ("other", "其他")
 
     # Apply
     metrics_df["category"] = metrics_df["site_id"].map(lambda s: final_map[s][0])
@@ -412,6 +414,7 @@ def export_site_metrics(df, site_names, dashboard_root):
         "full_history_rows", "full_history_non_null_rows",
         "full_history_positive_rows", "full_history_zero_rows",
         "full_history_zero_ratio_pct", "full_history_start_date", "full_history_end_date",
+        "is_all_zero_history",
     ]
     metrics_df = metrics_df[out_cols]
 
