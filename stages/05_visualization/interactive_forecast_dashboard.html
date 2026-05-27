@@ -1376,69 +1376,98 @@ async function filterSiteSeries(siteId) {
 // ============================================================
 // METRICS CALCULATION
 // ============================================================
-function computeMetrics(rows, isSite) {
-  if (!rows || rows.length === 0) {
-    return { samples: 0, sites: 0, actualSum: 0, predSum: 0,
-             mae: 0, rmse: 0, nrmse: 0, bias: 0, ratio: 0 };
+function toNumber(v, fallback = 0) {
+  const x = Number(v);
+  return Number.isFinite(x) ? x : fallback;
+}
+
+function sumBy(rows, key) {
+  return rows.reduce((acc, r) => acc + toNumber(r[key], 0), 0);
+}
+
+function maxBy(rows, key) {
+  if (!rows.length) return 0;
+  return Math.max(...rows.map(r => toNumber(r[key], 0)));
+}
+
+function meanBy(rows, key) {
+  const vals = rows.map(r => toNumber(r[key], NaN)).filter(Number.isFinite);
+  if (!vals.length) return 0;
+  return vals.reduce((a, b) => a + b, 0) / vals.length;
+}
+
+function computeMetrics(rows, scope) {
+  if (!rows || !rows.length) {
+    return { sampleCount: 0, siteCount: 0, actualMwh: 0, predMwh: 0, maeMw: 0, rmseMw: 0, nrmsePct: 0, biasPct: null, ratio: null };
   }
 
-  const actuals = rows.map(r => r.actual_mw || r.actual_mw);
-  const preds = rows.map(r => r.pred_mw || r.pred_mw);
+  const actual = sumBy(rows, "actual_mw");
+  const pred = sumBy(rows, "pred_mw");
+  const actualSafe = Math.abs(actual) > 1e-9 ? actual : null;
 
-  const actualSum = actuals.reduce((a, b) => a + b, 0);
-  const predSum = preds.reduce((a, b) => a + b, 0);
+  // city_series: each row = one time point; sample_count = sites contributing at that time
+  // site_series: each row = one site at one time; rows.length = sample count
+  const sampleCount = scope === "city"
+    ? Math.round(sumBy(rows, "sample_count"))
+    : rows.length;
 
-  // MAE
-  let mae = 0;
-  let rmseSum = 0;
-  let count = 0;
-  let capSum = 0;
-  for (let i = 0; i < rows.length; i++) {
-    const err = preds[i] - actuals[i];
-    mae += Math.abs(err);
-    rmseSum += err * err;
-    capSum += rows[i].capacity_mw || rows[i].capacity_sum_mw || 1;
-    count++;
-  }
-  mae /= count;
-  const rmse = Math.sqrt(rmseSum / count);
-  const capMean = capSum / count;
+  // n_sites in city_series = sites contributing at that time; take max across all time points
+  const siteCount = scope === "city"
+    ? Math.max(1, Math.round(maxBy(rows, "n_sites")))
+    : 1;
 
-  const nrmse = isSite ? (rmse / Math.max(capMean, 1e-9) * 100) : rmse;
-  const bias = (predSum - actualSum) / Math.max(actualSum, 1e-9) * 100;
-  const ratio = predSum / Math.max(actualSum, 1e-9);
+  const errors = rows.map(r => toNumber(r.pred_mw) - toNumber(r.actual_mw));
+  const absErrors = errors.map(Math.abs);
+  const mae = absErrors.length ? absErrors.reduce((a, b) => a + b, 0) / absErrors.length : 0;
+  const rmse = errors.length
+    ? Math.sqrt(errors.reduce((a, b) => a + b * b, 0) / errors.length)
+    : 0;
 
-  // Site count
-  const siteIds = new Set(rows.map(r => r.site_id));
-  const siteCount = isSite ? 1 : siteIds.size;
+  // NRMSE denominator: city uses capacity_sum_mw mean; site uses capacity_mw mean
+  const capacityDenom = scope === "city"
+    ? meanBy(rows, "capacity_sum_mw")
+    : meanBy(rows, "capacity_mw");
+
+  const nrmsePct = capacityDenom > 0 ? rmse / capacityDenom * 100 : 0;
+  const ratio = actualSafe ? pred / actualSafe : null;
+  const biasPct = actualSafe ? (pred - actual) / actualSafe * 100 : null;
 
   return {
-    samples: count,
-    sites: siteCount,
-    actualSum: actualSum,
-    predSum: predSum,
-    mae: mae,
-    rmse: rmse,
-    nrmse: nrmse,
-    bias: bias,
-    ratio: ratio,
+    sampleCount,
+    siteCount,
+    actualMwh: actual,
+    predMwh: pred,
+    maeMw: mae,
+    rmseMw: rmse,
+    nrmsePct,
+    biasPct,
+    ratio,
   };
 }
 
 // ============================================================
 // METRICS DISPLAY
 // ============================================================
-function updateMetricsCards(metrics, rows) {
-  const isSite = state.scope === "site";
-  document.getElementById("m-samples").textContent = metrics.samples.toLocaleString();
-  document.getElementById("m-sites").textContent = metrics.sites;
-  document.getElementById("m-actual").textContent = fmt2(metrics.actualSum);
-  document.getElementById("m-pred").textContent = fmt2(metrics.predSum);
-  document.getElementById("m-ratio").textContent = fmt2(metrics.ratio);
-  document.getElementById("m-mae").textContent = fmt2(metrics.mae);
-  document.getElementById("m-rmse").textContent = fmt2(metrics.rmse);
-  document.getElementById("m-nrmse").textContent = fmt2(metrics.nrmse);
-  document.getElementById("m-bias").textContent = fmt2(metrics.bias);
+function setCardValue(id, value) {
+  const el = document.getElementById(id);
+  if (el) el.textContent = value;
+}
+
+function updateMetricsCards(rows) {
+  const scope = state.scope;
+  const metrics = computeMetrics(rows, scope);
+
+  setCardValue("m-samples", Number.isFinite(metrics.sampleCount)
+    ? Math.round(metrics.sampleCount).toLocaleString("zh-CN") : "0");
+  setCardValue("m-sites", Number.isFinite(metrics.siteCount)
+    ? Math.round(metrics.siteCount).toLocaleString("zh-CN") : "0");
+  setCardValue("m-actual", fmt2(metrics.actualMwh));
+  setCardValue("m-pred", fmt2(metrics.predMwh));
+  setCardValue("m-ratio", formatRatio(metrics.ratio));
+  setCardValue("m-mae", fmt2(metrics.maeMw));
+  setCardValue("m-rmse", fmt2(metrics.rmseMw));
+  setCardValue("m-nrmse", fmt2(metrics.nrmsePct));
+  setCardValue("m-bias", metrics.biasPct === null ? "-" : fmt2(metrics.biasPct));
 }
 
 // ============================================================
