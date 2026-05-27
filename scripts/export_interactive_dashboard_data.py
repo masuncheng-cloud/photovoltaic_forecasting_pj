@@ -428,9 +428,8 @@ def export_site_metrics(df, site_names, dashboard_root):
 
 def export_midday_city(df, dashboard_root):
     """Export midday_city_by_date.json for 10-14h city-level daily stats."""
-    df_f = df[
-        df["split"].isin(["train", "valid", "test"])
-        & df["hour"].between(10, 14)
+    df_f = build_history_frame(df)
+    df_f = df_f[
         & df["power_mw"].notna()
         & df["power_pred"].notna()
     ].copy()
