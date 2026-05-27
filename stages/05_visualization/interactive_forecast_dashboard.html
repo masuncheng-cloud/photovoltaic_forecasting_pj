@@ -1174,7 +1174,7 @@ function bindDateComboEvents() {
 // DATA LOADING
 // ============================================================
 async function loadAll() {
-  const [idx, city, metrics, scatter, threshold, seasons, midday, scatterSite, sampleReq, sampleBins, hourly, invalidZero] = await Promise.all([
+  const [idx, city, metrics, scatter, threshold, seasons, midday, scatterSite, sampleReq, sampleBins, hourly, invalidZero, integrity] = await Promise.all([
     fetchJSON(DASHBOARD_BASE + "index.json"),
     fetchJSON(DASHBOARD_BASE + "city_series.json"),
     fetchJSON(DASHBOARD_BASE + "site_metrics.json"),
@@ -1193,6 +1193,7 @@ async function loadAll() {
       console.warn("invalid_zero_sites.json not found");
       return [];
     }),
+    fetchJSON(DASHBOARD_BASE + "data_integrity_check.json").catch(() => null),
   ]);
 
   gIndex = idx;
@@ -1207,6 +1208,7 @@ async function loadAll() {
   gSeasonDays = seasons;
   gMiddayByDate = midday;
   gInvalidZeroSites = invalidZero || [];
+  window.gDataIntegrity = integrity || null;
 
   // Set date range defaults
   state.startDate = idx.default_start_date || idx.min_date;
