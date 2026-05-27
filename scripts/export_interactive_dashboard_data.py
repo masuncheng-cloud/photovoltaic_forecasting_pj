@@ -1150,7 +1150,10 @@ def main():
     sm_df = load_site_master_full(output_root)
     scatter_site = export_scatter_site_sample_nrmse(df, site_names, sm_df, metrics_df, dashboard_root)
 
-    print("\n[9c] Exporting sample_requirement_summary.json...")
+    print("\n[9c] Exporting invalid_zero_sites.json...")
+    invalid_zero_sites = export_invalid_zero_sites(metrics_df, dashboard_root)
+
+    print("\n[9d] Exporting sample_requirement_summary.json...")
     sample_req_summary = export_sample_requirement_summary(scatter_site, dashboard_root)
 
     print("\n[9d] Exporting sample_requirement_bins.json...")
