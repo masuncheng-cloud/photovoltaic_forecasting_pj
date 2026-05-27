@@ -430,8 +430,9 @@ def export_midday_city(df, dashboard_root):
     """Export midday_city_by_date.json for 10-14h city-level daily stats."""
     df_f = build_history_frame(df)
     df_f = df_f[
-        & df["power_mw"].notna()
-        & df["power_pred"].notna()
+        df_f["hour"].between(10, 14)
+        & df_f["power_mw"].notna()
+        & df_f["power_pred"].notna()
     ].copy()
 
     daily = df_f.groupby("date").agg(
@@ -482,11 +483,11 @@ def export_midday_city(df, dashboard_root):
 
 def export_season_days(df, dashboard_root):
     """Export season_days.json with one representative day per season."""
-    df_f = df[
-        df["split"].isin(["train", "valid", "test"])
-        & df["hour"].between(6, 19)
-        & df["power_mw"].notna()
-        & df["power_pred"].notna()
+    df_f = build_history_frame(df)
+    df_f = df_f[
+        df_f["hour"].between(6, 19)
+        & df_f["power_mw"].notna()
+        & df_f["power_pred"].notna()
     ].copy()
 
     df_f["month"] = pd.to_datetime(df_f["date"]).dt.month
