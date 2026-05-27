@@ -661,6 +661,72 @@ tbody td {
     grid-template-columns: 1fr;
   }
 }
+
+/* ---- Invalid Zero Sites Panel ---- */
+.panel {
+  background: #fff;
+  border: 1px solid #dde3ec;
+  border-radius: 6px;
+  padding: 14px;
+  margin-bottom: 14px;
+}
+
+.panel h3 {
+  font-size: 14px;
+  font-weight: 600;
+  color: #2d3748;
+  margin-bottom: 4px;
+}
+
+.panel .hint-text {
+  margin-bottom: 10px;
+}
+
+.empty-note {
+  font-size: 12px;
+  color: #a0aec0;
+  font-style: italic;
+  padding: 8px 0;
+}
+
+#invalid-zero-sites-table {
+  overflow-x: auto;
+  max-height: 320px;
+  overflow-y: auto;
+}
+
+#invalid-zero-sites-table table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 12px;
+}
+
+#invalid-zero-sites-table thead th {
+  background: #f0f4f8;
+  padding: 7px 8px;
+  text-align: center;
+  font-weight: 600;
+  color: #4a5568;
+  border-bottom: 2px solid #dde3ec;
+  white-space: nowrap;
+  position: sticky;
+  top: 0;
+}
+
+#invalid-zero-sites-table tbody tr {
+  border-bottom: 1px solid #edf2f7;
+  cursor: default;
+}
+
+#invalid-zero-sites-table tbody tr:hover {
+  background: #fff5f5;
+}
+
+#invalid-zero-sites-table tbody td {
+  padding: 6px 8px;
+  text-align: center;
+  color: #2d3748;
+}
 </style>
 </head>
 <body>
@@ -873,6 +939,15 @@ tbody td {
     </table>
   </div>
 </div>
+
+<!-- ===== INVALID ZERO SITES PANEL ===== -->
+<section class="panel" id="invalid-zero-panel" style="display:none;">
+  <h3>无有效发电样本站点</h3>
+  <p class="hint-text">
+    以下站点历史功率几乎全为0，不参与样本量-NRMSE关系统计和阈值统计。
+  </p>
+  <div id="invalid-zero-sites-table"></div>
+</section>
 
 <!-- ===== FOOTER ===== -->
 <div id="footer">
