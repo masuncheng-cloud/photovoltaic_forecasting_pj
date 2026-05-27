@@ -1142,6 +1142,9 @@ async function loadAll() {
   // Populate site select
   populateSiteSelect(metrics);
 
+  // Auto-select a default site so the dropdown has a value even before user switches to "site" scope
+  ensureDefaultSiteSelected();
+
   // Setup season buttons
   setupSeasonButtons(seasons);
 
@@ -2182,6 +2185,17 @@ function showStatusMessage(msg) {
 // MAIN REFRESH
 // ============================================================
 async function refreshAll() {
+  if (state.scope === "site") {
+    const ok = ensureDefaultSiteSelected();
+    if (!ok) {
+      updateMetricsCards({ samples: 0, sites: 0, actualSum: 0, predSum: 0, mae: 0, rmse: 0, nrmse: 0, bias: 0, ratio: 0 }, []);
+      setLineRows([]);
+      drawLineChart([]);
+      updateLineZoomInfo();
+      return;
+    }
+  }
+
   const rows = await getFilteredRows();
   const isSite = state.scope === "site";
   const m = computeMetrics(rows, isSite);
