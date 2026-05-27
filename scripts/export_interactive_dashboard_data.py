@@ -159,7 +159,7 @@ def export_index(df, site_names, dashboard_root):
     ]
 
     index_data = {
-        "title": "光伏功率预测交互式结果页面",
+        "title": "光伏功率预测交互式结果展示",
         "description": "展示连云港光伏电站真实功率与预测功率对比",
         "data_source": (
             "output/pv_pipeline/tables/distributed_predictions_final_full.pkl "

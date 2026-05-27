@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>光伏功率预测交互式结果页面</title>
+<title>光伏功率预测交互式结果展示</title>
 <style>
 * { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -734,7 +734,7 @@ tbody td {
 <div id="loading">正在加载数据，请稍候...</div>
 <div id="tooltip"></div>
 
-<h1>光伏功率预测交互式结果页面</h1>
+<h1>光伏功率预测交互式结果展示</h1>
 
 <!-- ===== CONTROLS ===== -->
 <div id="controls">
@@ -1451,7 +1451,6 @@ function computeMetrics(rows, scope) {
 }
 
 // ============================================================
-// METRICS DISPLAY
 // METRICS DISPLAY
 // ============================================================
 function setCardValue(id, value) {
@@ -2365,7 +2364,6 @@ async function refreshAll() {
   }
 
   const rows = await getFilteredRows();
-  const m = computeMetrics(rows, state.scope);
   updateMetricsCards(rows);
 
   setLineRows(rows);
