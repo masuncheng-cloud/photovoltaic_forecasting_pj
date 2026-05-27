@@ -1392,8 +1392,9 @@ function maxBy(rows, key) {
 }
 
 function meanBy(rows, key) {
-  var vals = rows.map(function(r) { return toNumber(r[key], NaN); })
-                 .filter(function(v) { return Number.isFinite(v); });
+  const vals = rows
+    .map(function(r) { return toNumber(r[key], NaN); })
+    .filter(function(v) { return Number.isFinite(v); });
   if (!vals.length) return 0;
   return vals.reduce(function(a, b) { return a + b; }, 0) / vals.length;
 }
@@ -1404,32 +1405,33 @@ function computeMetrics(rows, scope) {
              maeMw: 0, rmseMw: 0, nrmsePct: 0, biasPct: null, ratio: null };
   }
 
-  var actual = sumBy(rows, "actual_mw");
-  var pred = sumBy(rows, "pred_mw");
-  var actualSafe = Math.abs(actual) > 1e-9 ? actual : null;
+  const actual = sumBy(rows, 'actual_mw');
+  const pred = sumBy(rows, 'pred_mw');
+  const actualSafe = Math.abs(actual) > 1e-9 ? actual : null;
 
   // city_series: each row = one time point; sample_count = sites contributing
   // site_series: each row = one site at one time; rows.length = sample count
-  var sampleCount = scope === "city"
-    ? Math.round(sumBy(rows, "sample_count"))
+  var sampleCount = scope === 'city'
+    ? Math.round(sumBy(rows, 'sample_count'))
     : rows.length;
 
   // n_sites in city_series = sites contributing at that time; use max across all time points
-  var siteCount = scope === "city"
-    ? Math.max(1, Math.round(maxBy(rows, "n_sites")))
+  var siteCount = scope === 'city'
+    ? Math.max(1, Math.round(maxBy(rows, 'n_sites')))
     : 1;
 
   var errors = rows.map(function(r) { return toNumber(r.pred_mw) - toNumber(r.actual_mw); });
   var absErrors = errors.map(Math.abs);
-  var mae = absErrors.length ? absErrors.reduce(function(a, b) { return a + b; }, 0) / absErrors.length : 0;
+  var mae = absErrors.length
+    ? absErrors.reduce(function(a, b) { return a + b; }, 0) / absErrors.length : 0;
   var rmse = errors.length
     ? Math.sqrt(errors.reduce(function(a, b) { return a + b * b; }, 0) / errors.length)
     : 0;
 
   // NRMSE denominator: city uses capacity_sum_mw mean; site uses capacity_mw mean
-  var capacityDenom = scope === "city"
-    ? meanBy(rows, "capacity_sum_mw")
-    : meanBy(rows, "capacity_mw");
+  var capacityDenom = scope === 'city'
+    ? meanBy(rows, 'capacity_sum_mw')
+    : meanBy(rows, 'capacity_mw');
 
   var nrmsePct = capacityDenom > 0 ? rmse / capacityDenom * 100 : 0;
   var ratio = actualSafe ? pred / actualSafe : null;
