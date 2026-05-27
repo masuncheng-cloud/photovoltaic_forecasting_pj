@@ -629,9 +629,12 @@ def export_scatter_site_sample_nrmse(df, site_names, sm_df, metrics_df, dashboar
     # Build category lookup
     cat_map = dict(zip(metrics_df["site_id"], metrics_df["category_label"]))
 
-    # Sample counts per site
-    train_rows = df[df["split"].eq("train")].groupby("site_id").size().rename("train_rows")
-    valid_rows = df[df["split"].eq("valid")].groupby("site_id").size().rename("valid_rows")
+    # Sample counts: use train/valid from history (no future)
+    tv = build_history_frame(df)
+    tv = tv[tv["split"].isin(["train", "valid"])].copy()
+
+    train_rows = tv[tv["split"].eq("train")].groupby("site_id").size().rename("train_rows")
+    valid_rows = tv[tv["split"].eq("valid")].groupby("site_id").size().rename("valid_rows")
 
     tv_agg = tv.groupby("site_id").agg(
         train_valid_rows=("power_mw", "size"),
@@ -648,9 +651,8 @@ def export_scatter_site_sample_nrmse(df, site_names, sm_df, metrics_df, dashboar
     tv_agg["valid_rows"] = tv_agg["valid_rows"].fillna(0).astype(int)
     tv_agg["train_valid_positive_rows"] = tv_agg["train_valid_positive_rows"].astype(int)
 
-    # Test NRMSE per site (6-19h only, non-null)
-    test_eval = test[test["hour"].between(6, 19)].copy()
-    test_eval = test_eval[test_eval["power_mw"].notna() & test_eval["power_pred"].notna()]
+    # Test NRMSE per site (test 6-19h, non-null)
+    test_eval = build_eval_frame_for_dashboard(df)
 
     def rmse(y, p):
         return np.sqrt(np.mean((p - y) ** 2))
