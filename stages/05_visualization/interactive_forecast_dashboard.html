@@ -917,6 +917,7 @@ tbody td {
       <tr>
         <th>类别</th><th>站点ID</th><th>站点名称</th><th>容量 MW</th>
         <th>全量历史样本数</th><th>全量正功率样本</th><th>全量零值占比%</th>
+        <th>测试集6-19点0值占比%</th>
         <th>MAE MW</th><th>RMSE MW</th><th>NRMSE %</th><th>pred/actual</th>
       </tr>
     </thead>
@@ -2492,6 +2493,7 @@ function buildSitesTable() {
       <td>${fmtInt(s.full_history_rows)}</td>
       <td>${fmtInt(s.full_history_positive_rows)}</td>
       <td>${fmt2(s.full_history_zero_ratio_pct)}</td>
+      <td>${fmt2(s.test_daytime_zero_ratio_6_19_pct || 0)}</td>
       <td>${fmt2(s.mae_mw)}</td>
       <td>${fmt2(s.rmse_mw)}</td>
       <td>${fmt2(s.nrmse_pct)}</td>
