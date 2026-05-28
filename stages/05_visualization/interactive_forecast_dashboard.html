@@ -1357,18 +1357,19 @@ function bindHourSelectEvents() {
 // DATA LOADING
 // ============================================================
 async function loadAll() {
-  const [idx, city, metrics, scatter, threshold, seasons, midday, scatterSite, sampleReq, sampleBins, hourly, invalidZero, integrity] = await Promise.all([
-    fetchJSON(DASHBOARD_BASE + "index.json"),
-    fetchJSON(DASHBOARD_BASE + "city_series.json"),
-    fetchJSON(DASHBOARD_BASE + "site_metrics.json"),
-    fetchJSON(DASHBOARD_BASE + "scatter_site_hour.json"),
-    fetchJSON(DASHBOARD_BASE + "error_threshold_summary.json"),
-    fetchJSON(DASHBOARD_BASE + "season_days.json"),
-    fetchJSON(DASHBOARD_BASE + "midday_city_by_date.json"),
-    fetchJSON(DASHBOARD_BASE + "scatter_site_sample_nrmse.json"),
-    fetchJSON(DASHBOARD_BASE + "sample_requirement_summary.json"),
-    fetchJSON(DASHBOARD_BASE + "sample_requirement_bins.json"),
-    fetchJSON(DASHBOARD_BASE + "hourly_prediction_summary.json").catch(() => {
+  const [meta, idx, city, metrics, scatter, threshold, seasons, midday, scatterSite, sampleReq, sampleBins, hourly, invalidZero, integrity] = await Promise.all([
+    fetchJSON("metadata.json"),
+    fetchJSON("index.json"),
+    fetchJSON("city_series.json"),
+    fetchJSON("site_metrics.json"),
+    fetchJSON("scatter_site_hour.json"),
+    fetchJSON("error_threshold_summary.json"),
+    fetchJSON("season_days.json"),
+    fetchJSON("midday_city_by_date.json"),
+    fetchJSON("scatter_site_sample_nrmse.json"),
+    fetchJSON("sample_requirement_summary.json"),
+    fetchJSON("sample_requirement_bins.json"),
+    fetchJSON("hourly_prediction_summary.json").catch(() => {
       console.warn("hourly_prediction_summary.json not found");
       return [];
     }),
