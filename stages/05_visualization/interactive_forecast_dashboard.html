@@ -963,8 +963,6 @@ tbody td {
     <span class="ctrl-label">横轴口径：</span>
     <div class="tab-bar">
       <button class="tab-btn active" data-xaxis="full">全量历史样本数</button>
-      <button class="tab-btn" data-xaxis="total">训练+验证总样本数</button>
-      <button class="tab-btn" data-xaxis="positive">训练+验证正功率样本数</button>
     </div>
     <div class="legend-row" style="margin-left:auto;">
       <div class="legend-item"><div class="legend-dot" style="background:#38a169"></div>预测最好</div>
@@ -2137,12 +2135,8 @@ function drawScatterChart(data) {
 
   if (!chartData || chartData.length === 0) return;
 
-  // Determine x-axis field
-  const xField = state.scatterXAxis === "full"
-    ? "full_history_rows"
-    : (state.scatterXAxis === "positive"
-        ? "train_valid_positive_rows"
-        : "train_valid_rows");
+  // Determine x-axis field (always full_history_rows per Round30)
+  const xField = "full_history_rows";
 
   const xVals = chartData.map(p => p[xField] || 0);
   const yVals = chartData.map(p => p["test_nrmse_pct"] || 0);
