@@ -800,6 +800,12 @@ tbody td {
 <div id="tooltip"></div>
 
 <h1>光伏功率预测交互式结果展示</h1>
+<div id="data-version-badge" style="display:none;background:#eef2ff;color:#4338ca;border-radius:6px;padding:6px 12px;margin:8px 0 0;font-size:13px;font-weight:bold;width:fit-content;">
+  数据版本：<span id="badge-data-round">--</span>（<span id="badge-pred-col">--</span>，默认不含 future）
+</div>
+<div id="data-version-warning" style="display:none;background:#fef2f2;color:#dc2626;border-radius:6px;padding:8px 12px;margin:8px 0;font-size:13px;width:fit-content;">
+  ⚠️ <span id="version-warning-text"></span>
+</div>
 
 <!-- ===== CONTROLS ===== -->
 <div id="controls">
@@ -1370,6 +1376,38 @@ async function loadAll() {
   gMiddayByDate = midday;
   gInvalidZeroSites = invalidZero || [];
   window.gDataIntegrity = integrity || null;
+
+  // ---- Round38: version badge and self-check ----
+  const idxRound = (idx.description || "").match(/Round\d+/);
+  const idxRoundStr = idxRound ? idxRound[0] : (idx.data_source || "").match(/Round\d+/)?.[0] || "Unknown";
+  const idxPredCol = (idx.data_source || "").includes("power_pred_final") ? "power_pred_final" : "power_pred_cal";
+  const badgeDataRound = document.getElementById("badge-data-round");
+  const badgePredCol = document.getElementById("badge-pred-col");
+  const verBadge = document.getElementById("data-version-badge");
+  if (badgeDataRound) badgeDataRound.textContent = idxRoundStr;
+  if (badgePredCol) badgePredCol.textContent = idxPredCol;
+  if (verBadge) verBadge.style.display = "block";
+
+  const warningEl = document.getElementById("data-version-warning");
+  const warningText = document.getElementById("version-warning-text");
+  const bestSites = (metrics || []).filter(s => !s.is_all_zero_history)
+    .sort((a, b) => (a.nrmse_pct || 999) - (b.nrmse_pct || 999)).slice(0, 5).map(s => s.site_id);
+  const worstSites = (metrics || []).filter(s => !s.is_all_zero_history)
+    .sort((a, b) => (b.nrmse_pct || 0) - (a.nrmse_pct || 0)).slice(0, 5).map(s => s.site_id);
+  const roundMatch = idxRoundStr === EXPECTED_DATA_ROUND;
+  const bestMatch = EXPECTED_BEST_SITES.every(v => bestSites.includes(v));
+  const worstMatch = EXPECTED_WORST_SITES.every(v => worstSites.includes(v));
+  if (!roundMatch || !bestMatch || !worstMatch) {
+    if (warningEl) warningEl.style.display = "block";
+    if (warningText) {
+      const parts = [];
+      if (!roundMatch) parts.push(`数据版本不是 ${EXPECTED_DATA_ROUND}（当前：${idxRoundStr}）`);
+      if (!bestMatch) parts.push(`预测最好站点不是 [${EXPECTED_BEST_SITES.join(", ")}]（当前：[${bestSites.join(", ")}]）`);
+      if (!worstMatch) parts.push(`预测最差站点不是 [${EXPECTED_WORST_SITES.join(", ")}]（当前：[${worstSites.join(", ")}]）`);
+      warningText.textContent = "警告：" + parts.join("；") + "。请检查数据路径或缓存。";
+    }
+  }
+  // ---- end Round38 version check ----
 
   // Set date range defaults
   state.startDate = idx.default_start_date || idx.min_date;
