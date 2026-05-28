@@ -1246,7 +1246,7 @@ def export_hourly_prediction_summary(output_root, dashboard_root, final_df=None,
 
     # Format
     hourly["hour"] = hourly["hour"].astype(int)
-    hourly["rows"] = hourly["rows"].astype(int)
+    hourly["rows"] = hourly["rows"].fillna(0).astype(int)
     hourly["site_nrmse_mean_pct"] = hourly["site_nrmse_mean_pct"].astype(float).round(2)
     hourly["city_nrmse_pct"] = hourly["city_nrmse_pct"].astype(float).round(3)
 
