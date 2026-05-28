@@ -394,6 +394,17 @@ def export_site_metrics(df, site_names, dashboard_root, test_daytime_zero_stats=
         "full_history_zero_ratio_pct", "full_history_start_date", "full_history_end_date",
     ]], on="site_id", how="left")
 
+    # Merge test 6-19 zero ratio stats
+    if test_daytime_zero_stats is not None and not test_daytime_zero_stats.empty:
+        metrics_df = metrics_df.merge(test_daytime_zero_stats, on="site_id", how="left")
+        for c in ["test_daytime_rows_6_19", "test_daytime_positive_rows_6_19", "test_daytime_zero_rows_6_19"]:
+            if c in metrics_df.columns:
+                metrics_df[c] = metrics_df[c].fillna(0).astype(int)
+        if "test_daytime_zero_ratio_6_19_pct" in metrics_df.columns:
+            metrics_df["test_daytime_zero_ratio_6_19_pct"] = (
+                metrics_df["test_daytime_zero_ratio_6_19_pct"].fillna(0).round(4)
+            )
+
     # ---- Mark all-zero / no-positive sites ----
     metrics_df["is_all_zero_history"] = metrics_df.apply(is_all_zero_history, axis=1)
 
@@ -461,6 +472,10 @@ def export_site_metrics(df, site_names, dashboard_root, test_daytime_zero_stats=
         "full_history_positive_rows", "full_history_zero_rows",
         "full_history_zero_ratio_pct", "full_history_start_date", "full_history_end_date",
         "is_all_zero_history",
+        "test_daytime_rows_6_19",
+        "test_daytime_positive_rows_6_19",
+        "test_daytime_zero_rows_6_19",
+        "test_daytime_zero_ratio_6_19_pct",
     ]
     metrics_df = metrics_df[out_cols]
 
