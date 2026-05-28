@@ -924,7 +924,7 @@ tbody td {
     <tbody></tbody>
   </table>
   </div>
-  <div id="typical-sites-note">说明：历史样本数 = train + valid + test，不包含 future；MAE、RMSE、NRMSE 和 pred/actual 均按测试集 6-19 点计算。全 0 或无正功率样本的站点归入"无有效发电样本站点"，不参与典型站点分类。</div>
+  <div id="typical-sites-note">说明：历史样本数 = train + valid + test，不包含 future；MAE、RMSE、NRMSE、pred/actual 与测试集6-19点0值占比均按测试集 6-19 点计算。全 0 或无正功率样本的站点归入"无有效发电样本站点"，不参与典型站点分类。</div>
 </div>
 
 <!-- ===== HOURLY PREDICTION PANEL ===== -->
@@ -2217,11 +2217,7 @@ function drawScatterChart(data) {
   }
 
   // Axis titles
-  const xAxisLabel = state.scatterXAxis === "full"
-    ? "单站点全量历史样本数（行）"
-    : (state.scatterXAxis === "positive"
-        ? "训练+验证正功率样本数（行）"
-        : "训练+验证总样本数（行）");
+  const xAxisLabel = "单站点全量历史样本数（行）";
   g.appendChild(svgNS("text", {
     x: (ML + cw / 2).toFixed(1), y: (H - 4).toFixed(1),
     "text-anchor": "middle", fill: "#718096", "font-size": "11",
