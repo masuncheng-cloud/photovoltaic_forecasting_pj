@@ -1382,7 +1382,7 @@ def main():
 
     print("\n[9b] Exporting scatter_site_sample_nrmse.json...")
     sm_df = load_site_master_full(output_root)
-    scatter_site = export_scatter_site_sample_nrmse(df, site_names, sm_df, metrics_df, dashboard_root)
+    scatter_site = export_scatter_site_sample_nrmse(df, site_names, sm_df, metrics_df, dashboard_root, test_daytime_zero_stats)
 
     print("\n[9c] Exporting invalid_zero_sites.json...")
     invalid_zero_sites = export_invalid_zero_sites(metrics_df, dashboard_root)
