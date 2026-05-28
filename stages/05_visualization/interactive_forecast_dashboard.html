@@ -2797,6 +2797,8 @@ document.addEventListener("DOMContentLoaded", () => {
     onScopeChange();
     bindLineZoomEvents();
     bindDateComboEvents();
+    bindHourSelectEvents();
+    initHourSelects();
     bindHelpTooltips();
     refreshAll();
   }).catch(err => {
@@ -2837,9 +2839,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   });
 
-  // Date/hours — date changes handled by bindDateComboEvents()
-  document.getElementById("start-hour").addEventListener("change", e => { state.startHour = parseInt(e.target.value) || 0; refreshAll(); });
-  document.getElementById("end-hour").addEventListener("change", e => { state.endHour = parseInt(e.target.value) || 23; refreshAll(); });
+  // Date/hours — date changes handled by bindDateComboEvents(); hour changes handled by bindHourSelectEvents()
 
   // Typical sites buttons
   function selectTypical(category) {
@@ -2863,10 +2863,7 @@ document.addEventListener("DOMContentLoaded", () => {
       const cityRadio = document.querySelector('input[name="scope"][value="city"]');
       if (cityRadio) cityRadio.checked = true;
 
-      const startHourInput = document.getElementById("start-hour");
-      const endHourInput = document.getElementById("end-hour");
-      if (startHourInput) startHourInput.value = 10;
-      if (endHourInput) endHourInput.value = 14;
+      syncHourSelects();
 
       if (typeof onScopeChange === "function") onScopeChange();
       if (!validateDateRange(true)) return;
