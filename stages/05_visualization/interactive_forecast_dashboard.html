@@ -2384,21 +2384,7 @@ function hideTooltip() {
 // INVALID ZERO SITES TABLE
 // ============================================================
 function renderDataIntegrityNote() {
-  var el = document.getElementById("data-integrity-note");
-  if (!el) return;
-
-  var data = window.gDataIntegrity;
-  if (!data) {
-    el.textContent = "";
-    el.className = "";
-    return;
-  }
-
-  var ok = data.status === "PASS";
-  el.className = ok ? "data-integrity-note ok" : "data-integrity-note bad";
-  el.textContent = ok
-    ? "真实值校验通过：页面 actual_mw 与 final_full/power_mw 一致；最大差值 " + data.max_abs_diff + "。"
-    : "真实值校验失败：页面 actual_mw 与数据源不一致，请重新生成可视化数据。";
+  return;
 }
 
 function renderInvalidZeroSites() {
@@ -2529,6 +2515,10 @@ function showStatusMessage(msg) {
 // MAIN REFRESH
 // ============================================================
 async function refreshAll() {
+  if (!validateHourRange()) {
+    return;
+  }
+
   if (state.scope === "site") {
     const ok = ensureDefaultSiteSelected();
     if (!ok) {
