@@ -1374,11 +1374,11 @@ async function loadAll() {
       console.warn("hourly_prediction_summary.json not found");
       return [];
     }),
-    fetchJSON(DASHBOARD_BASE + "invalid_zero_sites.json").catch(() => {
+    fetchJSON("invalid_zero_sites.json").catch(() => {
       console.warn("invalid_zero_sites.json not found");
       return [];
     }),
-    fetchJSON(DASHBOARD_BASE + "data_integrity_check.json").catch(() => null),
+    fetchJSON("data_integrity_check.json").catch(() => null),
   ]);
 
   gIndex = idx;
@@ -1469,14 +1469,6 @@ async function loadAll() {
   renderDataIntegrityNote();
 
   document.getElementById("loading").style.display = "none";
-}
-
-async function fetchJSON(url) {
-  const sep = url.includes("?") ? "&" : "?";
-  const bustUrl = sep + "v=" + Date.now();
-  const r = await fetch(url + bustUrl, { cache: "no-store" });
-  if (!r.ok) throw new Error("fetch " + url + " failed: " + r.status);
-  return r.json();
 }
 
 // ============================================================
