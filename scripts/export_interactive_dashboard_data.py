@@ -1248,6 +1248,16 @@ def export_hourly_prediction_summary(output_root, dashboard_root, final_df=None,
         hourly = hourly.rename(columns={k: v for k, v in rename_map.items() if k in hourly.columns})
         if "hour" not in hourly.columns and "Hour" in hourly.columns:
             hourly = hourly.rename(columns={"Hour": "hour"})
+        # If CSV has per-date rows (many rows), group by hour
+        if "hour" in hourly.columns and len(hourly) > 20:
+            hourly = hourly[hourly["hour"].between(6, 19)]
+            hourly = hourly.groupby("hour", as_index=False).agg(
+                rows=("rows", "sum"),
+                site_nrmse_mean_pct=("site_nrmse_mean_pct", "mean"),
+                city_nrmse_pct=("city_nrmse_pct", "mean"),
+            )
+        elif "hour" in hourly.columns:
+            hourly = hourly[hourly["hour"].between(6, 19)].copy()
     elif final_df is not None:
         print(f"  CSV not found, computing hourly summary from final_df...")
         hourly = compute_hourly_summary_from_final(final_df)
