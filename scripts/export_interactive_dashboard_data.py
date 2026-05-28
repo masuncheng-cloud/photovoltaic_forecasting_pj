@@ -114,69 +114,114 @@ def derive_split(df: pd.DataFrame) -> pd.DataFrame:
     return df
 
 
-def load_predictions(output_root):
-    """Load prediction data, preferring clean file (Round33 要求)。
+def resolve_prediction_column(df: pd.DataFrame) -> str:
+    """Resolve the best prediction column available in the dataframe, in priority order."""
+    candidates = [
+        "power_pred_final",
+        "pred_calibrated",
+        "power_pred_cal",
+        "power_pred",
+    ]
+    for col in candidates:
+        if col in df.columns:
+            return col
+    raise KeyError(f"None of {candidates} found in dataframe columns: {list(df.columns)}")
 
-    优先级：
-      1. distributed_predictions_final_round36.pkl（Round36，含 power_pred_final）
-      2. distributed_predictions_final_round34.pkl（Round34，含 power_pred_final）
-      3. distributed_predictions_v159.pkl（v159 raw）
+
+def find_latest_prediction_file(output_root):
+    """Auto-detect the latest distributed_predictions_final_roundXX.pkl.
+
+    Returns (Path, round_name_str) where round_name_str is like "Round36".
+    """
+    import re
+    tables_dir = Path(output_root) / "tables"
+    candidates = []
+    for p in tables_dir.glob("distributed_predictions_final_round*.pkl"):
+        m = re.search(r"round(\d+)", p.name, re.IGNORECASE)
+        if m:
+            candidates.append((int(m.group(1)), p))
+
+    if candidates:
+        candidates.sort(reverse=True, key=lambda x: x[0])
+        num, path = candidates[0]
+        return path, f"Round{num}"
+
+    fallback = [
+        tables_dir / "distributed_predictions_final.pkl",
+        tables_dir / "distributed_predictions_final_full.pkl",
+        tables_dir / "distributed_predictions_v159.pkl",
+    ]
+    for p in fallback:
+        if p.exists():
+            return p, "unknown"
+
+    raise FileNotFoundError(
+        "找不到 distributed_predictions_final_roundXX.pkl 或 fallback 预测文件"
+    )
+
+
+def load_predictions(output_root):
+    """Load prediction data by auto-detecting the latest round file.
+
+    Priority:
+      1. distributed_predictions_final_roundXX.pkl (highest round number wins)
+      2. distributed_predictions_final_full.pkl (fallback)
+      3. distributed_predictions_v159.pkl (last resort)
     """
     tables_dir = Path(output_root) / "tables"
-    candidates = [
-        tables_dir / "distributed_predictions_final_round36.pkl",   # Round36 (preferred, has power_pred_final)
-        tables_dir / "distributed_predictions_final_round34.pkl",   # Round34
-        tables_dir / "distributed_predictions_v159.pkl",            # v159 raw
-    ]
-    df = None
-    used_path = None
-    for path in candidates:
-        if path.exists():
-            print(f"  Loading {path}")
-            with open(path, "rb") as f:
-                df = pickle.load(f)
-            used_path = path
-            break
-    if df is None:
-        raise FileNotFoundError(f"No prediction file found in {tables_dir}")
+    pred_path, round_name = find_latest_prediction_file(output_root)
+    print(f"  [AUTO] Detected latest: {pred_path.name} ({round_name})")
 
-    # ── 补全必要列 ──────────────────────────────────────────────────────
+    with open(pred_path, "rb") as f:
+        df = pickle.load(f)
+
+    # ── resolve prediction column ──────────────────────────────────────────────
+    pred_col = resolve_prediction_column(df)
+    print(f"  [AUTO] Prediction column: {pred_col}")
+
+    # ── ensure standard columns exist ────────────────────────────────────────
     df["time"] = pd.to_datetime(df["time"], errors="coerce")
     if "hour" not in df.columns:
         df["hour"] = df["time"].dt.hour
     if "date" not in df.columns:
         df["date"] = df["time"].dt.strftime("%Y-%m-%d")
 
-    # v159 文件没有 split 列，需要推导
-    if "split" not in df.columns:
-        print("  [INFO] 'split' 列缺失，从时间推导...")
+    # derive split if missing
+    if "split" not in df.columns or df["split"].notna().sum() == 0:
+        print("  [INFO] 'split' column missing or empty, deriving from time...")
         df = derive_split(df)
 
-    # ── 加载站点有效性表（用于 site_status 字段）────────────────────────
-    # 优先使用 round36，其次 round34
+    # ── load site validity for the detected round ──────────────────────────────
     metrics_dir = Path(output_root) / "metrics"
-    for vname in ["round36_site_validity.csv", "round34_site_validity.csv"]:
-        validity_path = metrics_dir / vname
-        if validity_path.exists():
-            print(f"  Loading site validity: {validity_path.name}")
-            validity_df = pd.read_csv(validity_path)
-            validity_map = {}
-            for _, row in validity_df.iterrows():
-                validity_map[row["site_id"]] = {
-                    "site_status": row.get("site_status", ""),
+    validity_map = {}
+    # Try round-specific validity file first, then generic fallback
+    for pattern in [f"round{''.join(filter(str.isdigit, round_name))}_site_validity.csv",
+                    "round36_site_validity.csv",
+                    "round34_site_validity.csv"]:
+        vpath = metrics_dir / pattern
+        if vpath.exists():
+            vd = pd.read_csv(vpath)
+            for _, row in vd.iterrows():
+                validity_map[str(row["site_id"])] = {
+                    "site_status": row.get("site_status", "正常评价"),
                     "exclude_from_ranking": row.get("exclude_from_ranking", "否"),
                     "exclude_reason": row.get("exclude_reason", ""),
                 }
+            print(f"  Loading site validity: {vpath.name}")
             break
-    else:
-        validity_map = {}
-        print("  [WARN] 站点有效性表未找到，使用默认状态")
-    df["_site_status"] = df["site_id"].map(lambda s: validity_map.get(s, {}).get("site_status", "正常评价"))
-    df["_exclude_from_ranking"] = df["site_id"].map(lambda s: validity_map.get(s, {}).get("exclude_from_ranking", "否"))
-    df["_exclude_reason"] = df["site_id"].map(lambda s: validity_map.get(s, {}).get("exclude_reason", ""))
+
+    df["_site_status"] = df["site_id"].astype(str).map(
+        lambda s: validity_map.get(s, {}).get("site_status", "正常评价")
+    )
+    df["_exclude_from_ranking"] = df["site_id"].astype(str).map(
+        lambda s: validity_map.get(s, {}).get("exclude_from_ranking", "否")
+    )
+    df["_exclude_reason"] = df["site_id"].astype(str).map(
+        lambda s: validity_map.get(s, {}).get("exclude_reason", "")
+    )
 
     print(f"  Loaded {len(df):,} rows, splits: {df['split'].value_counts().to_dict()}")
-    return df
+    return df, round_name, pred_col
 
 
 def load_site_master(output_root):
