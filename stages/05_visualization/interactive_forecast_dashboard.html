@@ -952,7 +952,7 @@ tbody td {
     </div>
   </div>
   <p class="note">
-    说明：站点平均 NRMSE 表示每个站点分别计算 NRMSE 后再按小时取平均；城市 NRMSE 表示全市聚合功率在该小时的误差水平（NRMSE = RMSE_city / median(capacity_sum_mw) × 100%）。该表使用测试集 6-19 点数据。
+    说明：站点平均 NRMSE 表示每个站点分别计算 NRMSE 后再按小时取平均；城市 NRMSE 表示全市聚合功率在该小时的误差水平（NRMSE = RMSE_city / capacity_sum_mw × 100%）。该表使用测试集 6-19 点数据。
   </p>
 </section>
 
@@ -1626,7 +1626,7 @@ function computeMetrics(rows, scope) {
     ? Math.sqrt(errors.reduce(function(a, b) { return a + b * b; }, 0) / errors.length)
     : 0;
 
-  // NRMSE denominator: city uses median(capacity_sum_mw); site uses median(capacity_mw)
+  // NRMSE denominator: city uses capacity_sum_mw; site uses capacity_mw
   var capacityRefMw = scope === 'city'
     ? median(rows.map(function(r) { return r.capacity_sum_mw; }))
     : median(rows.map(function(r) { return r.capacity_mw; }));
