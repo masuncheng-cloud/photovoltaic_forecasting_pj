@@ -261,10 +261,11 @@ def export_index(df, site_names, dashboard_root, round_name="unknown", pred_col=
     # Count zero sites in test period
     test_day = eval_df.copy()
     zero_test_sites = test_day.groupby("site_id").apply(
-        lambda g: (pd.to_numeric(g["power_mw"], errors="coerce").fillna(0) > 0).sum() == 0
+        lambda g: (pd.to_numeric(g["power_mw"], errors="coerce").fillna(0) > 0).sum() == 0,
+        include_groups=False
     )
     zero_site_ids = sorted(zero_test_sites[zero_test_sites].index.tolist())
-    zero_note = f"，测试期零发电站点{len(zero_site_ids)}个（{','.join(zero_site_ids)}）" if zero_site_ids else ""
+    zero_note = f"，测试期零发电站点{len(zero_site_ids)}个（{','.join(str(s) for s in zero_site_ids)}）" if zero_site_ids else ""
 
     index_data = {
         "title": "光伏功率预测交互式结果展示",
