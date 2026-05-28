@@ -291,6 +291,29 @@ def export_index(df, site_names, dashboard_root):
     print(f"  [OK] index.json ({index_data['total_sites']} sites, {min_date}~{max_date})")
 
 
+def write_metadata(dashboard_root, round_name, pred_col, source_path):
+    """Write metadata.json for the dashboard page to display version info."""
+    history_dir = Path(dashboard_root) / "site_series"
+    n_sites = len(list(history_dir.glob("*.json"))) if history_dir.exists() else 0
+    meta = {
+        "round": round_name,
+        "prediction_column": pred_col,
+        "actual_column": "power_mw",
+        "source_file": str(source_path),
+        "generated_at": pd.Timestamp.now().strftime("%Y-%m-%d %H:%M:%S"),
+        "test_period": "2025-09-01~2025-12-31",
+        "hours": "6-19",
+        "exclude_future": True,
+        "data_root": "output/pv_pipeline/interactive_dashboard",
+        "total_site_files": n_sites,
+    }
+    out_path = Path(dashboard_root) / "metadata.json"
+    with open(out_path, "w", encoding="utf-8") as f:
+        json.dump(meta, f, ensure_ascii=False, indent=2)
+    print(f"  [OK] metadata.json ({round_name}, {pred_col})")
+    return meta
+
+
 def export_city_series(df, dashboard_root):
     """Export city_series.json with city-level aggregated data."""
     df_f = build_history_frame(df)
