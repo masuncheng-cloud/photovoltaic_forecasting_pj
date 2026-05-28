@@ -1,2 +1,0 @@
-﻿rows,n_sites,actual_mwh,pred_mwh,pred_actual_ratio,bias_pct,mae_mw,rmse_mw,nrmse_capacity_pct
-68888,53,93382.49,92069.09,0.985935,-1.406,0.5893,1.2047,19.71

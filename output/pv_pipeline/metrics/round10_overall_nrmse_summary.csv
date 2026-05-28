@@ -1,3 +1,0 @@
-﻿version,rows,n_sites,actual_mwh,pred_mwh,pred_actual_ratio,bias_pct,mae_mw,rmse_mw,overall_nrmse_pct
-final,68888,53,93382.49,92069.0926,0.985935,-1.4065,0.58932,1.204699,19.710496
-best,68888,53,93382.49,92069.0926,0.985935,-1.4065,0.58932,1.204699,19.710496
