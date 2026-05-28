@@ -1036,16 +1036,32 @@ tbody td {
 // ============================================================
 // GLOBAL DATA
 // ============================================================
-const DASHBOARD_BASE = "../../output/pv_pipeline/interactive_dashboard/";
-const SITE_SERIES_BASE = DASHBOARD_BASE + "site_series/";
+// Auto-detect DATA_ROOT based on page location
+const DATA_ROOT = (() => {
+  const path = window.location.pathname;
+  if (path.includes("/stages/05_visualization/")) {
+    return "../../output/pv_pipeline/interactive_dashboard";
+  }
+  return ".";
+})();
+const SITE_SERIES_BASE = DATA_ROOT + "/site_series/";
+
+// Centralized fetch that always uses DATA_ROOT and disables browser cache
+async function fetchJSON(relativePath) {
+  const sep = relativePath.includes("?") ? "&" : "?";
+  const url = `${DATA_ROOT}/${relativePath}${sep}v=${Date.now()}`;
+  const res = await fetch(url, { cache: "no-store" });
+  if (!res.ok) throw new Error(`加载数据失败: ${url} (${res.status})`);
+  return await res.json();
+}
 
 // ============================================================
-// PAGE VERSION MARKER (Round38: Round36 data)
+// PAGE VERSION MARKER (Round39: auto-detect latest round)
 // ============================================================
-const PAGE_VERSION = "Round38";
-const EXPECTED_DATA_ROUND = "Round36";
-const EXPECTED_BEST_SITES = ["S077", "S023", "S031", "S062", "S049"];
-const EXPECTED_WORST_SITES = ["S045", "S044", "S053", "S076", "S019"];
+const PAGE_VERSION = "Round39";
+let gExpectedRound = null;  // will be set from metadata.json after load
+const gExpectedBestSites = ["S077", "S023", "S031", "S062", "S049"];
+const gExpectedWorstSites = ["S045", "S044", "S053", "S076", "S019"];
 
 let gIndex = null;
 let gCitySeries = [];
