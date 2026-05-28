@@ -1,9 +1,9 @@
 {
   "title": "光伏功率预测交互式结果展示",
-  "description": "展示连云港光伏电站真实功率与预测功率对比",
-  "data_source": "output/pv_pipeline/tables/distributed_predictions_final_full.pkl 或 distributed_predictions_final_eval.pkl",
-  "data_scope": "train/valid/test only; future excluded",
-  "note": "页面只用于展示当前 final/best 预测结果，不参与模型训练和模型选择。",
+  "description": "展示连云港光伏电站真实功率与预测功率对比（Round33 版本）",
+  "data_source": "output/pv_pipeline/tables/distributed_predictions_final_full_clean.pkl (Round33 清洗版) 或 distributed_predictions_v159.pkl",
+  "data_scope": "train/valid/test only; future excluded (默认不展示未来数据)",
+  "round33口径说明": "统计口径：test 6-19点；指标口径：NRMSE%=RMSE/容量均值×100%；有效评价站点68个，被排除站点0个（测试期异常）",
   "min_date": "2023-01-01",
   "max_date": "2025-12-31",
   "default_start_date": "2023-01-01",
@@ -12,5 +12,6 @@
   "total_sites": 68,
   "date_range": "2023-01-01 ~ 2025-12-31",
   "hourly_prediction_summary": "hourly_prediction_summary.json",
-  "invalid_zero_sites": "invalid_zero_sites.json"
+  "invalid_zero_sites": "invalid_zero_sites.json",
+  "note": "页面只用于展示当前 final/best 预测结果，不参与模型训练和模型选择。若选择非test日期，显示历史展示口径，非最终测试评价口径。"
 }

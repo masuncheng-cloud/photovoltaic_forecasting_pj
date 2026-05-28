@@ -94,38 +94,77 @@ def parse_args():
     return parser.parse_args()
 
 
+def derive_split(df: pd.DataFrame) -> pd.DataFrame:
+    """从时间列推导 split（Round33 方案统一口径）。"""
+    if "split" in df.columns and df["split"].notna().any():
+        return df
+    df = df.copy()
+    df["time"] = pd.to_datetime(df["time"])
+    TRAIN_END = pd.Timestamp("2025-07-01")
+    VALID_END  = pd.Timestamp("2025-09-01")
+    TEST_END   = pd.Timestamp("2026-01-01")
+    df["split"] = "future"
+    df.loc[df["time"] < TRAIN_END, "split"] = "train"
+    df.loc[(df["time"] >= TRAIN_END) & (df["time"] < VALID_END), "split"] = "valid"
+    df.loc[(df["time"] >= VALID_END) & (df["time"] < TEST_END), "split"] = "test"
+    return df
+
+
 def load_predictions(output_root):
-    """Load prediction data, preferring full file over eval file."""
+    """Load prediction data, preferring clean file (Round33 要求)。
+
+    优先级：
+      1. distributed_predictions_final_full_clean.pkl（Round33 清洗版）
+      2. distributed_predictions_final_full.pkl（上一轮清洁版）
+      3. distributed_predictions_final_eval.pkl（仅 test）
+    """
     tables_dir = Path(output_root) / "tables"
-    full_path = tables_dir / "distributed_predictions_final_full.pkl"
-    eval_path = tables_dir / "distributed_predictions_final_eval.pkl"
+    candidates = [
+        tables_dir / "distributed_predictions_final_full_clean.pkl",   # Round33 clean
+        tables_dir / "distributed_predictions_final_full.pkl",         # legacy clean
+        tables_dir / "distributed_predictions_v159.pkl",              # v159 full
+        tables_dir / "distributed_predictions_final_eval.pkl",         # eval only
+    ]
+    df = None
+    used_path = None
+    for path in candidates:
+        if path.exists():
+            print(f"  Loading {path}")
+            with open(path, "rb") as f:
+                df = pickle.load(f)
+            used_path = path
+            break
+    if df is None:
+        raise FileNotFoundError(f"No prediction file found in {tables_dir}")
 
-    if full_path.exists():
-        print(f"  Loading {full_path}")
-        with open(full_path, "rb") as f:
-            df = pickle.load(f)
-    elif eval_path.exists():
-        print(f"  Falling back to {eval_path}")
-        with open(eval_path, "rb") as f:
-            df = pickle.load(f)
-    else:
-        raise FileNotFoundError(
-            f"Neither {full_path} nor {eval_path} found. "
-            "Run training first to produce prediction files."
-        )
-
-    # Validate required columns
-    required = ["time", "site_id", "power_mw", "power_pred", "capacity_mw", "hour", "date", "split"]
-    missing = [c for c in required if c not in df.columns]
-    if missing:
-        raise ValueError(f"Missing required columns: {missing}")
-
-    # Ensure hour/date are present (regenerate if needed)
+    # ── 补全必要列 ──────────────────────────────────────────────────────
+    df["time"] = pd.to_datetime(df["time"], errors="coerce")
     if "hour" not in df.columns:
         df["hour"] = df["time"].dt.hour
     if "date" not in df.columns:
         df["date"] = df["time"].dt.strftime("%Y-%m-%d")
 
+    # v159 文件没有 split 列，需要推导
+    if "split" not in df.columns:
+        print("  [INFO] 'split' 列缺失，从时间推导...")
+        df = derive_split(df)
+
+    # ── 加载站点有效性表（用于 site_status 字段）────────────────────────
+    validity_path = Path(output_root) / "metrics" / "round33_site_validity.csv"
+    validity_map = {}
+    if validity_path.exists():
+        validity_df = pd.read_csv(validity_path)
+        for _, row in validity_df.iterrows():
+            validity_map[row["site_id"]] = {
+                "site_status": row.get("site_status", ""),
+                "exclude_from_ranking": row.get("exclude_from_ranking", "否"),
+                "exclude_reason": row.get("exclude_reason", ""),
+            }
+    df["_site_status"] = df["site_id"].map(lambda s: validity_map.get(s, {}).get("site_status", "正常评价"))
+    df["_exclude_from_ranking"] = df["site_id"].map(lambda s: validity_map.get(s, {}).get("exclude_from_ranking", "否"))
+    df["_exclude_reason"] = df["site_id"].map(lambda s: validity_map.get(s, {}).get("exclude_reason", ""))
+
+    print(f"  Loaded {len(df):,} rows, splits: {df['split'].value_counts().to_dict()}")
     return df
 
 
@@ -158,16 +197,22 @@ def export_index(df, site_names, dashboard_root):
         & history_df["power_pred"].notna()
     ]
 
+    # Round33 口径说明
+    eval_df = build_eval_frame_for_dashboard(history_df)
+    n_eval_sites = int(eval_df["site_id"].nunique())
+    n_valid_sites = int(history_df["site_id"].nunique()) - n_eval_sites  # future站点
+
     index_data = {
         "title": "光伏功率预测交互式结果展示",
-        "description": "展示连云港光伏电站真实功率与预测功率对比",
+        "description": "展示连云港光伏电站真实功率与预测功率对比（Round33 版本）",
         "data_source": (
-            "output/pv_pipeline/tables/distributed_predictions_final_full.pkl "
-            "或 distributed_predictions_final_eval.pkl"
+            "output/pv_pipeline/tables/distributed_predictions_final_full_clean.pkl "
+            "(Round33 清洗版) 或 distributed_predictions_v159.pkl"
         ),
-        "data_scope": "train/valid/test only; future excluded",
-        "note": (
-            "页面只用于展示当前 final/best 预测结果，不参与模型训练和模型选择。"
+        "data_scope": "train/valid/test only; future excluded (默认不展示未来数据)",
+        "round33口径说明": (
+            "统计口径：test 6-19点；指标口径：NRMSE%=RMSE/容量均值×100%；"
+            f"有效评价站点{n_eval_sites}个，被排除站点{n_valid_sites}个（测试期异常）"
         ),
         "min_date": min_date,
         "max_date": max_date,
@@ -178,6 +223,10 @@ def export_index(df, site_names, dashboard_root):
         "date_range": f"{min_date} ~ {max_date}",
         "hourly_prediction_summary": "hourly_prediction_summary.json",
         "invalid_zero_sites": "invalid_zero_sites.json",
+        "note": (
+            "页面只用于展示当前 final/best 预测结果，不参与模型训练和模型选择。"
+            "若选择非test日期，显示历史展示口径，非最终测试评价口径。"
+        ),
     }
 
     out_path = Path(dashboard_root) / "index.json"
@@ -234,7 +283,7 @@ def export_city_series(df, dashboard_root):
 
 
 def export_site_series(df, site_names, dashboard_root):
-    """Export per-site time series JSON files."""
+    """Export per-site time series JSON files（Round33 版本：含 site_status）。"""
     df_f = build_history_frame(df)
     df_f = df_f[
         df_f["hour"].between(6, 19)
@@ -265,6 +314,10 @@ def export_site_series(df, site_names, dashboard_root):
                 "point_nrmse_pct": round(
                     float(abs(row["power_pred"] - row["power_mw"]) / max(row["capacity_mw"], 1e-9) * 100), 4
                 ),
+                # Round33 新增字段
+                "site_status": str(row.get("_site_status", "正常评价")),
+                "exclude_from_ranking": str(row.get("_exclude_from_ranking", "否")),
+                "is_future": False,
             }
             records.append(rec)
 
@@ -272,7 +325,7 @@ def export_site_series(df, site_names, dashboard_root):
         with open(out_path, "w", encoding="utf-8") as f:
             json.dump(records, f, ensure_ascii=False, indent=2)
 
-    print(f"  [OK] site_series/ ({len(site_ids)} files)")
+    print(f"  [OK] site_series/ ({len(site_ids)} files, Round33 含 site_status)")
     return site_ids
 
 
@@ -394,6 +447,23 @@ def export_site_metrics(df, site_names, dashboard_root, test_daytime_zero_stats=
         "full_history_zero_ratio_pct", "full_history_start_date", "full_history_end_date",
     ]], on="site_id", how="left")
 
+    # Merge Round33 site validity (site_status, exclude_reason)
+    if "_site_status" in df.columns:
+        site_status_map = df.groupby("site_id")["_site_status"].first().reset_index()
+        site_status_map.columns = ["site_id", "site_status"]
+        metrics_df = metrics_df.merge(site_status_map, on="site_id", how="left")
+        metrics_df["site_status"] = metrics_df["site_status"].fillna("正常评价")
+    if "_exclude_from_ranking" in df.columns:
+        ex_map = df.groupby("site_id")["_exclude_from_ranking"].first().reset_index()
+        ex_map.columns = ["site_id", "exclude_from_ranking"]
+        metrics_df = metrics_df.merge(ex_map, on="site_id", how="left")
+        metrics_df["exclude_from_ranking"] = metrics_df["exclude_from_ranking"].fillna("否")
+    if "_exclude_reason" in df.columns:
+        reason_map = df.groupby("site_id")["_exclude_reason"].first().reset_index()
+        reason_map.columns = ["site_id", "exclude_reason"]
+        metrics_df = metrics_df.merge(reason_map, on="site_id", how="left")
+        metrics_df["exclude_reason"] = metrics_df["exclude_reason"].fillna("")
+
     # Merge test 6-19 zero ratio stats
     if test_daytime_zero_stats is not None and not test_daytime_zero_stats.empty:
         metrics_df = metrics_df.merge(test_daytime_zero_stats, on="site_id", how="left")
@@ -413,6 +483,9 @@ def export_site_metrics(df, site_names, dashboard_root, test_daytime_zero_stats=
     min_rows = max(200, rows_q20)
 
     valid_metrics_df = metrics_df[~metrics_df["is_all_zero_history"]].copy()
+    # Round33: 只从有效评价站点中选择典型站点（排除测试期异常站点）
+    if "exclude_from_ranking" in valid_metrics_df.columns:
+        valid_metrics_df = valid_metrics_df[valid_metrics_df["exclude_from_ranking"] != "是"].copy()
     best_candidates = valid_metrics_df[
         (valid_metrics_df["rows"] >= min_rows) & (valid_metrics_df["positive_rows"] >= 100)
     ].copy()
@@ -463,6 +536,14 @@ def export_site_metrics(df, site_names, dashboard_root, test_daytime_zero_stats=
     metrics_df["category_label"] = metrics_df["site_id"].map(lambda s: final_map[s][1])
 
     # Drop temp columns and sort
+    # Round33 新增字段：站点有效性分类（来自 round33_site_validity.csv）
+    if "_site_status" in metrics_df.columns:
+        metrics_df["site_status"] = metrics_df["_site_status"]
+    if "_exclude_from_ranking" in metrics_df.columns:
+        metrics_df["exclude_from_ranking"] = metrics_df["_exclude_from_ranking"]
+    if "_exclude_reason" in metrics_df.columns:
+        metrics_df["exclude_reason"] = metrics_df["_exclude_reason"]
+
     out_cols = [
         "site_id", "site_name", "county", "capacity_mw",
         "rows", "positive_rows", "zero_rows", "zero_ratio_pct",
@@ -476,6 +557,8 @@ def export_site_metrics(df, site_names, dashboard_root, test_daytime_zero_stats=
         "test_daytime_positive_rows_6_19",
         "test_daytime_zero_rows_6_19",
         "test_daytime_zero_ratio_6_19_pct",
+        # Round33 新增
+        "site_status", "exclude_from_ranking", "exclude_reason",
     ]
     metrics_df = metrics_df[out_cols]
 

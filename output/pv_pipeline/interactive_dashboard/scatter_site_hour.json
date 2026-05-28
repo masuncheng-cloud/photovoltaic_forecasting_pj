@@ -10,7 +10,7 @@
     "nrmse_pct": 14.2056,
     "bias_pct": -96.8852,
     "pred_actual_ratio": 0.0311,
-    "category_label": "样本少"
+    "category_label": "其他"
   },
   {
     "site_id": "S002",
@@ -23,7 +23,7 @@
     "nrmse_pct": 13.3978,
     "bias_pct": -42.4698,
     "pred_actual_ratio": 0.5753,
-    "category_label": "样本少"
+    "category_label": "其他"
   },
   {
     "site_id": "S002",
@@ -36,7 +36,7 @@
     "nrmse_pct": 13.6574,
     "bias_pct": -10.6275,
     "pred_actual_ratio": 0.8937,
-    "category_label": "样本少"
+    "category_label": "其他"
   },
   {
     "site_id": "S002",
@@ -49,7 +49,7 @@
     "nrmse_pct": 16.5859,
     "bias_pct": 6.1748,
     "pred_actual_ratio": 1.0617,
-    "category_label": "样本少"
+    "category_label": "其他"
   },
   {
     "site_id": "S002",
@@ -62,7 +62,7 @@
     "nrmse_pct": 18.8376,
     "bias_pct": -0.3419,
     "pred_actual_ratio": 0.9966,
-    "category_label": "样本少"
+    "category_label": "其他"
   },
   {
     "site_id": "S002",
@@ -75,7 +75,7 @@
     "nrmse_pct": 20.782,
     "bias_pct": 0.7694,
     "pred_actual_ratio": 1.0077,
-    "category_label": "样本少"
+    "category_label": "其他"
   },
   {
     "site_id": "S002",
@@ -88,7 +88,7 @@
     "nrmse_pct": 22.3076,
     "bias_pct": 0.3128,
     "pred_actual_ratio": 1.0031,
-    "category_label": "样本少"
+    "category_label": "其他"
   },
   {
     "site_id": "S002",
@@ -101,7 +101,7 @@
     "nrmse_pct": 21.3379,
     "bias_pct": 0.0194,
     "pred_actual_ratio": 1.0002,
-    "category_label": "样本少"
+    "category_label": "其他"
   },
   {
     "site_id": "S002",
@@ -114,7 +114,7 @@
     "nrmse_pct": 20.1302,
     "bias_pct": -1.6393,
     "pred_actual_ratio": 0.9836,
-    "category_label": "样本少"
+    "category_label": "其他"
   },
   {
     "site_id": "S002",
@@ -127,7 +127,7 @@
     "nrmse_pct": 16.7248,
     "bias_pct": 9.0413,
     "pred_actual_ratio": 1.0904,
-    "category_label": "样本少"
+    "category_label": "其他"
   },
   {
     "site_id": "S002",
@@ -140,7 +140,7 @@
     "nrmse_pct": 14.761,
     "bias_pct": -4.242,
     "pred_actual_ratio": 0.9576,
-    "category_label": "样本少"
+    "category_label": "其他"
   },
   {
     "site_id": "S002",
@@ -153,7 +153,7 @@
     "nrmse_pct": 13.7936,
     "bias_pct": -55.9931,
     "pred_actual_ratio": 0.4401,
-    "category_label": "样本少"
+    "category_label": "其他"
   },
   {
     "site_id": "S002",
@@ -166,7 +166,7 @@
     "nrmse_pct": 9.9798,
     "bias_pct": -78.866,
     "pred_actual_ratio": 0.2113,
-    "category_label": "样本少"
+    "category_label": "其他"
   },
   {
     "site_id": "S002",
@@ -179,7 +179,7 @@
     "nrmse_pct": 9.9201,
     "bias_pct": -98.8951,
     "pred_actual_ratio": 0.011,
-    "category_label": "样本少"
+    "category_label": "其他"
   },
   {
     "site_id": "S003",
@@ -192,7 +192,7 @@
     "nrmse_pct": 10.1562,
     "bias_pct": -74.7408,
     "pred_actual_ratio": 0.2526,
-    "category_label": "样本少"
+    "category_label": "其他"
   },
   {
     "site_id": "S003",
@@ -205,7 +205,7 @@
     "nrmse_pct": 9.8706,
     "bias_pct": -11.7869,
     "pred_actual_ratio": 0.8821,
-    "category_label": "样本少"
+    "category_label": "其他"
   },
   {
     "site_id": "S003",
@@ -218,7 +218,7 @@
     "nrmse_pct": 11.5452,
     "bias_pct": 24.5813,
     "pred_actual_ratio": 1.2458,
-    "category_label": "样本少"
+    "category_label": "其他"
   },
   {
     "site_id": "S003",
@@ -231,7 +231,7 @@
     "nrmse_pct": 15.3582,
     "bias_pct": 31.8795,
     "pred_actual_ratio": 1.3188,
-    "category_label": "样本少"
+    "category_label": "其他"
   },
   {
     "site_id": "S003",
@@ -244,7 +244,7 @@
     "nrmse_pct": 19.788,
     "bias_pct": 36.9678,
     "pred_actual_ratio": 1.3697,
-    "category_label": "样本少"
+    "category_label": "其他"
   },
   {
     "site_id": "S003",
@@ -257,7 +257,7 @@
     "nrmse_pct": 22.3415,
     "bias_pct": 34.5984,
     "pred_actual_ratio": 1.346,
-    "category_label": "样本少"
+    "category_label": "其他"
   },
   {
     "site_id": "S003",
@@ -270,7 +270,7 @@
     "nrmse_pct": 23.734,
     "bias_pct": 32.8005,
     "pred_actual_ratio": 1.328,
-    "category_label": "样本少"
+    "category_label": "其他"
   },
   {
     "site_id": "S003",
@@ -283,7 +283,7 @@
     "nrmse_pct": 22.7853,
     "bias_pct": 31.8386,
     "pred_actual_ratio": 1.3184,
-    "category_label": "样本少"
+    "category_label": "其他"
   },
   {
     "site_id": "S003",
@@ -296,7 +296,7 @@
     "nrmse_pct": 21.1806,
     "bias_pct": 28.3013,
     "pred_actual_ratio": 1.283,
-    "category_label": "样本少"
+    "category_label": "其他"
   },
   {
     "site_id": "S003",
@@ -309,7 +309,7 @@
     "nrmse_pct": 16.5887,
     "bias_pct": 18.0061,
     "pred_actual_ratio": 1.1801,
-    "category_label": "样本少"
+    "category_label": "其他"
   },
   {
     "site_id": "S003",
@@ -322,7 +322,7 @@
     "nrmse_pct": 12.2676,
     "bias_pct": 13.4513,
     "pred_actual_ratio": 1.1345,
-    "category_label": "样本少"
+    "category_label": "其他"
   },
   {
     "site_id": "S003",
@@ -335,7 +335,7 @@
     "nrmse_pct": 9.9512,
     "bias_pct": -7.0304,
     "pred_actual_ratio": 0.9297,
-    "category_label": "样本少"
+    "category_label": "其他"
   },
   {
     "site_id": "S003",
@@ -348,7 +348,7 @@
     "nrmse_pct": 10.2496,
     "bias_pct": -41.4843,
     "pred_actual_ratio": 0.5852,
-    "category_label": "样本少"
+    "category_label": "其他"
   },
   {
     "site_id": "S003",
@@ -361,7 +361,7 @@
     "nrmse_pct": 10.4329,
     "bias_pct": -92.0998,
     "pred_actual_ratio": 0.079,
-    "category_label": "样本少"
+    "category_label": "其他"
   },
   {
     "site_id": "S004",
@@ -374,7 +374,7 @@
     "nrmse_pct": 3.5236,
     "bias_pct": -87.1967,
     "pred_actual_ratio": 0.128,
-    "category_label": "样本少"
+    "category_label": "其他"
   },
   {
     "site_id": "S004",
@@ -387,7 +387,7 @@
     "nrmse_pct": 5.2811,
     "bias_pct": -13.6123,
     "pred_actual_ratio": 0.8639,
-    "category_label": "样本少"
+    "category_label": "其他"
   },
   {
     "site_id": "S004",
@@ -400,7 +400,7 @@
     "nrmse_pct": 7.1895,
     "bias_pct": -5.1328,
     "pred_actual_ratio": 0.9487,
-    "category_label": "样本少"
+    "category_label": "其他"
   },
   {
     "site_id": "S004",
@@ -413,7 +413,7 @@
     "nrmse_pct": 11.0379,
     "bias_pct": 2.8417,
     "pred_actual_ratio": 1.0284,
-    "category_label": "样本少"
+    "category_label": "其他"
   },
   {
     "site_id": "S004",
@@ -426,7 +426,7 @@
     "nrmse_pct": 14.1988,
     "bias_pct": 8.2253,
     "pred_actual_ratio": 1.0823,
-    "category_label": "样本少"
+    "category_label": "其他"
   },
   {
     "site_id": "S004",
@@ -439,7 +439,7 @@
     "nrmse_pct": 14.7978,
     "bias_pct": 10.1167,
     "pred_actual_ratio": 1.1012,
-    "category_label": "样本少"
+    "category_label": "其他"
   },
   {
     "site_id": "S004",
@@ -452,7 +452,7 @@
     "nrmse_pct": 16.083,
     "bias_pct": 8.997,
     "pred_actual_ratio": 1.09,
-    "category_label": "样本少"
+    "category_label": "其他"
   },
   {
     "site_id": "S004",
@@ -465,7 +465,7 @@
     "nrmse_pct": 16.6257,
     "bias_pct": 10.7927,
     "pred_actual_ratio": 1.1079,
-    "category_label": "样本少"
+    "category_label": "其他"
   },
   {
     "site_id": "S004",
@@ -478,7 +478,7 @@
     "nrmse_pct": 15.5114,
     "bias_pct": 13.4416,
     "pred_actual_ratio": 1.1344,
-    "category_label": "样本少"
+    "category_label": "其他"
   },
   {
     "site_id": "S004",
@@ -491,7 +491,7 @@
     "nrmse_pct": 12.0399,
     "bias_pct": 3.4404,
     "pred_actual_ratio": 1.0344,
-    "category_label": "样本少"
+    "category_label": "其他"
   },
   {
     "site_id": "S004",
@@ -504,7 +504,7 @@
     "nrmse_pct": 9.3541,
     "bias_pct": 1.4985,
     "pred_actual_ratio": 1.015,
-    "category_label": "样本少"
+    "category_label": "其他"
   },
   {
     "site_id": "S004",
@@ -517,7 +517,7 @@
     "nrmse_pct": 5.922,
     "bias_pct": -24.1567,
     "pred_actual_ratio": 0.7584,
-    "category_label": "样本少"
+    "category_label": "其他"
   },
   {
     "site_id": "S004",
@@ -530,7 +530,7 @@
     "nrmse_pct": 2.8308,
     "bias_pct": -33.3113,
     "pred_actual_ratio": 0.6669,
-    "category_label": "样本少"
+    "category_label": "其他"
   },
   {
     "site_id": "S004",
@@ -543,7 +543,7 @@
     "nrmse_pct": 0.1527,
     "bias_pct": 1091.6287,
     "pred_actual_ratio": 11.9163,
-    "category_label": "样本少"
+    "category_label": "其他"
   },
   {
     "site_id": "S006",
@@ -556,7 +556,7 @@
     "nrmse_pct": 0.6153,
     "bias_pct": 10.9959,
     "pred_actual_ratio": 1.11,
-    "category_label": "样本少"
+    "category_label": "其他"
   },
   {
     "site_id": "S006",
@@ -569,7 +569,7 @@
     "nrmse_pct": 4.6556,
     "bias_pct": 126.9777,
     "pred_actual_ratio": 2.2698,
-    "category_label": "样本少"
+    "category_label": "其他"
   },
   {
     "site_id": "S006",
@@ -582,7 +582,7 @@
     "nrmse_pct": 9.8804,
     "bias_pct": 129.2553,
     "pred_actual_ratio": 2.2926,
-    "category_label": "样本少"
+    "category_label": "其他"
   },
   {
     "site_id": "S006",
@@ -595,7 +595,7 @@
     "nrmse_pct": 16.4422,
     "bias_pct": 133.285,
     "pred_actual_ratio": 2.3328,
-    "category_label": "样本少"
+    "category_label": "其他"
   },
   {
     "site_id": "S006",
@@ -608,7 +608,7 @@
     "nrmse_pct": 14.5964,
     "bias_pct": 74.7793,
     "pred_actual_ratio": 1.7478,
-    "category_label": "样本少"
+    "category_label": "其他"
   },
   {
     "site_id": "S006",
@@ -621,7 +621,7 @@
     "nrmse_pct": 15.9421,
     "bias_pct": 67.3943,
     "pred_actual_ratio": 1.6739,
-    "category_label": "样本少"
+    "category_label": "其他"
   },
   {
     "site_id": "S006",
@@ -634,7 +634,7 @@
     "nrmse_pct": 16.7553,
     "bias_pct": 67.6412,
     "pred_actual_ratio": 1.6764,
-    "category_label": "样本少"
+    "category_label": "其他"
   },
   {
     "site_id": "S006",
@@ -647,7 +647,7 @@
     "nrmse_pct": 16.2025,
     "bias_pct": 67.6814,
     "pred_actual_ratio": 1.6768,
-    "category_label": "样本少"
+    "category_label": "其他"
   },
   {
     "site_id": "S006",
@@ -660,7 +660,7 @@
     "nrmse_pct": 14.3279,
     "bias_pct": 64.5941,
     "pred_actual_ratio": 1.6459,
-    "category_label": "样本少"
+    "category_label": "其他"
   },
   {
     "site_id": "S006",
@@ -673,7 +673,7 @@
     "nrmse_pct": 15.6171,
     "bias_pct": 112.5842,
     "pred_actual_ratio": 2.1258,
-    "category_label": "样本少"
+    "category_label": "其他"
   },
   {
     "site_id": "S006",
@@ -686,7 +686,7 @@
     "nrmse_pct": 9.2608,
     "bias_pct": 83.4085,
     "pred_actual_ratio": 1.8341,
-    "category_label": "样本少"
+    "category_label": "其他"
   },
   {
     "site_id": "S006",
@@ -699,7 +699,7 @@
     "nrmse_pct": 2.9852,
     "bias_pct": -8.9282,
     "pred_actual_ratio": 0.9107,
-    "category_label": "样本少"
+    "category_label": "其他"
   },
   {
     "site_id": "S006",
@@ -712,7 +712,7 @@
     "nrmse_pct": 1.3932,
     "bias_pct": -43.355,
     "pred_actual_ratio": 0.5664,
-    "category_label": "样本少"
+    "category_label": "其他"
   },
   {
     "site_id": "S006",
@@ -725,7 +725,7 @@
     "nrmse_pct": 0.1104,
     "bias_pct": 601.6123,
     "pred_actual_ratio": 7.0161,
-    "category_label": "样本少"
+    "category_label": "其他"
   },
   {
     "site_id": "S007",
@@ -1102,7 +1102,7 @@
     "nrmse_pct": 1.6767,
     "bias_pct": -8.9621,
     "pred_actual_ratio": 0.9104,
-    "category_label": "其他"
+    "category_label": "样本少"
   },
   {
     "site_id": "S009",
@@ -1115,7 +1115,7 @@
     "nrmse_pct": 4.185,
     "bias_pct": -6.7094,
     "pred_actual_ratio": 0.9329,
-    "category_label": "其他"
+    "category_label": "样本少"
   },
   {
     "site_id": "S009",
@@ -1128,7 +1128,7 @@
     "nrmse_pct": 8.8214,
     "bias_pct": -13.0454,
     "pred_actual_ratio": 0.8695,
-    "category_label": "其他"
+    "category_label": "样本少"
   },
   {
     "site_id": "S009",
@@ -1141,7 +1141,7 @@
     "nrmse_pct": 11.8027,
     "bias_pct": -9.1714,
     "pred_actual_ratio": 0.9083,
-    "category_label": "其他"
+    "category_label": "样本少"
   },
   {
     "site_id": "S009",
@@ -1154,7 +1154,7 @@
     "nrmse_pct": 13.3316,
     "bias_pct": 9.9024,
     "pred_actual_ratio": 1.099,
-    "category_label": "其他"
+    "category_label": "样本少"
   },
   {
     "site_id": "S009",
@@ -1167,7 +1167,7 @@
     "nrmse_pct": 15.904,
     "bias_pct": 11.9375,
     "pred_actual_ratio": 1.1194,
-    "category_label": "其他"
+    "category_label": "样本少"
   },
   {
     "site_id": "S009",
@@ -1180,7 +1180,7 @@
     "nrmse_pct": 16.0196,
     "bias_pct": 13.1246,
     "pred_actual_ratio": 1.1312,
-    "category_label": "其他"
+    "category_label": "样本少"
   },
   {
     "site_id": "S009",
@@ -1193,7 +1193,7 @@
     "nrmse_pct": 15.9191,
     "bias_pct": 13.0574,
     "pred_actual_ratio": 1.1306,
-    "category_label": "其他"
+    "category_label": "样本少"
   },
   {
     "site_id": "S009",
@@ -1206,7 +1206,7 @@
     "nrmse_pct": 15.3486,
     "bias_pct": 13.4953,
     "pred_actual_ratio": 1.135,
-    "category_label": "其他"
+    "category_label": "样本少"
   },
   {
     "site_id": "S009",
@@ -1219,7 +1219,7 @@
     "nrmse_pct": 11.2292,
     "bias_pct": -0.6521,
     "pred_actual_ratio": 0.9935,
-    "category_label": "其他"
+    "category_label": "样本少"
   },
   {
     "site_id": "S009",
@@ -1232,7 +1232,7 @@
     "nrmse_pct": 8.8542,
     "bias_pct": -4.3672,
     "pred_actual_ratio": 0.9563,
-    "category_label": "其他"
+    "category_label": "样本少"
   },
   {
     "site_id": "S009",
@@ -1245,7 +1245,7 @@
     "nrmse_pct": 8.718,
     "bias_pct": -59.3135,
     "pred_actual_ratio": 0.4069,
-    "category_label": "其他"
+    "category_label": "样本少"
   },
   {
     "site_id": "S009",
@@ -1258,7 +1258,7 @@
     "nrmse_pct": 2.4776,
     "bias_pct": -28.0553,
     "pred_actual_ratio": 0.7194,
-    "category_label": "其他"
+    "category_label": "样本少"
   },
   {
     "site_id": "S009",
@@ -1271,7 +1271,7 @@
     "nrmse_pct": 0.9175,
     "bias_pct": 124.2345,
     "pred_actual_ratio": 2.2423,
-    "category_label": "其他"
+    "category_label": "样本少"
   },
   {
     "site_id": "S010",
@@ -1466,7 +1466,7 @@
     "nrmse_pct": 4.3336,
     "bias_pct": -40.3917,
     "pred_actual_ratio": 0.5961,
-    "category_label": "其他"
+    "category_label": "样本少"
   },
   {
     "site_id": "S011",
@@ -1479,7 +1479,7 @@
     "nrmse_pct": 4.1755,
     "bias_pct": 9.5041,
     "pred_actual_ratio": 1.095,
-    "category_label": "其他"
+    "category_label": "样本少"
   },
   {
     "site_id": "S011",
@@ -1492,7 +1492,7 @@
     "nrmse_pct": 5.9683,
     "bias_pct": 12.735,
     "pred_actual_ratio": 1.1273,
-    "category_label": "其他"
+    "category_label": "样本少"
   },
   {
     "site_id": "S011",
@@ -1505,7 +1505,7 @@
     "nrmse_pct": 8.4366,
     "bias_pct": 6.0036,
     "pred_actual_ratio": 1.06,
-    "category_label": "其他"
+    "category_label": "样本少"
   },
   {
     "site_id": "S011",
@@ -1518,7 +1518,7 @@
     "nrmse_pct": 10.772,
     "bias_pct": 1.4359,
     "pred_actual_ratio": 1.0144,
-    "category_label": "其他"
+    "category_label": "样本少"
   },
   {
     "site_id": "S011",
@@ -1531,7 +1531,7 @@
     "nrmse_pct": 11.293,
     "bias_pct": -1.0435,
     "pred_actual_ratio": 0.9896,
-    "category_label": "其他"
+    "category_label": "样本少"
   },
   {
     "site_id": "S011",
@@ -1544,7 +1544,7 @@
     "nrmse_pct": 12.2356,
     "bias_pct": -1.507,
     "pred_actual_ratio": 0.9849,
-    "category_label": "其他"
+    "category_label": "样本少"
   },
   {
     "site_id": "S011",
@@ -1557,7 +1557,7 @@
     "nrmse_pct": 11.8591,
     "bias_pct": 0.7553,
     "pred_actual_ratio": 1.0076,
-    "category_label": "其他"
+    "category_label": "样本少"
   },
   {
     "site_id": "S011",
@@ -1570,7 +1570,7 @@
     "nrmse_pct": 11.4886,
     "bias_pct": 1.6099,
     "pred_actual_ratio": 1.0161,
-    "category_label": "其他"
+    "category_label": "样本少"
   },
   {
     "site_id": "S011",
@@ -1583,7 +1583,7 @@
     "nrmse_pct": 9.5928,
     "bias_pct": -3.1306,
     "pred_actual_ratio": 0.9687,
-    "category_label": "其他"
+    "category_label": "样本少"
   },
   {
     "site_id": "S011",
@@ -1596,7 +1596,7 @@
     "nrmse_pct": 7.3598,
     "bias_pct": -6.5598,
     "pred_actual_ratio": 0.9344,
-    "category_label": "其他"
+    "category_label": "样本少"
   },
   {
     "site_id": "S011",
@@ -1609,7 +1609,7 @@
     "nrmse_pct": 5.754,
     "bias_pct": -12.2038,
     "pred_actual_ratio": 0.878,
-    "category_label": "其他"
+    "category_label": "样本少"
   },
   {
     "site_id": "S011",
@@ -1622,7 +1622,7 @@
     "nrmse_pct": 4.608,
     "bias_pct": -23.6798,
     "pred_actual_ratio": 0.7632,
-    "category_label": "其他"
+    "category_label": "样本少"
   },
   {
     "site_id": "S011",
@@ -1635,7 +1635,7 @@
     "nrmse_pct": 4.6714,
     "bias_pct": -85.9003,
     "pred_actual_ratio": 0.141,
-    "category_label": "其他"
+    "category_label": "样本少"
   },
   {
     "site_id": "S012",
@@ -1648,7 +1648,7 @@
     "nrmse_pct": 1.7478,
     "bias_pct": -79.7544,
     "pred_actual_ratio": 0.2025,
-    "category_label": "预测最差"
+    "category_label": "其他"
   },
   {
     "site_id": "S012",
@@ -1661,7 +1661,7 @@
     "nrmse_pct": 3.0746,
     "bias_pct": 32.7358,
     "pred_actual_ratio": 1.3274,
-    "category_label": "预测最差"
+    "category_label": "其他"
   },
   {
     "site_id": "S012",
@@ -1674,7 +1674,7 @@
     "nrmse_pct": 8.1532,
     "bias_pct": 57.0973,
     "pred_actual_ratio": 1.571,
-    "category_label": "预测最差"
+    "category_label": "其他"
   },
   {
     "site_id": "S012",
@@ -1687,7 +1687,7 @@
     "nrmse_pct": 15.4603,
     "bias_pct": 76.4148,
     "pred_actual_ratio": 1.7641,
-    "category_label": "预测最差"
+    "category_label": "其他"
   },
   {
     "site_id": "S012",
@@ -1700,7 +1700,7 @@
     "nrmse_pct": 19.5783,
     "bias_pct": 66.6915,
     "pred_actual_ratio": 1.6669,
-    "category_label": "预测最差"
+    "category_label": "其他"
   },
   {
     "site_id": "S012",
@@ -1713,7 +1713,7 @@
     "nrmse_pct": 22.8676,
     "bias_pct": 68.8907,
     "pred_actual_ratio": 1.6889,
-    "category_label": "预测最差"
+    "category_label": "其他"
   },
   {
     "site_id": "S012",
@@ -1726,7 +1726,7 @@
     "nrmse_pct": 23.8234,
     "bias_pct": 65.2668,
     "pred_actual_ratio": 1.6527,
-    "category_label": "预测最差"
+    "category_label": "其他"
   },
   {
     "site_id": "S012",
@@ -1739,7 +1739,7 @@
     "nrmse_pct": 22.3698,
     "bias_pct": 66.9401,
     "pred_actual_ratio": 1.6694,
-    "category_label": "预测最差"
+    "category_label": "其他"
   },
   {
     "site_id": "S012",
@@ -1752,7 +1752,7 @@
     "nrmse_pct": 19.2605,
     "bias_pct": 63.7059,
     "pred_actual_ratio": 1.6371,
-    "category_label": "预测最差"
+    "category_label": "其他"
   },
   {
     "site_id": "S012",
@@ -1765,7 +1765,7 @@
     "nrmse_pct": 14.0845,
     "bias_pct": 56.6972,
     "pred_actual_ratio": 1.567,
-    "category_label": "预测最差"
+    "category_label": "其他"
   },
   {
     "site_id": "S012",
@@ -1778,7 +1778,7 @@
     "nrmse_pct": 7.3705,
     "bias_pct": 24.7076,
     "pred_actual_ratio": 1.2471,
-    "category_label": "预测最差"
+    "category_label": "其他"
   },
   {
     "site_id": "S012",
@@ -1791,7 +1791,7 @@
     "nrmse_pct": 3.9276,
     "bias_pct": -5.2279,
     "pred_actual_ratio": 0.9477,
-    "category_label": "预测最差"
+    "category_label": "其他"
   },
   {
     "site_id": "S012",
@@ -1804,7 +1804,7 @@
     "nrmse_pct": 1.6502,
     "bias_pct": -29.8132,
     "pred_actual_ratio": 0.7019,
-    "category_label": "预测最差"
+    "category_label": "其他"
   },
   {
     "site_id": "S012",
@@ -1817,7 +1817,7 @@
     "nrmse_pct": 0.6654,
     "bias_pct": -88.283,
     "pred_actual_ratio": 0.1172,
-    "category_label": "预测最差"
+    "category_label": "其他"
   },
   {
     "site_id": "S014",
@@ -2194,7 +2194,7 @@
     "nrmse_pct": 3.7327,
     "bias_pct": -91.6145,
     "pred_actual_ratio": 0.0839,
-    "category_label": "预测最好"
+    "category_label": "其他"
   },
   {
     "site_id": "S017",
@@ -2207,7 +2207,7 @@
     "nrmse_pct": 6.157,
     "bias_pct": -14.4967,
     "pred_actual_ratio": 0.855,
-    "category_label": "预测最好"
+    "category_label": "其他"
   },
   {
     "site_id": "S017",
@@ -2220,7 +2220,7 @@
     "nrmse_pct": 11.6285,
     "bias_pct": -6.1017,
     "pred_actual_ratio": 0.939,
-    "category_label": "预测最好"
+    "category_label": "其他"
   },
   {
     "site_id": "S017",
@@ -2233,7 +2233,7 @@
     "nrmse_pct": 17.3846,
     "bias_pct": -3.9857,
     "pred_actual_ratio": 0.9601,
-    "category_label": "预测最好"
+    "category_label": "其他"
   },
   {
     "site_id": "S017",
@@ -2246,7 +2246,7 @@
     "nrmse_pct": 20.5535,
     "bias_pct": 21.5135,
     "pred_actual_ratio": 1.2151,
-    "category_label": "预测最好"
+    "category_label": "其他"
   },
   {
     "site_id": "S017",
@@ -2259,7 +2259,7 @@
     "nrmse_pct": 22.3685,
     "bias_pct": 21.9449,
     "pred_actual_ratio": 1.2194,
-    "category_label": "预测最好"
+    "category_label": "其他"
   },
   {
     "site_id": "S017",
@@ -2272,7 +2272,7 @@
     "nrmse_pct": 22.6342,
     "bias_pct": 23.6258,
     "pred_actual_ratio": 1.2363,
-    "category_label": "预测最好"
+    "category_label": "其他"
   },
   {
     "site_id": "S017",
@@ -2285,7 +2285,7 @@
     "nrmse_pct": 22.3145,
     "bias_pct": 21.4594,
     "pred_actual_ratio": 1.2146,
-    "category_label": "预测最好"
+    "category_label": "其他"
   },
   {
     "site_id": "S017",
@@ -2298,7 +2298,7 @@
     "nrmse_pct": 20.6329,
     "bias_pct": 21.0464,
     "pred_actual_ratio": 1.2105,
-    "category_label": "预测最好"
+    "category_label": "其他"
   },
   {
     "site_id": "S017",
@@ -2311,7 +2311,7 @@
     "nrmse_pct": 17.7228,
     "bias_pct": -6.9274,
     "pred_actual_ratio": 0.9307,
-    "category_label": "预测最好"
+    "category_label": "其他"
   },
   {
     "site_id": "S017",
@@ -2324,7 +2324,7 @@
     "nrmse_pct": 13.6965,
     "bias_pct": -14.7462,
     "pred_actual_ratio": 0.8525,
-    "category_label": "预测最好"
+    "category_label": "其他"
   },
   {
     "site_id": "S017",
@@ -2337,7 +2337,7 @@
     "nrmse_pct": 9.5714,
     "bias_pct": 28.0865,
     "pred_actual_ratio": 1.2809,
-    "category_label": "预测最好"
+    "category_label": "其他"
   },
   {
     "site_id": "S017",
@@ -2350,7 +2350,7 @@
     "nrmse_pct": 4.3618,
     "bias_pct": -6.6578,
     "pred_actual_ratio": 0.9334,
-    "category_label": "预测最好"
+    "category_label": "其他"
   },
   {
     "site_id": "S017",
@@ -2363,7 +2363,7 @@
     "nrmse_pct": 3.5719,
     "bias_pct": -98.1262,
     "pred_actual_ratio": 0.0187,
-    "category_label": "预测最好"
+    "category_label": "其他"
   },
   {
     "site_id": "S018",
@@ -2558,7 +2558,7 @@
     "nrmse_pct": 16.0124,
     "bias_pct": -70.5808,
     "pred_actual_ratio": 0.2942,
-    "category_label": "预测最差"
+    "category_label": "其他"
   },
   {
     "site_id": "S019",
@@ -2571,7 +2571,7 @@
     "nrmse_pct": 15.7605,
     "bias_pct": -26.7843,
     "pred_actual_ratio": 0.7322,
-    "category_label": "预测最差"
+    "category_label": "其他"
   },
   {
     "site_id": "S019",
@@ -2584,7 +2584,7 @@
     "nrmse_pct": 15.3855,
     "bias_pct": -9.8293,
     "pred_actual_ratio": 0.9017,
-    "category_label": "预测最差"
+    "category_label": "其他"
   },
   {
     "site_id": "S019",
@@ -2597,7 +2597,7 @@
     "nrmse_pct": 17.6983,
     "bias_pct": -5.6582,
     "pred_actual_ratio": 0.9434,
-    "category_label": "预测最差"
+    "category_label": "其他"
   },
   {
     "site_id": "S019",
@@ -2610,7 +2610,7 @@
     "nrmse_pct": 19.1404,
     "bias_pct": 4.0131,
     "pred_actual_ratio": 1.0401,
-    "category_label": "预测最差"
+    "category_label": "其他"
   },
   {
     "site_id": "S019",
@@ -2623,7 +2623,7 @@
     "nrmse_pct": 20.413,
     "bias_pct": 2.5133,
     "pred_actual_ratio": 1.0251,
-    "category_label": "预测最差"
+    "category_label": "其他"
   },
   {
     "site_id": "S019",
@@ -2636,7 +2636,7 @@
     "nrmse_pct": 20.7908,
     "bias_pct": 3.0526,
     "pred_actual_ratio": 1.0305,
-    "category_label": "预测最差"
+    "category_label": "其他"
   },
   {
     "site_id": "S019",
@@ -2649,7 +2649,7 @@
     "nrmse_pct": 18.9559,
     "bias_pct": 1.8384,
     "pred_actual_ratio": 1.0184,
-    "category_label": "预测最差"
+    "category_label": "其他"
   },
   {
     "site_id": "S019",
@@ -2662,7 +2662,7 @@
     "nrmse_pct": 18.2025,
     "bias_pct": 3.6309,
     "pred_actual_ratio": 1.0363,
-    "category_label": "预测最差"
+    "category_label": "其他"
   },
   {
     "site_id": "S019",
@@ -2675,7 +2675,7 @@
     "nrmse_pct": 16.6824,
     "bias_pct": -5.2072,
     "pred_actual_ratio": 0.9479,
-    "category_label": "预测最差"
+    "category_label": "其他"
   },
   {
     "site_id": "S019",
@@ -2688,7 +2688,7 @@
     "nrmse_pct": 17.0588,
     "bias_pct": -10.466,
     "pred_actual_ratio": 0.8953,
-    "category_label": "预测最差"
+    "category_label": "其他"
   },
   {
     "site_id": "S019",
@@ -2701,7 +2701,7 @@
     "nrmse_pct": 18.4845,
     "bias_pct": -27.7928,
     "pred_actual_ratio": 0.7221,
-    "category_label": "预测最差"
+    "category_label": "其他"
   },
   {
     "site_id": "S019",
@@ -2714,7 +2714,7 @@
     "nrmse_pct": 18.7093,
     "bias_pct": -54.6841,
     "pred_actual_ratio": 0.4532,
-    "category_label": "预测最差"
+    "category_label": "其他"
   },
   {
     "site_id": "S019",
@@ -2727,7 +2727,7 @@
     "nrmse_pct": 18.3596,
     "bias_pct": -93.7966,
     "pred_actual_ratio": 0.062,
-    "category_label": "预测最差"
+    "category_label": "其他"
   },
   {
     "site_id": "S020",
@@ -3286,7 +3286,7 @@
     "nrmse_pct": 1.4126,
     "bias_pct": -37.5678,
     "pred_actual_ratio": 0.6243,
-    "category_label": "预测最好"
+    "category_label": "样本少"
   },
   {
     "site_id": "S023",
@@ -3299,7 +3299,7 @@
     "nrmse_pct": 2.4855,
     "bias_pct": 11.907,
     "pred_actual_ratio": 1.1191,
-    "category_label": "预测最好"
+    "category_label": "样本少"
   },
   {
     "site_id": "S023",
@@ -3312,7 +3312,7 @@
     "nrmse_pct": 4.9067,
     "bias_pct": 6.4393,
     "pred_actual_ratio": 1.0644,
-    "category_label": "预测最好"
+    "category_label": "样本少"
   },
   {
     "site_id": "S023",
@@ -3325,7 +3325,7 @@
     "nrmse_pct": 7.0229,
     "bias_pct": 0.3945,
     "pred_actual_ratio": 1.0039,
-    "category_label": "预测最好"
+    "category_label": "样本少"
   },
   {
     "site_id": "S023",
@@ -3338,7 +3338,7 @@
     "nrmse_pct": 8.729,
     "bias_pct": -0.823,
     "pred_actual_ratio": 0.9918,
-    "category_label": "预测最好"
+    "category_label": "样本少"
   },
   {
     "site_id": "S023",
@@ -3351,7 +3351,7 @@
     "nrmse_pct": 9.3225,
     "bias_pct": -0.9672,
     "pred_actual_ratio": 0.9903,
-    "category_label": "预测最好"
+    "category_label": "样本少"
   },
   {
     "site_id": "S023",
@@ -3364,7 +3364,7 @@
     "nrmse_pct": 9.7864,
     "bias_pct": 1.359,
     "pred_actual_ratio": 1.0136,
-    "category_label": "预测最好"
+    "category_label": "样本少"
   },
   {
     "site_id": "S023",
@@ -3377,7 +3377,7 @@
     "nrmse_pct": 10.0122,
     "bias_pct": 0.3979,
     "pred_actual_ratio": 1.004,
-    "category_label": "预测最好"
+    "category_label": "样本少"
   },
   {
     "site_id": "S023",
@@ -3390,7 +3390,7 @@
     "nrmse_pct": 8.9283,
     "bias_pct": 0.8842,
     "pred_actual_ratio": 1.0088,
-    "category_label": "预测最好"
+    "category_label": "样本少"
   },
   {
     "site_id": "S023",
@@ -3403,7 +3403,7 @@
     "nrmse_pct": 7.366,
     "bias_pct": -1.1291,
     "pred_actual_ratio": 0.9887,
-    "category_label": "预测最好"
+    "category_label": "样本少"
   },
   {
     "site_id": "S023",
@@ -3416,7 +3416,7 @@
     "nrmse_pct": 5.6763,
     "bias_pct": -2.1715,
     "pred_actual_ratio": 0.9783,
-    "category_label": "预测最好"
+    "category_label": "样本少"
   },
   {
     "site_id": "S023",
@@ -3429,7 +3429,7 @@
     "nrmse_pct": 3.1652,
     "bias_pct": -0.0532,
     "pred_actual_ratio": 0.9995,
-    "category_label": "预测最好"
+    "category_label": "样本少"
   },
   {
     "site_id": "S023",
@@ -3442,7 +3442,7 @@
     "nrmse_pct": 1.1743,
     "bias_pct": 13.177,
     "pred_actual_ratio": 1.1318,
-    "category_label": "预测最好"
+    "category_label": "样本少"
   },
   {
     "site_id": "S023",
@@ -3455,7 +3455,7 @@
     "nrmse_pct": 0.3399,
     "bias_pct": 303.8242,
     "pred_actual_ratio": 4.0382,
-    "category_label": "预测最好"
+    "category_label": "样本少"
   },
   {
     "site_id": "S024",
@@ -3468,7 +3468,7 @@
     "nrmse_pct": 2.4569,
     "bias_pct": -12.7525,
     "pred_actual_ratio": 0.8725,
-    "category_label": "相对正确"
+    "category_label": "其他"
   },
   {
     "site_id": "S024",
@@ -3481,7 +3481,7 @@
     "nrmse_pct": 3.3615,
     "bias_pct": -5.0985,
     "pred_actual_ratio": 0.949,
-    "category_label": "相对正确"
+    "category_label": "其他"
   },
   {
     "site_id": "S024",
@@ -3494,7 +3494,7 @@
     "nrmse_pct": 6.2469,
     "bias_pct": -0.9437,
     "pred_actual_ratio": 0.9906,
-    "category_label": "相对正确"
+    "category_label": "其他"
   },
   {
     "site_id": "S024",
@@ -3507,7 +3507,7 @@
     "nrmse_pct": 9.6131,
     "bias_pct": -1.1137,
     "pred_actual_ratio": 0.9889,
-    "category_label": "相对正确"
+    "category_label": "其他"
   },
   {
     "site_id": "S024",
@@ -3520,7 +3520,7 @@
     "nrmse_pct": 12.5365,
     "bias_pct": 0.8726,
     "pred_actual_ratio": 1.0087,
-    "category_label": "相对正确"
+    "category_label": "其他"
   },
   {
     "site_id": "S024",
@@ -3533,7 +3533,7 @@
     "nrmse_pct": 13.8809,
     "bias_pct": -0.1859,
     "pred_actual_ratio": 0.9981,
-    "category_label": "相对正确"
+    "category_label": "其他"
   },
   {
     "site_id": "S024",
@@ -3546,7 +3546,7 @@
     "nrmse_pct": 13.9002,
     "bias_pct": -0.2042,
     "pred_actual_ratio": 0.998,
-    "category_label": "相对正确"
+    "category_label": "其他"
   },
   {
     "site_id": "S024",
@@ -3559,7 +3559,7 @@
     "nrmse_pct": 14.3473,
     "bias_pct": -0.648,
     "pred_actual_ratio": 0.9935,
-    "category_label": "相对正确"
+    "category_label": "其他"
   },
   {
     "site_id": "S024",
@@ -3572,7 +3572,7 @@
     "nrmse_pct": 12.6641,
     "bias_pct": -0.0405,
     "pred_actual_ratio": 0.9996,
-    "category_label": "相对正确"
+    "category_label": "其他"
   },
   {
     "site_id": "S024",
@@ -3585,7 +3585,7 @@
     "nrmse_pct": 10.148,
     "bias_pct": 1.0653,
     "pred_actual_ratio": 1.0107,
-    "category_label": "相对正确"
+    "category_label": "其他"
   },
   {
     "site_id": "S024",
@@ -3598,7 +3598,7 @@
     "nrmse_pct": 6.9676,
     "bias_pct": -0.0472,
     "pred_actual_ratio": 0.9995,
-    "category_label": "相对正确"
+    "category_label": "其他"
   },
   {
     "site_id": "S024",
@@ -3611,7 +3611,7 @@
     "nrmse_pct": 4.0734,
     "bias_pct": 4.591,
     "pred_actual_ratio": 1.0459,
-    "category_label": "相对正确"
+    "category_label": "其他"
   },
   {
     "site_id": "S024",
@@ -3624,7 +3624,7 @@
     "nrmse_pct": 2.4271,
     "bias_pct": 24.734,
     "pred_actual_ratio": 1.2473,
-    "category_label": "相对正确"
+    "category_label": "其他"
   },
   {
     "site_id": "S024",
@@ -3637,7 +3637,7 @@
     "nrmse_pct": 2.0483,
     "bias_pct": 29.3595,
     "pred_actual_ratio": 1.2936,
-    "category_label": "相对正确"
+    "category_label": "其他"
   },
   {
     "site_id": "S025",
@@ -3650,7 +3650,7 @@
     "nrmse_pct": 1.9093,
     "bias_pct": -11.1747,
     "pred_actual_ratio": 0.8883,
-    "category_label": "相对正确"
+    "category_label": "其他"
   },
   {
     "site_id": "S025",
@@ -3663,7 +3663,7 @@
     "nrmse_pct": 3.7779,
     "bias_pct": -0.4637,
     "pred_actual_ratio": 0.9954,
-    "category_label": "相对正确"
+    "category_label": "其他"
   },
   {
     "site_id": "S025",
@@ -3676,7 +3676,7 @@
     "nrmse_pct": 7.6913,
     "bias_pct": 6.1032,
     "pred_actual_ratio": 1.061,
-    "category_label": "相对正确"
+    "category_label": "其他"
   },
   {
     "site_id": "S025",
@@ -3689,7 +3689,7 @@
     "nrmse_pct": 11.8724,
     "bias_pct": 6.9456,
     "pred_actual_ratio": 1.0695,
-    "category_label": "相对正确"
+    "category_label": "其他"
   },
   {
     "site_id": "S025",
@@ -3702,7 +3702,7 @@
     "nrmse_pct": 14.7852,
     "bias_pct": -0.0668,
     "pred_actual_ratio": 0.9993,
-    "category_label": "相对正确"
+    "category_label": "其他"
   },
   {
     "site_id": "S025",
@@ -3715,7 +3715,7 @@
     "nrmse_pct": 16.5573,
     "bias_pct": -4.2169,
     "pred_actual_ratio": 0.9578,
-    "category_label": "相对正确"
+    "category_label": "其他"
   },
   {
     "site_id": "S025",
@@ -3728,7 +3728,7 @@
     "nrmse_pct": 16.4837,
     "bias_pct": -1.9638,
     "pred_actual_ratio": 0.9804,
-    "category_label": "相对正确"
+    "category_label": "其他"
   },
   {
     "site_id": "S025",
@@ -3741,7 +3741,7 @@
     "nrmse_pct": 16.968,
     "bias_pct": -5.9544,
     "pred_actual_ratio": 0.9405,
-    "category_label": "相对正确"
+    "category_label": "其他"
   },
   {
     "site_id": "S025",
@@ -3754,7 +3754,7 @@
     "nrmse_pct": 14.9622,
     "bias_pct": -0.8852,
     "pred_actual_ratio": 0.9911,
-    "category_label": "相对正确"
+    "category_label": "其他"
   },
   {
     "site_id": "S025",
@@ -3767,7 +3767,7 @@
     "nrmse_pct": 11.8349,
     "bias_pct": 8.2445,
     "pred_actual_ratio": 1.0824,
-    "category_label": "相对正确"
+    "category_label": "其他"
   },
   {
     "site_id": "S025",
@@ -3780,7 +3780,7 @@
     "nrmse_pct": 8.5725,
     "bias_pct": 6.5977,
     "pred_actual_ratio": 1.066,
-    "category_label": "相对正确"
+    "category_label": "其他"
   },
   {
     "site_id": "S025",
@@ -3793,7 +3793,7 @@
     "nrmse_pct": 5.1304,
     "bias_pct": 4.2878,
     "pred_actual_ratio": 1.0429,
-    "category_label": "相对正确"
+    "category_label": "其他"
   },
   {
     "site_id": "S025",
@@ -3806,7 +3806,7 @@
     "nrmse_pct": 2.2344,
     "bias_pct": 33.2611,
     "pred_actual_ratio": 1.3326,
-    "category_label": "相对正确"
+    "category_label": "其他"
   },
   {
     "site_id": "S025",
@@ -3819,7 +3819,7 @@
     "nrmse_pct": 0.9437,
     "bias_pct": 347.2007,
     "pred_actual_ratio": 4.472,
-    "category_label": "相对正确"
+    "category_label": "其他"
   },
   {
     "site_id": "S028",
@@ -4014,7 +4014,7 @@
     "nrmse_pct": 4.1607,
     "bias_pct": -88.9851,
     "pred_actual_ratio": 0.1101,
-    "category_label": "其他"
+    "category_label": "样本少"
   },
   {
     "site_id": "S030",
@@ -4027,7 +4027,7 @@
     "nrmse_pct": 8.5039,
     "bias_pct": -0.9243,
     "pred_actual_ratio": 0.9908,
-    "category_label": "其他"
+    "category_label": "样本少"
   },
   {
     "site_id": "S030",
@@ -4040,7 +4040,7 @@
     "nrmse_pct": 9.864,
     "bias_pct": 5.1988,
     "pred_actual_ratio": 1.052,
-    "category_label": "其他"
+    "category_label": "样本少"
   },
   {
     "site_id": "S030",
@@ -4053,7 +4053,7 @@
     "nrmse_pct": 11.7374,
     "bias_pct": 2.3299,
     "pred_actual_ratio": 1.0233,
-    "category_label": "其他"
+    "category_label": "样本少"
   },
   {
     "site_id": "S030",
@@ -4066,7 +4066,7 @@
     "nrmse_pct": 14.2017,
     "bias_pct": 6.6912,
     "pred_actual_ratio": 1.0669,
-    "category_label": "其他"
+    "category_label": "样本少"
   },
   {
     "site_id": "S030",
@@ -4079,7 +4079,7 @@
     "nrmse_pct": 14.8658,
     "bias_pct": 2.1985,
     "pred_actual_ratio": 1.022,
-    "category_label": "其他"
+    "category_label": "样本少"
   },
   {
     "site_id": "S030",
@@ -4092,7 +4092,7 @@
     "nrmse_pct": 15.1703,
     "bias_pct": 0.7163,
     "pred_actual_ratio": 1.0072,
-    "category_label": "其他"
+    "category_label": "样本少"
   },
   {
     "site_id": "S030",
@@ -4105,7 +4105,7 @@
     "nrmse_pct": 15.0076,
     "bias_pct": 2.4062,
     "pred_actual_ratio": 1.0241,
-    "category_label": "其他"
+    "category_label": "样本少"
   },
   {
     "site_id": "S030",
@@ -4118,7 +4118,7 @@
     "nrmse_pct": 14.9019,
     "bias_pct": 4.076,
     "pred_actual_ratio": 1.0408,
-    "category_label": "其他"
+    "category_label": "样本少"
   },
   {
     "site_id": "S030",
@@ -4131,7 +4131,7 @@
     "nrmse_pct": 12.6425,
     "bias_pct": -0.5622,
     "pred_actual_ratio": 0.9944,
-    "category_label": "其他"
+    "category_label": "样本少"
   },
   {
     "site_id": "S030",
@@ -4144,7 +4144,7 @@
     "nrmse_pct": 10.5066,
     "bias_pct": -3.2094,
     "pred_actual_ratio": 0.9679,
-    "category_label": "其他"
+    "category_label": "样本少"
   },
   {
     "site_id": "S030",
@@ -4157,7 +4157,7 @@
     "nrmse_pct": 6.7121,
     "bias_pct": -21.2214,
     "pred_actual_ratio": 0.7878,
-    "category_label": "其他"
+    "category_label": "样本少"
   },
   {
     "site_id": "S030",
@@ -4170,7 +4170,7 @@
     "nrmse_pct": 4.804,
     "bias_pct": -34.9194,
     "pred_actual_ratio": 0.6508,
-    "category_label": "其他"
+    "category_label": "样本少"
   },
   {
     "site_id": "S030",
@@ -4183,7 +4183,7 @@
     "nrmse_pct": 4.5279,
     "bias_pct": -96.0635,
     "pred_actual_ratio": 0.0394,
-    "category_label": "其他"
+    "category_label": "样本少"
   },
   {
     "site_id": "S031",
@@ -4924,7 +4924,7 @@
     "nrmse_pct": 2.2065,
     "bias_pct": -25.067,
     "pred_actual_ratio": 0.7493,
-    "category_label": "相对正确"
+    "category_label": "其他"
   },
   {
     "site_id": "S035",
@@ -4937,7 +4937,7 @@
     "nrmse_pct": 4.1228,
     "bias_pct": -8.8129,
     "pred_actual_ratio": 0.9119,
-    "category_label": "相对正确"
+    "category_label": "其他"
   },
   {
     "site_id": "S035",
@@ -4950,7 +4950,7 @@
     "nrmse_pct": 8.2514,
     "bias_pct": 0.9698,
     "pred_actual_ratio": 1.0097,
-    "category_label": "相对正确"
+    "category_label": "其他"
   },
   {
     "site_id": "S035",
@@ -4963,7 +4963,7 @@
     "nrmse_pct": 12.0407,
     "bias_pct": 1.9923,
     "pred_actual_ratio": 1.0199,
-    "category_label": "相对正确"
+    "category_label": "其他"
   },
   {
     "site_id": "S035",
@@ -4976,7 +4976,7 @@
     "nrmse_pct": 15.3007,
     "bias_pct": -0.1943,
     "pred_actual_ratio": 0.9981,
-    "category_label": "相对正确"
+    "category_label": "其他"
   },
   {
     "site_id": "S035",
@@ -4989,7 +4989,7 @@
     "nrmse_pct": 17.2411,
     "bias_pct": -3.5042,
     "pred_actual_ratio": 0.965,
-    "category_label": "相对正确"
+    "category_label": "其他"
   },
   {
     "site_id": "S035",
@@ -5002,7 +5002,7 @@
     "nrmse_pct": 17.5047,
     "bias_pct": -1.4058,
     "pred_actual_ratio": 0.9859,
-    "category_label": "相对正确"
+    "category_label": "其他"
   },
   {
     "site_id": "S035",
@@ -5015,7 +5015,7 @@
     "nrmse_pct": 16.9489,
     "bias_pct": 0.1745,
     "pred_actual_ratio": 1.0017,
-    "category_label": "相对正确"
+    "category_label": "其他"
   },
   {
     "site_id": "S035",
@@ -5028,7 +5028,7 @@
     "nrmse_pct": 15.3476,
     "bias_pct": 0.7748,
     "pred_actual_ratio": 1.0077,
-    "category_label": "相对正确"
+    "category_label": "其他"
   },
   {
     "site_id": "S035",
@@ -5041,7 +5041,7 @@
     "nrmse_pct": 12.0687,
     "bias_pct": 5.3963,
     "pred_actual_ratio": 1.054,
-    "category_label": "相对正确"
+    "category_label": "其他"
   },
   {
     "site_id": "S035",
@@ -5054,7 +5054,7 @@
     "nrmse_pct": 7.8343,
     "bias_pct": 1.2313,
     "pred_actual_ratio": 1.0123,
-    "category_label": "相对正确"
+    "category_label": "其他"
   },
   {
     "site_id": "S035",
@@ -5067,7 +5067,7 @@
     "nrmse_pct": 4.3605,
     "bias_pct": 2.8827,
     "pred_actual_ratio": 1.0288,
-    "category_label": "相对正确"
+    "category_label": "其他"
   },
   {
     "site_id": "S035",
@@ -5080,7 +5080,7 @@
     "nrmse_pct": 2.1618,
     "bias_pct": 19.2306,
     "pred_actual_ratio": 1.1923,
-    "category_label": "相对正确"
+    "category_label": "其他"
   },
   {
     "site_id": "S035",
@@ -5093,7 +5093,7 @@
     "nrmse_pct": 1.5756,
     "bias_pct": 36.404,
     "pred_actual_ratio": 1.364,
-    "category_label": "相对正确"
+    "category_label": "其他"
   },
   {
     "site_id": "S037",
@@ -6380,7 +6380,7 @@
     "nrmse_pct": 10.0936,
     "bias_pct": -5.563,
     "pred_actual_ratio": 0.9444,
-    "category_label": "预测最差"
+    "category_label": "其他"
   },
   {
     "site_id": "S045",
@@ -6393,7 +6393,7 @@
     "nrmse_pct": 11.4172,
     "bias_pct": 22.3792,
     "pred_actual_ratio": 1.2238,
-    "category_label": "预测最差"
+    "category_label": "其他"
   },
   {
     "site_id": "S045",
@@ -6406,7 +6406,7 @@
     "nrmse_pct": 17.4225,
     "bias_pct": 51.7415,
     "pred_actual_ratio": 1.5174,
-    "category_label": "预测最差"
+    "category_label": "其他"
   },
   {
     "site_id": "S045",
@@ -6419,7 +6419,7 @@
     "nrmse_pct": 25.4204,
     "bias_pct": 70.2527,
     "pred_actual_ratio": 1.7025,
-    "category_label": "预测最差"
+    "category_label": "其他"
   },
   {
     "site_id": "S045",
@@ -6432,7 +6432,7 @@
     "nrmse_pct": 33.9556,
     "bias_pct": 88.1796,
     "pred_actual_ratio": 1.8818,
-    "category_label": "预测最差"
+    "category_label": "其他"
   },
   {
     "site_id": "S045",
@@ -6445,7 +6445,7 @@
     "nrmse_pct": 37.9008,
     "bias_pct": 89.5271,
     "pred_actual_ratio": 1.8953,
-    "category_label": "预测最差"
+    "category_label": "其他"
   },
   {
     "site_id": "S045",
@@ -6458,7 +6458,7 @@
     "nrmse_pct": 39.2879,
     "bias_pct": 86.6259,
     "pred_actual_ratio": 1.8663,
-    "category_label": "预测最差"
+    "category_label": "其他"
   },
   {
     "site_id": "S045",
@@ -6471,7 +6471,7 @@
     "nrmse_pct": 37.7553,
     "bias_pct": 91.4951,
     "pred_actual_ratio": 1.915,
-    "category_label": "预测最差"
+    "category_label": "其他"
   },
   {
     "site_id": "S045",
@@ -6484,7 +6484,7 @@
     "nrmse_pct": 33.6353,
     "bias_pct": 83.6919,
     "pred_actual_ratio": 1.8369,
-    "category_label": "预测最差"
+    "category_label": "其他"
   },
   {
     "site_id": "S045",
@@ -6497,7 +6497,7 @@
     "nrmse_pct": 25.6476,
     "bias_pct": 71.0642,
     "pred_actual_ratio": 1.7106,
-    "category_label": "预测最差"
+    "category_label": "其他"
   },
   {
     "site_id": "S045",
@@ -6510,7 +6510,7 @@
     "nrmse_pct": 18.496,
     "bias_pct": 66.6361,
     "pred_actual_ratio": 1.6664,
-    "category_label": "预测最差"
+    "category_label": "其他"
   },
   {
     "site_id": "S045",
@@ -6523,7 +6523,7 @@
     "nrmse_pct": 12.4531,
     "bias_pct": 72.5632,
     "pred_actual_ratio": 1.7256,
-    "category_label": "预测最差"
+    "category_label": "其他"
   },
   {
     "site_id": "S045",
@@ -6536,7 +6536,7 @@
     "nrmse_pct": 10.2537,
     "bias_pct": 68.3244,
     "pred_actual_ratio": 1.6832,
-    "category_label": "预测最差"
+    "category_label": "其他"
   },
   {
     "site_id": "S045",
@@ -6549,7 +6549,7 @@
     "nrmse_pct": 9.7011,
     "bias_pct": -54.1032,
     "pred_actual_ratio": 0.459,
-    "category_label": "预测最差"
+    "category_label": "其他"
   },
   {
     "site_id": "S046",
@@ -6744,7 +6744,7 @@
     "nrmse_pct": 1.6237,
     "bias_pct": 15.9734,
     "pred_actual_ratio": 1.1597,
-    "category_label": "相对正确"
+    "category_label": "预测最好"
   },
   {
     "site_id": "S047",
@@ -6757,7 +6757,7 @@
     "nrmse_pct": 3.6566,
     "bias_pct": 7.7422,
     "pred_actual_ratio": 1.0774,
-    "category_label": "相对正确"
+    "category_label": "预测最好"
   },
   {
     "site_id": "S047",
@@ -6770,7 +6770,7 @@
     "nrmse_pct": 6.885,
     "bias_pct": 0.7926,
     "pred_actual_ratio": 1.0079,
-    "category_label": "相对正确"
+    "category_label": "预测最好"
   },
   {
     "site_id": "S047",
@@ -6783,7 +6783,7 @@
     "nrmse_pct": 8.8988,
     "bias_pct": -1.2125,
     "pred_actual_ratio": 0.9879,
-    "category_label": "相对正确"
+    "category_label": "预测最好"
   },
   {
     "site_id": "S047",
@@ -6796,7 +6796,7 @@
     "nrmse_pct": 11.33,
     "bias_pct": -4.2482,
     "pred_actual_ratio": 0.9575,
-    "category_label": "相对正确"
+    "category_label": "预测最好"
   },
   {
     "site_id": "S047",
@@ -6809,7 +6809,7 @@
     "nrmse_pct": 12.7644,
     "bias_pct": -8.1158,
     "pred_actual_ratio": 0.9188,
-    "category_label": "相对正确"
+    "category_label": "预测最好"
   },
   {
     "site_id": "S047",
@@ -6822,7 +6822,7 @@
     "nrmse_pct": 12.9381,
     "bias_pct": -7.2014,
     "pred_actual_ratio": 0.928,
-    "category_label": "相对正确"
+    "category_label": "预测最好"
   },
   {
     "site_id": "S047",
@@ -6835,7 +6835,7 @@
     "nrmse_pct": 12.4821,
     "bias_pct": -5.1112,
     "pred_actual_ratio": 0.9489,
-    "category_label": "相对正确"
+    "category_label": "预测最好"
   },
   {
     "site_id": "S047",
@@ -6848,7 +6848,7 @@
     "nrmse_pct": 11.6771,
     "bias_pct": -2.6369,
     "pred_actual_ratio": 0.9736,
-    "category_label": "相对正确"
+    "category_label": "预测最好"
   },
   {
     "site_id": "S047",
@@ -6861,7 +6861,7 @@
     "nrmse_pct": 9.6334,
     "bias_pct": 3.6797,
     "pred_actual_ratio": 1.0368,
-    "category_label": "相对正确"
+    "category_label": "预测最好"
   },
   {
     "site_id": "S047",
@@ -6874,7 +6874,7 @@
     "nrmse_pct": 6.5749,
     "bias_pct": 3.8637,
     "pred_actual_ratio": 1.0386,
-    "category_label": "相对正确"
+    "category_label": "预测最好"
   },
   {
     "site_id": "S047",
@@ -6887,7 +6887,7 @@
     "nrmse_pct": 3.7592,
     "bias_pct": 5.6486,
     "pred_actual_ratio": 1.0565,
-    "category_label": "相对正确"
+    "category_label": "预测最好"
   },
   {
     "site_id": "S047",
@@ -6900,7 +6900,7 @@
     "nrmse_pct": 1.7422,
     "bias_pct": 30.0584,
     "pred_actual_ratio": 1.3006,
-    "category_label": "相对正确"
+    "category_label": "预测最好"
   },
   {
     "site_id": "S047",
@@ -6913,7 +6913,7 @@
     "nrmse_pct": 0.8813,
     "bias_pct": 99.9928,
     "pred_actual_ratio": 1.9999,
-    "category_label": "相对正确"
+    "category_label": "预测最好"
   },
   {
     "site_id": "S048",
@@ -7836,7 +7836,7 @@
     "nrmse_pct": 20.1542,
     "bias_pct": -71.6425,
     "pred_actual_ratio": 0.2836,
-    "category_label": "预测最差"
+    "category_label": "其他"
   },
   {
     "site_id": "S053",
@@ -7849,7 +7849,7 @@
     "nrmse_pct": 13.0641,
     "bias_pct": -24.0172,
     "pred_actual_ratio": 0.7598,
-    "category_label": "预测最差"
+    "category_label": "其他"
   },
   {
     "site_id": "S053",
@@ -7862,7 +7862,7 @@
     "nrmse_pct": 10.0965,
     "bias_pct": -9.6167,
     "pred_actual_ratio": 0.9038,
-    "category_label": "预测最差"
+    "category_label": "其他"
   },
   {
     "site_id": "S053",
@@ -7875,7 +7875,7 @@
     "nrmse_pct": 9.1568,
     "bias_pct": -4.9021,
     "pred_actual_ratio": 0.951,
-    "category_label": "预测最差"
+    "category_label": "其他"
   },
   {
     "site_id": "S053",
@@ -7888,7 +7888,7 @@
     "nrmse_pct": 11.1328,
     "bias_pct": 9.6611,
     "pred_actual_ratio": 1.0966,
-    "category_label": "预测最差"
+    "category_label": "其他"
   },
   {
     "site_id": "S053",
@@ -7901,7 +7901,7 @@
     "nrmse_pct": 11.9937,
     "bias_pct": 7.3784,
     "pred_actual_ratio": 1.0738,
-    "category_label": "预测最差"
+    "category_label": "其他"
   },
   {
     "site_id": "S053",
@@ -7914,7 +7914,7 @@
     "nrmse_pct": 12.15,
     "bias_pct": 6.6803,
     "pred_actual_ratio": 1.0668,
-    "category_label": "预测最差"
+    "category_label": "其他"
   },
   {
     "site_id": "S053",
@@ -7927,7 +7927,7 @@
     "nrmse_pct": 11.7796,
     "bias_pct": 6.947,
     "pred_actual_ratio": 1.0695,
-    "category_label": "预测最差"
+    "category_label": "其他"
   },
   {
     "site_id": "S053",
@@ -7940,7 +7940,7 @@
     "nrmse_pct": 10.5119,
     "bias_pct": 5.9029,
     "pred_actual_ratio": 1.059,
-    "category_label": "预测最差"
+    "category_label": "其他"
   },
   {
     "site_id": "S053",
@@ -7953,7 +7953,7 @@
     "nrmse_pct": 10.0814,
     "bias_pct": -8.2558,
     "pred_actual_ratio": 0.9174,
-    "category_label": "预测最差"
+    "category_label": "其他"
   },
   {
     "site_id": "S053",
@@ -7966,7 +7966,7 @@
     "nrmse_pct": 10.5486,
     "bias_pct": -11.9494,
     "pred_actual_ratio": 0.8805,
-    "category_label": "预测最差"
+    "category_label": "其他"
   },
   {
     "site_id": "S053",
@@ -7979,7 +7979,7 @@
     "nrmse_pct": 15.4887,
     "bias_pct": -32.018,
     "pred_actual_ratio": 0.6798,
-    "category_label": "预测最差"
+    "category_label": "其他"
   },
   {
     "site_id": "S053",
@@ -7992,7 +7992,7 @@
     "nrmse_pct": 18.6339,
     "bias_pct": -49.3295,
     "pred_actual_ratio": 0.5067,
-    "category_label": "预测最差"
+    "category_label": "其他"
   },
   {
     "site_id": "S053",
@@ -8005,7 +8005,7 @@
     "nrmse_pct": 21.644,
     "bias_pct": -86.0149,
     "pred_actual_ratio": 0.1399,
-    "category_label": "预测最差"
+    "category_label": "其他"
   },
   {
     "site_id": "S054",
@@ -8564,7 +8564,7 @@
     "nrmse_pct": 3.0746,
     "bias_pct": -30.4756,
     "pred_actual_ratio": 0.6952,
-    "category_label": "其他"
+    "category_label": "预测最差"
   },
   {
     "site_id": "S058",
@@ -8577,7 +8577,7 @@
     "nrmse_pct": 4.6955,
     "bias_pct": -8.3013,
     "pred_actual_ratio": 0.917,
-    "category_label": "其他"
+    "category_label": "预测最差"
   },
   {
     "site_id": "S058",
@@ -8590,7 +8590,7 @@
     "nrmse_pct": 8.3152,
     "bias_pct": -2.4193,
     "pred_actual_ratio": 0.9758,
-    "category_label": "其他"
+    "category_label": "预测最差"
   },
   {
     "site_id": "S058",
@@ -8603,7 +8603,7 @@
     "nrmse_pct": 12.7883,
     "bias_pct": -2.6962,
     "pred_actual_ratio": 0.973,
-    "category_label": "其他"
+    "category_label": "预测最差"
   },
   {
     "site_id": "S058",
@@ -8616,7 +8616,7 @@
     "nrmse_pct": 16.4355,
     "bias_pct": -9.139,
     "pred_actual_ratio": 0.9086,
-    "category_label": "其他"
+    "category_label": "预测最差"
   },
   {
     "site_id": "S058",
@@ -8629,7 +8629,7 @@
     "nrmse_pct": 18.6604,
     "bias_pct": -7.1404,
     "pred_actual_ratio": 0.9286,
-    "category_label": "其他"
+    "category_label": "预测最差"
   },
   {
     "site_id": "S058",
@@ -8642,7 +8642,7 @@
     "nrmse_pct": 19.7302,
     "bias_pct": -5.6522,
     "pred_actual_ratio": 0.9435,
-    "category_label": "其他"
+    "category_label": "预测最差"
   },
   {
     "site_id": "S058",
@@ -8655,7 +8655,7 @@
     "nrmse_pct": 18.9695,
     "bias_pct": -5.6565,
     "pred_actual_ratio": 0.9434,
-    "category_label": "其他"
+    "category_label": "预测最差"
   },
   {
     "site_id": "S058",
@@ -8668,7 +8668,7 @@
     "nrmse_pct": 16.9693,
     "bias_pct": -7.5828,
     "pred_actual_ratio": 0.9242,
-    "category_label": "其他"
+    "category_label": "预测最差"
   },
   {
     "site_id": "S058",
@@ -8681,7 +8681,7 @@
     "nrmse_pct": 13.3956,
     "bias_pct": -1.7659,
     "pred_actual_ratio": 0.9823,
-    "category_label": "其他"
+    "category_label": "预测最差"
   },
   {
     "site_id": "S058",
@@ -8694,7 +8694,7 @@
     "nrmse_pct": 9.2928,
     "bias_pct": -3.9326,
     "pred_actual_ratio": 0.9607,
-    "category_label": "其他"
+    "category_label": "预测最差"
   },
   {
     "site_id": "S058",
@@ -8707,7 +8707,7 @@
     "nrmse_pct": 5.9667,
     "bias_pct": 0.9173,
     "pred_actual_ratio": 1.0092,
-    "category_label": "其他"
+    "category_label": "预测最差"
   },
   {
     "site_id": "S058",
@@ -8720,7 +8720,7 @@
     "nrmse_pct": 4.7305,
     "bias_pct": 7.7383,
     "pred_actual_ratio": 1.0774,
-    "category_label": "其他"
+    "category_label": "预测最差"
   },
   {
     "site_id": "S058",
@@ -8733,7 +8733,7 @@
     "nrmse_pct": 4.2595,
     "bias_pct": -66.2013,
     "pred_actual_ratio": 0.338,
-    "category_label": "其他"
+    "category_label": "预测最差"
   },
   {
     "site_id": "S059",
@@ -9656,7 +9656,7 @@
     "nrmse_pct": 3.6116,
     "bias_pct": -43.143,
     "pred_actual_ratio": 0.5686,
-    "category_label": "其他"
+    "category_label": "相对正确"
   },
   {
     "site_id": "S064",
@@ -9669,7 +9669,7 @@
     "nrmse_pct": 4.2713,
     "bias_pct": 6.8591,
     "pred_actual_ratio": 1.0686,
-    "category_label": "其他"
+    "category_label": "相对正确"
   },
   {
     "site_id": "S064",
@@ -9682,7 +9682,7 @@
     "nrmse_pct": 6.4078,
     "bias_pct": 11.7609,
     "pred_actual_ratio": 1.1176,
-    "category_label": "其他"
+    "category_label": "相对正确"
   },
   {
     "site_id": "S064",
@@ -9695,7 +9695,7 @@
     "nrmse_pct": 9.0538,
     "bias_pct": 6.1016,
     "pred_actual_ratio": 1.061,
-    "category_label": "其他"
+    "category_label": "相对正确"
   },
   {
     "site_id": "S064",
@@ -9708,7 +9708,7 @@
     "nrmse_pct": 11.2721,
     "bias_pct": 8.1604,
     "pred_actual_ratio": 1.0816,
-    "category_label": "其他"
+    "category_label": "相对正确"
   },
   {
     "site_id": "S064",
@@ -9721,7 +9721,7 @@
     "nrmse_pct": 12.5613,
     "bias_pct": 3.4518,
     "pred_actual_ratio": 1.0345,
-    "category_label": "其他"
+    "category_label": "相对正确"
   },
   {
     "site_id": "S064",
@@ -9734,7 +9734,7 @@
     "nrmse_pct": 13.1316,
     "bias_pct": -1.2491,
     "pred_actual_ratio": 0.9875,
-    "category_label": "其他"
+    "category_label": "相对正确"
   },
   {
     "site_id": "S064",
@@ -9747,7 +9747,7 @@
     "nrmse_pct": 13.5695,
     "bias_pct": -0.8898,
     "pred_actual_ratio": 0.9911,
-    "category_label": "其他"
+    "category_label": "相对正确"
   },
   {
     "site_id": "S064",
@@ -9760,7 +9760,7 @@
     "nrmse_pct": 12.6256,
     "bias_pct": -0.4722,
     "pred_actual_ratio": 0.9953,
-    "category_label": "其他"
+    "category_label": "相对正确"
   },
   {
     "site_id": "S064",
@@ -9773,7 +9773,7 @@
     "nrmse_pct": 10.6225,
     "bias_pct": -0.7128,
     "pred_actual_ratio": 0.9929,
-    "category_label": "其他"
+    "category_label": "相对正确"
   },
   {
     "site_id": "S064",
@@ -9786,7 +9786,7 @@
     "nrmse_pct": 8.1765,
     "bias_pct": -3.7866,
     "pred_actual_ratio": 0.9621,
-    "category_label": "其他"
+    "category_label": "相对正确"
   },
   {
     "site_id": "S064",
@@ -9799,7 +9799,7 @@
     "nrmse_pct": 5.8232,
     "bias_pct": -9.218,
     "pred_actual_ratio": 0.9078,
-    "category_label": "其他"
+    "category_label": "相对正确"
   },
   {
     "site_id": "S064",
@@ -9812,7 +9812,7 @@
     "nrmse_pct": 4.5765,
     "bias_pct": -20.2654,
     "pred_actual_ratio": 0.7973,
-    "category_label": "其他"
+    "category_label": "相对正确"
   },
   {
     "site_id": "S064",
@@ -9825,7 +9825,7 @@
     "nrmse_pct": 4.5324,
     "bias_pct": -82.433,
     "pred_actual_ratio": 0.1757,
-    "category_label": "其他"
+    "category_label": "相对正确"
   },
   {
     "site_id": "S065",
@@ -10930,7 +10930,7 @@
     "nrmse_pct": 1.7575,
     "bias_pct": -24.4723,
     "pred_actual_ratio": 0.7553,
-    "category_label": "其他"
+    "category_label": "预测最差"
   },
   {
     "site_id": "S072",
@@ -10943,7 +10943,7 @@
     "nrmse_pct": 6.0556,
     "bias_pct": 0.8756,
     "pred_actual_ratio": 1.0088,
-    "category_label": "其他"
+    "category_label": "预测最差"
   },
   {
     "site_id": "S072",
@@ -10956,7 +10956,7 @@
     "nrmse_pct": 10.781,
     "bias_pct": -2.9505,
     "pred_actual_ratio": 0.9705,
-    "category_label": "其他"
+    "category_label": "预测最差"
   },
   {
     "site_id": "S072",
@@ -10969,7 +10969,7 @@
     "nrmse_pct": 16.1921,
     "bias_pct": -3.9367,
     "pred_actual_ratio": 0.9606,
-    "category_label": "其他"
+    "category_label": "预测最差"
   },
   {
     "site_id": "S072",
@@ -10982,7 +10982,7 @@
     "nrmse_pct": 20.1459,
     "bias_pct": 1.2729,
     "pred_actual_ratio": 1.0127,
-    "category_label": "其他"
+    "category_label": "预测最差"
   },
   {
     "site_id": "S072",
@@ -10995,7 +10995,7 @@
     "nrmse_pct": 20.6603,
     "bias_pct": -4.0709,
     "pred_actual_ratio": 0.9593,
-    "category_label": "其他"
+    "category_label": "预测最差"
   },
   {
     "site_id": "S072",
@@ -11008,7 +11008,7 @@
     "nrmse_pct": 21.7964,
     "bias_pct": -5.2691,
     "pred_actual_ratio": 0.9473,
-    "category_label": "其他"
+    "category_label": "预测最差"
   },
   {
     "site_id": "S072",
@@ -11021,7 +11021,7 @@
     "nrmse_pct": 21.0036,
     "bias_pct": -6.8803,
     "pred_actual_ratio": 0.9312,
-    "category_label": "其他"
+    "category_label": "预测最差"
   },
   {
     "site_id": "S072",
@@ -11034,7 +11034,7 @@
     "nrmse_pct": 17.9868,
     "bias_pct": -3.1815,
     "pred_actual_ratio": 0.9682,
-    "category_label": "其他"
+    "category_label": "预测最差"
   },
   {
     "site_id": "S072",
@@ -11047,7 +11047,7 @@
     "nrmse_pct": 14.6225,
     "bias_pct": -4.0033,
     "pred_actual_ratio": 0.96,
-    "category_label": "其他"
+    "category_label": "预测最差"
   },
   {
     "site_id": "S072",
@@ -11060,7 +11060,7 @@
     "nrmse_pct": 10.2517,
     "bias_pct": 5.9832,
     "pred_actual_ratio": 1.0598,
-    "category_label": "其他"
+    "category_label": "预测最差"
   },
   {
     "site_id": "S072",
@@ -11073,7 +11073,7 @@
     "nrmse_pct": 6.5795,
     "bias_pct": 6.6595,
     "pred_actual_ratio": 1.0666,
-    "category_label": "其他"
+    "category_label": "预测最差"
   },
   {
     "site_id": "S072",
@@ -11086,7 +11086,7 @@
     "nrmse_pct": 5.2785,
     "bias_pct": 13.434,
     "pred_actual_ratio": 1.1343,
-    "category_label": "其他"
+    "category_label": "预测最差"
   },
   {
     "site_id": "S072",
@@ -11099,7 +11099,7 @@
     "nrmse_pct": 1.5977,
     "bias_pct": 17.3809,
     "pred_actual_ratio": 1.1738,
-    "category_label": "其他"
+    "category_label": "预测最差"
   },
   {
     "site_id": "S073",
@@ -12204,7 +12204,7 @@
     "nrmse_pct": 2.445,
     "bias_pct": -100.0,
     "pred_actual_ratio": 0.0,
-    "category_label": "其他"
+    "category_label": "预测最差"
   },
   {
     "site_id": "S116",
@@ -12217,7 +12217,7 @@
     "nrmse_pct": 5.9332,
     "bias_pct": -14.3497,
     "pred_actual_ratio": 0.8565,
-    "category_label": "其他"
+    "category_label": "预测最差"
   },
   {
     "site_id": "S116",
@@ -12230,7 +12230,7 @@
     "nrmse_pct": 12.6398,
     "bias_pct": -10.6582,
     "pred_actual_ratio": 0.8934,
-    "category_label": "其他"
+    "category_label": "预测最差"
   },
   {
     "site_id": "S116",
@@ -12243,7 +12243,7 @@
     "nrmse_pct": 19.0778,
     "bias_pct": -12.7358,
     "pred_actual_ratio": 0.8726,
-    "category_label": "其他"
+    "category_label": "预测最差"
   },
   {
     "site_id": "S116",
@@ -12256,7 +12256,7 @@
     "nrmse_pct": 23.0156,
     "bias_pct": -1.1247,
     "pred_actual_ratio": 0.9888,
-    "category_label": "其他"
+    "category_label": "预测最差"
   },
   {
     "site_id": "S116",
@@ -12269,7 +12269,7 @@
     "nrmse_pct": 25.7529,
     "bias_pct": -4.7517,
     "pred_actual_ratio": 0.9525,
-    "category_label": "其他"
+    "category_label": "预测最差"
   },
   {
     "site_id": "S116",
@@ -12282,7 +12282,7 @@
     "nrmse_pct": 26.5732,
     "bias_pct": -5.8936,
     "pred_actual_ratio": 0.9411,
-    "category_label": "其他"
+    "category_label": "预测最差"
   },
   {
     "site_id": "S116",
@@ -12295,7 +12295,7 @@
     "nrmse_pct": 25.6659,
     "bias_pct": -3.7543,
     "pred_actual_ratio": 0.9625,
-    "category_label": "其他"
+    "category_label": "预测最差"
   },
   {
     "site_id": "S116",
@@ -12308,7 +12308,7 @@
     "nrmse_pct": 22.9261,
     "bias_pct": -0.9493,
     "pred_actual_ratio": 0.9905,
-    "category_label": "其他"
+    "category_label": "预测最差"
   },
   {
     "site_id": "S116",
@@ -12321,7 +12321,7 @@
     "nrmse_pct": 19.0236,
     "bias_pct": -6.9418,
     "pred_actual_ratio": 0.9306,
-    "category_label": "其他"
+    "category_label": "预测最差"
   },
   {
     "site_id": "S116",
@@ -12334,7 +12334,7 @@
     "nrmse_pct": 12.9978,
     "bias_pct": -10.6828,
     "pred_actual_ratio": 0.8932,
-    "category_label": "其他"
+    "category_label": "预测最差"
   },
   {
     "site_id": "S116",
@@ -12347,7 +12347,7 @@
     "nrmse_pct": 12.4973,
     "bias_pct": -100.0,
     "pred_actual_ratio": 0.0,
-    "category_label": "其他"
+    "category_label": "预测最差"
   },
   {
     "site_id": "S116",
@@ -12360,7 +12360,7 @@
     "nrmse_pct": 3.6273,
     "bias_pct": -100.0,
     "pred_actual_ratio": 0.0,
-    "category_label": "其他"
+    "category_label": "预测最差"
   },
   {
     "site_id": "S116",
@@ -12373,6 +12373,6 @@
     "nrmse_pct": 0.4315,
     "bias_pct": -100.0,
     "pred_actual_ratio": 0.0,
-    "category_label": "其他"
+    "category_label": "预测最差"
   }
 ]

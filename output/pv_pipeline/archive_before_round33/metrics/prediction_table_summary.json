@@ -1,0 +1,40 @@
+{
+  "full_rows": 1172180,
+  "eval_rows": 77178,
+  "full_hour_min": 0,
+  "full_hour_max": 23,
+  "eval_hour_min": 6,
+  "eval_hour_max": 19,
+  "full_site_count": 69,
+  "eval_site_count": 61,
+  "full_time_min": "2023-01-01 00:00:00",
+  "full_time_max": "2026-03-31 23:00:00",
+  "eval_time_min": "2025-09-01 06:00:00",
+  "eval_time_max": "2025-12-31 19:00:00",
+  "split_counts_full": {
+    "train": 723007,
+    "test": 199104,
+    "future": 148885,
+    "valid": 101184
+  },
+  "split_counts_eval": {
+    "test": 77178
+  },
+  "eval_conditions": {
+    "hour_range": [
+      6,
+      19
+    ],
+    "power_mw_positive": true,
+    "exclude_bad_sites": [
+      "S015",
+      "S026",
+      "S036",
+      "S045",
+      "S057",
+      "S058",
+      "S067"
+    ],
+    "note": "此表为评估子集，不是完整预测表"
+  }
+}

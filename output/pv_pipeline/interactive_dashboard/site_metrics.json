@@ -13,8 +13,8 @@
     "nrmse_pct": 14.0009,
     "bias_pct": -16.748,
     "pred_actual_ratio": 0.8325,
-    "category": "low_sample",
-    "category_label": "样本少",
+    "category": "other",
+    "category_label": "其他",
     "full_history_rows": 5893,
     "full_history_non_null_rows": 5893,
     "full_history_positive_rows": 3095,
@@ -26,7 +26,10 @@
     "test_daytime_rows_6_19": 1708,
     "test_daytime_positive_rows_6_19": 1415,
     "test_daytime_zero_rows_6_19": 293,
-    "test_daytime_zero_ratio_6_19_pct": 17.1546
+    "test_daytime_zero_ratio_6_19_pct": 17.1546,
+    "site_status": "测试期分布漂移",
+    "exclude_from_ranking": "是",
+    "exclude_reason": "cf_mean漂移0.098>=0.1或cf_p95漂移0.498>=0.2"
   },
   {
     "site_id": "S003",
@@ -42,8 +45,8 @@
     "nrmse_pct": 19.9427,
     "bias_pct": 100591669245522.69,
     "pred_actual_ratio": 1005916692455.2268,
-    "category": "low_sample",
-    "category_label": "样本少",
+    "category": "other",
+    "category_label": "其他",
     "full_history_rows": 20462,
     "full_history_non_null_rows": 20462,
     "full_history_positive_rows": 7350,
@@ -55,7 +58,10 @@
     "test_daytime_rows_6_19": 1708,
     "test_daytime_positive_rows_6_19": 0,
     "test_daytime_zero_rows_6_19": 1708,
-    "test_daytime_zero_ratio_6_19_pct": 100.0
+    "test_daytime_zero_ratio_6_19_pct": 100.0,
+    "site_status": "测试期无有效发电",
+    "exclude_from_ranking": "是",
+    "exclude_reason": "test正功率样本0.0<100或总电量不足"
   },
   {
     "site_id": "S004",
@@ -71,8 +77,8 @@
     "nrmse_pct": 10.0793,
     "bias_pct": 31.9002,
     "pred_actual_ratio": 1.319,
-    "category": "low_sample",
-    "category_label": "样本少",
+    "category": "other",
+    "category_label": "其他",
     "full_history_rows": 6033,
     "full_history_non_null_rows": 6033,
     "full_history_positive_rows": 2816,
@@ -84,7 +90,10 @@
     "test_daytime_rows_6_19": 1708,
     "test_daytime_positive_rows_6_19": 1184,
     "test_daytime_zero_rows_6_19": 524,
-    "test_daytime_zero_ratio_6_19_pct": 30.6792
+    "test_daytime_zero_ratio_6_19_pct": 30.6792,
+    "site_status": "测试期分布漂移",
+    "exclude_from_ranking": "是",
+    "exclude_reason": "cf_mean漂移0.169>=0.1或cf_p95漂移0.271>=0.2"
   },
   {
     "site_id": "S006",
@@ -100,8 +109,8 @@
     "nrmse_pct": 12.1437,
     "bias_pct": 161.6457,
     "pred_actual_ratio": 2.6165,
-    "category": "low_sample",
-    "category_label": "样本少",
+    "category": "other",
+    "category_label": "其他",
     "full_history_rows": 5935,
     "full_history_non_null_rows": 5935,
     "full_history_positive_rows": 2360,
@@ -113,7 +122,10 @@
     "test_daytime_rows_6_19": 1708,
     "test_daytime_positive_rows_6_19": 922,
     "test_daytime_zero_rows_6_19": 786,
-    "test_daytime_zero_ratio_6_19_pct": 46.0187
+    "test_daytime_zero_ratio_6_19_pct": 46.0187,
+    "site_status": "系统性偏差",
+    "exclude_from_ranking": "是",
+    "exclude_reason": "pred/actual=2.616超出[0.8,1.2]"
   },
   {
     "site_id": "S007",
@@ -142,7 +154,10 @@
     "test_daytime_rows_6_19": 1708,
     "test_daytime_positive_rows_6_19": 1276,
     "test_daytime_zero_rows_6_19": 432,
-    "test_daytime_zero_ratio_6_19_pct": 25.2927
+    "test_daytime_zero_ratio_6_19_pct": 25.2927,
+    "site_status": "正常评价",
+    "exclude_from_ranking": "否",
+    "exclude_reason": ""
   },
   {
     "site_id": "S008",
@@ -171,7 +186,10 @@
     "test_daytime_rows_6_19": 1708,
     "test_daytime_positive_rows_6_19": 1319,
     "test_daytime_zero_rows_6_19": 389,
-    "test_daytime_zero_ratio_6_19_pct": 22.7752
+    "test_daytime_zero_ratio_6_19_pct": 22.7752,
+    "site_status": "测试期分布漂移",
+    "exclude_from_ranking": "是",
+    "exclude_reason": "cf_mean漂移0.210>=0.1或cf_p95漂移0.316>=0.2"
   },
   {
     "site_id": "S009",
@@ -187,8 +205,8 @@
     "nrmse_pct": 10.7542,
     "bias_pct": 16.9152,
     "pred_actual_ratio": 1.1692,
-    "category": "other",
-    "category_label": "其他",
+    "category": "low_sample",
+    "category_label": "样本少",
     "full_history_rows": 10479,
     "full_history_non_null_rows": 10479,
     "full_history_positive_rows": 5076,
@@ -200,7 +218,10 @@
     "test_daytime_rows_6_19": 1708,
     "test_daytime_positive_rows_6_19": 1312,
     "test_daytime_zero_rows_6_19": 396,
-    "test_daytime_zero_ratio_6_19_pct": 23.185
+    "test_daytime_zero_ratio_6_19_pct": 23.185,
+    "site_status": "正常评价",
+    "exclude_from_ranking": "否",
+    "exclude_reason": ""
   },
   {
     "site_id": "S010",
@@ -229,7 +250,10 @@
     "test_daytime_rows_6_19": 1708,
     "test_daytime_positive_rows_6_19": 1421,
     "test_daytime_zero_rows_6_19": 287,
-    "test_daytime_zero_ratio_6_19_pct": 16.8033
+    "test_daytime_zero_ratio_6_19_pct": 16.8033,
+    "site_status": "测试期分布漂移",
+    "exclude_from_ranking": "是",
+    "exclude_reason": "cf_mean漂移0.093>=0.1或cf_p95漂移0.227>=0.2"
   },
   {
     "site_id": "S011",
@@ -245,8 +269,8 @@
     "nrmse_pct": 7.2753,
     "bias_pct": 5.5731,
     "pred_actual_ratio": 1.0557,
-    "category": "other",
-    "category_label": "其他",
+    "category": "low_sample",
+    "category_label": "样本少",
     "full_history_rows": 26304,
     "full_history_non_null_rows": 26304,
     "full_history_positive_rows": 12968,
@@ -258,7 +282,10 @@
     "test_daytime_rows_6_19": 1708,
     "test_daytime_positive_rows_6_19": 1286,
     "test_daytime_zero_rows_6_19": 422,
-    "test_daytime_zero_ratio_6_19_pct": 24.7073
+    "test_daytime_zero_ratio_6_19_pct": 24.7073,
+    "site_status": "正常评价",
+    "exclude_from_ranking": "否",
+    "exclude_reason": ""
   },
   {
     "site_id": "S012",
@@ -274,8 +301,8 @@
     "nrmse_pct": 18.4022,
     "bias_pct": 202.6413,
     "pred_actual_ratio": 3.0264,
-    "category": "worst",
-    "category_label": "预测最差",
+    "category": "other",
+    "category_label": "其他",
     "full_history_rows": 5889,
     "full_history_non_null_rows": 5889,
     "full_history_positive_rows": 2909,
@@ -287,7 +314,10 @@
     "test_daytime_rows_6_19": 1708,
     "test_daytime_positive_rows_6_19": 1402,
     "test_daytime_zero_rows_6_19": 306,
-    "test_daytime_zero_ratio_6_19_pct": 17.9157
+    "test_daytime_zero_ratio_6_19_pct": 17.9157,
+    "site_status": "测试期分布漂移",
+    "exclude_from_ranking": "是",
+    "exclude_reason": "cf_mean漂移0.122>=0.1或cf_p95漂移0.193>=0.2"
   },
   {
     "site_id": "S014",
@@ -316,7 +346,10 @@
     "test_daytime_rows_6_19": 1708,
     "test_daytime_positive_rows_6_19": 1261,
     "test_daytime_zero_rows_6_19": 447,
-    "test_daytime_zero_ratio_6_19_pct": 26.171
+    "test_daytime_zero_ratio_6_19_pct": 26.171,
+    "site_status": "测试期分布漂移",
+    "exclude_from_ranking": "是",
+    "exclude_reason": "cf_mean漂移0.157>=0.1或cf_p95漂移0.246>=0.2"
   },
   {
     "site_id": "S016",
@@ -345,7 +378,10 @@
     "test_daytime_rows_6_19": 1708,
     "test_daytime_positive_rows_6_19": 1062,
     "test_daytime_zero_rows_6_19": 646,
-    "test_daytime_zero_ratio_6_19_pct": 37.822
+    "test_daytime_zero_ratio_6_19_pct": 37.822,
+    "site_status": "测试期分布漂移",
+    "exclude_from_ranking": "是",
+    "exclude_reason": "cf_mean漂移0.164>=0.1或cf_p95漂移0.275>=0.2"
   },
   {
     "site_id": "S017",
@@ -361,8 +397,8 @@
     "nrmse_pct": 6.2388,
     "bias_pct": -18.1413,
     "pred_actual_ratio": 0.8186,
-    "category": "best",
-    "category_label": "预测最好",
+    "category": "other",
+    "category_label": "其他",
     "full_history_rows": 26304,
     "full_history_non_null_rows": 26304,
     "full_history_positive_rows": 5982,
@@ -374,7 +410,10 @@
     "test_daytime_rows_6_19": 1708,
     "test_daytime_positive_rows_6_19": 1288,
     "test_daytime_zero_rows_6_19": 420,
-    "test_daytime_zero_ratio_6_19_pct": 24.5902
+    "test_daytime_zero_ratio_6_19_pct": 24.5902,
+    "site_status": "测试期分布漂移",
+    "exclude_from_ranking": "是",
+    "exclude_reason": "cf_mean漂移0.019>=0.1或cf_p95漂移0.398>=0.2"
   },
   {
     "site_id": "S018",
@@ -403,7 +442,10 @@
     "test_daytime_rows_6_19": 1708,
     "test_daytime_positive_rows_6_19": 1261,
     "test_daytime_zero_rows_6_19": 447,
-    "test_daytime_zero_ratio_6_19_pct": 26.171
+    "test_daytime_zero_ratio_6_19_pct": 26.171,
+    "site_status": "测试期分布漂移",
+    "exclude_from_ranking": "是",
+    "exclude_reason": "cf_mean漂移0.117>=0.1或cf_p95漂移0.231>=0.2"
   },
   {
     "site_id": "S019",
@@ -419,8 +461,8 @@
     "nrmse_pct": 31.0281,
     "bias_pct": -37.1638,
     "pred_actual_ratio": 0.6284,
-    "category": "worst",
-    "category_label": "预测最差",
+    "category": "other",
+    "category_label": "其他",
     "full_history_rows": 26304,
     "full_history_non_null_rows": 26304,
     "full_history_positive_rows": 12461,
@@ -432,7 +474,10 @@
     "test_daytime_rows_6_19": 1708,
     "test_daytime_positive_rows_6_19": 1357,
     "test_daytime_zero_rows_6_19": 351,
-    "test_daytime_zero_ratio_6_19_pct": 20.5504
+    "test_daytime_zero_ratio_6_19_pct": 20.5504,
+    "site_status": "系统性偏差",
+    "exclude_from_ranking": "是",
+    "exclude_reason": "pred/actual=0.628超出[0.8,1.2]"
   },
   {
     "site_id": "S020",
@@ -461,7 +506,10 @@
     "test_daytime_rows_6_19": 1708,
     "test_daytime_positive_rows_6_19": 1255,
     "test_daytime_zero_rows_6_19": 453,
-    "test_daytime_zero_ratio_6_19_pct": 26.5222
+    "test_daytime_zero_ratio_6_19_pct": 26.5222,
+    "site_status": "测试期分布漂移",
+    "exclude_from_ranking": "是",
+    "exclude_reason": "cf_mean漂移0.118>=0.1或cf_p95漂移0.197>=0.2"
   },
   {
     "site_id": "S021",
@@ -490,7 +538,10 @@
     "test_daytime_rows_6_19": 1708,
     "test_daytime_positive_rows_6_19": 1205,
     "test_daytime_zero_rows_6_19": 503,
-    "test_daytime_zero_ratio_6_19_pct": 29.4496
+    "test_daytime_zero_ratio_6_19_pct": 29.4496,
+    "site_status": "测试期分布漂移",
+    "exclude_from_ranking": "是",
+    "exclude_reason": "cf_mean漂移0.102>=0.1或cf_p95漂移0.200>=0.2"
   },
   {
     "site_id": "S022",
@@ -519,7 +570,10 @@
     "test_daytime_rows_6_19": 1708,
     "test_daytime_positive_rows_6_19": 1313,
     "test_daytime_zero_rows_6_19": 395,
-    "test_daytime_zero_ratio_6_19_pct": 23.1265
+    "test_daytime_zero_ratio_6_19_pct": 23.1265,
+    "site_status": "系统性偏差",
+    "exclude_from_ranking": "是",
+    "exclude_reason": "pred/actual=0.688超出[0.8,1.2]"
   },
   {
     "site_id": "S023",
@@ -535,8 +589,8 @@
     "nrmse_pct": 5.9139,
     "bias_pct": 2.7398,
     "pred_actual_ratio": 1.0274,
-    "category": "best",
-    "category_label": "预测最好",
+    "category": "low_sample",
+    "category_label": "样本少",
     "full_history_rows": 26304,
     "full_history_non_null_rows": 26304,
     "full_history_positive_rows": 12323,
@@ -548,7 +602,10 @@
     "test_daytime_rows_6_19": 1708,
     "test_daytime_positive_rows_6_19": 1235,
     "test_daytime_zero_rows_6_19": 473,
-    "test_daytime_zero_ratio_6_19_pct": 27.6932
+    "test_daytime_zero_ratio_6_19_pct": 27.6932,
+    "site_status": "正常评价",
+    "exclude_from_ranking": "否",
+    "exclude_reason": ""
   },
   {
     "site_id": "S024",
@@ -564,8 +621,8 @@
     "nrmse_pct": 8.1942,
     "bias_pct": -4.2747,
     "pred_actual_ratio": 0.9573,
-    "category": "normal",
-    "category_label": "相对正确",
+    "category": "other",
+    "category_label": "其他",
     "full_history_rows": 21320,
     "full_history_non_null_rows": 21320,
     "full_history_positive_rows": 9476,
@@ -577,7 +634,10 @@
     "test_daytime_rows_6_19": 1708,
     "test_daytime_positive_rows_6_19": 1260,
     "test_daytime_zero_rows_6_19": 448,
-    "test_daytime_zero_ratio_6_19_pct": 26.2295
+    "test_daytime_zero_ratio_6_19_pct": 26.2295,
+    "site_status": "测试期分布漂移",
+    "exclude_from_ranking": "是",
+    "exclude_reason": "cf_mean漂移0.083>=0.1或cf_p95漂移0.212>=0.2"
   },
   {
     "site_id": "S025",
@@ -593,8 +653,8 @@
     "nrmse_pct": 7.6265,
     "bias_pct": 2.3238,
     "pred_actual_ratio": 1.0232,
-    "category": "normal",
-    "category_label": "相对正确",
+    "category": "other",
+    "category_label": "其他",
     "full_history_rows": 14335,
     "full_history_non_null_rows": 14335,
     "full_history_positive_rows": 6458,
@@ -606,7 +666,10 @@
     "test_daytime_rows_6_19": 1708,
     "test_daytime_positive_rows_6_19": 1241,
     "test_daytime_zero_rows_6_19": 467,
-    "test_daytime_zero_ratio_6_19_pct": 27.3419
+    "test_daytime_zero_ratio_6_19_pct": 27.3419,
+    "site_status": "测试期分布漂移",
+    "exclude_from_ranking": "是",
+    "exclude_reason": "cf_mean漂移0.083>=0.1或cf_p95漂移0.205>=0.2"
   },
   {
     "site_id": "S028",
@@ -635,7 +698,10 @@
     "test_daytime_rows_6_19": 1708,
     "test_daytime_positive_rows_6_19": 1238,
     "test_daytime_zero_rows_6_19": 470,
-    "test_daytime_zero_ratio_6_19_pct": 27.5176
+    "test_daytime_zero_ratio_6_19_pct": 27.5176,
+    "site_status": "测试期分布漂移",
+    "exclude_from_ranking": "是",
+    "exclude_reason": "cf_mean漂移0.097>=0.1或cf_p95漂移0.220>=0.2"
   },
   {
     "site_id": "S030",
@@ -651,8 +717,8 @@
     "nrmse_pct": 8.922,
     "bias_pct": 12.0513,
     "pred_actual_ratio": 1.1205,
-    "category": "other",
-    "category_label": "其他",
+    "category": "low_sample",
+    "category_label": "样本少",
     "full_history_rows": 26304,
     "full_history_non_null_rows": 26304,
     "full_history_positive_rows": 12833,
@@ -664,7 +730,10 @@
     "test_daytime_rows_6_19": 1708,
     "test_daytime_positive_rows_6_19": 1253,
     "test_daytime_zero_rows_6_19": 455,
-    "test_daytime_zero_ratio_6_19_pct": 26.6393
+    "test_daytime_zero_ratio_6_19_pct": 26.6393,
+    "site_status": "正常评价",
+    "exclude_from_ranking": "否",
+    "exclude_reason": ""
   },
   {
     "site_id": "S031",
@@ -693,7 +762,10 @@
     "test_daytime_rows_6_19": 1708,
     "test_daytime_positive_rows_6_19": 1134,
     "test_daytime_zero_rows_6_19": 574,
-    "test_daytime_zero_ratio_6_19_pct": 33.6066
+    "test_daytime_zero_ratio_6_19_pct": 33.6066,
+    "site_status": "正常评价",
+    "exclude_from_ranking": "否",
+    "exclude_reason": ""
   },
   {
     "site_id": "S032",
@@ -722,7 +794,10 @@
     "test_daytime_rows_6_19": 1708,
     "test_daytime_positive_rows_6_19": 1263,
     "test_daytime_zero_rows_6_19": 445,
-    "test_daytime_zero_ratio_6_19_pct": 26.0539
+    "test_daytime_zero_ratio_6_19_pct": 26.0539,
+    "site_status": "系统性偏差",
+    "exclude_from_ranking": "是",
+    "exclude_reason": "pred/actual=0.496超出[0.8,1.2]"
   },
   {
     "site_id": "S033",
@@ -751,7 +826,10 @@
     "test_daytime_rows_6_19": 1708,
     "test_daytime_positive_rows_6_19": 1278,
     "test_daytime_zero_rows_6_19": 430,
-    "test_daytime_zero_ratio_6_19_pct": 25.1756
+    "test_daytime_zero_ratio_6_19_pct": 25.1756,
+    "site_status": "测试期分布漂移",
+    "exclude_from_ranking": "是",
+    "exclude_reason": "cf_mean漂移0.195>=0.1或cf_p95漂移0.290>=0.2"
   },
   {
     "site_id": "S034",
@@ -780,7 +858,10 @@
     "test_daytime_rows_6_19": 1708,
     "test_daytime_positive_rows_6_19": 1071,
     "test_daytime_zero_rows_6_19": 637,
-    "test_daytime_zero_ratio_6_19_pct": 37.2951
+    "test_daytime_zero_ratio_6_19_pct": 37.2951,
+    "site_status": "测试期分布漂移",
+    "exclude_from_ranking": "是",
+    "exclude_reason": "cf_mean漂移0.178>=0.1或cf_p95漂移0.277>=0.2"
   },
   {
     "site_id": "S035",
@@ -796,8 +877,8 @@
     "nrmse_pct": 8.2508,
     "bias_pct": 2.179,
     "pred_actual_ratio": 1.0218,
-    "category": "normal",
-    "category_label": "相对正确",
+    "category": "other",
+    "category_label": "其他",
     "full_history_rows": 19848,
     "full_history_non_null_rows": 19848,
     "full_history_positive_rows": 9044,
@@ -809,7 +890,10 @@
     "test_daytime_rows_6_19": 1708,
     "test_daytime_positive_rows_6_19": 1285,
     "test_daytime_zero_rows_6_19": 423,
-    "test_daytime_zero_ratio_6_19_pct": 24.7658
+    "test_daytime_zero_ratio_6_19_pct": 24.7658,
+    "site_status": "测试期分布漂移",
+    "exclude_from_ranking": "是",
+    "exclude_reason": "cf_mean漂移0.087>=0.1或cf_p95漂移0.246>=0.2"
   },
   {
     "site_id": "S037",
@@ -838,7 +922,10 @@
     "test_daytime_rows_6_19": 1708,
     "test_daytime_positive_rows_6_19": 759,
     "test_daytime_zero_rows_6_19": 949,
-    "test_daytime_zero_ratio_6_19_pct": 55.5621
+    "test_daytime_zero_ratio_6_19_pct": 55.5621,
+    "site_status": "测试期分布漂移",
+    "exclude_from_ranking": "是",
+    "exclude_reason": "cf_mean漂移0.112>=0.1或cf_p95漂移0.489>=0.2"
   },
   {
     "site_id": "S038",
@@ -867,7 +954,10 @@
     "test_daytime_rows_6_19": 1708,
     "test_daytime_positive_rows_6_19": 1223,
     "test_daytime_zero_rows_6_19": 485,
-    "test_daytime_zero_ratio_6_19_pct": 28.3958
+    "test_daytime_zero_ratio_6_19_pct": 28.3958,
+    "site_status": "测试期分布漂移",
+    "exclude_from_ranking": "是",
+    "exclude_reason": "cf_mean漂移0.177>=0.1或cf_p95漂移0.272>=0.2"
   },
   {
     "site_id": "S039",
@@ -896,7 +986,10 @@
     "test_daytime_rows_6_19": 1708,
     "test_daytime_positive_rows_6_19": 1266,
     "test_daytime_zero_rows_6_19": 442,
-    "test_daytime_zero_ratio_6_19_pct": 25.8782
+    "test_daytime_zero_ratio_6_19_pct": 25.8782,
+    "site_status": "测试期分布漂移",
+    "exclude_from_ranking": "是",
+    "exclude_reason": "cf_mean漂移0.160>=0.1或cf_p95漂移0.279>=0.2"
   },
   {
     "site_id": "S040",
@@ -925,7 +1018,10 @@
     "test_daytime_rows_6_19": 1708,
     "test_daytime_positive_rows_6_19": 1264,
     "test_daytime_zero_rows_6_19": 444,
-    "test_daytime_zero_ratio_6_19_pct": 25.9953
+    "test_daytime_zero_ratio_6_19_pct": 25.9953,
+    "site_status": "测试期分布漂移",
+    "exclude_from_ranking": "是",
+    "exclude_reason": "cf_mean漂移0.147>=0.1或cf_p95漂移0.230>=0.2"
   },
   {
     "site_id": "S041",
@@ -954,7 +1050,10 @@
     "test_daytime_rows_6_19": 1708,
     "test_daytime_positive_rows_6_19": 1257,
     "test_daytime_zero_rows_6_19": 451,
-    "test_daytime_zero_ratio_6_19_pct": 26.4052
+    "test_daytime_zero_ratio_6_19_pct": 26.4052,
+    "site_status": "测试期分布漂移",
+    "exclude_from_ranking": "是",
+    "exclude_reason": "cf_mean漂移0.113>=0.1或cf_p95漂移0.118>=0.2"
   },
   {
     "site_id": "S042",
@@ -983,7 +1082,10 @@
     "test_daytime_rows_6_19": 1708,
     "test_daytime_positive_rows_6_19": 1241,
     "test_daytime_zero_rows_6_19": 467,
-    "test_daytime_zero_ratio_6_19_pct": 27.3419
+    "test_daytime_zero_ratio_6_19_pct": 27.3419,
+    "site_status": "测试期分布漂移",
+    "exclude_from_ranking": "是",
+    "exclude_reason": "cf_mean漂移0.104>=0.1或cf_p95漂移0.207>=0.2"
   },
   {
     "site_id": "S044",
@@ -1012,7 +1114,10 @@
     "test_daytime_rows_6_19": 1708,
     "test_daytime_positive_rows_6_19": 0,
     "test_daytime_zero_rows_6_19": 1708,
-    "test_daytime_zero_ratio_6_19_pct": 100.0
+    "test_daytime_zero_ratio_6_19_pct": 100.0,
+    "site_status": "测试期无有效发电",
+    "exclude_from_ranking": "是",
+    "exclude_reason": "test正功率样本0.0<100或总电量不足"
   },
   {
     "site_id": "S045",
@@ -1028,8 +1133,8 @@
     "nrmse_pct": 22.7558,
     "bias_pct": 541.5326,
     "pred_actual_ratio": 6.4153,
-    "category": "worst",
-    "category_label": "预测最差",
+    "category": "other",
+    "category_label": "其他",
     "full_history_rows": 6969,
     "full_history_non_null_rows": 6969,
     "full_history_positive_rows": 1743,
@@ -1041,7 +1146,10 @@
     "test_daytime_rows_6_19": 1708,
     "test_daytime_positive_rows_6_19": 160,
     "test_daytime_zero_rows_6_19": 1548,
-    "test_daytime_zero_ratio_6_19_pct": 90.6323
+    "test_daytime_zero_ratio_6_19_pct": 90.6323,
+    "site_status": "测试期分布漂移",
+    "exclude_from_ranking": "是",
+    "exclude_reason": "cf_mean漂移0.212>=0.1或cf_p95漂移0.624>=0.2"
   },
   {
     "site_id": "S046",
@@ -1070,7 +1178,10 @@
     "test_daytime_rows_6_19": 1708,
     "test_daytime_positive_rows_6_19": 1304,
     "test_daytime_zero_rows_6_19": 404,
-    "test_daytime_zero_ratio_6_19_pct": 23.6534
+    "test_daytime_zero_ratio_6_19_pct": 23.6534,
+    "site_status": "测试期分布漂移",
+    "exclude_from_ranking": "是",
+    "exclude_reason": "cf_mean漂移0.104>=0.1或cf_p95漂移0.188>=0.2"
   },
   {
     "site_id": "S047",
@@ -1086,8 +1197,8 @@
     "nrmse_pct": 6.675,
     "bias_pct": -1.4182,
     "pred_actual_ratio": 0.9858,
-    "category": "normal",
-    "category_label": "相对正确",
+    "category": "best",
+    "category_label": "预测最好",
     "full_history_rows": 22968,
     "full_history_non_null_rows": 22968,
     "full_history_positive_rows": 10819,
@@ -1099,7 +1210,10 @@
     "test_daytime_rows_6_19": 1708,
     "test_daytime_positive_rows_6_19": 1230,
     "test_daytime_zero_rows_6_19": 478,
-    "test_daytime_zero_ratio_6_19_pct": 27.9859
+    "test_daytime_zero_ratio_6_19_pct": 27.9859,
+    "site_status": "正常评价",
+    "exclude_from_ranking": "否",
+    "exclude_reason": ""
   },
   {
     "site_id": "S048",
@@ -1128,7 +1242,10 @@
     "test_daytime_rows_6_19": 1708,
     "test_daytime_positive_rows_6_19": 1129,
     "test_daytime_zero_rows_6_19": 579,
-    "test_daytime_zero_ratio_6_19_pct": 33.8993
+    "test_daytime_zero_ratio_6_19_pct": 33.8993,
+    "site_status": "系统性偏差",
+    "exclude_from_ranking": "是",
+    "exclude_reason": "pred/actual=1.203超出[0.8,1.2]"
   },
   {
     "site_id": "S049",
@@ -1157,7 +1274,10 @@
     "test_daytime_rows_6_19": 1708,
     "test_daytime_positive_rows_6_19": 1238,
     "test_daytime_zero_rows_6_19": 470,
-    "test_daytime_zero_ratio_6_19_pct": 27.5176
+    "test_daytime_zero_ratio_6_19_pct": 27.5176,
+    "site_status": "正常评价",
+    "exclude_from_ranking": "否",
+    "exclude_reason": ""
   },
   {
     "site_id": "S050",
@@ -1186,7 +1306,10 @@
     "test_daytime_rows_6_19": 1708,
     "test_daytime_positive_rows_6_19": 1440,
     "test_daytime_zero_rows_6_19": 268,
-    "test_daytime_zero_ratio_6_19_pct": 15.6909
+    "test_daytime_zero_ratio_6_19_pct": 15.6909,
+    "site_status": "测试期分布漂移",
+    "exclude_from_ranking": "是",
+    "exclude_reason": "cf_mean漂移0.158>=0.1或cf_p95漂移0.205>=0.2"
   },
   {
     "site_id": "S051",
@@ -1215,7 +1338,10 @@
     "test_daytime_rows_6_19": 1708,
     "test_daytime_positive_rows_6_19": 1266,
     "test_daytime_zero_rows_6_19": 442,
-    "test_daytime_zero_ratio_6_19_pct": 25.8782
+    "test_daytime_zero_ratio_6_19_pct": 25.8782,
+    "site_status": "测试期分布漂移",
+    "exclude_from_ranking": "是",
+    "exclude_reason": "cf_mean漂移0.124>=0.1或cf_p95漂移0.186>=0.2"
   },
   {
     "site_id": "S052",
@@ -1244,7 +1370,10 @@
     "test_daytime_rows_6_19": 1708,
     "test_daytime_positive_rows_6_19": 1290,
     "test_daytime_zero_rows_6_19": 418,
-    "test_daytime_zero_ratio_6_19_pct": 24.4731
+    "test_daytime_zero_ratio_6_19_pct": 24.4731,
+    "site_status": "系统性偏差",
+    "exclude_from_ranking": "是",
+    "exclude_reason": "pred/actual=0.586超出[0.8,1.2]"
   },
   {
     "site_id": "S053",
@@ -1260,8 +1389,8 @@
     "nrmse_pct": 23.7238,
     "bias_pct": -41.7196,
     "pred_actual_ratio": 0.5828,
-    "category": "worst",
-    "category_label": "预测最差",
+    "category": "other",
+    "category_label": "其他",
     "full_history_rows": 26304,
     "full_history_non_null_rows": 26304,
     "full_history_positive_rows": 13951,
@@ -1273,7 +1402,10 @@
     "test_daytime_rows_6_19": 1708,
     "test_daytime_positive_rows_6_19": 1662,
     "test_daytime_zero_rows_6_19": 46,
-    "test_daytime_zero_ratio_6_19_pct": 2.6932
+    "test_daytime_zero_ratio_6_19_pct": 2.6932,
+    "site_status": "测试期分布漂移",
+    "exclude_from_ranking": "是",
+    "exclude_reason": "cf_mean漂移0.148>=0.1或cf_p95漂移0.096>=0.2"
   },
   {
     "site_id": "S054",
@@ -1302,7 +1434,10 @@
     "test_daytime_rows_6_19": 1708,
     "test_daytime_positive_rows_6_19": 1247,
     "test_daytime_zero_rows_6_19": 461,
-    "test_daytime_zero_ratio_6_19_pct": 26.9906
+    "test_daytime_zero_ratio_6_19_pct": 26.9906,
+    "site_status": "系统性偏差",
+    "exclude_from_ranking": "是",
+    "exclude_reason": "pred/actual=1.223超出[0.8,1.2]"
   },
   {
     "site_id": "S055",
@@ -1331,7 +1466,10 @@
     "test_daytime_rows_6_19": 1708,
     "test_daytime_positive_rows_6_19": 1503,
     "test_daytime_zero_rows_6_19": 205,
-    "test_daytime_zero_ratio_6_19_pct": 12.0023
+    "test_daytime_zero_ratio_6_19_pct": 12.0023,
+    "site_status": "测试期分布漂移",
+    "exclude_from_ranking": "是",
+    "exclude_reason": "cf_mean漂移0.005>=0.1或cf_p95漂移0.207>=0.2"
   },
   {
     "site_id": "S056",
@@ -1360,7 +1498,10 @@
     "test_daytime_rows_6_19": 1708,
     "test_daytime_positive_rows_6_19": 1148,
     "test_daytime_zero_rows_6_19": 560,
-    "test_daytime_zero_ratio_6_19_pct": 32.7869
+    "test_daytime_zero_ratio_6_19_pct": 32.7869,
+    "site_status": "测试期分布漂移",
+    "exclude_from_ranking": "是",
+    "exclude_reason": "cf_mean漂移0.117>=0.1或cf_p95漂移0.109>=0.2"
   },
   {
     "site_id": "S058",
@@ -1376,8 +1517,8 @@
     "nrmse_pct": 9.7165,
     "bias_pct": -19.407,
     "pred_actual_ratio": 0.8059,
-    "category": "other",
-    "category_label": "其他",
+    "category": "worst",
+    "category_label": "预测最差",
     "full_history_rows": 26304,
     "full_history_non_null_rows": 26304,
     "full_history_positive_rows": 13515,
@@ -1389,7 +1530,10 @@
     "test_daytime_rows_6_19": 1708,
     "test_daytime_positive_rows_6_19": 1296,
     "test_daytime_zero_rows_6_19": 412,
-    "test_daytime_zero_ratio_6_19_pct": 24.1218
+    "test_daytime_zero_ratio_6_19_pct": 24.1218,
+    "site_status": "正常评价",
+    "exclude_from_ranking": "否",
+    "exclude_reason": ""
   },
   {
     "site_id": "S059",
@@ -1418,7 +1562,10 @@
     "test_daytime_rows_6_19": 1708,
     "test_daytime_positive_rows_6_19": 1677,
     "test_daytime_zero_rows_6_19": 31,
-    "test_daytime_zero_ratio_6_19_pct": 1.815
+    "test_daytime_zero_ratio_6_19_pct": 1.815,
+    "site_status": "测试期分布漂移",
+    "exclude_from_ranking": "是",
+    "exclude_reason": "cf_mean漂移0.012>=0.1或cf_p95漂移0.375>=0.2"
   },
   {
     "site_id": "S060",
@@ -1447,7 +1594,10 @@
     "test_daytime_rows_6_19": 1708,
     "test_daytime_positive_rows_6_19": 1251,
     "test_daytime_zero_rows_6_19": 457,
-    "test_daytime_zero_ratio_6_19_pct": 26.7564
+    "test_daytime_zero_ratio_6_19_pct": 26.7564,
+    "site_status": "测试期分布漂移",
+    "exclude_from_ranking": "是",
+    "exclude_reason": "cf_mean漂移0.186>=0.1或cf_p95漂移0.310>=0.2"
   },
   {
     "site_id": "S061",
@@ -1476,7 +1626,10 @@
     "test_daytime_rows_6_19": 1708,
     "test_daytime_positive_rows_6_19": 1277,
     "test_daytime_zero_rows_6_19": 431,
-    "test_daytime_zero_ratio_6_19_pct": 25.2342
+    "test_daytime_zero_ratio_6_19_pct": 25.2342,
+    "site_status": "测试期分布漂移",
+    "exclude_from_ranking": "是",
+    "exclude_reason": "cf_mean漂移0.134>=0.1或cf_p95漂移0.225>=0.2"
   },
   {
     "site_id": "S062",
@@ -1505,7 +1658,10 @@
     "test_daytime_rows_6_19": 1708,
     "test_daytime_positive_rows_6_19": 1219,
     "test_daytime_zero_rows_6_19": 489,
-    "test_daytime_zero_ratio_6_19_pct": 28.63
+    "test_daytime_zero_ratio_6_19_pct": 28.63,
+    "site_status": "正常评价",
+    "exclude_from_ranking": "否",
+    "exclude_reason": ""
   },
   {
     "site_id": "S063",
@@ -1534,7 +1690,10 @@
     "test_daytime_rows_6_19": 1708,
     "test_daytime_positive_rows_6_19": 1083,
     "test_daytime_zero_rows_6_19": 625,
-    "test_daytime_zero_ratio_6_19_pct": 36.5925
+    "test_daytime_zero_ratio_6_19_pct": 36.5925,
+    "site_status": "测试期分布漂移",
+    "exclude_from_ranking": "是",
+    "exclude_reason": "cf_mean漂移0.126>=0.1或cf_p95漂移0.126>=0.2"
   },
   {
     "site_id": "S064",
@@ -1550,8 +1709,8 @@
     "nrmse_pct": 6.7837,
     "bias_pct": 13.6619,
     "pred_actual_ratio": 1.1366,
-    "category": "other",
-    "category_label": "其他",
+    "category": "normal",
+    "category_label": "相对正确",
     "full_history_rows": 26304,
     "full_history_non_null_rows": 26304,
     "full_history_positive_rows": 11817,
@@ -1563,7 +1722,10 @@
     "test_daytime_rows_6_19": 1708,
     "test_daytime_positive_rows_6_19": 1135,
     "test_daytime_zero_rows_6_19": 573,
-    "test_daytime_zero_ratio_6_19_pct": 33.548
+    "test_daytime_zero_ratio_6_19_pct": 33.548,
+    "site_status": "正常评价",
+    "exclude_from_ranking": "否",
+    "exclude_reason": ""
   },
   {
     "site_id": "S065",
@@ -1592,7 +1754,10 @@
     "test_daytime_rows_6_19": 1708,
     "test_daytime_positive_rows_6_19": 1413,
     "test_daytime_zero_rows_6_19": 295,
-    "test_daytime_zero_ratio_6_19_pct": 17.2717
+    "test_daytime_zero_ratio_6_19_pct": 17.2717,
+    "site_status": "正常评价",
+    "exclude_from_ranking": "否",
+    "exclude_reason": ""
   },
   {
     "site_id": "S066",
@@ -1621,7 +1786,10 @@
     "test_daytime_rows_6_19": 1708,
     "test_daytime_positive_rows_6_19": 1281,
     "test_daytime_zero_rows_6_19": 427,
-    "test_daytime_zero_ratio_6_19_pct": 25.0
+    "test_daytime_zero_ratio_6_19_pct": 25.0,
+    "site_status": "正常评价",
+    "exclude_from_ranking": "否",
+    "exclude_reason": ""
   },
   {
     "site_id": "S068",
@@ -1650,7 +1818,10 @@
     "test_daytime_rows_6_19": 1708,
     "test_daytime_positive_rows_6_19": 1230,
     "test_daytime_zero_rows_6_19": 478,
-    "test_daytime_zero_ratio_6_19_pct": 27.9859
+    "test_daytime_zero_ratio_6_19_pct": 27.9859,
+    "site_status": "正常评价",
+    "exclude_from_ranking": "否",
+    "exclude_reason": ""
   },
   {
     "site_id": "S069",
@@ -1679,7 +1850,10 @@
     "test_daytime_rows_6_19": 1708,
     "test_daytime_positive_rows_6_19": 0,
     "test_daytime_zero_rows_6_19": 1708,
-    "test_daytime_zero_ratio_6_19_pct": 100.0
+    "test_daytime_zero_ratio_6_19_pct": 100.0,
+    "site_status": "测试期无有效发电",
+    "exclude_from_ranking": "是",
+    "exclude_reason": "test正功率样本0.0<100或总电量不足"
   },
   {
     "site_id": "S070",
@@ -1708,7 +1882,10 @@
     "test_daytime_rows_6_19": 1708,
     "test_daytime_positive_rows_6_19": 1212,
     "test_daytime_zero_rows_6_19": 496,
-    "test_daytime_zero_ratio_6_19_pct": 29.0398
+    "test_daytime_zero_ratio_6_19_pct": 29.0398,
+    "site_status": "测试期分布漂移",
+    "exclude_from_ranking": "是",
+    "exclude_reason": "cf_mean漂移0.092>=0.1或cf_p95漂移0.221>=0.2"
   },
   {
     "site_id": "S071",
@@ -1737,7 +1914,10 @@
     "test_daytime_rows_6_19": 1708,
     "test_daytime_positive_rows_6_19": 1495,
     "test_daytime_zero_rows_6_19": 213,
-    "test_daytime_zero_ratio_6_19_pct": 12.4707
+    "test_daytime_zero_ratio_6_19_pct": 12.4707,
+    "site_status": "系统性偏差",
+    "exclude_from_ranking": "是",
+    "exclude_reason": "pred/actual=0.610超出[0.8,1.2]"
   },
   {
     "site_id": "S072",
@@ -1753,8 +1933,8 @@
     "nrmse_pct": 11.7998,
     "bias_pct": -9.6915,
     "pred_actual_ratio": 0.9031,
-    "category": "other",
-    "category_label": "其他",
+    "category": "worst",
+    "category_label": "预测最差",
     "full_history_rows": 19848,
     "full_history_non_null_rows": 19848,
     "full_history_positive_rows": 9220,
@@ -1766,7 +1946,10 @@
     "test_daytime_rows_6_19": 1708,
     "test_daytime_positive_rows_6_19": 1282,
     "test_daytime_zero_rows_6_19": 426,
-    "test_daytime_zero_ratio_6_19_pct": 24.9415
+    "test_daytime_zero_ratio_6_19_pct": 24.9415,
+    "site_status": "正常评价",
+    "exclude_from_ranking": "否",
+    "exclude_reason": ""
   },
   {
     "site_id": "S073",
@@ -1795,7 +1978,10 @@
     "test_daytime_rows_6_19": 1708,
     "test_daytime_positive_rows_6_19": 1333,
     "test_daytime_zero_rows_6_19": 375,
-    "test_daytime_zero_ratio_6_19_pct": 21.9555
+    "test_daytime_zero_ratio_6_19_pct": 21.9555,
+    "site_status": "正常评价",
+    "exclude_from_ranking": "否",
+    "exclude_reason": ""
   },
   {
     "site_id": "S074",
@@ -1824,7 +2010,10 @@
     "test_daytime_rows_6_19": 1708,
     "test_daytime_positive_rows_6_19": 1281,
     "test_daytime_zero_rows_6_19": 427,
-    "test_daytime_zero_ratio_6_19_pct": 25.0
+    "test_daytime_zero_ratio_6_19_pct": 25.0,
+    "site_status": "测试期分布漂移",
+    "exclude_from_ranking": "是",
+    "exclude_reason": "cf_mean漂移0.157>=0.1或cf_p95漂移0.285>=0.2"
   },
   {
     "site_id": "S075",
@@ -1853,7 +2042,10 @@
     "test_daytime_rows_6_19": 1708,
     "test_daytime_positive_rows_6_19": 1281,
     "test_daytime_zero_rows_6_19": 427,
-    "test_daytime_zero_ratio_6_19_pct": 25.0
+    "test_daytime_zero_ratio_6_19_pct": 25.0,
+    "site_status": "测试期分布漂移",
+    "exclude_from_ranking": "是",
+    "exclude_reason": "cf_mean漂移0.160>=0.1或cf_p95漂移0.235>=0.2"
   },
   {
     "site_id": "S076",
@@ -1882,7 +2074,10 @@
     "test_daytime_rows_6_19": 1708,
     "test_daytime_positive_rows_6_19": 0,
     "test_daytime_zero_rows_6_19": 1708,
-    "test_daytime_zero_ratio_6_19_pct": 100.0
+    "test_daytime_zero_ratio_6_19_pct": 100.0,
+    "site_status": "测试期无有效发电",
+    "exclude_from_ranking": "是",
+    "exclude_reason": "test正功率样本0.0<100或总电量不足"
   },
   {
     "site_id": "S077",
@@ -1911,7 +2106,10 @@
     "test_daytime_rows_6_19": 1708,
     "test_daytime_positive_rows_6_19": 0,
     "test_daytime_zero_rows_6_19": 1708,
-    "test_daytime_zero_ratio_6_19_pct": 100.0
+    "test_daytime_zero_ratio_6_19_pct": 100.0,
+    "site_status": "测试期无有效发电",
+    "exclude_from_ranking": "是",
+    "exclude_reason": "test正功率样本0.0<100或总电量不足"
   },
   {
     "site_id": "S115",
@@ -1940,7 +2138,10 @@
     "test_daytime_rows_6_19": 1708,
     "test_daytime_positive_rows_6_19": 1130,
     "test_daytime_zero_rows_6_19": 578,
-    "test_daytime_zero_ratio_6_19_pct": 33.8407
+    "test_daytime_zero_ratio_6_19_pct": 33.8407,
+    "site_status": "正常评价",
+    "exclude_from_ranking": "否",
+    "exclude_reason": ""
   },
   {
     "site_id": "S116",
@@ -1956,8 +2157,8 @@
     "nrmse_pct": 16.9763,
     "bias_pct": 9.7759,
     "pred_actual_ratio": 1.0978,
-    "category": "other",
-    "category_label": "其他",
+    "category": "worst",
+    "category_label": "预测最差",
     "full_history_rows": 26304,
     "full_history_non_null_rows": 26304,
     "full_history_positive_rows": 13038,
@@ -1969,6 +2170,9 @@
     "test_daytime_rows_6_19": 1708,
     "test_daytime_positive_rows_6_19": 1334,
     "test_daytime_zero_rows_6_19": 374,
-    "test_daytime_zero_ratio_6_19_pct": 21.897
+    "test_daytime_zero_ratio_6_19_pct": 21.897,
+    "site_status": "正常评价",
+    "exclude_from_ranking": "否",
+    "exclude_reason": ""
   }
 ]

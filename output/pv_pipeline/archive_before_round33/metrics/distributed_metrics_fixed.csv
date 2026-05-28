@@ -1,0 +1,10 @@
+﻿metric,before,after,improvement_abs,improvement_pct
+Corr,0.6314,0.6314,0.0,0.0
+MAE,0.6627,0.6627,0.0,0.0
+MAPE_clipped,57.4149,57.4149,0.0,0.0
+MAPE_raw,87.9811,87.9811,0.0,0.0
+NRMSE,0.0808,0.0808,0.0,0.0
+RMSE,1.5591,1.5591,0.0,0.0
+WAPE,49.7036,49.7036,0.0,0.0
+bias_pct,-21.2333,-21.2333,0.0,0.0
+pred_actual_ratio,0.7877,0.7877,0.0,0.0
