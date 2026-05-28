@@ -1193,18 +1193,27 @@ def compute_hourly_summary_from_final(df: pd.DataFrame) -> pd.DataFrame:
     return hourly
 
 
-def export_hourly_prediction_summary(output_root, dashboard_root, final_df=None) -> list:
+def export_hourly_prediction_summary(output_root, dashboard_root, final_df=None, round_name="unknown") -> list:
     """Export hourly_prediction_summary.json.
 
-    Priority: read existing CSV → fallback to compute from final_df.
+    Priority: round-specific CSV → generic CSV → compute from final_df.
     """
     metrics_dir = Path(output_root) / "metrics"
-    csv_path = metrics_dir / "分布式光伏预测_逐小时平均NRMSE.csv"
+    # Try round-specific CSV first
+    rn = "".join(filter(str.isdigit, round_name))
+    csv_candidates = [
+        metrics_dir / f"round{rn}_city_hourly_nrmse.csv",
+        metrics_dir / "分布式光伏预测_逐小时平均NRMSE.csv",
+    ]
+    csv_path = None
+    for cp in csv_candidates:
+        if cp.exists():
+            csv_path = cp
+            break
 
-    if csv_path.exists():
+    if csv_path:
         print(f"  Loading existing hourly CSV: {csv_path}")
         hourly = pd.read_csv(csv_path)
-        # Normalize column names
         rename_map = {
             "小时": "hour",
             "小时（时）": "hour",
@@ -1216,7 +1225,6 @@ def export_hourly_prediction_summary(output_root, dashboard_root, final_df=None)
             "城市 NRMSE（%）": "city_nrmse_pct",
         }
         hourly = hourly.rename(columns={k: v for k, v in rename_map.items() if k in hourly.columns})
-        # If column still missing, try direct rename from "hour"
         if "hour" not in hourly.columns and "Hour" in hourly.columns:
             hourly = hourly.rename(columns={"Hour": "hour"})
     elif final_df is not None:
@@ -1583,7 +1591,7 @@ def main():
     export_error_threshold_summary(scatter_data, dashboard_root)
 
     print("\n[10b] Exporting hourly_prediction_summary.json...")
-    hourly_summary = export_hourly_prediction_summary(output_root, dashboard_root, df)
+    hourly_summary = export_hourly_prediction_summary(output_root, dashboard_root, df, round_name)
 
     # Validation
     print("\n[11] Validating outputs...")
