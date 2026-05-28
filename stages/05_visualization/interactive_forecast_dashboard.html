@@ -1560,6 +1560,21 @@ function meanBy(rows, key) {
   return vals.reduce(function(a, b) { return a + b; }, 0) / vals.length;
 }
 
+function median(values) {
+  const nums = values
+    .map(function(v) { return Number(v); })
+    .filter(function(v) { return Number.isFinite(v); })
+    .sort(function(a, b) { return a - b; });
+
+  if (!nums.length) return 0;
+
+  const mid = Math.floor(nums.length / 2);
+  if (nums.length % 2 === 1) {
+    return nums[mid];
+  }
+  return (nums[mid - 1] + nums[mid]) / 2;
+}
+
 function computeMetrics(rows, scope) {
   if (!rows || !rows.length) {
     return { sampleCount: 0, siteCount: 0, actualMwh: 0, predMwh: 0,
@@ -1597,12 +1612,12 @@ function computeMetrics(rows, scope) {
     ? Math.sqrt(errors.reduce(function(a, b) { return a + b * b; }, 0) / errors.length)
     : 0;
 
-  // NRMSE denominator: city uses capacity_sum_mw mean; site uses capacity_mw mean
-  var capacityDenom = scope === 'city'
-    ? meanBy(rows, 'capacity_sum_mw')
-    : meanBy(rows, 'capacity_mw');
+  // NRMSE denominator: city uses median(capacity_sum_mw); site uses median(capacity_mw)
+  var capacityRefMw = scope === 'city'
+    ? median(rows.map(function(r) { return r.capacity_sum_mw; }))
+    : median(rows.map(function(r) { return r.capacity_mw; }));
 
-  var nrmsePct = capacityDenom > 0 ? rmse / capacityDenom * 100 : 0;
+  var nrmsePct = capacityRefMw > 0 ? rmse / capacityRefMw * 100 : 0;
   var ratio = actualSafe ? pred / actualSafe : null;
   var biasPct = actualSafe ? (pred - actual) / actualSafe * 100 : null;
 
@@ -1615,7 +1630,8 @@ function computeMetrics(rows, scope) {
     rmseMw: rmse,
     nrmsePct: nrmsePct,
     biasPct: biasPct,
-    ratio: ratio
+    ratio: ratio,
+    capacityRefMw: capacityRefMw,
   };
 }
 
