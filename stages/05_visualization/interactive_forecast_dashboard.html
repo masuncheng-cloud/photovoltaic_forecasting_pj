@@ -2909,10 +2909,7 @@ document.addEventListener("DOMContentLoaded", () => {
       setDateComboValue("end", state.endDate);
       syncHiddenDateInputs();
 
-      const startHourInput = document.getElementById("start-hour");
-      const endHourInput = document.getElementById("end-hour");
-      if (startHourInput) startHourInput.value = 10;
-      if (endHourInput) endHourInput.value = 14;
+      syncHourSelects();
 
       if (typeof onScopeChange === "function") onScopeChange();
       validateDateRange(false);
@@ -2937,8 +2934,9 @@ document.addEventListener("DOMContentLoaded", () => {
       setDateComboValue("end", state.endDate);
       document.getElementById("start-date").value = state.startDate;
       document.getElementById("end-date").value = state.endDate;
-      document.getElementById("start-hour").value = 6;
-      document.getElementById("end-hour").value = 19;
+      state.startHour = 6;
+      state.endHour = 19;
+      syncHourSelects();
       onScopeChange();
       refreshAll();
     });
