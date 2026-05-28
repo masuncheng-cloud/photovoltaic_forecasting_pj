@@ -1500,16 +1500,22 @@ def main():
     dashboard_root = args.dashboard_root
     output_root = args.output_root
 
-    print(f"\n=== Round23: Export Interactive Dashboard Data ===")
+    print(f"\n=== Auto Export Interactive Dashboard Data ===")
     print(f"  Output root : {output_root}")
     print(f"  Dashboard dir: {dashboard_root}")
 
-    # Create output directory
-    Path(dashboard_root).mkdir(parents=True, exist_ok=True)
+    # ── Clean output directory (only json/csv, keep subdirs) ──────────────────────
+    dash_dir = Path(dashboard_root)
+    if dash_dir.exists():
+        for p in dash_dir.rglob("*"):
+            if p.is_file() and p.suffix.lower() in [".json", ".csv"]:
+                p.unlink()
+    dash_dir.mkdir(parents=True, exist_ok=True)
 
-    # Load data
+    # Load data (auto-detects latest round)
     print("\n[1] Loading prediction data...")
-    df = load_predictions(output_root)
+    df, round_name, pred_col = load_predictions(output_root)
+    pred_path, _ = find_latest_prediction_file(output_root)
     print(f"  Shape: {df.shape}, sites: {df['site_id'].nunique()}")
     print(f"  Splits: {sorted(df['split'].unique().tolist())}")
 
