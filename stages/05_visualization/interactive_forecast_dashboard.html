@@ -264,6 +264,13 @@ input[type="number"] { width: 60px; }
   margin-left: 2px;
 }
 
+.metric-card .sub-value {
+  font-size: 11px;
+  color: #718096;
+  margin-top: 2px;
+  white-space: nowrap;
+}
+
 /* ---- Chart Area ---- */
 #chart-container {
   background: #fff;
@@ -884,7 +891,7 @@ tbody td {
   <div class="metric-card"><div class="label">pred/actual</div><div class="value" id="m-ratio">--</div></div>
   <div class="metric-card"><div class="label">MAE</div><div class="value"><span id="m-mae">--</span><span class="unit">MW</span></div></div>
   <div class="metric-card"><div class="label">RMSE</div><div class="value"><span id="m-rmse">--</span><span class="unit">MW</span></div></div>
-  <div class="metric-card"><div class="label">NRMSE</div><div class="value"><span id="m-nrmse">--</span><span class="unit">%</span></div></div>
+  <div class="metric-card" title="NRMSE = RMSE / 容量基准 × 100%。单站点容量基准为该站点装机容量；全市容量基准为当前筛选范围内 capacity_sum_mw 的中位数。"><div class="label">NRMSE</div><div class="value"><span id="m-nrmse">--</span><span class="unit">%</span></div><div class="sub-value" id="m-nrmse-cap-ref"></div></div>
   <div class="metric-card"><div class="label">bias</div><div class="value"><span id="m-bias">--</span><span class="unit">%</span></div></div>
 </div>
 
