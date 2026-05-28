@@ -1,0 +1,10 @@
+﻿check_item,status,detail
+split_time_range_future,INFO,"rows=148885, min=2026-01-01 00:00:00, max=2026-03-31 23:00:00"
+split_time_range_test,INFO,"rows=199104, min=2025-09-01 00:00:00, max=2025-12-31 23:00:00"
+split_time_range_train,INFO,"rows=723007, min=2023-01-01 00:00:00, max=2025-06-30 23:00:00"
+split_time_range_valid,INFO,"rows=101184, min=2025-07-01 00:00:00, max=2025-08-31 23:00:00"
+final_eval_only_test,PASS,splits=['test']
+final_eval_hour_6_19,PASS,"hour_min=6, hour_max=19"
+duplicate_site_time,FAIL,duplicate_rows=781
+suspicious_target_feature_columns,PASS,none
+prediction_physical_range,PASS,"negative=0, over_capacity_2pct=0"
