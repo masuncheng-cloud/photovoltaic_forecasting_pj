@@ -1380,7 +1380,8 @@ async function loadAll() {
   // ---- Round38: version badge and self-check ----
   const idxRound = (idx.description || "").match(/Round\d+/);
   const idxRoundStr = idxRound ? idxRound[0] : (idx.data_source || "").match(/Round\d+/)?.[0] || "Unknown";
-  const idxPredCol = (idx.data_source || "").includes("power_pred_final") ? "power_pred_final" : "power_pred_cal";
+  // Infer actual prediction column from site_series
+  let idxPredCol = "power_pred_cal"; // default, can be overridden below
   const badgeDataRound = document.getElementById("badge-data-round");
   const badgePredCol = document.getElementById("badge-pred-col");
   const verBadge = document.getElementById("data-version-badge");
