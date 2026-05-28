@@ -239,7 +239,7 @@ def load_site_master(output_root):
     return None
 
 
-def export_index(df, site_names, dashboard_root):
+def export_index(df, site_names, dashboard_root, round_name="unknown", pred_col="power_pred"):
     """Export index.json with overview metadata."""
     history_df = build_history_frame(df)
     dates = pd.to_datetime(history_df["date"]).dropna().unique()
@@ -250,25 +250,34 @@ def export_index(df, site_names, dashboard_root):
     active = history_df[
         history_df["hour"].between(6, 19)
         & history_df["power_mw"].notna()
-        & history_df["power_pred"].notna()
+        & history_df[pred_col].notna()
     ]
 
-    # Round33 口径说明
+    # Compute eval stats
     eval_df = build_eval_frame_for_dashboard(history_df)
     n_eval_sites = int(eval_df["site_id"].nunique())
-    n_valid_sites = int(history_df["site_id"].nunique()) - n_eval_sites  # future站点
+    n_valid_sites = int(history_df["site_id"].nunique()) - n_eval_sites
+
+    # Count zero sites in test period
+    test_day = eval_df.copy()
+    zero_test_sites = test_day.groupby("site_id").apply(
+        lambda g: (pd.to_numeric(g["power_mw"], errors="coerce").fillna(0) > 0).sum() == 0
+    )
+    zero_site_ids = sorted(zero_test_sites[zero_test_sites].index.tolist())
+    zero_note = f"，测试期零发电站点{len(zero_site_ids)}个（{','.join(zero_site_ids)}）" if zero_site_ids else ""
 
     index_data = {
         "title": "光伏功率预测交互式结果展示",
-        "description": "展示连云港光伏电站真实功率与预测功率对比（Round34 版本）",
+        "description": f"展示连云港光伏电站真实功率与预测功率对比（{round_name} 版本）",
         "data_source": (
-            "output/pv_pipeline/tables/distributed_predictions_final_full_clean.pkl "
-            "(Round34，含 power_pred_final) 或 distributed_predictions_v159.pkl"
+            f"output/pv_pipeline/tables/（{round_name}，预测列：{pred_col}）"
         ),
+        "prediction_column": pred_col,
+        "round": round_name,
         "data_scope": "train/valid/test only; future excluded (默认不展示未来数据)",
-        "round33口径说明": (
-            "统计口径：test 6-19点；指标口径：NRMSE%=RMSE/容量均值×100%；"
-            f"有效评价站点{n_eval_sites}个，被排除站点{n_valid_sites}个（测试期异常）"
+        "口径说明": (
+            f"统计口径：test 6-19点；指标口径：NRMSE%=RMSE/capacity_sum_mw×100%；"
+            f"有效评价站点{n_eval_sites}个，测试期异常站点{n_valid_sites}个{zero_note}"
         ),
         "min_date": min_date,
         "max_date": max_date,
@@ -1531,7 +1540,7 @@ def main():
 
     # Export all data files
     print("\n[3] Exporting index.json...")
-    export_index(df, site_names, dashboard_root)
+    export_index(df, site_names, dashboard_root, round_name, pred_col)
 
     print("\n[4] Exporting city_series.json...")
     city = export_city_series(df, dashboard_root)
