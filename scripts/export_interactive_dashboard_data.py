@@ -654,7 +654,7 @@ def build_site_name_lookup(sm_df):
     return lookup
 
 
-def export_scatter_site_sample_nrmse(df, site_names, sm_df, metrics_df, dashboard_root):
+def export_scatter_site_sample_nrmse(df, site_names, sm_df, metrics_df, dashboard_root, test_daytime_zero_stats=None):
     """Export scatter_site_sample_nrmse.json: each point = one site.
 
     - Sample counts use train/valid/test only (no future).
