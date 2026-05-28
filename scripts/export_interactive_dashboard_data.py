@@ -29,6 +29,9 @@ from pathlib import Path
 import numpy as np
 import pandas as pd
 
+import sys
+sys.path.insert(0, str(Path(__file__).parent.parent / "src"))
+
 # Use anaconda python when available
 PYTHON_BIN = "/home/mjj/anaconda3/bin/python3"
 import sys
@@ -282,12 +285,17 @@ def export_city_series(df, dashboard_root):
 
 
 def export_site_series(df, site_names, dashboard_root):
-    """Export per-site time series JSON files（Round33 版本：含 site_status）。"""
+    """Export per-site time series JSON files（Round34 版本：使用 power_pred_final）。"""
+    # 解析预测列
+    from pv_forecasting.core.eval_frame import resolve_prediction_column
+    pred_col = resolve_prediction_column(df)
+    print(f"  [INFO] site_series 预测列: {pred_col}")
+
     df_f = build_history_frame(df)
     df_f = df_f[
         df_f["hour"].between(6, 19)
         & df_f["power_mw"].notna()
-        & df_f["power_pred"].notna()
+        & df_f[pred_col].notna()
     ].copy()
 
     site_dir = Path(dashboard_root) / "site_series"
@@ -299,6 +307,9 @@ def export_site_series(df, site_names, dashboard_root):
 
         records = []
         for _, row in sdf.iterrows():
+            pred_val = float(row[pred_col])
+            actual_val = float(row["power_mw"])
+            cap_val = float(row["capacity_mw"])
             rec = {
                 "time": pd.Timestamp(row["time"]).strftime("%Y-%m-%d %H:%M:%S"),
                 "date": str(row["date"]),
@@ -306,17 +317,18 @@ def export_site_series(df, site_names, dashboard_root):
                 "split": str(row["split"]),
                 "site_id": str(row["site_id"]),
                 "site_name": site_names.get(sid, sid) if site_names else str(sid),
-                "actual_mw": round(float(row["power_mw"]), 4),
-                "pred_mw": round(float(row["power_pred"]), 4),
-                "capacity_mw": round(float(row["capacity_mw"]), 4),
-                "abs_error_mw": round(float(abs(row["power_pred"] - row["power_mw"])), 4),
+                "actual_mw": round(actual_val, 4),
+                "pred_mw": round(pred_val, 4),
+                "capacity_mw": round(cap_val, 4),
+                "abs_error_mw": round(float(abs(pred_val - actual_val)), 4),
                 "point_nrmse_pct": round(
-                    float(abs(row["power_pred"] - row["power_mw"]) / max(row["capacity_mw"], 1e-9) * 100), 4
+                    float(abs(pred_val - actual_val) / max(cap_val, 1e-9) * 100), 4
                 ),
-                # Round33 新增字段
+                # Round34: 使用 power_pred_final
                 "site_status": str(row.get("_site_status", "正常评价")),
                 "exclude_from_ranking": str(row.get("_exclude_from_ranking", "否")),
                 "is_future": False,
+                "pred_col_used": pred_col,
             }
             records.append(rec)
 
@@ -324,7 +336,7 @@ def export_site_series(df, site_names, dashboard_root):
         with open(out_path, "w", encoding="utf-8") as f:
             json.dump(records, f, ensure_ascii=False, indent=2)
 
-    print(f"  [OK] site_series/ ({len(site_ids)} files, Round33 含 site_status)")
+    print(f"  [OK] site_series/ ({len(site_ids)} files, Round34 使用 {pred_col})")
     return site_ids
 
 

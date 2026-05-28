@@ -16,9 +16,11 @@ PROJECT_ROOT = Path(__file__).parent.parent.resolve()
 TABLES  = PROJECT_ROOT / "output" / "pv_pipeline" / "tables"
 METRICS = PROJECT_ROOT / "output" / "pv_pipeline" / "metrics"
 DASH    = PROJECT_ROOT / "output" / "pv_pipeline" / "interactive_dashboard"
-os.makedirs(METRICS / "docs", exist_ok=True)
+DOCS    = PROJECT_ROOT / "output" / "pv_pipeline" / "docs"
+os.makedirs(DOCS, exist_ok=True)
+os.makedirs(METRICS, exist_ok=True)
 
-RESULT_FILE = METRICS / "docs" / "Round34_指标口径与最终产物一致性验证报告.md"
+RESULT_FILE = DOCS / "Round34_指标口径与最终产物一致性验证报告.md" / "Round34_指标口径与最终产物一致性验证报告.md"
 
 # ── 检查工具 ──────────────────────────────────────────────────────────────
 class Check:

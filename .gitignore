@@ -37,6 +37,19 @@ output/pv_pipeline/reorganize_back40.py
 output/pv_pipeline/reorganize_cols.py
 catboost_info/
 
+# Large interactive dashboard data (generated, not source)
+output/pv_pipeline/interactive_dashboard/city_series.json
+output/pv_pipeline/interactive_dashboard/site_series/
+output/pv_pipeline/interactive_dashboard/scatter_*.json
+output/pv_pipeline/interactive_dashboard/sample_requirement_*.json
+output/pv_pipeline/interactive_dashboard/hourly_prediction_summary.json
+output/pv_pipeline/interactive_dashboard/season_days.json
+output/pv_pipeline/interactive_dashboard/midday_city_by_date.json
+output/pv_pipeline/interactive_dashboard/error_threshold_summary.json
+output/pv_pipeline/interactive_dashboard/data_integrity_check.json
+output/pv_pipeline/interactive_dashboard/invalid_zero_sites.json
+output/pv_pipeline/interactive_dashboard/site_metrics.json
+
 # Archive nested output/docs — these contain copies of large pkl/metrics/docs
 output/pv_pipeline/archive_round7/
 output/pv_pipeline/archive_round11/

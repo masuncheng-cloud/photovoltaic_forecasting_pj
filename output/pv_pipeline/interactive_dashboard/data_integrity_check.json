@@ -1,9 +1,0 @@
-{
-  "checked_at": "2026-05-28 17:59:27",
-  "source": "distributed_predictions_final_full.pkl power_mw",
-  "dashboard_site_series": "interactive_dashboard/site_series/*.json actual_mw",
-  "site_count": 68,
-  "fail_count": 0,
-  "max_abs_diff": 8.881784197001252e-16,
-  "status": "PASS"
-}
