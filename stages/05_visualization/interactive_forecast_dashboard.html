@@ -1530,6 +1530,13 @@ async function filterSiteSeries(siteId) {
 // ============================================================
 // METRICS CALCULATION
 // ============================================================
+function getSelectedSiteMetric() {
+  if (!Array.isArray(gSiteMetrics)) return null;
+  const sid = state.siteId;
+  if (!sid) return null;
+  return gSiteMetrics.find(r => String(r.site_id) === String(sid)) || null;
+}
+
 function toNumber(v, fallback) {
   if (fallback === undefined) fallback = 0;
   const x = Number(v);
@@ -1564,10 +1571,18 @@ function computeMetrics(rows, scope) {
   const actualSafe = Math.abs(actual) > 1e-9 ? actual : null;
 
   // city_series: each row = one time point; sample_count = sites contributing
-  // site_series: each row = one site at one time; rows.length = sample count
-  var sampleCount = scope === 'city'
-    ? Math.round(sumBy(rows, 'sample_count'))
-    : rows.length;
+  // site_series: each row = one site at one time
+  // city mode: sum of sample_count across rows; site mode: full_history_rows from site_metrics
+  var sampleCount;
+  if (scope === 'city') {
+    sampleCount = Math.round(sumBy(rows, 'sample_count'));
+  } else {
+    var siteMetric = getSelectedSiteMetric();
+    sampleCount = Number(siteMetric ? siteMetric.full_history_rows : NaN);
+    if (!Number.isFinite(sampleCount) || sampleCount <= 0) {
+      sampleCount = rows.length;
+    }
+  }
 
   // n_sites in city_series = sites contributing at that time; use max across all time points
   var siteCount = scope === 'city'
