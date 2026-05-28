@@ -2282,6 +2282,7 @@ function showSiteScatterTooltip(e, p, xField) {
     <div class="tip-label">全量历史样本数</div><div class="tip-val">${fmtInt(p.full_history_rows || 0)} 行</div>
     <div class="tip-label">全量正功率样本数</div><div class="tip-val">${fmtInt(p.full_history_positive_rows || 0)} 行</div>
     <div class="tip-label">全量0值占比</div><div class="tip-val">${fmt2(p.full_history_zero_ratio_pct || 0)}%</div>
+    <div class="tip-label">测试集6-19点0值占比</div><div class="tip-val">${fmt2(p.test_daytime_zero_ratio_6_19_pct || 0)}%</div>
     <div class="tip-label">记录日期范围</div><div class="tip-val">${p.full_history_start_date || "-"} ~ ${p.full_history_end_date || "-"}</div>
     <div class="tip-label">训练+验证正功率样本数</div><div class="tip-val">${fmtInt(p.train_valid_positive_rows || 0)} 行</div>
     <div class="tip-label">测试集站点 NRMSE</div><div class="tip-val">${fmt2(p.test_nrmse_pct || 0)}%</div>
