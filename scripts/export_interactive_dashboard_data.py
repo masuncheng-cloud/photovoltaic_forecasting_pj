@@ -117,15 +117,15 @@ def load_predictions(output_root):
     """Load prediction data, preferring clean file (Round33 要求)。
 
     优先级：
-      1. distributed_predictions_final_full_clean.pkl（Round33 清洗版）
-      2. distributed_predictions_final_full.pkl（上一轮清洁版）
-      3. distributed_predictions_final_eval.pkl（仅 test）
+      1. distributed_predictions_final_round36.pkl（Round36，含 power_pred_final）
+      2. distributed_predictions_final_round34.pkl（Round34，含 power_pred_final）
+      3. distributed_predictions_v159.pkl（v159 raw）
     """
     tables_dir = Path(output_root) / "tables"
     candidates = [
-        tables_dir / "distributed_predictions_final_round34.pkl",      # Round34 (preferred, has power_pred_final)
-        tables_dir / "distributed_predictions_final_full_clean.pkl",   # Round33 clean
-        tables_dir / "distributed_predictions_v159.pkl",              # v159 raw
+        tables_dir / "distributed_predictions_final_round36.pkl",   # Round36 (preferred, has power_pred_final)
+        tables_dir / "distributed_predictions_final_round34.pkl",   # Round34
+        tables_dir / "distributed_predictions_v159.pkl",            # v159 raw
     ]
     df = None
     used_path = None
@@ -152,16 +152,24 @@ def load_predictions(output_root):
         df = derive_split(df)
 
     # ── 加载站点有效性表（用于 site_status 字段）────────────────────────
-    validity_path = Path(output_root) / "metrics" / "round34_site_validity.csv"
-    validity_map = {}
-    if validity_path.exists():
-        validity_df = pd.read_csv(validity_path)
-        for _, row in validity_df.iterrows():
-            validity_map[row["site_id"]] = {
-                "site_status": row.get("site_status", ""),
-                "exclude_from_ranking": row.get("exclude_from_ranking", "否"),
-                "exclude_reason": row.get("exclude_reason", ""),
-            }
+    # 优先使用 round36，其次 round34
+    metrics_dir = Path(output_root) / "metrics"
+    for vname in ["round36_site_validity.csv", "round34_site_validity.csv"]:
+        validity_path = metrics_dir / vname
+        if validity_path.exists():
+            print(f"  Loading site validity: {validity_path.name}")
+            validity_df = pd.read_csv(validity_path)
+            validity_map = {}
+            for _, row in validity_df.iterrows():
+                validity_map[row["site_id"]] = {
+                    "site_status": row.get("site_status", ""),
+                    "exclude_from_ranking": row.get("exclude_from_ranking", "否"),
+                    "exclude_reason": row.get("exclude_reason", ""),
+                }
+            break
+    else:
+        validity_map = {}
+        print("  [WARN] 站点有效性表未找到，使用默认状态")
     df["_site_status"] = df["site_id"].map(lambda s: validity_map.get(s, {}).get("site_status", "正常评价"))
     df["_exclude_from_ranking"] = df["site_id"].map(lambda s: validity_map.get(s, {}).get("exclude_from_ranking", "否"))
     df["_exclude_reason"] = df["site_id"].map(lambda s: validity_map.get(s, {}).get("exclude_reason", ""))

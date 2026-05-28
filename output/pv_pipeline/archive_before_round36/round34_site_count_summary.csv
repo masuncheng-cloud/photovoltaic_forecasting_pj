@@ -1,0 +1,8 @@
+﻿category,count,exclude_from_ranking,description
+全部登记站点,118,否,来自 site_master.csv 的全部已登记站点
+有test结果站点,68,—,final_eval 中实际有 test 6-19 点预测结果的站点
+无测试预测结果,50,是,final_eval 中无 test 6-19 点预测结果
+测试期分布漂移,37,是,训练验证期与测试期容量因子分布明显差异（均值漂移≥0.10 或 P95 漂移≥0.20）
+正常评价,14,否,"有 test 结果，且 pred/actual 在 [0.8, 1.2] 范围内"
+系统性偏差,12,是,"test pred/actual 超出 [0.8, 1.2]，存在系统性高估或低估"
+测试期无有效发电,5,是,test 6-19 点正功率样本不足 100 或总电量接近 0
