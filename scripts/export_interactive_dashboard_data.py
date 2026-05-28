@@ -1235,7 +1235,9 @@ def export_hourly_prediction_summary(output_root, dashboard_root, final_df=None,
     if csv_path:
         print(f"  Loading existing hourly CSV: {csv_path}")
         hourly = pd.read_csv(csv_path)
-        rename_map = {
+
+        # Normalize column names to standard output names
+        col_rename = {
             "小时": "hour",
             "小时（时）": "hour",
             "样本数": "rows",
@@ -1244,20 +1246,29 @@ def export_hourly_prediction_summary(output_root, dashboard_root, final_df=None,
             "站点平均 NRMSE（%）": "site_nrmse_mean_pct",
             "城市NRMSE（%）": "city_nrmse_pct",
             "城市 NRMSE（%）": "city_nrmse_pct",
+            "NRMSE（%）": "city_nrmse_pct",
+            "nrmse_city_pct": "city_nrmse_pct",
+            "nrmse_pct": "city_nrmse_pct",
         }
-        hourly = hourly.rename(columns={k: v for k, v in rename_map.items() if k in hourly.columns})
+        hourly = hourly.rename(columns={k: v for k, v in col_rename.items() if k in hourly.columns})
         if "hour" not in hourly.columns and "Hour" in hourly.columns:
             hourly = hourly.rename(columns={"Hour": "hour"})
-        # If CSV has per-date rows (many rows), group by hour
+
+        # If CSV has per-datetime rows (many rows), aggregate by hour
         if "hour" in hourly.columns and len(hourly) > 20:
             hourly = hourly[hourly["hour"].between(6, 19)]
-            hourly = hourly.groupby("hour", as_index=False).agg(
-                rows=("rows", "sum"),
-                site_nrmse_mean_pct=("site_nrmse_mean_pct", "mean"),
-                city_nrmse_pct=("city_nrmse_pct", "mean"),
-            )
+            agg_map = {}
+            if "city_nrmse_pct" in hourly.columns:
+                agg_map["city_nrmse_pct"] = "mean"
+            if "site_nrmse_mean_pct" in hourly.columns:
+                agg_map["site_nrmse_mean_pct"] = "mean"
+            if "rows" in hourly.columns:
+                agg_map["rows"] = "sum"
+            if agg_map:
+                hourly = hourly.groupby("hour", as_index=False).agg(**agg_map)
         elif "hour" in hourly.columns:
             hourly = hourly[hourly["hour"].between(6, 19)].copy()
+        # else: no hour column, will skip
     elif final_df is not None:
         print(f"  CSV not found, computing hourly summary from final_df...")
         hourly = compute_hourly_summary_from_final(final_df)
