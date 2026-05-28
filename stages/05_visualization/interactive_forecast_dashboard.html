@@ -619,10 +619,6 @@ tbody td {
   box-sizing: border-box;
 }
 
-#reset-line-zoom:hover {
-  background: #f8fafc;
-}
-
 .zoom-info {
   font-size: 12px;
   color: #64748b;
@@ -847,6 +843,7 @@ tbody td {
     <select id="start-hour" class="hour-select" aria-label="开始小时"></select>
     <span class="ctrl-label">至</span>
     <select id="end-hour" class="hour-select" aria-label="结束小时"></select>
+    <span id="hour-range-message" class="hour-error" style="display:none;"></span>
   </div>
   <div class="divider"></div>
 
