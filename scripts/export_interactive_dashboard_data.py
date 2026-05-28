@@ -1055,9 +1055,29 @@ def export_sample_requirement_summary(scatter_data, dashboard_root):
     return results
 
 
-def export_invalid_zero_sites(metrics_df, dashboard_root):
-    """Export invalid_zero_sites.json: sites with zero_ratio >= 99.999% or no positive rows."""
+def export_invalid_zero_sites(metrics_df, dashboard_root, df=None):
+    """Export invalid_zero_sites.json: history-zero OR test-period-zero sites."""
+    # Step 1: history-zero (is_all_zero_history)
     invalid = metrics_df[metrics_df.get("is_all_zero_history", pd.Series(False)) == True].copy()
+    invalid_ids = set(invalid["site_id"].astype(str).tolist())
+
+    # Step 2: also detect test-period 100% zero (S003/S044/S076/S077 etc.)
+    if df is not None:
+        test_day = df[
+            df["split"].eq("test")
+            & df["hour"].isin(EVAL_HOURS)
+            & df["power_mw"].notna()
+        ].copy()
+        if not test_day.empty:
+            test_pos = test_day.groupby("site_id").apply(
+                lambda g: (pd.to_numeric(g["power_mw"], errors="coerce").fillna(0) > 0).sum(),
+                include_groups=False
+            )
+            test_zero_ids = set(test_pos[test_pos == 0].index.astype(str).tolist())
+            # Merge with metrics_df data for these sites
+            extra = metrics_df[metrics_df["site_id"].astype(str).isin(test_zero_ids - invalid_ids)].copy()
+            if not extra.empty:
+                invalid = pd.concat([invalid, extra], ignore_index=True)
 
     cols = [
         "site_id", "site_name", "county", "capacity_mw",
@@ -1579,7 +1599,7 @@ def main():
     scatter_site = export_scatter_site_sample_nrmse(df, site_names, sm_df, metrics_df, dashboard_root, test_daytime_zero_stats)
 
     print("\n[9c] Exporting invalid_zero_sites.json...")
-    invalid_zero_sites = export_invalid_zero_sites(metrics_df, dashboard_root)
+    invalid_zero_sites = export_invalid_zero_sites(metrics_df, dashboard_root, df)
 
     print("\n[9d] Exporting sample_requirement_summary.json...")
     sample_req_summary = export_sample_requirement_summary(scatter_site, dashboard_root)
