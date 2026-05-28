@@ -1664,6 +1664,12 @@ function updateMetricsCards(rows) {
   setCardValue("m-mae", fmt2(metrics.maeMw));
   setCardValue("m-rmse", fmt2(metrics.rmseMw));
   setCardValue("m-nrmse", fmt2(metrics.nrmsePct));
+  var capRefEl = document.getElementById("m-nrmse-cap-ref");
+  if (capRefEl) {
+    capRefEl.textContent = metrics.capacityRefMw && metrics.capacityRefMw > 0
+      ? "容量基准 " + fmt2(metrics.capacityRefMw) + " MW"
+      : "";
+  }
   setCardValue("m-bias", metrics.biasPct === null ? "-" : fmt2(metrics.biasPct));
 }
 
