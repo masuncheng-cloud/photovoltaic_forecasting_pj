@@ -1,2 +1,0 @@
-﻿candidate_name,accepted,candidate_overall_nrmse_pct,best_overall_nrmse_pct,overall_improve_pp,candidate_midday_nrmse_pct,best_midday_nrmse_pct,midday_improve_pp,candidate_mae_mw,candidate_rmse_mw,best_mae_mw,best_rmse_mw,candidate_score,best_score,reasons,decision_file
-midday_specialist_round9,False,22.089405,19.710496,-2.378909,22.089405,22.436371,0.3469660000000019,0.774713,1.480023,0.58932,1.204699,17.8969976,17.174442449999997,整体 NRMSE 改善不足: -2.3789 pp < 0.1000 pp,output/pv_pipeline/metrics/round10_candidate_decision_midday_specialist_round9.json

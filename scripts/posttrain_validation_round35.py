@@ -14,6 +14,7 @@ import pandas as pd
 import numpy as np
 from pathlib import Path
 import sys
+import subprocess
 
 PROJECT_ROOT = Path(__file__).parent.parent.resolve()
 TABLES  = PROJECT_ROOT / "output" / "pv_pipeline" / "tables"
@@ -87,12 +88,12 @@ if pkl_path.exists():
 # C3: Round34 指标文件存在
 # ────────────────────────────────────────────────────────────────────────
 required_csv = [
-    ("round34_city_hourly_nrmse.csv",    METRICS),
-    ("round34_site_hourly_nrmse.csv",    METRICS),
-    ("round34_site_avg_hourly_nrmse.csv",METRICS),
-    ("round34_site_metrics.csv",         METRICS),
-    ("round34_typical_sites.csv",        METRICS),
-    ("round34_site_validity.csv",        METRICS),
+    ("round34_city_hourly_nrmse.csv",     METRICS),
+    ("round34_site_hourly_nrmse.csv",     METRICS),
+    ("round34_site_avg_hourly_nrmse.csv", METRICS),
+    ("round34_site_metrics.csv",          METRICS),
+    ("round34_typical_sites.csv",         METRICS),
+    ("round34_site_validity.csv",         METRICS),
     ("round34_site_count_summary.csv",    METRICS),
     ("round35_dashboard_prediction_consistency.csv", METRICS),
 ]
@@ -151,27 +152,26 @@ else:
     try:
         cons = pd.read_csv(cons_path)
         fails = int((cons["status"] == "FAIL").sum())
+        max_pred = float(cons["max_abs_diff_pred"].max()) if cons["max_abs_diff_pred"].notna().any() else 0.0
+        max_actual = float(cons["max_abs_diff_actual"].max()) if cons["max_abs_diff_actual"].notna().any() else 0.0
         if fails > 0:
             c.fail("C6: dashboard pred/actual 一致",
-                   f"{fails}/{len(cons)} 个站点 FAIL，max_pred_diff={cons['max_abs_diff_pred'].max():.2e}")
+                   f"{fails}/{len(cons)} 个站点 FAIL，max_pred_diff={max_pred:.2e}")
         else:
             c.ok("C6: dashboard pred/actual 一致",
-                 f"68/68 PASS, max_pred_diff={cons['max_abs_diff_pred'].max():.2e}")
+                 f"68/68 PASS, max_pred={max_pred:.2e}, max_actual={max_actual:.2e}")
     except Exception as e:
         c.fail("C6: dashboard 一致性 CSV 检查", str(e))
 
 # ────────────────────────────────────────────────────────────────────────
-# C7: 报告路径均在 output/pv_pipeline/docs/
+# C7: 报告路径统一（Markdown 报告应在 docs/，不应在 metrics/docs/）
 # ────────────────────────────────────────────────────────────────────────
-docs_files = [
-    DOCS / "Round34_指标口径与最终产物一致性验证报告.md",
-    DOCS / "Round35_产物收口与可视化一致性验证报告.md",
-]
-missing_docs = [f for f in docs_files if not f.exists()]
-if missing_docs:
-    c.warn("C7: Round34 报告在正确路径", f"以下文件缺失（将在本次运行后创建）: {[str(f.name) for f in missing_docs]}")
+wrong_docs_dir = METRICS / "docs"
+wrong_docs_files = list(wrong_docs_dir.glob("*.md")) if wrong_docs_dir.exists() else []
+if wrong_docs_files:
+    c.fail("C7: 报告路径统一", f"metrics/docs/ 下仍有报告: {[p.name for p in wrong_docs_files]}")
 else:
-    c.ok("C7: 报告在 output/pv_pipeline/docs/", f"{len(docs_files)} 个文件")
+    c.ok("C7: 报告路径统一", "Markdown 报告统一输出到 output/pv_pipeline/docs/")
 
 # ────────────────────────────────────────────────────────────────────────
 # C8: 光伏功率预测项目.md 中包含 118、68、14 三类站点说明
@@ -201,7 +201,6 @@ else:
 if report_path.exists():
     try:
         content = open(report_path, encoding="utf-8").read()
-        # 在正文（前500行）搜索 0.3365
         lines = content.split("\n")
         core_section = "\n".join(lines[:500])
         has_bad = "0.3365" in core_section or "0.3420" in core_section
@@ -216,37 +215,30 @@ if report_path.exists():
 # ────────────────────────────────────────────────────────────────────────
 # C10: Git 不追踪大体积 pkl、site_series JSON 和 tables 输出
 # ────────────────────────────────────────────────────────────────────────
-os.chdir(PROJECT_ROOT)
-large_tracked = []
-for pattern in [r'\.pkl$', r'\.joblib$', r'site_series/', r'output/pv_pipeline/tables/', r'city_series\.json']:
-    import subprocess
-    r = subprocess.run(
-        ["git", "ls-files"],
-        capture_output=True, text=True, errors="replace"
-    )
-    matches = [l for l in r.stdout.splitlines() if any(
-        p.replace("/", "").replace(".", "") in l.replace("/", "").replace(".", "")
-        for p in [pattern]
-    )]
-    large_tracked.extend(matches)
+tracked = subprocess.run(
+    ["git", "ls-files"],
+    capture_output=True, text=True, errors="replace",
+    cwd=str(PROJECT_ROOT), check=False,
+).stdout.splitlines()
 
-pkl_tracked = []
-json_tracked = []
-for l in large_tracked:
-    if any(l.endswith(ext) for ext in [".pkl", ".joblib"]):
-        pkl_tracked.append(l)
-    elif "site_series/" in l or "city_series.json" in l:
-        json_tracked.append(l)
+pkl_tracked = [x for x in tracked if x.endswith((".pkl", ".joblib", ".parquet"))]
+json_tracked = [x for x in tracked if "site_series/" in x or x.endswith("city_series.json")]
+tables_tracked = [x for x in tracked if "output/pv_pipeline/tables/" in x]
 
 if pkl_tracked:
-    c.fail("C10: Git 不追踪 pkl 文件", f"发现 {len(pkl_tracked)} 个: {pkl_tracked[:3]}")
+    c.fail("C10: Git 不追踪 pkl/joblib/parquet", f"发现 {len(pkl_tracked)} 个: {pkl_tracked[:5]}")
 else:
-    c.ok("C10: Git 不追踪 pkl 文件", "0 个")
+    c.ok("C10: Git 不追踪 pkl/joblib/parquet", "0 个")
 
 if json_tracked:
-    c.fail("C10: Git 不追踪 site_series JSON", f"发现 {len(json_tracked)} 个")
+    c.fail("C10: Git 不追踪 site_series/city_series JSON", f"发现 {len(json_tracked)} 个")
 else:
-    c.ok("C10: Git 不追踪 site_series JSON", "0 个（已从 git 移除并写入 .gitignore）")
+    c.ok("C10: Git 不追踪 site_series/city_series JSON", "0 个（已从 git 移除并写入 .gitignore）")
+
+if tables_tracked:
+    c.fail("C10: Git 不追踪 tables/ 输出", f"发现 {len(tables_tracked)} 个")
+else:
+    c.ok("C10: Git 不追踪 tables/ 输出", "0 个")
 
 # ────────────────────────────────────────────────────────────────────────
 # C11: 可视化页面默认不含 future
@@ -271,7 +263,9 @@ if DASH.exists():
 # C12: 站点数量自洽性验证
 # ────────────────────────────────────────────────────────────────────────
 sv_path = METRICS / "round34_site_validity.csv"
-if sv_path.exists():
+if not sv_path.exists():
+    c.warn("C12: round34_site_validity.csv 存在", "文件不存在")
+else:
     try:
         sv = pd.read_csv(sv_path)
         total = len(sv)
@@ -301,7 +295,7 @@ print("=" * 60)
 
 lines = [
     "# Round35 产物收口与可视化一致性验证报告\n",
-    f"**生成时间**: 2026-05-28 18:40\n",
+    f"**生成时间**: 2026-05-28 21:35\n",
     f"\n## 校验结果\n",
     f"| 状态 | 数量 |\n",
     f"|------|------|\n",
