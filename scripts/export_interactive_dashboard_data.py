@@ -120,10 +120,9 @@ def load_predictions(output_root):
     """
     tables_dir = Path(output_root) / "tables"
     candidates = [
+        tables_dir / "distributed_predictions_final_round34.pkl",      # Round34 (preferred, has power_pred_final)
         tables_dir / "distributed_predictions_final_full_clean.pkl",   # Round33 clean
-        tables_dir / "distributed_predictions_final_full.pkl",         # legacy clean
-        tables_dir / "distributed_predictions_v159.pkl",              # v159 full
-        tables_dir / "distributed_predictions_final_eval.pkl",         # eval only
+        tables_dir / "distributed_predictions_v159.pkl",              # v159 raw
     ]
     df = None
     used_path = None
@@ -150,7 +149,7 @@ def load_predictions(output_root):
         df = derive_split(df)
 
     # ── 加载站点有效性表（用于 site_status 字段）────────────────────────
-    validity_path = Path(output_root) / "metrics" / "round33_site_validity.csv"
+    validity_path = Path(output_root) / "metrics" / "round34_site_validity.csv"
     validity_map = {}
     if validity_path.exists():
         validity_df = pd.read_csv(validity_path)
@@ -204,10 +203,10 @@ def export_index(df, site_names, dashboard_root):
 
     index_data = {
         "title": "光伏功率预测交互式结果展示",
-        "description": "展示连云港光伏电站真实功率与预测功率对比（Round33 版本）",
+        "description": "展示连云港光伏电站真实功率与预测功率对比（Round34 版本）",
         "data_source": (
             "output/pv_pipeline/tables/distributed_predictions_final_full_clean.pkl "
-            "(Round33 清洗版) 或 distributed_predictions_v159.pkl"
+            "(Round34，含 power_pred_final) 或 distributed_predictions_v159.pkl"
         ),
         "data_scope": "train/valid/test only; future excluded (默认不展示未来数据)",
         "round33口径说明": (

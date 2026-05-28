@@ -237,3 +237,44 @@ def build_eval_summary(df: pd.DataFrame) -> dict:
         "positive_power_rows": int(pos) if pos is not None else None,
         "zero_power_rows": int(zero) if zero is not None else None,
     }
+
+
+# ── 预测列解析 ──────────────────────────────────────────────────────────────
+
+def resolve_prediction_column(df: pd.DataFrame) -> str:
+    """从 DataFrame 中解析出当前可用的预测功率列。
+
+    优先级：power_pred_final > pred_calibrated > power_pred_cal > power_pred
+    所有评估脚本必须调用此函数，禁止直接写死列名。
+
+    Parameters
+    ----------
+    df : DataFrame
+        预测结果 DataFrame。
+
+    Returns
+    -------
+    str
+        当前可用的预测功率列名。
+
+    Raises
+    ------
+    KeyError
+        没有任何预测列时。
+    """
+    candidates = ["power_pred_final", "pred_calibrated", "power_pred_cal", "power_pred"]
+    for col in candidates:
+        if col in df.columns:
+            return col
+    raise KeyError(
+        f"未找到预测功率列，尝试的优先级顺序：{candidates}"
+    )
+
+
+def get_pred_col_safe(df: pd.DataFrame, default: str = "power_pred") -> str:
+    """安全版本：若找不到任何预测列，返回 default 而非抛出异常。"""
+    candidates = ["power_pred_final", "pred_calibrated", "power_pred_cal", "power_pred"]
+    for col in candidates:
+        if col in df.columns:
+            return col
+    return default

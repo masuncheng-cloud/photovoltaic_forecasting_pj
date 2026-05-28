@@ -12,9 +12,9 @@
     "full_history_end_date": "2025-12-31",
     "rows": 1708,
     "positive_rows": 0,
-    "mae_mw": 0.4947,
-    "rmse_mw": 0.693,
-    "nrmse_pct": 23.0999,
-    "pred_actual_ratio": 844894544836.0549
+    "mae_mw": 0.466,
+    "rmse_mw": 0.6809,
+    "nrmse_pct": 22.6958,
+    "pred_actual_ratio": 795928305912.4099
   }
 ]
