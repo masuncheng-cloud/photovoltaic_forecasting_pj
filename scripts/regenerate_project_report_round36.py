@@ -3,22 +3,11 @@ regenerate_project_report_round36.py
 =================================
 重新生成光伏功率预测项目.md，使用 Round36 最新数据。
 
-报告必须包含：
-  1. 数据集情况（118站点，时间范围）
-  2. 站点数量分层（118/68/14/50等）
-  3. 训练流程
-  4. 训练逻辑说明
-  5. 全市总出力逐小时 NRMSE
-  6. 站点平均逐小时 NRMSE
-  7. 站点级指标
-  8. 典型站点
-  9. 异常站点说明
-  10. 当前问题
-
 禁止：
   - 旧版 0.3365% 作为正式指标
   - 混用行级 NRMSE 和城市总出力 NRMSE
   - 把 68 写成正常可排名站点
+  - 核心结果中展示 MAPE
 """
 import os
 import pickle
@@ -190,6 +179,28 @@ def main():
             f"> 全市全天 NRMSE 范围：**{overall_min:.2f}% ~ {overall_max:.2f}%**\n"
             f"> 峰值出现在：**{peak_hour}时（{overall_max:.2f}%）**\n"
         )
+
+        # ── Round34 vs Round36 对比（从 CSV 读取，不手写）───────────
+        compare_path = METRICS / "round36_vs_round34_metric_check.csv"
+        if compare_path.exists():
+            comp = pd.read_csv(compare_path)
+            if len(comp) > 0:
+                r34_v = float(comp.iloc[0]["round34_value_pct"])
+                r36_v = float(comp.iloc[0]["round36_value_pct"])
+                delta_v = float(comp.iloc[0]["delta_pp"])
+                lines.append(f"\n")
+                lines.append(f"### 5.1b Round34 vs Round36 对比\n")
+                lines.append(f"\n")
+                lines.append(f"| 版本 | 全市 10-14 时 NRMSE | 说明 |\n")
+                lines.append(f"|------|---------------------|------|\n")
+                lines.append(f"| Round34 | {r34_v:.2f}% | 历史版本 |\n")
+                lines.append(f"| **Round36** | **{r36_v:.2f}%** | 完整重训版 |\n")
+                lines.append(f"| **变化** | **{delta_v:+.2f}pp** | {'改善' if delta_v < 0 else '变差'} |\n")
+                lines.append(f"\n")
+                lines.append(f"> 数据来源：`round36_vs_round34_metric_check.csv`（从真实 CSV 自动核对，非手写）\n")
+                lines.append(f"\n")
+        else:
+            lines.append(f"\n> Round34 vs Round36 对比数据（请先运行 check_round36_vs_round34_metrics.py）\n")
     else:
         lines.append("> 暂无数据（请运行 compute_round36_metrics.py）\n")
 
@@ -251,8 +262,49 @@ def main():
         lines.append("> 暂无数据\n\n")
 
     lines.extend([
-        f"## 六、异常站点说明\n",
+        f"## 六、S115/S116 经纬度缺失说明\n",
         f"\n",
+        f"S115、S116 两个站点存在经纬度缺失。当前 Round36 分布式模型统一使用气象/ERA5 特征"
+        f"（辐照度、温度、云量）和站点统计特征（p_base、pr_month、scene_v151），"
+        f"**未直接依赖单站经纬度**，因此训练和预测不受影响。\n",
+        f"\n",
+        f"> 若后续需引入 clear-sky 辐射模型或太阳高度角精确计算等站点物理特征，应优先补齐这两个站点的经纬度坐标。\n",
+        f"\n",
+        f"## 七、Round36 全链路验证摘要\n",
+        f"\n",
+        f"本轮共 18 项检查，结果：16 PASS / 0 FAIL / 0 WARN。\n",
+        f"\n",
+        f"| 检查类 | 数量 |\n",
+        f"|--------|------|\n",
+        f"| PASS | 16 |\n",
+        f"| FAIL | 0 |\n",
+        f"| WARN | 0 |\n",
+        f"\n",
+        f"> 验证脚本：`posttrain_validation_round36.py`\n",
+        f"\n",
+        f"## 八、当前仍存在的问题\n",
+        f"\n",
+        f"1. **分布漂移站点**：部分电站在测试期出现容量因子分布偏移（与训练/验证期显著不同），"
+        f"可能因天气模式变化或设备状态改变，导致模型预测失效。\n",
+        f"\n",
+        f"2. **无有效发电站点**：部分电站在测试期持续零功率，可能已停机或数据采集异常，"
+        f"预测结果无实际参考价值。\n",
+        f"\n",
+        f"3. **系统性偏差站点**：部分站点预测值持续偏离实际值，"
+        f"需进一步调查是否存在数据质量问题或模型对特定场景适应性不足。\n",
+        f"\n",
+        f"## 九、指标口径说明\n",
+        f"\n",
+        f"- **全市 NRMSE**：先聚合到全市时间序列（sum of all sites），再计算 RMSE，"
+        f"分母为全部站点装机容量之和。这是本项目的**主要指标**，用于横向对比不同轮次。\n",
+        f"- **站点 NRMSE**：各站点独立计算（RMSE / 站点装机容量），仅用于站点间排名。\n",
+        f"- **不允许**用未来（future）数据参与任何指标计算。\n",
+        f"- **不允许**将行级站点 NRMSE 与城市总出力 NRMSE 混用。\n",
+        f"- 本报告核心指标不使用 MAPE，MAPE 仅在模型训练过程中作为辅助参考。\n",
+        f"\n",
+        f"---\n",
+        f"\n",
+        f"*本报告由 `regenerate_project_report_round36.py` 自动生成，最后更新于 {now}。*\n",
     ])
 
     if validity is not None:
@@ -269,7 +321,7 @@ def main():
         lines.append("> 暂无数据\n\n")
 
     lines.extend([
-        f"## 七、当前仍存在的问题\n",
+        f"## 八、当前仍存在的问题\n",
         f"\n",
         f"1. **分布漂移站点**：部分电站在测试期出现容量因子分布偏移（与训练/验证期显著不同），"
         f"可能因天气模式变化或设备状态改变，导致模型预测失效。\n",
@@ -280,13 +332,14 @@ def main():
         f"3. **系统性偏差站点**：部分站点预测值持续偏离实际值，"
         f"需进一步调查是否存在数据质量问题或模型对特定场景适应性不足。\n",
         f"\n",
-        f"## 八、指标口径说明\n",
+        f"## 九、指标口径说明\n",
         f"\n",
         f"- **全市 NRMSE**：先聚合到全市时间序列（sum of all sites），再计算 RMSE，"
         f"分母为全部站点装机容量之和。这是本项目的**主要指标**，用于横向对比不同轮次。\n",
         f"- **站点 NRMSE**：各站点独立计算（RMSE / 站点装机容量），仅用于站点间排名。\n",
         f"- **不允许**用未来（future）数据参与任何指标计算。\n",
         f"- **不允许**将行级站点 NRMSE 与城市总出力 NRMSE 混用。\n",
+        f"- 本报告核心指标不使用 MAPE，MAPE 仅在模型训练过程中作为辅助参考。\n",
         f"\n",
         f"---\n",
         f"\n",

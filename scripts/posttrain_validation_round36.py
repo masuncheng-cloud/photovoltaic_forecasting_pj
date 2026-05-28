@@ -107,13 +107,13 @@ if fp.exists():
         c.fail("C4: power_pred_final 范围检查", str(e))
 
 # ── C5: future 不参与指标 ─────────────────────────────────
+# future 保留在 final pkl 中，但 eval/metrics/默认可视化均排除 future → PASS
 if fp.exists():
     try:
         df = pd.read_pickle(fp)
         future_count = (df["split"] == "future").sum()
-        # future 可以存在于 pkl，但不应用于 eval 或 metrics
         if future_count > 0:
-            c.warn("C5: future 不参与指标", f"pkl 中有 {future_count} 行 future（已排除）")
+            c.ok("C5: future 不参与指标", f"pkl 中含 {future_count} 行 future（已排除指标和默认可视化）")
         else:
             c.ok("C5: future 不参与指标", "pkl 中无 future 行")
     except Exception as e:
@@ -297,17 +297,29 @@ if fp.exists():
     except Exception as e:
         c.fail("C15: split 时间边界检查", str(e))
 
-# ── C16: 训练日志存在 ─────────────────────────────────────
+# ── C16: 训练日志存在且内容完整 ─────────────────────────────
 log_path = DOCS / "Round36_训练日志.md"
+REQUIRED_TERMS = [
+    "训练入口",
+    "train",
+    "valid",
+    "test",
+    "future",
+    "distributed_predictions_final_round36.pkl",
+    "distributed_predictions_final_eval_round36.pkl",
+]
 if log_path.exists():
     try:
-        log = open(log_path, encoding="utf-8").read()
-        has_split = "train" in log and "valid" in log and "test" in log
-        c.ok("C16: 训练日志存在", f"{len(log)} 字，含 train/valid/test: {has_split}")
+        content = open(log_path, encoding="utf-8").read()
+        missing = [t for t in REQUIRED_TERMS if t not in content]
+        if not missing:
+            c.ok("C16: 训练日志完整", f"包含全部 {len(REQUIRED_TERMS)} 项必要内容")
+        else:
+            c.fail("C16: 训练日志完整", f"缺少内容: {missing}")
     except Exception as e:
-        c.warn("C16: 训练日志", str(e))
+        c.warn("C16: 训练日志检查", str(e))
 else:
-    c.warn("C16: 训练日志存在", "文件不存在（训练后生成）")
+    c.fail("C16: 训练日志存在", f"不存在: {log_path}")
 
 # ── 汇总写报告 ─────────────────────────────────────────────
 total_ = len(c.results)
