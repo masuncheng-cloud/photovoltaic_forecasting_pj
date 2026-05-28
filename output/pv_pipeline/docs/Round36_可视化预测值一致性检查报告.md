@@ -86,4 +86,4 @@
 | S116 | 15344 | 15344 | 15344 | ✓ | 0.00e+00 | 0.00e+00 | ✓ PASS | actual_diff=0.00e+00, pred_diff=0.00e+00, cap_diff=0.00e+00, count_ok=True |
 
 ## 结论
-**全部站点通过**：pred_mw 与 power_pred_final、actual_mw 与 power_mw 完全一致，n_json == n_pkl_6_19 == n_matched。
+**全部站点通过**：pred_mw 与 power_pred_cal、actual_mw 与 power_mw 完全一致，n_json == n_pkl_6_19 == n_matched。

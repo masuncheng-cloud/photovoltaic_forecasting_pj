@@ -4,17 +4,17 @@
 ## 校验结果
 | 状态 | 数量 |
 ||------|
-| PASS | 18 |
-| FAIL | 0 |
+| PASS | 15 |
+| FAIL | 3 |
 | WARN | 0 |
 
 ## 逐项结果
 | # | 状态 | 检查项 | 说明 |
 |---|------|--------|------|
-| 1 | ✓ PASS | C1: final_round36.pkl 存在且可读 | 1,172,180 行, 25 列 |
-| 2 | ✓ PASS | C2: eval_round36 只含 test 6-19 | 116,144 行, 68 站 |
-| 3 | ✓ PASS | C3: power_pred_final 存在 | 1,172,180 个非空值 / 1,172,180 行 |
-| 4 | ✓ PASS | C4: power_pred_final 在 [0, capacity] | 全部在有效范围内 |
+| 1 | ✓ PASS | C1: final_round36.pkl 存在且可读 | 1,172,180 行, 27 列 |
+| 2 | ✗ FAIL | C2: eval_round36.pkl 存在 | 不存在: /home/ac/data16t/msc/photovoltaic_forecasting_pj/output/pv_pipeline/tables/distributed_predictions_final_eval_round36.pkl |
+| 3 | ✗ FAIL | C3: power_pred_final 存在 | 列不存在 |
+| 4 | ✗ FAIL | C4: power_pred_final 范围检查 | 'power_pred_final' |
 | 5 | ✓ PASS | C5: future 不参与指标 | pkl 中含 148885 行 future（已排除指标和默认可视化） |
 | 6 | ✓ PASS | C6: 站点数量自洽 | 全部=118, 有test=68, 无test=50 |
 | 7 | ✓ PASS | C7: city_hourly_nrmse 口径正确 | 1708 行, NRMSE=0.00%~24.26% |
@@ -31,4 +31,4 @@
 | 18 | ✓ PASS | C16: 训练日志完整 | 包含全部 7 项必要内容 |
 
 ## 结论
-**全部检查通过：Round36 训练与可视化全链路验证合格。**
+**3 项 FAIL，不合格。请修复后重新运行 posttrain_validation_round36.py。**
