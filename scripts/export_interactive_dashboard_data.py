@@ -1218,77 +1218,75 @@ def export_hourly_prediction_summary(output_root, dashboard_root, final_df=None,
     """Export hourly_prediction_summary.json.
 
     Priority: round-specific CSV → generic CSV → compute from final_df.
+    The CSV provides city_nrmse_pct; rows and site-level NRMSE are computed from eval_df.
     """
     metrics_dir = Path(output_root) / "metrics"
-    # Try round-specific CSV first
     rn = "".join(filter(str.isdigit, round_name))
-    csv_candidates = [
-        metrics_dir / f"round{rn}_city_hourly_nrmse.csv",
-        metrics_dir / "分布式光伏预测_逐小时平均NRMSE.csv",
-    ]
-    csv_path = None
-    for cp in csv_candidates:
-        if cp.exists():
-            csv_path = cp
-            break
+    csv_path = metrics_dir / f"round{rn}_city_hourly_nrmse.csv"
 
-    if csv_path:
-        print(f"  Loading existing hourly CSV: {csv_path}")
-        hourly = pd.read_csv(csv_path)
-
-        # Normalize column names to standard output names
-        col_rename = {
-            "小时": "hour",
-            "小时（时）": "hour",
-            "样本数": "rows",
-            "样本数（行）": "rows",
+    # Determine if we need to compute from eval_df
+    compute_from_df = True
+    city_nrmse_by_hour = None
+    if csv_path.exists():
+        print(f"  Loading hourly CSV: {csv_path}")
+        df_csv = pd.read_csv(csv_path)
+        col_map = {
+            "小时": "hour", "小时（时）": "hour",
             "站点平均NRMSE（%）": "site_nrmse_mean_pct",
             "站点平均 NRMSE（%）": "site_nrmse_mean_pct",
             "城市NRMSE（%）": "city_nrmse_pct",
             "城市 NRMSE（%）": "city_nrmse_pct",
-            "NRMSE（%）": "city_nrmse_pct",
             "nrmse_city_pct": "city_nrmse_pct",
-            "nrmse_pct": "city_nrmse_pct",
+            "NRMSE（%）": "city_nrmse_pct",
         }
-        hourly = hourly.rename(columns={k: v for k, v in col_rename.items() if k in hourly.columns})
-        if "hour" not in hourly.columns and "Hour" in hourly.columns:
-            hourly = hourly.rename(columns={"Hour": "hour"})
+        df_csv = df_csv.rename(columns={k: v for k, v in col_map.items() if k in df_csv.columns})
+        if "city_nrmse_pct" in df_csv.columns and "hour" in df_csv.columns:
+            df_csv["hour"] = pd.to_numeric(df_csv["hour"], errors="coerce")
+            df_csv = df_csv[df_csv["hour"].between(6, 19)]
+            if len(df_csv) > 14:
+                city_nrmse_by_hour = df_csv.groupby("hour")["city_nrmse_pct"].mean().reset_index()
+            else:
+                city_nrmse_by_hour = df_csv[["hour", "city_nrmse_pct"]].copy()
+            compute_from_df = True  # still need rows and site_nrmse
 
-        # If CSV has per-datetime rows (many rows), aggregate by hour
-        if "hour" in hourly.columns and len(hourly) > 20:
-            hourly = hourly[hourly["hour"].between(6, 19)]
-            agg_map = {}
-            if "city_nrmse_pct" in hourly.columns:
-                agg_map["city_nrmse_pct"] = "mean"
-            if "site_nrmse_mean_pct" in hourly.columns:
-                agg_map["site_nrmse_mean_pct"] = "mean"
-            if "rows" in hourly.columns:
-                agg_map["rows"] = "sum"
-            if agg_map:
-                hourly = hourly.groupby("hour", as_index=False).agg(**agg_map)
-        elif "hour" in hourly.columns:
-            hourly = hourly[hourly["hour"].between(6, 19)].copy()
-        # else: no hour column, will skip
-    elif final_df is not None:
-        print(f"  CSV not found, computing hourly summary from final_df...")
-        hourly = compute_hourly_summary_from_final(final_df)
+    # Always compute rows and site_nrmse from eval_df
+    if compute_from_df and final_df is not None:
+        eval_df = build_eval_frame_for_dashboard(final_df)
+        rows_by_hour = eval_df.groupby("hour").size().reset_index(name="rows")
+        site_nrmse_by_hour = (
+            eval_df.groupby("hour")
+            .apply(
+                lambda g: float(
+                    np.sqrt(
+                        ((pd.to_numeric(g["power_pred"], errors="coerce") -
+                          pd.to_numeric(g["power_mw"], errors="coerce")) ** 2
+                        ).mean()
+                    )
+                )
+                / max(float(pd.to_numeric(g["capacity_mw"], errors="coerce").median()), 1e-9)
+                * 100,
+                include_groups=False,
+            )
+        ).reset_index(name="site_nrmse_mean_pct")
+        hourly = rows_by_hour.merge(site_nrmse_by_hour, on="hour", how="outer")
+        if city_nrmse_by_hour is not None:
+            hourly = hourly.merge(city_nrmse_by_hour, on="hour", how="left")
+    elif compute_from_df:
+        print("  WARNING: compute_from_df=True but no final_df, skipping")
+        return []
     else:
-        print(f"  WARNING: hourly CSV not found and no final_df provided, skipping hourly export")
+        print("  WARNING: no CSV and no final_df, skipping hourly export")
         return []
 
-    # Ensure required columns exist
-    for col in ["hour", "rows", "site_nrmse_mean_pct", "city_nrmse_pct"]:
-        if col not in hourly.columns:
-            hourly[col] = None
-
-    # Format
+    # Build output
     hourly["hour"] = hourly["hour"].astype(int)
-    hourly["rows"] = hourly["rows"].fillna(0).astype(int)
-    hourly["site_nrmse_mean_pct"] = hourly["site_nrmse_mean_pct"].astype(float).round(2)
-    hourly["city_nrmse_pct"] = hourly["city_nrmse_pct"].astype(float).round(3)
+    hourly["rows"] = hourly.get("rows", pd.Series(dtype=float)).fillna(0).astype(int)
+    hourly["site_nrmse_mean_pct"] = hourly.get("site_nrmse_mean_pct", pd.Series(dtype=float)).fillna(0).round(2)
+    hourly["city_nrmse_pct"] = hourly.get("city_nrmse_pct", pd.Series(dtype=float)).fillna(0).round(3)
+    hourly = hourly.sort_values("hour")[["hour", "rows", "site_nrmse_mean_pct", "city_nrmse_pct"]].reset_index(drop=True)
 
     out_path = Path(dashboard_root) / "hourly_prediction_summary.json"
-    records = hourly[["hour", "rows", "site_nrmse_mean_pct", "city_nrmse_pct"]].to_dict(orient="records")
+    records = hourly.to_dict(orient="records")
     with open(out_path, "w", encoding="utf-8") as f:
         json.dump(records, f, ensure_ascii=False, indent=2)
     print(f"  [OK] hourly_prediction_summary.json ({len(records)} rows, 6-19h)")
