@@ -1265,11 +1265,6 @@ def export_hourly_prediction_summary(output_root, dashboard_root, final_df=None,
         print(f"  WARNING: hourly CSV not found and no final_df provided, skipping hourly export")
         return []
 
-    # Filter to 6-19h
-    if "hour" in hourly.columns:
-        hourly = hourly[hourly["hour"].between(6, 19)].copy()
-        hourly = hourly.sort_values("hour")
-
     # Ensure required columns exist
     for col in ["hour", "rows", "site_nrmse_mean_pct", "city_nrmse_pct"]:
         if col not in hourly.columns:
