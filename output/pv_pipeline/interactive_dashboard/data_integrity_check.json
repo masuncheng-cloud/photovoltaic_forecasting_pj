@@ -1,5 +1,5 @@
 {
-  "checked_at": "2026-05-28 00:10:01",
+  "checked_at": "2026-05-28 15:19:05",
   "source": "distributed_predictions_final_full.pkl power_mw",
   "dashboard_site_series": "interactive_dashboard/site_series/*.json actual_mw",
   "site_count": 68,
