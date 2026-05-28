@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Round12: Export interactive dashboard data from distributed_predictions_final_full.pkl.
+Export interactive dashboard data. Auto-detects the latest distributed_predictions_final_roundXX.pkl.
 
 Usage:
     python scripts/export_interactive_dashboard_data.py \
@@ -9,6 +9,7 @@ Usage:
 
 Outputs:
     output/pv_pipeline/interactive_dashboard/
+        metadata.json
         index.json
         city_series.json
         site_metrics.json
