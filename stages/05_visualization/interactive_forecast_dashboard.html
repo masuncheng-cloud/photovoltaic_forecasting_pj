@@ -565,14 +565,58 @@ tbody td {
   margin-top: 8px;
 }
 
+.hour-select {
+  height: 34px;
+  min-height: 34px;
+  min-width: 86px;
+  border: 1px solid #cbd5e1;
+  border-radius: 7px;
+  background: #ffffff;
+  color: #1f2937;
+  padding: 0 32px 0 12px;
+  font-size: 14px;
+  font-weight: 700;
+  line-height: 32px;
+  outline: none;
+  box-sizing: border-box;
+  appearance: none;
+  -webkit-appearance: none;
+  cursor: pointer;
+}
+
+.hour-select:focus {
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.16);
+}
+
+.hour-error {
+  display: inline-flex;
+  align-items: center;
+  height: 34px;
+  padding: 0 8px;
+  border: 1px solid #fecaca;
+  border-radius: 6px;
+  background: #fef2f2;
+  color: #b91c1c;
+  font-size: 13px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
 #reset-line-zoom {
+  height: 34px;
+  min-width: 86px;
+  padding: 0 12px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
   border: 1px solid #cbd5e1;
   background: #ffffff;
   color: #334155;
   border-radius: 6px;
-  padding: 6px 10px;
   cursor: pointer;
   font-size: 13px;
+  box-sizing: border-box;
 }
 
 #reset-line-zoom:hover {
@@ -800,9 +844,9 @@ tbody td {
 
   <div class="ctrl-group">
     <span class="ctrl-label">小时：</span>
-    <input type="number" id="start-hour" min="0" max="23" value="6">
+    <select id="start-hour" class="hour-select" aria-label="开始小时"></select>
     <span class="ctrl-label">至</span>
-    <input type="number" id="end-hour" min="0" max="23" value="19">
+    <select id="end-hour" class="hour-select" aria-label="结束小时"></select>
   </div>
   <div class="divider"></div>
 
