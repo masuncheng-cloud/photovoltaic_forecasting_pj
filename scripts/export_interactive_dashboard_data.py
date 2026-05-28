@@ -1625,6 +1625,10 @@ def main():
     print("\n[11c] Validating against power_clean.pkl...")
     validate_against_power_clean(dashboard_root, output_root)
 
+    # [11d] Write metadata.json
+    print("\n[11d] Writing metadata.json...")
+    meta = write_metadata(dashboard_root, round_name, pred_col, pred_path)
+
     # Summary
     history_df = build_history_frame(df)
     history_dates = pd.to_datetime(history_df["date"]).dropna().unique()
@@ -1634,6 +1638,8 @@ def main():
     site_series_count = len(list(site_series_dir.glob("*.json")))
 
     print(f"\n[OK] interactive dashboard data exported")
+    print(f"     round        = {round_name}")
+    print(f"     pred_col    = {pred_col}")
     print(f"     rows        = {len(history_df[history_df['hour'].between(6,19)]):,}")
     print(f"     sites       = {len(site_ids)}")
     print(f"     date_range  = {min_date} ~ {max_date}")
