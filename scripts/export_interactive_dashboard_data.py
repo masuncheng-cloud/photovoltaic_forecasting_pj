@@ -743,6 +743,17 @@ def export_scatter_site_sample_nrmse(df, site_names, sm_df, metrics_df, dashboar
     merged = merged.merge(full_hist_agg, on="site_id", how="left")
     merged["capacity_mw"] = merged["capacity_mw_tv"]
 
+    # Merge test 6-19 zero ratio stats
+    if test_daytime_zero_stats is not None and not test_daytime_zero_stats.empty:
+        merged = merged.merge(test_daytime_zero_stats, on="site_id", how="left")
+        for c in ["test_daytime_rows_6_19", "test_daytime_positive_rows_6_19", "test_daytime_zero_rows_6_19"]:
+            if c in merged.columns:
+                merged[c] = merged[c].fillna(0).astype(int)
+        if "test_daytime_zero_ratio_6_19_pct" in merged.columns:
+            merged["test_daytime_zero_ratio_6_19_pct"] = (
+                merged["test_daytime_zero_ratio_6_19_pct"].fillna(0).round(4)
+            )
+
     # Site names
     if sm_df is not None:
         name_map = {}
@@ -1352,7 +1363,13 @@ def main():
     site_ids = export_site_series(df, site_names, dashboard_root)
 
     print("\n[6] Exporting site_metrics.json...")
-    metrics_df = export_site_metrics(df, site_names, dashboard_root)
+    print("\n[6b] Computing test 6-19 zero ratio stats...")
+    test_daytime_zero_stats = compute_site_test_daytime_zero_stats(df)
+    metrics_path = Path(output_root) / "metrics" / "site_test_daytime_zero_ratio_summary.csv"
+    metrics_path.parent.mkdir(parents=True, exist_ok=True)
+    test_daytime_zero_stats.to_csv(metrics_path, index=False, encoding="utf-8-sig")
+    print(f"  [OK] site_test_daytime_zero_ratio_summary.csv ({len(test_daytime_zero_stats)} sites)")
+    metrics_df = export_site_metrics(df, site_names, dashboard_root, test_daytime_zero_stats)
 
     print("\n[7] Exporting midday_city_by_date.json...")
     export_midday_city(df, dashboard_root)
