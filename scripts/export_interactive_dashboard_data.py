@@ -276,7 +276,53 @@ def export_site_series(df, site_names, dashboard_root):
     return site_ids
 
 
-def export_site_metrics(df, site_names, dashboard_root):
+def compute_site_test_daytime_zero_stats(df: pd.DataFrame) -> pd.DataFrame:
+    """计算站点级测试集 6-19 点 0值占比。
+
+    统计口径：
+    - split == test
+    - hour in 6..19
+    - power_mw notna
+    """
+    out = df.copy()
+
+    if "time" in out.columns:
+        out["time"] = pd.to_datetime(out["time"], errors="coerce")
+
+    if "hour" not in out.columns:
+        out["hour"] = out["time"].dt.hour
+
+    out = out[
+        out["split"].eq("test")
+        & out["hour"].between(6, 19)
+        & out["power_mw"].notna()
+    ].copy()
+
+    if out.empty:
+        return pd.DataFrame(columns=[
+            "site_id",
+            "test_daytime_rows_6_19",
+            "test_daytime_positive_rows_6_19",
+            "test_daytime_zero_rows_6_19",
+            "test_daytime_zero_ratio_6_19_pct",
+        ])
+
+    stats = out.groupby("site_id").agg(
+        test_daytime_rows_6_19=("power_mw", "size"),
+        test_daytime_positive_rows_6_19=("power_mw", lambda s: int((s.fillna(0) > 0).sum())),
+        test_daytime_zero_rows_6_19=("power_mw", lambda s: int((s.fillna(0) == 0).sum())),
+    ).reset_index()
+
+    stats["test_daytime_zero_ratio_6_19_pct"] = (
+        stats["test_daytime_zero_rows_6_19"]
+        / stats["test_daytime_rows_6_19"].clip(lower=1)
+        * 100
+    ).round(4)
+
+    return stats
+
+
+def export_site_metrics(df, site_names, dashboard_root, test_daytime_zero_stats=None):
     """Export site_metrics.json with per-site statistics and categories."""
     # Full-history stats: train/valid/test only (no future), no hour/power filter
     full_df = build_history_frame(df)
