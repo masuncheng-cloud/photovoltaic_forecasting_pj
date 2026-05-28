@@ -1056,6 +1056,7 @@ let state = {
   endDate: "",
   startHour: 6,
   endHour: 19,
+  hourRangeValid: true,
   scatterHourFilter: "all",
   scatterXAxis: "full",
 };
@@ -1237,6 +1238,88 @@ function bindDateComboEvents() {
     monthEl.addEventListener("change", onYearMonthChange);
     dayEl.addEventListener("change", applyDateChange);
   });
+}
+
+// ============================================================
+// HOUR SELECTS
+// ============================================================
+function initHourSelects() {
+  const startHour = document.getElementById("start-hour");
+  const endHour = document.getElementById("end-hour");
+  if (!startHour || !endHour) return;
+
+  const makeOptions = (selectedValue) => {
+    const opts = [];
+    for (let h = 0; h <= 23; h += 1) {
+      const selected = h === Number(selectedValue) ? "selected" : "";
+      opts.push(`<option value="${h}" ${selected}>${String(h).padStart(2, "0")}:00</option>`);
+    }
+    return opts.join("");
+  };
+
+  startHour.innerHTML = makeOptions(state.startHour ?? 6);
+  endHour.innerHTML = makeOptions(state.endHour ?? 19);
+}
+
+function syncHourSelects() {
+  const startHour = document.getElementById("start-hour");
+  const endHour = document.getElementById("end-hour");
+  if (startHour) startHour.value = String(state.startHour);
+  if (endHour) endHour.value = String(state.endHour);
+}
+
+function validateHourRange() {
+  const startHour = document.getElementById("start-hour");
+  const endHour = document.getElementById("end-hour");
+
+  let start = Number(state.startHour);
+  let end = Number(state.endHour);
+
+  if (!Number.isFinite(start)) start = 6;
+  if (!Number.isFinite(end)) end = 19;
+
+  state.hourRangeValid = start <= end;
+
+  let msg = document.getElementById("hour-range-message");
+  if (!msg) {
+    msg = document.createElement("span");
+    msg.id = "hour-range-message";
+    msg.className = "hour-error";
+    if (endHour && endHour.parentElement) {
+      endHour.parentElement.appendChild(msg);
+    }
+  }
+
+  if (!state.hourRangeValid) {
+    msg.textContent = "开始小时不能晚于结束小时";
+    msg.style.display = "inline-flex";
+  } else {
+    msg.textContent = "";
+    msg.style.display = "none";
+  }
+
+  return state.hourRangeValid;
+}
+
+function bindHourSelectEvents() {
+  const startHour = document.getElementById("start-hour");
+  const endHour = document.getElementById("end-hour");
+
+  if (startHour) {
+    startHour.addEventListener("change", () => {
+      state.startHour = Number(startHour.value);
+      validateHourRange();
+      refreshAll();
+    });
+  }
+
+  if (endHour) {
+    endHour.addEventListener("change", () => {
+      state.endHour = Number(endHour.value);
+      validateHourRange();
+      refreshAll();
+    });
+  }
 }
 
 // ============================================================
