@@ -1,0 +1,39 @@
+{
+  "strategy": "edge_protection_plus_unified_daytime_source_plus_site_bias_calibration",
+  "edge_hours": [
+    6,
+    7,
+    18,
+    19
+  ],
+  "daytime_hours": [
+    8,
+    9,
+    10,
+    11,
+    12,
+    13,
+    14,
+    15,
+    16,
+    17
+  ],
+  "focus_hours_for_daytime_source_selection": [
+    10,
+    11,
+    12,
+    13,
+    14
+  ],
+  "selected_daytime_source": "power_pred_final_round40_snapshot",
+  "selected_valid_metrics": {
+    "pred_col": "power_pred_final_round40_snapshot",
+    "split": "valid",
+    "hours": "10,11,12,13,14",
+    "hour_count": 5,
+    "mean_hourly_city_nrmse_pct": 6.703072,
+    "max_hourly_city_nrmse_pct": 7.326193,
+    "mean_abs_bias_pct": 1.999528,
+    "total_suspicious_city_zero_count": 0
+  }
+}
