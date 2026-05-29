@@ -145,8 +145,23 @@ def main():
                      index=False, encoding="utf-8-sig")
     print(f"校准表已保存: {METRICS}/round36_calibration_table.csv ({len(cal_table)} 行)")
 
+    # 导出口径：统一列名（actual_mw/pred_mw），且以 physics-calibrated pred_cal 为最终预测
+    # 因为 power_pred ML 混合模型在早晚临界小时会被 ghi<5 硬置零，
+    # power_pred_cal 有更好的边缘小时表现（使用 physics blend 而非强制置零）。
+    if "actual_mw" not in df.columns:
+        df["actual_mw"] = df["power_mw"]
+    if "pred_mw" not in df.columns:
+        df["pred_mw"] = df["power_pred_cal"] if "power_pred_cal" in df.columns else df["power_pred"]
+
     # ── 应用校准到全量数据 ──────────────────────────────────
     print("\n应用校准到全量数据...")
+
+    # 确定最终预测的基础列：
+    # - 优先用 power_pred_cal（physics-calibrated，边缘小时更好）
+    # - 回退到 power_pred
+    pred_base_col = "power_pred_cal" if "power_pred_cal" in df.columns else "power_pred"
+    print(f"  最终预测基础列: {pred_base_col}")
+    print(f"  [Round39.11] 改用 power_pred_cal 避免早晚临界小时 ghi<5 硬置零问题")
 
     # 构建 (site_id, hour) → ratio 映射（从完整校准表）
     cal_map = {
@@ -154,7 +169,7 @@ def main():
         for _, row in cal_table.iterrows()
     }
 
-    df["power_pred_final"] = df["power_pred"].copy()
+    df["power_pred_final"] = df[pred_base_col].copy()
     df["calibrated_ratio"] = 1.0
     df["calibration_applied"] = False
 
@@ -169,7 +184,7 @@ def main():
                    on=["site_id", "hour"], how="left")
     has_ratio = df["ratio_val"].notna()
     df.loc[has_ratio, "calibrated_ratio"]     = df.loc[has_ratio, "ratio_val"]
-    df.loc[has_ratio, "power_pred_final"]    = (df.loc[has_ratio, "power_pred"] *
+    df.loc[has_ratio, "power_pred_final"]    = (df.loc[has_ratio, pred_base_col] *
                                                   df.loc[has_ratio, "calibrated_ratio"])
     df.loc[has_ratio, "calibration_applied"]  = True
     df.drop(columns=["ratio_val"], inplace=True, errors="ignore")
