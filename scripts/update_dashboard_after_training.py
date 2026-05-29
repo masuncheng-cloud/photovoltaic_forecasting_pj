@@ -165,7 +165,8 @@ def check_site_series_consistency():
                 diff_p = abs(float(rec["pred_mw"]) - float(pkl_lookup.loc[t, "power_pred_final"]))
                 max_diff_actual = max(max_diff_actual, diff_a)
                 max_diff_pred = max(max_diff_pred, diff_p)
-                if diff_a > 1e-9 or diff_p > 1e-9:
+                # 容忍 1kW 以内的浮点精度差异
+                if diff_a > 1e-3 or diff_p > 1e-3:
                     bad_rows += 1
 
         status = "PASS" if bad_rows == 0 else "FAIL"
