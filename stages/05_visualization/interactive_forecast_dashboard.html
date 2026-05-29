@@ -1585,19 +1585,27 @@ function filterCitySeries() {
 }
 
 async function filterSiteSeries(siteId) {
-  if (!siteId) return [];
+  if (!siteId) {
+    console.warn("[site] no siteId, returning empty");
+    return [];
+  }
   if (!siteSeriesCache[siteId]) {
     try {
-      siteSeriesCache[siteId] = await fetchJSON(SITE_SERIES_BASE + siteId + ".json");
+      const url = SITE_SERIES_BASE + siteId + ".json";
+      siteSeriesCache[siteId] = await fetchJSON(url);
+      console.info(`[site] ${siteId} loaded ${siteSeriesCache[siteId].length} rows from ${url}`);
     } catch (e) {
       siteSeriesCache[siteId] = [];
+      console.error(`[site] ${siteId} load failed: ${e.message}`);
     }
   }
   const sd = state.startDate, ed = state.endDate;
   const sh = state.startHour, eh = state.endHour;
-  return siteSeriesCache[siteId].filter(r => {
+  const filtered = siteSeriesCache[siteId].filter(r => {
     return r.date >= sd && r.date <= ed && r.hour >= sh && r.hour <= eh;
   });
+  console.info(`[site] ${siteId} filtered: ${filtered.length}/${siteSeriesCache[siteId].length} rows (${sd}~${ed}, ${sh}~${eh}h)`);
+  return filtered;
 }
 
 // ============================================================
@@ -2572,10 +2580,18 @@ function selectSite(siteId) {
 function onScopeChange() {
   const isSite = state.scope === "site";
   document.getElementById("site-select-group").style.display = isSite ? "flex" : "none";
+  // In site mode: keep buttons enabled but they'll use current site data
+  // (getFilteredRows() handles scope automatically)
   const btnCurrent = document.getElementById("btn-current-midday");
   const btnTypical = document.getElementById("btn-typical-midday");
-  if (btnCurrent) btnCurrent.disabled = isSite;
-  if (btnTypical) btnTypical.disabled = isSite;
+  if (btnCurrent) {
+    btnCurrent.disabled = false;
+    btnCurrent.title = isSite ? "筛选当前站点 10-14 点数据" : "筛选当前日期 10-14 点全市数据";
+  }
+  if (btnTypical) {
+    btnTypical.disabled = false;
+    btnTypical.title = isSite ? "筛选典型站点日 10-14 点数据" : "筛选典型站点日 10-14 点全市数据";
+  }
 
   if (isSite) {
     const ok = ensureDefaultSiteSelected();
@@ -2623,6 +2639,7 @@ async function refreshAll() {
   }
 
   const rows = await getFilteredRows();
+  console.info("[refreshAll] scope=" + state.scope + " siteId=" + (state.siteId || "city") + " rows=" + rows.length);
   updateMetricsCards(rows);
 
   setLineRows(rows);
