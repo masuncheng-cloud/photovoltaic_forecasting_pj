@@ -2691,14 +2691,15 @@ function buildSitesTable() {
   });
 }
 
-function selectSite(siteId) {
+async function selectSite(siteId) {
   document.querySelector('input[name="scope"][value="site"]').checked = true;
   state.scope = "site";
   state.siteId = siteId;
   const sel = document.getElementById("site-select");
   if (sel) sel.value = siteId;
+  await ensureSiteRows(state.siteId);
   if (onScopeChange() !== false) {
-    refreshAll();
+    await refreshAll();
   }
 }
 
