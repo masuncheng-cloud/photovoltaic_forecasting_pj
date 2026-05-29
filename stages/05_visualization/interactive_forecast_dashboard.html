@@ -2955,12 +2955,15 @@ document.addEventListener("DOMContentLoaded", () => {
   const btnCurrentMidday = document.getElementById("btn-current-midday");
   if (btnCurrentMidday) {
     btnCurrentMidday.addEventListener("click", () => {
-      state.scope = "city";
+      // Keep current scope (city or site), only change hour range
       state.startHour = 10;
       state.endHour = 14;
 
-      const cityRadio = document.querySelector('input[name="scope"][value="city"]');
-      if (cityRadio) cityRadio.checked = true;
+      // Sync radio only if in city mode
+      if (state.scope === "city") {
+        const cityRadio = document.querySelector('input[name="scope"][value="city"]');
+        if (cityRadio) cityRadio.checked = true;
+      }
 
       syncHourSelects();
 
