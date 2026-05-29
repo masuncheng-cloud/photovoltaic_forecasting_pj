@@ -2752,9 +2752,14 @@ function showStatusMessage(msg) {
 // ============================================================
 async function refreshAll() {
   if (!validateHourRange()) {
+    updateMetricsCards([]);
+    setLineRows([]);
+    drawLineChart([]);
+    updateLineZoomInfo();
     return;
   }
 
+  // Ensure site data is loaded before filtering
   if (state.scope === "site") {
     const ok = ensureDefaultSiteSelected();
     if (!ok) {
@@ -2764,18 +2769,27 @@ async function refreshAll() {
       updateLineZoomInfo();
       return;
     }
+    await ensureSiteRows(state.siteId);
   }
 
   const rows = await getFilteredRows();
-  console.info("[refreshAll] scope=" + state.scope + " siteId=" + (state.siteId || "city") + " rows=" + rows.length);
-  updateMetricsCards(rows);
+  const isSite = state.scope === "site";
+
+  console.info("[refreshAll]", {
+    scope: state.scope,
+    siteId: state.siteId,
+    rows: rows.length,
+    firstRow: rows[0] || null,
+  });
+
+  const metrics = computeMetrics(rows, isSite);
+  updateMetricsCards(metrics, rows);
 
   setLineRows(rows);
-  console.info("[line-chart] full rows:", gLineRowsFull.length);
   resetLineZoom();
 
   drawHourlyNrmseChart();
-  if (state.scope !== "site") drawScatterChart(gScatterSite);
+  if (!isSite) drawScatterChart(gScatterSite);
 }
 
 // ============================================================
