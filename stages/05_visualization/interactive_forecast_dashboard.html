@@ -1486,12 +1486,19 @@ function getSiteCategory(row) {
 
 function getDefaultSiteId() {
   const list = Array.isArray(gSiteMetrics) ? gSiteMetrics : [];
+  // Priority: S062 → S023 → S049 → S047 → S056 → first "best" → first available
+  const preferred = ["S062", "S023", "S049", "S047", "S056"];
+  for (const sid of preferred) {
+    const found = list.find(s => getSiteId(s) === sid);
+    if (found) return sid;
+  }
+  // Fall back to first "best" site
   const best = list.find(row => {
     const cat = String(getSiteCategory(row));
     return cat === "best" && getSiteId(row);
   });
   if (best) return getSiteId(best);
-
+  // Last resort: first available site
   const first = list.find(row => getSiteId(row));
   return first ? getSiteId(first) : "";
 }
