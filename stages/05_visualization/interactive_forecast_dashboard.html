@@ -3100,10 +3100,10 @@ document.addEventListener("DOMContentLoaded", () => {
   // Date/hours — date changes handled by bindDateComboEvents(); hour changes handled by bindHourSelectEvents()
 
   // Typical sites buttons
-  function selectTypical(category) {
+  async function selectTypical(category) {
     const sites = gSiteMetrics.filter(s => s.category === category);
     if (!sites.length) return;
-    selectSite(sites[0].site_id);
+    await selectSite(sites[0].site_id);
   }
   document.getElementById("btn-best").addEventListener("click", () => selectTypical("best"));
   document.getElementById("btn-worst").addEventListener("click", () => selectTypical("worst"));
