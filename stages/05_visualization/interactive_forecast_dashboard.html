@@ -3311,13 +3311,17 @@ function drawHourlyNrmseChart() {
 
 function showHourlyTooltip(e, row, key, color) {
   const tip = document.getElementById("tooltip");
-  const siteVal = row.site_nrmse_mean_pct;
+  const siteAvg = row.site_avg_nrmse_pct;
+  const siteMed = row.site_median_nrmse_pct;
+  const siteActive = row.active_site_avg_nrmse_pct;
   const cityVal = row.city_nrmse_pct;
   tip.innerHTML = `
     <div style="font-weight:600;margin-bottom:4px">${row.hour}时 逐小时预测结果</div>
-    <div class="tip-label">样本数</div><div class="tip-val">${fmtInt(row.rows)} 行</div>
+    <div class="tip-label">样本数 / 站点数</div><div class="tip-val">${fmtInt(row.rows)} 行 / ${row.site_count} 站</div>
     <div style="margin-top:4px;color:#2563eb;font-size:11px">站点平均 NRMSE</div>
-    <div class="tip-val" style="color:#2563eb">${fmtNum(siteVal, 2)}%</div>
+    <div class="tip-val" style="color:#2563eb">${fmtNum(siteAvg, 2)}%</div>
+    <div class="tip-label">站点中位 NRMSE</div><div class="tip-val">${fmtNum(siteMed, 2)}%</div>
+    ${siteActive != null ? `<div class="tip-label">有效发电站点NRMSE</div><div class="tip-val">${fmtNum(siteActive, 2)}%</div>` : ""}
     <div style="margin-top:4px;color:#f97316;font-size:11px">城市 NRMSE</div>
     <div class="tip-val" style="color:#f97316">${fmtNum(cityVal, 3)}%</div>
   `;
@@ -3332,7 +3336,7 @@ function renderHourlySummaryTable() {
 
   const data = gHourlySummary || [];
   if (!data.length) {
-    tbody.innerHTML = `<tr><td colspan="4" style="text-align:center;color:#a0aec0">暂无逐小时预测结果数据</td></tr>`;
+    tbody.innerHTML = `<tr><td colspan="8" style="text-align:center;color:#a0aec0">暂无逐小时预测结果数据</td></tr>`;
     return;
   }
 
@@ -3341,7 +3345,11 @@ function renderHourlySummaryTable() {
     tr.innerHTML = `
       <td>${row.hour}</td>
       <td>${fmtInt(row.rows)}</td>
-      <td>${fmtNum(row.site_nrmse_mean_pct, 2)}%</td>
+      <td>${row.site_count}</td>
+      <td>${fmtNum(row.site_avg_nrmse_pct, 2)}%</td>
+      <td>${fmtNum(row.site_median_nrmse_pct, 2)}%</td>
+      <td>${row.active_site_avg_nrmse_pct != null ? fmtNum(row.active_site_avg_nrmse_pct, 2) + "%" : "—"}</td>
+      <td>${fmtNum(row.avg_zero_actual_ratio_pct, 1)}%</td>
       <td>${fmtNum(row.city_nrmse_pct, 3)}%</td>
     `;
     tbody.appendChild(tr);
