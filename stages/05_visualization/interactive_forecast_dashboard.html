@@ -2788,8 +2788,7 @@ async function refreshAll() {
     firstRow: rows[0] || null,
   });
 
-  const metrics = computeMetrics(rows, isSite);
-  updateMetricsCards(metrics, rows);
+  updateMetricsCards(rows);
 
   setLineRows(rows);
   resetLineZoom();
