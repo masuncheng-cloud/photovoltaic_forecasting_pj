@@ -1358,7 +1358,7 @@ function bindHourSelectEvents() {
 // DATA LOADING
 // ============================================================
 async function loadAll() {
-  const [meta, idx, city, metrics, scatter, threshold, seasons, midday, scatterSite, sampleReq, sampleBins, hourly, invalidZero, integrity] = await Promise.all([
+  const [meta, idx, city, metrics, scatter, threshold, seasons, midday, scatterSite, sampleReq, sampleBins, hourly, invalidZero, integrity, typicalSites] = await Promise.all([
     fetchJSON("metadata.json"),
     fetchJSON("index.json"),
     fetchJSON("city_series.json"),
@@ -1379,6 +1379,7 @@ async function loadAll() {
       return [];
     }),
     fetchJSON("data_integrity_check.json").catch(() => null),
+    fetchJSON("typical_sites.json"),
   ]);
 
   gIndex = idx;
@@ -1394,6 +1395,7 @@ async function loadAll() {
   gMiddayByDate = midday;
   gInvalidZeroSites = invalidZero || [];
   window.gDataIntegrity = integrity || null;
+  window.gTypicalSites = Array.isArray(typicalSites) ? typicalSites : [];
 
   // ---- Round39: version badge from metadata.json ----
   const metaRound = (meta && meta.round) ? meta.round : "unknown";
