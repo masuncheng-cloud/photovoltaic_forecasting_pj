@@ -2998,14 +2998,16 @@ document.addEventListener("DOMContentLoaded", () => {
         Math.abs(Number(a.nrmse_pct) - median) - Math.abs(Number(b.nrmse_pct) - median)
       )[0];
 
-      state.scope = "city";
+      // Typical midday is city-level; switch scope to city
+      if (state.scope !== "city") {
+        state.scope = "city";
+        const cityRadio = document.querySelector('input[name="scope"][value="city"]');
+        if (cityRadio) cityRadio.checked = true;
+      }
       state.startDate = closest.date;
       state.endDate = closest.date;
       state.startHour = 10;
       state.endHour = 14;
-
-      const cityRadio = document.querySelector('input[name="scope"][value="city"]');
-      if (cityRadio) cityRadio.checked = true;
 
       setDateComboValue("start", state.startDate);
       setDateComboValue("end", state.endDate);
