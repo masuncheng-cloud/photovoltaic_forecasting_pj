@@ -1,0 +1,2 @@
+﻿use_round45_candidate,site_improve_valid_pp,city_delta_valid_pp,focus_delta_valid_pp,base_site_mean_nrmse,cand_site_mean_nrmse,base_city_nrmse,cand_city_nrmse,base_focus_nrmse,cand_focus_nrmse,cand_city_bias,cand_edge_suspicious_zero,cond1_site_improve_ge_0.2,cond2_city_delta_le_0.3,cond3_focus_delta_le_0.3,cond4_bias_le_15,cond5_edge_zero_eq_0
+False,-0.086505,-0.10587,-0.072076,15.490353,15.576858,5.393474,5.287604,6.719558,6.647482,-2.950558,0,False,True,True,True,True
