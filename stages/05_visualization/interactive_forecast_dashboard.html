@@ -1824,15 +1824,50 @@ function pickSeasonDate(seasonKey) {
   return rep ? rep.date : null;
 }
 
+function pickSeasonBestRepresentative(seasonKey) {
+  syncStateFromControls();
+
+  if (state.scope === "site") {
+    const siteId = state.siteId;
+    if (!siteId) return null;
+    const siteItem = gSeasonBestBySite?.[siteId];
+    const rep = siteItem?.[seasonKey];
+
+    if (rep && rep.date) {
+      return {
+        ...rep,
+        scope: "site",
+        site_id: siteId,
+        site_name: rep.site_name || siteItem?.site_name || "",
+      };
+    }
+
+    console.warn("[pickSeasonBestRepresentative] no site season best day", {
+      seasonKey,
+      siteId,
+      siteItem,
+    });
+    return null;
+  }
+
+  const rep = gSeasonBestCity?.[seasonKey];
+  if (rep && rep.date) {
+    return { ...rep, scope: "city" };
+  }
+
+  console.warn("[pickSeasonBestRepresentative] no city season best day", {
+    seasonKey,
+    gSeasonBestCity,
+  });
+  return null;
+}
+
 async function selectSeasonDay(seasonKey) {
   syncStateFromControls();
 
-  const beforeScope = state.scope;
-  const beforeSiteId = state.siteId;
-
-  const rep = pickSeasonRepresentative(seasonKey);
+  const rep = pickSeasonBestRepresentative(seasonKey);
   if (!rep || !rep.date) {
-    console.warn("[selectSeasonDay] no representative day for season", seasonKey, rep);
+    alert("当前范围内没有可用的四季最佳日数据，请确认季节数据已导出。");
     return;
   }
 
@@ -1846,27 +1881,30 @@ async function selectSeasonDay(seasonKey) {
   document.getElementById("end-date").value = rep.date;
   syncHourSelects();
 
-  // If season_days gives a representative site, use it; otherwise keep the pre-click site
-  const targetSiteId = rep.siteId || beforeSiteId;
-
-  if (beforeScope === "site" || targetSiteId) {
-    setSelectedSiteInUI(targetSiteId);
-    if (targetSiteId) await ensureSiteRows(targetSiteId);
+  if (rep.scope === "site") {
+    state.scope = "site";
+    state.siteId = rep.site_id || state.siteId;
+    setSelectedSiteInUI(state.siteId);
+    if (state.siteId) await ensureSiteRows(state.siteId);
   } else {
     state.scope = "city";
     const cityRadio = document.querySelector('input[name="scope"][value="city"]');
     const siteRadio = document.querySelector('input[name="scope"][value="site"]');
     if (cityRadio) cityRadio.checked = true;
     if (siteRadio) siteRadio.checked = false;
+    const siteSelectWrap = document.getElementById("site-select-group");
+    if (siteSelectWrap) siteSelectWrap.style.display = "none";
   }
 
-  console.info("[selectSeasonDay]", {
+  console.info("[selectSeasonDay best]", {
     seasonKey,
+    scope: rep.scope,
     date: rep.date,
-    representativeSiteId: rep.siteId,
-    representativeSiteName: rep.siteName,
-    targetSiteId: state.siteId,
-    scope: state.scope,
+    siteId: state.siteId,
+    nrmse_pct: rep.nrmse_pct,
+    rmse_mw: rep.rmse_mw,
+    mae_mw: rep.mae_mw,
+    sample_count: rep.sample_count,
   });
 
   await refreshAll();
