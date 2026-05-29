@@ -1,2 +1,0 @@
-rows,actual_mwh,pred_mwh,mae_mw,rmse_mw,nrmse_pct,bias_pct,pred_actual_ratio
-68888,93382.49,92069.0926,0.5893,1.2047,19.7105,-1.4065,0.985935
