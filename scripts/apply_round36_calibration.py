@@ -169,7 +169,7 @@ def main():
                    on=["site_id", "hour"], how="left")
     has_ratio = df["ratio_val"].notna()
     df.loc[has_ratio, "calibrated_ratio"]     = df.loc[has_ratio, "ratio_val"]
-    df.loc[has_ratio, "power_pred_final"]    = (df.loc[has_ratio, "power_pred_raw"] *
+    df.loc[has_ratio, "power_pred_final"]    = (df.loc[has_ratio, "power_pred"] *
                                                   df.loc[has_ratio, "calibrated_ratio"])
     df.loc[has_ratio, "calibration_applied"]  = True
     df.drop(columns=["ratio_val"], inplace=True, errors="ignore")
