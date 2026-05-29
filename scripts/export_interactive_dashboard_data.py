@@ -1732,6 +1732,10 @@ def main():
     print("\n[11d] Writing metadata.json...")
     meta = write_metadata(dashboard_root, round_name, pred_col, pred_path)
 
+    # [11e] Export typical_sites.json
+    print("\n[11e] Exporting typical_sites.json...")
+    typical_sites = export_typical_sites(dashboard_root, output_root, round_name)
+
     # Summary
     history_df = build_history_frame(df)
     history_dates = pd.to_datetime(history_df["date"]).dropna().unique()
