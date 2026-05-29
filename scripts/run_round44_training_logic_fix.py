@@ -14,18 +14,13 @@ Round44 训练逻辑修正脚本（无需重新训练模型）。
      — 基于修正后的 PKL 重算指标
   3. round41_42_guard.py
      — 守门检查（如果失败自动回退 PKL）
-  4. export_interactive_dashboard_data.py
-     — 导出可视化数据（基于修正后的 PKL）
-  5. update_dashboard_after_training.py
-     — 检测 dashboard 是否真的刷新了
-  6. check_dashboard_auto_update_stamp.py
-     — 验证 stamp 文件有效
-  7. round44_dashboard_regression_check.py
-     — 可视化全问题回归检查
-  8. posttrain_validation_round36.py
-     — 全链路最终验证
-  9. regenerate_project_report_round36.py
-     — 项目报告更新
+  4. export_interactive_dashboard_data.py（已被 Step 9 替代）
+  5. update_dashboard_after_training.py（已被 Step 9 替代）
+  6. check_dashboard_auto_update_stamp.py（已被 Step 9 替代）
+  7. round44_dashboard_regression_check.py（已被 Step 9 替代）
+  8. posttrain_validation_round36.py（已被 Step 9 替代）
+  9. regenerate_project_report_round36.py（已被 Step 9 替代）
+ 10. post_training_finalize_outputs.py — 统一收口（替代 Step 4-9）
 
 用法：
   python scripts/run_round44_training_logic_fix.py
@@ -37,24 +32,26 @@ from pathlib import Path
 PROJECT_ROOT = Path(__file__).parent.parent.resolve()
 
 STEPS = [
-    ("[1/9] 训练逻辑修正（daytime_source + 站点校准守门）",
+    ("[1/10] 训练逻辑修正（daytime_source + 站点校准守门）",
      "scripts/round41_42_unified_daytime_and_site_calibration.py"),
-    ("[2/9] 指标重算",
+    ("[2/10] 指标重算",
      "scripts/round40_compare_final_prediction_metrics.py"),
-    ("[3/9] 守门检查",
+    ("[3/10] 守门检查",
      "scripts/round41_42_guard.py"),
-    ("[4/9] 可视化数据导出",
+    ("[4/10] 旧：可视化导出（已废弃，用 Step 10）",
      "scripts/export_interactive_dashboard_data.py"),
-    ("[5/9] Dashboard 自动刷新检测",
+    ("[5/10] 旧：Dashboard 自动刷新（已废弃，用 Step 10）",
      "scripts/update_dashboard_after_training.py"),
-    ("[6/9] Dashboard stamp 验证",
+    ("[6/10] 旧：Dashboard stamp 验证（已废弃，用 Step 10）",
      "scripts/check_dashboard_auto_update_stamp.py"),
-    ("[7/9] Dashboard 回归检查",
+    ("[7/10] 旧：Dashboard 回归检查（已废弃，用 Step 10）",
      "scripts/round44_dashboard_regression_check.py"),
-    ("[8/9] 全链路最终验证",
+    ("[8/10] 旧：全链路最终验证（已废弃，用 Step 10）",
      "scripts/posttrain_validation_round36.py"),
-    ("[9/9] 项目报告更新",
+    ("[9/10] 旧：项目报告更新（已废弃，用 Step 10）",
      "scripts/regenerate_project_report_round36.py"),
+    ("[10/10] 训练后统一收口（替代 Step 4-9）",
+     "scripts/post_training_finalize_outputs.py"),
 ]
 
 
