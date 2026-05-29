@@ -1,8 +1,8 @@
 # Round47 Archive: round_artifacts_before_round47
 
-Generated: 2026-05-29T23:47:57
-Mode: DRY-RUN
-Archived: 78 files
+Generated: 2026-05-29T23:48:40
+Mode: APPLY
+Archived: 77 files
 
 这些文件已从项目主目录移动到这里。
 
