@@ -192,7 +192,7 @@ def main():
         # 校准前 NRMSE
         nrmse_before = nrmse(
             site_test["power_mw"].values,
-            site_test["power_pred_raw"].values, cap)
+            site_test["power_pred"].values, cap)
 
         # 校准后 NRMSE（从 df 中获取）
         site_pred_final = df.loc[site_test.index, "power_pred_final"]
@@ -217,7 +217,7 @@ def main():
             print(f"    {r['site_id']}: {r['nrmse_before']:.2f}% → {r['nrmse_after']:.2f}% (Δ={r['delta']:+.2f}%)")
         # 回退
         df.loc[df["site_id"].isin(rollback_sids), "power_pred_final"] = \
-            df.loc[df["site_id"].isin(rollback_sids), "power_pred_raw"]
+            df.loc[df["site_id"].isin(rollback_sids), "power_pred"]
         df.loc[df["site_id"].isin(rollback_sids), "calibration_applied"] = False
         rollback_df.to_csv(METRICS / "round36_calibration_rollback.csv",
                            index=False, encoding="utf-8-sig")
