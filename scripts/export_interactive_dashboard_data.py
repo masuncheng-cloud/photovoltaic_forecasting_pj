@@ -1533,11 +1533,19 @@ def export_hourly_prediction_summary(output_root, dashboard_root, final_df=None,
         return []
 
     # Build output
+    hourly["hour"] = pd.to_numeric(hourly["hour"], errors="coerce")
+    hourly = hourly.dropna(subset=["hour"])
     hourly["hour"] = hourly["hour"].astype(int)
     hourly["rows"] = hourly.get("rows", pd.Series(dtype=float)).fillna(0).astype(int)
     hourly["site_avg_nrmse_pct"] = hourly.get("site_avg_nrmse_pct", pd.Series(dtype=float)).fillna(0).round(3)
     hourly["city_nrmse_pct"] = hourly.get("city_nrmse_pct", pd.Series(dtype=float)).fillna(0).round(3)
-    hourly = hourly.sort_values("hour")[["hour", "rows", "site_avg_nrmse_pct", "city_nrmse_pct"]].reset_index(drop=True)
+    # Aggregate to one row per hour (merge may have expanded rows)
+    hourly_agg = hourly.groupby("hour", as_index=False).agg(
+        rows=("rows", "sum"),
+        site_avg_nrmse_pct=("site_avg_nrmse_pct", "mean"),
+        city_nrmse_pct=("city_nrmse_pct", "mean"),
+    )
+    hourly_agg = hourly_agg.sort_values("hour").reset_index(drop=True)
 
     out_path = Path(dashboard_root) / "hourly_prediction_summary.json"
     records = hourly.to_dict(orient="records")
