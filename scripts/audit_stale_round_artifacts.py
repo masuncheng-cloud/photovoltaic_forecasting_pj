@@ -55,6 +55,7 @@ KEEP_CORE_PATTERNS = [
     # Round47 统一收口
     "scripts/post_training_finalize_outputs.py",
     "scripts/check_post_training_auto_finalize.py",
+    "scripts/check_dashboard_data_freshness.py",
     "scripts/compute_hourly_nrmse_consistent.py",
     "scripts/round46_recompute_hourly_nrmse_consistent.py",
     # Dashboard 验证

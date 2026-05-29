@@ -166,6 +166,11 @@ def run_finalize() -> dict:
             [PYTHON, str(ROOT / "scripts" / "check_dashboard_auto_update_stamp.py")],
             "scripts/check_dashboard_auto_update_stamp.py",
         ),
+        (
+            "check_dashboard_data_freshness",
+            [PYTHON, str(ROOT / "scripts" / "check_dashboard_data_freshness.py")],
+            "scripts/check_dashboard_data_freshness.py",
+        ),
     ]
 
     for name, cmd, desc in steps:
