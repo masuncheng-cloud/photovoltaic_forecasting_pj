@@ -378,15 +378,14 @@ def export_typical_sites(dashboard_root, output_root, round_name):
 
 def export_city_series(df, dashboard_root):
     """Export city_series.json with city-level aggregated data."""
-    # 统一列名：actual_mw/pred_mw（Round39.11: power_pred_final = power_pred_cal * calibrated_ratio）
+    # 统一列名：actual_mw/pred_mw（Round40: power_pred_final = hour-level selection）
+    # 必须强制覆盖 pred_mw，使用 power_pred_final（与 export_site_series 保持一致）
     if "actual_mw" not in df.columns:
         df["actual_mw"] = df["power_mw"]
-    # 使用 power_pred_final（与 export_site_series 保持一致）
-    if "pred_mw" not in df.columns:
-        df["pred_mw"] = (
-            df["power_pred_final"] if "power_pred_final" in df.columns else
-            (df["power_pred_cal"] if "power_pred_cal" in df.columns else df["power_pred"])
-        )
+    df["pred_mw"] = (
+        df["power_pred_final"] if "power_pred_final" in df.columns else
+        (df["power_pred_cal"] if "power_pred_cal" in df.columns else df["power_pred"])
+    )
 
     df_f = build_history_frame(df)
     df_f = df_f[
@@ -737,26 +736,33 @@ def export_site_metrics(df, site_names, dashboard_root, test_daytime_zero_stats=
 
 def export_midday_city(df, dashboard_root):
     """Export midday_city_by_date.json for 10-14h city-level daily stats."""
+    # 强制使用 power_pred_final（与 city_series/site_series 保持一致）
+    df = df.copy()
+    if "pred_mw" not in df.columns:
+        df["pred_mw"] = (
+            df["power_pred_final"] if "power_pred_final" in df.columns else
+            (df["power_pred_cal"] if "power_pred_cal" in df.columns else df["power_pred"])
+        )
     df_f = build_history_frame(df)
     df_f = df_f[
         df_f["hour"].between(10, 14)
         & df_f["power_mw"].notna()
-        & df_f["power_pred"].notna()
+        & df_f["pred_mw"].notna()
     ].copy()
 
     daily = df_f.groupby("date").agg(
         actual_mwh=("power_mw", "sum"),
-        pred_mwh=("power_pred", "sum"),
+        pred_mwh=("pred_mw", "sum"),
         capacity_mw_sum=("capacity_mw", "sum"),
         sample_count=("site_id", "size"),
         n_sites=("site_id", "nunique"),
     ).reset_index()
 
     mae_vals = df_f.groupby("date").apply(
-        lambda g: (g["power_pred"] - g["power_mw"]).abs().mean(), include_groups=False
+        lambda g: (g["pred_mw"] - g["power_mw"]).abs().mean(), include_groups=False
     )
     rmse_vals = df_f.groupby("date").apply(
-        lambda g: np.sqrt(((g["power_pred"] - g["power_mw"]) ** 2).mean()), include_groups=False
+        lambda g: np.sqrt(((g["pred_mw"] - g["power_mw"]) ** 2).mean()), include_groups=False
     )
     daily["mae_mw"] = mae_vals.reindex(daily["date"]).values
     daily["rmse_mw"] = rmse_vals.reindex(daily["date"]).values
