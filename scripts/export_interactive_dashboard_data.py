@@ -1504,7 +1504,7 @@ def export_hourly_prediction_summary(output_root, dashboard_root, final_df=None,
         def rmse(x):
             return float(np.sqrt(np.mean(np.square(np.asarray(x, dtype=float)))))
 
-        eval_df = eval_df.copy()
+        eval_df = final_df.copy()
         eval_df["err"] = pd.to_numeric(eval_df["power_pred"], errors="coerce") - pd.to_numeric(eval_df["power_mw"], errors="coerce")
         eval_df["capacity_mw_num"] = pd.to_numeric(eval_df["capacity_mw"], errors="coerce")
 
