@@ -134,7 +134,7 @@ def city_hour_metrics(df, pred_col, split, hours):
         "mean_hourly_city_nrmse_pct": round(float(h["city_nrmse_pct"].mean()), 6),
         "max_hourly_city_nrmse_pct": round(float(h["city_nrmse_pct"].max()), 6),
         "mean_abs_bias_pct": round(float(h["city_bias_pct"].abs().mean()), 6),
-        "total_suspicious_city_zero_count": int(h["suspicious_city_zero_count"].sum"]),
+        "total_suspicious_city_zero_count": int(h["suspicious_city_zero_count"].sum()),
     }
 
 
