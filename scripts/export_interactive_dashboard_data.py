@@ -1913,7 +1913,7 @@ def main():
     assert len(hourly_summary) == 14, f"hourly_summary expected 14 rows (6-19h), got {len(hourly_summary)}"
     assert "hour" in hourly_summary[0], "missing hour field"
     assert "rows" in hourly_summary[0], "missing rows field"
-    assert "site_nrmse_mean_pct" in hourly_summary[0], "missing site_nrmse_mean_pct field"
+    assert "site_avg_nrmse_pct" in hourly_summary[0], "missing site_avg_nrmse_pct field"
     assert "city_nrmse_pct" in hourly_summary[0], "missing city_nrmse_pct field"
     # Verify future is excluded from city_series
     future_in_city = any(r.get("split") == "future" for r in city.to_dict(orient="records"))
