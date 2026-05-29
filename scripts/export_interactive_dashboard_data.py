@@ -1471,18 +1471,29 @@ def export_hourly_prediction_summary(output_root, dashboard_root, final_df=None,
     The CSV provides city_nrmse_pct; rows and site-level NRMSE are computed from eval_df.
     """
     metrics_dir = Path(output_root) / "metrics"
-    rn = "".join(filter(str.isdigit, round_name))
-    # Try multiple CSV naming patterns
-    csv_path = metrics_dir / f"round{rn}_city_hourly_nrmse.csv"
-    if not csv_path.exists():
-        csv_path = metrics_dir / f"round{rn}_hourly_nrmse_consistent.csv"
-    consistent_csv_path = metrics_dir / f"round{rn}_hourly_nrmse_consistent.csv"
+
+    # Find the latest hourly NRMSE consistent CSV (ignore round number — use most recent)
+    # This ensures we always use the latest consistent metrics regardless of which
+    # round's PKL was auto-detected.
+    consistent_candidates = sorted(
+        metrics_dir.glob("round*_hourly_nrmse_consistent.csv"),
+        key=lambda p: p.stat().st_mtime,
+        reverse=True,
+    )
+    if consistent_candidates:
+        consistent_csv_path = consistent_candidates[0]
+        print(f"  [AUTO] Using latest consistent CSV: {consistent_csv_path.name}")
+    else:
+        # Fallback: build path from round_name (legacy behavior)
+        rn = "".join(filter(str.isdigit, round_name))
+        csv_path = metrics_dir / f"round{rn}_city_hourly_nrmse.csv"
+        consistent_csv_path = None
 
     # Determine if we need to compute from eval_df
     compute_from_df = True
     city_nrmse_by_hour = None
     site_avg_nrmse_from_csv = None
-    if consistent_csv_path.exists():
+    if consistent_csv_path and consistent_csv_path.exists():
         # Prefer the _consistent CSV which has all fields pre-computed
         print(f"  Loading consistent hourly CSV: {consistent_csv_path}")
         df_cons = pd.read_csv(consistent_csv_path)
