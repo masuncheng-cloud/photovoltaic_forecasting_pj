@@ -1539,16 +1539,15 @@ def export_hourly_prediction_summary(output_root, dashboard_root, final_df=None,
     hourly["rows"] = hourly.get("rows", pd.Series(dtype=float)).fillna(0).astype(int)
     hourly["site_avg_nrmse_pct"] = hourly.get("site_avg_nrmse_pct", pd.Series(dtype=float)).fillna(0).round(3)
     hourly["city_nrmse_pct"] = hourly.get("city_nrmse_pct", pd.Series(dtype=float)).fillna(0).round(3)
-    # Aggregate to one row per hour (merge may have expanded rows)
-    hourly_agg = hourly.groupby("hour", as_index=False).agg(
+    # Aggregate to one row per hour (merge may have expanded rows from multi-date CSV)
+    hourly_agg = hourly[hourly["hour"].between(6, 19)].groupby("hour", as_index=False).agg(
         rows=("rows", "sum"),
         site_avg_nrmse_pct=("site_avg_nrmse_pct", "mean"),
         city_nrmse_pct=("city_nrmse_pct", "mean"),
-    )
-    hourly_agg = hourly_agg.sort_values("hour").reset_index(drop=True)
+    ).sort_values("hour").reset_index(drop=True)
 
     out_path = Path(dashboard_root) / "hourly_prediction_summary.json"
-    records = hourly.to_dict(orient="records")
+    records = hourly_agg.to_dict(orient="records")
     with open(out_path, "w", encoding="utf-8") as f:
         json.dump(records, f, ensure_ascii=False, indent=2)
     print(f"  [OK] hourly_prediction_summary.json ({len(records)} rows, 6-19h)")
