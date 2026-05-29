@@ -114,6 +114,8 @@ def city_hour_metrics(df, pred_col, split, hours):
 
 
 def select_daytime_source(df, cols):
+    """Evaluate candidates on the ORIGINAL unmodified df (before apply_unified_daytime_source).
+    This avoids circular dependency where power_pred_final is already modified."""
     rows = []
     for col in cols:
         m = city_hour_metrics(df, col, "valid", FOCUS_HOURS)
@@ -263,7 +265,7 @@ def main():
         df["power_pred_final_round40_snapshot"] = df["power_pred_final"]
 
     cols = candidate_columns(df)
-    selection_table, selected = select_daytime_source(df, cols)
+    selection_table, selected = select_daytime_source(df, cols)  # must use original df, not modified df1
     daytime_source = selected["pred_col"]
 
     selection_table.to_csv(METRIC_DIR / "round41_42_daytime_source_selection.csv", index=False, encoding="utf-8-sig")

@@ -1,7 +1,7 @@
 ﻿check,value,threshold,status
 edge_suspicious_city_zero_count,0.0,0.0,PASS
-focus_10_14_city_hourly_nrmse_under_6,7.005637,6.0,FAIL
-city_nrmse_under_10,4.840014,10.0,PASS
-city_abs_bias_under_15,7.29069,15.0,PASS
-full_site_mean_nrmse_under_35,11.339307,35.0,PASS
-active_site_mean_nrmse_under_25,12.27594,25.0,PASS
+focus_10_14_city_hourly_nrmse_under_6,6.884918,6.0,FAIL
+city_nrmse_under_10,4.763548,10.0,PASS
+city_abs_bias_under_15,6.751705,15.0,PASS
+full_site_mean_nrmse_under_35,10.938759,35.0,PASS
+active_site_mean_nrmse_under_25,12.076284,25.0,PASS
