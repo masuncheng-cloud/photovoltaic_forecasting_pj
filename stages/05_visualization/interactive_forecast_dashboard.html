@@ -1080,6 +1080,7 @@ let gInvalidZeroSites = [];
 
 // In-memory site series cache
 const siteSeriesCache = {};
+let gCurrentSiteRows = [];
 
 // Current view state
 let state = {
@@ -1131,6 +1132,72 @@ function daysInMonth(year, month) {
 
 function buildDateString(year, month, day) {
   return `${year}-${pad2(month)}-${pad2(day)}`;
+}
+
+function parseHourValue(v) {
+  if (typeof v === "number") return v;
+  const s = String(v || "").trim();
+  if (!s) return 0;
+  return Number.parseInt(s.split(":")[0], 10);
+}
+
+function getComboDate(prefix) {
+  const y = document.getElementById(`${prefix}-year`)?.value
+    || document.getElementById(`${prefix}Year`)?.value;
+  const m = document.getElementById(`${prefix}-month`)?.value
+    || document.getElementById(`${prefix}Month`)?.value;
+  const d = document.getElementById(`${prefix}-day`)?.value
+    || document.getElementById(`${prefix}Day`)?.value;
+  return `${y}-${pad2(m)}-${pad2(d)}`;
+}
+
+function getStartDateString() {
+  return state.startDate || getComboDate("start");
+}
+
+function getEndDateString() {
+  return state.endDate || getComboDate("end");
+}
+
+function getStartHourValue() {
+  return parseHourValue(
+    state.startHour ?? document.getElementById("start-hour")?.value
+      ?? document.getElementById("startHour")?.value
+  );
+}
+
+function getEndHourValue() {
+  return parseHourValue(
+    state.endHour ?? document.getElementById("end-hour")?.value
+      ?? document.getElementById("endHour")?.value
+  );
+}
+
+function syncStateFromControls() {
+  const scopeInput = document.querySelector('input[name="scope"]:checked');
+  if (scopeInput) state.scope = scopeInput.value;
+
+  const siteSelect = document.getElementById("site-select") || document.getElementById("siteSelect");
+  if (siteSelect && siteSelect.value) state.siteId = siteSelect.value;
+
+  state.startDate = getComboDate("start");
+  state.endDate = getComboDate("end");
+  state.startHour = getStartHourValue();
+  state.endHour = getEndHourValue();
+}
+
+// Row-level helpers for site series data
+function rowDate(r) {
+  return String(r.date || r.time || "").slice(0, 10);
+}
+
+function rowHour(r) {
+  if (r.hour !== undefined && r.hour !== null && r.hour !== "") {
+    const h = Number(r.hour);
+    if (Number.isFinite(h)) return h;
+  }
+  const t = String(r.time || "");
+  return parseHourValue(t.slice(11, 16));
 }
 
 function populateDayOptions(prefix, year, month, selectedDay) {
