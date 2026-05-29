@@ -53,7 +53,7 @@ def nrmse(y_true, y_pred, cap_mw):
     return float(np.sqrt(mse) / max(float(np.mean(cap_mw)), 1e-9) * 100)
 
 
-def compute_ratio(df_split, pred_col="power_pred_raw"):
+def compute_ratio(df_split, pred_col="power_pred"):
     """计算某 split 的 actual/pred 比率。"""
     m = df_split["power_mw"].notna() & df_split[pred_col].notna() & (df_split[pred_col] > 0)
     sub = df_split[m]
@@ -154,7 +154,7 @@ def main():
         for _, row in cal_table.iterrows()
     }
 
-    df["power_pred_final"] = df["power_pred_raw"].copy()
+    df["power_pred_final"] = df["power_pred"].copy()
     df["calibrated_ratio"] = 1.0
     df["calibration_applied"] = False
 
