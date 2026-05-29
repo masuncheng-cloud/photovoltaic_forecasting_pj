@@ -1666,22 +1666,61 @@ function setupSeasonButtons(seasons) {
 // ============================================================
 // FILTERING
 // ============================================================
-function getFilteredRows() {
-  if (state.scope === "city") {
-    return filterCitySeries();
-  } else {
-    return filterSiteSeries(state.siteId);
+
+async function ensureSiteRows(siteId) {
+  if (!siteId) {
+    gCurrentSiteRows = [];
+    return [];
   }
+  if (!siteSeriesCache[siteId]) {
+    try {
+      const rows = await fetchJSON(`site_series/${siteId}.json`);
+      siteSeriesCache[siteId] = Array.isArray(rows) ? rows : [];
+      console.info("[ensureSiteRows]", siteId, "loaded", siteSeriesCache[siteId].length);
+    } catch (e) {
+      siteSeriesCache[siteId] = [];
+      console.error("[ensureSiteRows]", siteId, "load failed:", e.message);
+    }
+  }
+  gCurrentSiteRows = siteSeriesCache[siteId];
+  return gCurrentSiteRows;
 }
 
-function filterCitySeries() {
-  const sd = state.startDate, ed = state.endDate;
-  const sh = state.startHour, eh = state.endHour;
-  return gCitySeries.filter(r => {
-    const d = r.date;
-    const h = r.hour;
-    return d >= sd && d <= ed && h >= sh && h <= eh;
+function filterRowsByCurrentControls(rows) {
+  syncStateFromControls();
+
+  const startDate = getStartDateString();
+  const endDate = getEndDateString();
+  const startHour = getStartHourValue();
+  const endHour = getEndHourValue();
+
+  const filtered = (Array.isArray(rows) ? rows : []).filter((r) => {
+    const d = rowDate(r);
+    const h = rowHour(r);
+    return d >= startDate && d <= endDate && h >= startHour && h <= endHour;
   });
+
+  console.info("[filterRowsByCurrentControls]", {
+    scope: state.scope,
+    siteId: state.siteId,
+    inputRows: Array.isArray(rows) ? rows.length : 0,
+    filteredRows: filtered.length,
+    startDate,
+    endDate,
+    startHour,
+    endHour,
+    firstInput: Array.isArray(rows) && rows.length ? rows[0] : null,
+    firstFiltered: filtered[0] || null,
+  });
+
+  return filtered;
+}
+
+function getFilteredRows() {
+  if (state.scope === "site") {
+    return filterRowsByCurrentControls(gCurrentSiteRows || []);
+  }
+  return filterRowsByCurrentControls(gCitySeries || []);
 }
 
 async function filterSiteSeries(siteId) {
@@ -1689,23 +1728,12 @@ async function filterSiteSeries(siteId) {
     console.warn("[site] no siteId, returning empty");
     return [];
   }
-  if (!siteSeriesCache[siteId]) {
-    try {
-      const url = SITE_SERIES_BASE + siteId + ".json";
-      siteSeriesCache[siteId] = await fetchJSON(url);
-      console.info(`[site] ${siteId} loaded ${siteSeriesCache[siteId].length} rows from ${url}`);
-    } catch (e) {
-      siteSeriesCache[siteId] = [];
-      console.error(`[site] ${siteId} load failed: ${e.message}`);
-    }
-  }
-  const sd = state.startDate, ed = state.endDate;
-  const sh = state.startHour, eh = state.endHour;
-  const filtered = siteSeriesCache[siteId].filter(r => {
-    return r.date >= sd && r.date <= ed && r.hour >= sh && r.hour <= eh;
-  });
-  console.info(`[site] ${siteId} filtered: ${filtered.length}/${siteSeriesCache[siteId].length} rows (${sd}~${ed}, ${sh}~${eh}h)`);
-  return filtered;
+  await ensureSiteRows(siteId);
+  return filterRowsByCurrentControls(gCurrentSiteRows);
+}
+
+function filterCitySeries() {
+  return filterRowsByCurrentControls(gCitySeries || []);
 }
 
 // ============================================================
