@@ -3039,15 +3039,15 @@ document.addEventListener("DOMContentLoaded", () => {
     return;
   }
 
-  loadAll().then(() => {
+  loadAll().then(async () => {
     buildSitesTable();
-    onScopeChange();
+    await onScopeChange();
     bindLineZoomEvents();
     bindDateComboEvents();
     bindHourSelectEvents();
     initHourSelects();
     bindHelpTooltips();
-    refreshAll();
+    await refreshAll();
   }).catch(err => {
     const loading = document.getElementById("loading");
     if (loading) {
