@@ -859,6 +859,176 @@ def export_season_days(df, dashboard_root):
     return results
 
 
+def season_from_month(month: int) -> str:
+    if month in (3, 4, 5):
+        return "spring"
+    if month in (6, 7, 8):
+        return "summer"
+    if month in (9, 10, 11):
+        return "autumn"
+    return "winter"
+
+
+def build_day_metric(rows, capacity_col="capacity_mw"):
+    actual = rows["actual_mw"].astype(float)
+    pred = rows["pred_mw"].astype(float)
+    err = pred - actual
+    rmse = math.sqrt(float((err ** 2).mean()))
+    mae = float(err.abs().mean())
+    cap = float(rows[capacity_col].mean())
+    nrmse = rmse / max(cap, 1e-9) * 100
+    return rmse, mae, cap, nrmse
+
+
+def export_season_best_days_by_site(df, dashboard_root):
+    """Select best-performing day per season per site (by lowest day-level NRMSE)."""
+    work = df.copy()
+    work["time"] = pd.to_datetime(work["time"])
+    work["date"] = work["time"].dt.strftime("%Y-%m-%d")
+    work["hour"] = work["time"].dt.hour
+    work["season"] = work["time"].dt.month.map(season_from_month)
+
+    work = work[
+        work["split"].isin(HISTORY_SPLITS)
+        & work["hour"].between(6, 19)
+        & work["actual_mw"].notna()
+        & work["pred_mw"].notna()
+        & work["capacity_mw"].notna()
+        & (work["capacity_mw"] > 0)
+    ].copy()
+
+    result = {}
+    seasons = ["spring", "summer", "autumn", "winter"]
+
+    for site_id, sdf in work.groupby("site_id"):
+        site_name = str(sdf["site_name"].dropna().iloc[0]) if "site_name" in sdf.columns and sdf["site_name"].notna().any() else str(site_id)
+        capacity = float(sdf["capacity_mw"].dropna().mean())
+
+        item = {
+            "site_id": str(site_id),
+            "site_name": site_name,
+            "capacity_mw": capacity,
+        }
+
+        for season in seasons:
+            ss = sdf[sdf["season"] == season].copy()
+            candidates = []
+
+            for date, ddf in ss.groupby("date"):
+                sample_count = int(len(ddf))
+                positive_count = int((ddf["actual_mw"] > 0).sum())
+                actual_mwh = float(ddf["actual_mw"].sum())
+                pred_mwh = float(ddf["pred_mw"].sum())
+
+                strict_ok = sample_count >= 8 and positive_count >= 3 and actual_mwh > 0
+                loose_ok = sample_count >= 4 and actual_mwh > 0
+                if not (strict_ok or loose_ok):
+                    continue
+
+                rmse, mae, cap, nrmse = build_day_metric(ddf)
+                candidates.append({
+                    "date": str(date),
+                    "season": season,
+                    "scope": "site",
+                    "site_id": str(site_id),
+                    "site_name": site_name,
+                    "capacity_mw": round(cap, 6),
+                    "nrmse_pct": round(nrmse, 6),
+                    "rmse_mw": round(rmse, 6),
+                    "mae_mw": round(mae, 6),
+                    "sample_count": sample_count,
+                    "positive_count": positive_count,
+                    "actual_mwh": round(actual_mwh, 6),
+                    "pred_mwh": round(pred_mwh, 6),
+                    "strict_ok": bool(strict_ok),
+                })
+
+            if candidates:
+                strict_candidates = [x for x in candidates if x["strict_ok"]]
+                pool = strict_candidates if strict_candidates else candidates
+                item[season] = sorted(pool, key=lambda x: (x["nrmse_pct"], -x["sample_count"], x["date"]))[0]
+            else:
+                item[season] = None
+
+        result[str(site_id)] = item
+
+    out = Path(dashboard_root) / "season_best_days_by_site.json"
+    out.write_text(json.dumps(result, ensure_ascii=False, indent=2), encoding="utf-8")
+    print(f"  [OK] season_best_days_by_site.json sites={len(result)}")
+    return result
+
+
+def export_season_best_days_city(df, dashboard_root):
+    """Select best-performing day per season for the city (by lowest city-level day NRMSE)."""
+    work = df.copy()
+    work["time"] = pd.to_datetime(work["time"])
+    work["date"] = work["time"].dt.strftime("%Y-%m-%d")
+    work["hour"] = work["time"].dt.hour
+    work["season"] = work["time"].dt.month.map(season_from_month)
+
+    work = work[
+        work["split"].isin(HISTORY_SPLITS)
+        & work["hour"].between(6, 19)
+        & work["actual_mw"].notna()
+        & work["pred_mw"].notna()
+        & work["capacity_mw"].notna()
+    ].copy()
+
+    city = (
+        work.groupby(["time", "date", "hour", "season"], as_index=False)
+        .agg(
+            actual_mw=("actual_mw", "sum"),
+            pred_mw=("pred_mw", "sum"),
+            capacity_sum_mw=("capacity_mw", "sum"),
+            site_count=("site_id", "nunique"),
+        )
+    )
+
+    result = {}
+    for season in ["spring", "summer", "autumn", "winter"]:
+        ss = city[city["season"] == season].copy()
+        candidates = []
+
+        for date, ddf in ss.groupby("date"):
+            sample_count = int(len(ddf))
+            site_count_median = float(ddf["site_count"].median())
+            actual_mwh = float(ddf["actual_mw"].sum())
+            pred_mwh = float(ddf["pred_mw"].sum())
+            capacity_city = float(ddf["capacity_sum_mw"].mean())
+
+            if sample_count < 8 or site_count_median < 30 or actual_mwh <= 0 or capacity_city <= 0:
+                continue
+
+            err = ddf["pred_mw"].astype(float) - ddf["actual_mw"].astype(float)
+            rmse = math.sqrt(float((err ** 2).mean()))
+            mae = float(err.abs().mean())
+            nrmse = rmse / max(capacity_city, 1e-9) * 100
+
+            candidates.append({
+                "date": str(date),
+                "season": season,
+                "scope": "city",
+                "nrmse_pct": round(nrmse, 6),
+                "rmse_mw": round(rmse, 6),
+                "mae_mw": round(mae, 6),
+                "sample_count": sample_count,
+                "site_count_median": round(site_count_median, 3),
+                "capacity_sum_mw": round(capacity_city, 6),
+                "actual_mwh": round(actual_mwh, 6),
+                "pred_mwh": round(pred_mwh, 6),
+            })
+
+        if candidates:
+            result[season] = sorted(candidates, key=lambda x: (x["nrmse_pct"], -x["sample_count"], x["date"]))[0]
+        else:
+            result[season] = None
+
+    out = Path(dashboard_root) / "season_best_days_city.json"
+    out.write_text(json.dumps(result, ensure_ascii=False, indent=2), encoding="utf-8")
+    print(f"  [OK] season_best_days_city.json")
+    return result
+
+
 def load_site_master_full(output_root):
     """Load full site master CSV for site names and metadata."""
     sm_path = Path(output_root) / "tables" / "site_master.csv"
