@@ -379,12 +379,11 @@ def export_typical_sites(dashboard_root, output_root, round_name):
 def export_city_series(df, dashboard_root):
     """Export city_series.json with city-level aggregated data."""
     # power_pred_final 已经是按小时选择的最优预测（边缘用cal，其他用uncalibrated）
-    if "actual_mw" not in df.columns:
-        df["actual_mw"] = df["power_mw"]
-    if "pred_mw" not in df.columns:
-        df["pred_mw"] = df["power_pred_final"] if "power_pred_final" in df.columns else (
-            df["power_pred_cal"] if "power_pred_cal" in df.columns else df["power_pred"]
-        )
+    # 必须在 df 上强制写入，不能依赖现有 pred_mw 列（该列可能是遗留的 power_pred_cal 值）
+    df["actual_mw"] = df["power_mw"]
+    df["pred_mw"] = df["power_pred_final"] if "power_pred_final" in df.columns else (
+        df["power_pred_cal"] if "power_pred_cal" in df.columns else df["power_pred"]
+    )
 
     df_f = build_history_frame(df)
     df_f = df_f[
