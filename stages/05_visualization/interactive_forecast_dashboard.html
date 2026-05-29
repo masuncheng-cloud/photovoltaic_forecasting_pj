@@ -1710,6 +1710,42 @@ function ensureDefaultSiteSelected() {
   return true;
 }
 
+function setSelectedSiteInUI(siteId) {
+  if (!siteId) return;
+
+  state.scope = "site";
+  state.siteId = siteId;
+
+  const siteRadio = document.querySelector('input[name="scope"][value="site"]');
+  const cityRadio = document.querySelector('input[name="scope"][value="city"]');
+  if (siteRadio) siteRadio.checked = true;
+  if (cityRadio) cityRadio.checked = false;
+
+  const siteSelect =
+    document.getElementById("site-select") ||
+    document.getElementById("siteSelect");
+
+  if (siteSelect) {
+    const options = Array.from(siteSelect.options);
+    const matched = options.find(opt => opt.value === siteId);
+    if (matched) {
+      siteSelect.value = siteId;
+    } else {
+      console.warn("[setSelectedSiteInUI] site option not found:", siteId);
+    }
+  }
+
+  const siteSelectWrap =
+    document.getElementById("site-select-group") ||
+    document.getElementById("site-select-wrap") ||
+    document.querySelector(".site-select-wrap");
+
+  if (siteSelectWrap) {
+    siteSelectWrap.style.display = "";
+    siteSelectWrap.hidden = false;
+  }
+}
+
 function preserveSiteSelectionIfNeeded() {
   const isSite = state.scope === "site";
   const siteSelect =
@@ -1735,23 +1771,49 @@ function preserveSiteSelectionIfNeeded() {
   }
 }
 
-function pickSeasonDate(seasonKey) {
+function pickSeasonRepresentative(seasonKey) {
   const data = gSeasonDays || {};
+
+  function normalizeItem(item) {
+    if (!item) return null;
+    if (typeof item === "string") {
+      return { date: item, siteId: null, siteName: null };
+    }
+    if (typeof item === "object") {
+      return {
+        date:
+          item.date || item.day || item.representative_date || item.start_date || null,
+        siteId:
+          item.site_id || item.station_id || item.id ||
+          item.representative_site_id || null,
+        siteName:
+          item.site_name || item.station_name || item.name ||
+          item.representative_site_name || null,
+      };
+    }
+    return null;
+  }
 
   if (Array.isArray(data)) {
     const row = data.find(x => {
-      const s = String(x.season || x.season_key || x.name || "").toLowerCase();
+      const s = String(x.season || x.season_key || x.name || x.label || "").toLowerCase();
       return s === seasonKey || s.includes(seasonKey);
     });
-    return row ? (row.date || row.day || row.representative_date) : null;
+    return normalizeItem(row);
   }
 
-  const item = data[seasonKey] || data[seasonKey + "_date"];
-  if (typeof item === "string") return item;
-  if (item && typeof item === "object") {
-    return item.date || item.day || item.representative_date || null;
-  }
-  return null;
+  const item =
+    data[seasonKey] ||
+    data[`${seasonKey}_date`] ||
+    data[`${seasonKey}_day`] ||
+    data[`${seasonKey}_representative`];
+
+  return normalizeItem(item);
+}
+
+function pickSeasonDate(seasonKey) {
+  const rep = pickSeasonRepresentative(seasonKey);
+  return rep ? rep.date : null;
 }
 
 async function selectSeasonDay(seasonKey) {
