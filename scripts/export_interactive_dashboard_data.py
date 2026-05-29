@@ -381,16 +381,19 @@ def export_city_series(df, dashboard_root):
     df_f = build_history_frame(df)
     df_f = df_f[
         df_f["hour"].between(6, 19)
-        & df_f["power_mw"].notna()
-        & df_f["power_pred"].notna()
+        & df_f["actual_mw"].notna()
+        & df_f["pred_mw"].notna()
     ].copy()
 
     city = df_f.groupby("time").agg(
-        actual_mw=("power_mw", "sum"),
-        pred_mw=("power_pred", "sum"),
+        actual_mw=("actual_mw", "sum"),
+        pred_mw=("pred_mw", "sum"),
         n_sites=("site_id", "nunique"),
         sample_count=("site_id", "size"),
         capacity_sum_mw=("capacity_mw", "sum"),
+        pred_valid_sites=("pred_mw", "count"),
+        actual_positive_sites=("actual_mw", lambda s: int((s > 0).sum())),
+        zero_pred_sites=("pred_mw", lambda s: int((pd.to_numeric(s, errors="coerce").fillna(0) == 0).sum())),
     ).reset_index()
 
     city["abs_error_mw"] = (city["pred_mw"] - city["actual_mw"]).abs()
@@ -405,7 +408,9 @@ def export_city_series(df, dashboard_root):
     city["split"] = city["time"].map(split_map).fillna("unknown")
 
     cols = ["time", "date", "hour", "split", "actual_mw", "pred_mw",
-            "n_sites", "sample_count", "capacity_sum_mw", "abs_error_mw", "city_nrmse_point_pct"]
+            "n_sites", "sample_count", "capacity_sum_mw", "abs_error_mw",
+            "city_nrmse_point_pct", "pred_valid_sites", "actual_positive_sites",
+            "zero_pred_sites"]
 
     records = city[cols].to_dict(orient="records")
     for r in records:
