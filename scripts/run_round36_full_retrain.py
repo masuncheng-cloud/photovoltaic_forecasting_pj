@@ -15,6 +15,12 @@ Round36 完整重训流程调度脚本。
   9. posttrain_validation_round36.py  — 全链路验证
  10. regenerate_project_report_round36.py — 项目报告
 
+Round44 修正（无需重训时使用 run_round44_training_logic_fix.py）：
+  - round41_42_unified_daytime_and_site_calibration.py（valid-only daytime source + gated site cal）
+  - update_dashboard_after_training.py（dashboard 自动刷新）
+  - check_dashboard_auto_update_stamp.py
+  - round44_dashboard_regression_check.py
+
 用法：
   python scripts/run_round36_full_retrain.py
 """
