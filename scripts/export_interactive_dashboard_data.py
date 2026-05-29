@@ -1499,25 +1499,27 @@ def export_hourly_prediction_summary(output_root, dashboard_root, final_df=None,
                 city_nrmse_by_hour = df_csv[["hour", "city_nrmse_pct"]].copy()
             compute_from_df = True  # still need rows and site_nrmse
 
-    # Always compute rows and site_nrmse from eval_df
-    if compute_from_df and final_df is not None:
-        eval_df = build_eval_frame_for_dashboard(final_df)
-        rows_by_hour = eval_df.groupby("hour").size().reset_index(name="rows")
-        site_nrmse_by_hour = (
-            eval_df.groupby("hour")
+        # 正确口径：先按 (site_id, hour) 算 RMSE/capacity，再对站点取平均
+        # 不再直接 groupby("hour") 混用所有站点
+        def rmse(x):
+            return float(np.sqrt(np.mean(np.square(np.asarray(x, dtype=float)))))
+
+        eval_df = eval_df.copy()
+        eval_df["err"] = pd.to_numeric(eval_df["power_pred"], errors="coerce") - pd.to_numeric(eval_df["power_mw"], errors="coerce")
+        eval_df["capacity_mw_num"] = pd.to_numeric(eval_df["capacity_mw"], errors="coerce")
+
+        site_hour_rmse = (
+            eval_df.groupby(["site_id", "hour"])
             .apply(
-                lambda g: float(
-                    np.sqrt(
-                        ((pd.to_numeric(g["power_pred"], errors="coerce") -
-                          pd.to_numeric(g["power_mw"], errors="coerce")) ** 2
-                        ).mean()
-                    )
-                )
-                / max(float(pd.to_numeric(g["capacity_mw"], errors="coerce").median()), 1e-9)
-                * 100,
+                lambda g: rmse(g["err"]) / max(float(g["capacity_mw_num"].mean()), 1e-9) * 100,
                 include_groups=False,
             )
-        ).reset_index(name="site_nrmse_mean_pct")
+        ).reset_index(name="nrmse_pct")
+
+        rows_by_hour = eval_df.groupby("hour").size().reset_index(name="rows")
+        site_nrmse_by_hour = site_hour_rmse.groupby("hour")["nrmse_pct"].mean().reset_index(name="site_avg_nrmse_pct")
+        site_nrmse_by_hour["site_avg_nrmse_pct"] = site_nrmse_by_hour["site_avg_nrmse_pct"].round(3)
+
         hourly = rows_by_hour.merge(site_nrmse_by_hour, on="hour", how="outer")
         if city_nrmse_by_hour is not None:
             hourly = hourly.merge(city_nrmse_by_hour, on="hour", how="left")
@@ -1531,9 +1533,9 @@ def export_hourly_prediction_summary(output_root, dashboard_root, final_df=None,
     # Build output
     hourly["hour"] = hourly["hour"].astype(int)
     hourly["rows"] = hourly.get("rows", pd.Series(dtype=float)).fillna(0).astype(int)
-    hourly["site_nrmse_mean_pct"] = hourly.get("site_nrmse_mean_pct", pd.Series(dtype=float)).fillna(0).round(2)
+    hourly["site_avg_nrmse_pct"] = hourly.get("site_avg_nrmse_pct", pd.Series(dtype=float)).fillna(0).round(3)
     hourly["city_nrmse_pct"] = hourly.get("city_nrmse_pct", pd.Series(dtype=float)).fillna(0).round(3)
-    hourly = hourly.sort_values("hour")[["hour", "rows", "site_nrmse_mean_pct", "city_nrmse_pct"]].reset_index(drop=True)
+    hourly = hourly.sort_values("hour")[["hour", "rows", "site_avg_nrmse_pct", "city_nrmse_pct"]].reset_index(drop=True)
 
     out_path = Path(dashboard_root) / "hourly_prediction_summary.json"
     records = hourly.to_dict(orient="records")
