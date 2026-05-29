@@ -949,11 +949,7 @@ tbody td {
           <tr>
             <th>小时（时）</th>
             <th>样本数（行）</th>
-            <th>站点数</th>
             <th>站点平均 NRMSE（%）</th>
-            <th>站点中位 NRMSE（%）</th>
-            <th>有效发电站点均NRMSE（%）</th>
-            <th>平均0值占比（%）</th>
             <th>城市 NRMSE（%）</th>
           </tr>
         </thead>
@@ -962,7 +958,7 @@ tbody td {
     </div>
   </div>
   <p class="note">
-    说明：站点平均 NRMSE 先按每个站点在该小时所有测试日期上计算 RMSE/capacity，再对站点取平均；有效发电口径仅统计 actual_mw > max(0.02×capacity_mw, 0.05MW) 的样本。该表使用测试集 6-19 点数据。
+    说明：站点平均 NRMSE 按"先对每个站点在该小时计算 NRMSE，再对站点取平均"的口径统计；城市 NRMSE 按全市同一小时总功率聚合后计算。样本数为测试集该小时参与统计的站点-时间记录数。
   </p>
 </section>
 
