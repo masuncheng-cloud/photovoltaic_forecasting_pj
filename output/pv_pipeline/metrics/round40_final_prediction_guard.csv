@@ -1,0 +1,5 @@
+﻿check,status,value,threshold
+edge_suspicious_city_zero,PASS,0.0,0.0
+midday_city_nrmse_not_worse_than_cal_by_3pp,PASS,0.255397,3.0
+overall_city_nrmse_under_10pct,PASS,4.980628,10.0
+overall_city_abs_bias_under_15pct,FAIL,16.60114,15.0

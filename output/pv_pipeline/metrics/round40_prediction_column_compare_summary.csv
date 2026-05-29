@@ -1,0 +1,4 @@
+﻿pred_col,rows,site_count,city_samples,city_mae_mw,city_rmse_mw,city_capacity_mw,city_nrmse_pct,city_bias_pct,city_pred_actual,site_mean_nrmse_pct,site_median_nrmse_pct,edge_samples,edge_city_nrmse_pct,edge_city_bias_pct,edge_site_mean_nrmse_pct,edge_site_median_nrmse_pct,midday_samples,midday_city_nrmse_pct,midday_city_bias_pct,midday_site_mean_nrmse_pct,midday_site_median_nrmse_pct
+power_pred_final,116144,68,1708,14.011801,19.359574,388.69748,4.980628,-16.60114,0.833989,12.33403,10.250006,33184,2.515274,-55.25824,4.565376,2.734298,41480,6.664437,-11.01229,17.17566,14.234092
+power_pred_cal,116144,68,1708,13.668186,18.909319,388.69748,4.864791,-15.388551,0.846114,13.112992,10.329188,33184,2.560497,-56.999617,4.567711,2.723073,41480,6.40904,-9.081725,18.332782,13.801849
+power_pred,116144,68,1708,14.126772,19.494408,388.69748,5.015316,8.232734,1.082327,11.70858,9.807168,33184,2.404472,-70.236779,3.462176,1.470985,41480,7.364041,16.604263,16.263917,14.155544
