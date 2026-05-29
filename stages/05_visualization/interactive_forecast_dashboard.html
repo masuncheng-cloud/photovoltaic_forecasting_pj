@@ -1719,39 +1719,73 @@ function ensureDefaultSiteSelected() {
 }
 
 function setSelectedSiteInUI(siteId) {
-  if (!siteId) return;
+  if (!siteId) {
+    console.warn("[setSelectedSiteInUI] empty siteId");
+    return;
+  }
+
+  siteId = String(siteId).trim();
 
   state.scope = "site";
   state.siteId = siteId;
 
-  const siteRadio = document.querySelector('input[name="scope"][value="site"]');
-  const cityRadio = document.querySelector('input[name="scope"][value="city"]');
+  // 1. Sync radios
+  const siteRadio =
+    document.querySelector('input[name="scope"][value="site"]') ||
+    document.querySelector('input[name="display-scope"][value="site"]');
+  const cityRadio =
+    document.querySelector('input[name="scope"][value="city"]') ||
+    document.querySelector('input[name="display-scope"][value="city"]');
+
   if (siteRadio) siteRadio.checked = true;
   if (cityRadio) cityRadio.checked = false;
 
+  // 2. Find site select
   const siteSelect =
     document.getElementById("site-select") ||
-    document.getElementById("siteSelect");
+    document.getElementById("siteSelect") ||
+    document.querySelector('select[name="site_id"]') ||
+    document.querySelector('select[name="siteId"]');
 
-  if (siteSelect) {
-    const options = Array.from(siteSelect.options);
-    const matched = options.find(opt => opt.value === siteId);
-    if (matched) {
-      siteSelect.value = siteId;
-    } else {
-      console.warn("[setSelectedSiteInUI] site option not found:", siteId);
-    }
-  }
-
+  // 3. Show site select wrapper
   const siteSelectWrap =
     document.getElementById("site-select-group") ||
     document.getElementById("site-select-wrap") ||
-    document.querySelector(".site-select-wrap");
+    document.getElementById("siteSelectWrap") ||
+    document.querySelector(".site-select-wrap") ||
+    document.querySelector(".station-select-wrap") ||
+    (siteSelect ? siteSelect.closest(".control-group") : null) ||
+    (siteSelect ? siteSelect.parentElement : null);
 
   if (siteSelectWrap) {
     siteSelectWrap.style.display = "";
     siteSelectWrap.hidden = false;
+    siteSelectWrap.classList.remove("hidden", "is-hidden", "d-none");
   }
+
+  // 4. Sync select value
+  if (siteSelect) {
+    const options = Array.from(siteSelect.options || []);
+    const hasOption = options.some(opt => opt.value === siteId);
+    if (hasOption) {
+      siteSelect.value = siteId;
+    } else {
+      console.warn("[setSelectedSiteInUI] site option not found:", siteId, options.slice(0, 5).map(o => o.value));
+    }
+    siteSelect.disabled = false;
+    siteSelect.style.display = "";
+    siteSelect.hidden = false;
+  } else {
+    console.warn("[setSelectedSiteInUI] site select element not found");
+  }
+
+  console.info("[setSelectedSiteInUI]", {
+    siteId,
+    scope: state.scope,
+    selectValue: siteSelect?.value,
+    wrapDisplay: siteSelectWrap?.style?.display,
+    wrapHidden: siteSelectWrap?.hidden,
+  });
 }
 
 function preserveSiteSelectionIfNeeded() {
@@ -3391,37 +3425,21 @@ document.addEventListener("DOMContentLoaded", () => {
   // Typical sites buttons — now use typical_sites.json with fallback
   async function selectTypicalSite(category) {
     const sid = pickTypicalSite(category);
-    if (!sid) return;
-
-    console.info("[selectTypicalSite]", { category, sid, scope: state.scope });
-
-    state.scope = "site";
-    state.siteId = sid;
-
-    const siteRadio = document.querySelector('input[name="scope"][value="site"]');
-    if (siteRadio) siteRadio.checked = true;
-    const cityRadio = document.querySelector('input[name="scope"][value="city"]');
-    if (cityRadio) cityRadio.checked = false;
-
-    // Show site select wrap
-    const siteSelectWrap =
-      document.getElementById("site-select-wrap") ||
-      document.getElementById("siteSelectWrap") ||
-      document.querySelector(".site-select-wrap");
-    if (siteSelectWrap) siteSelectWrap.style.display = "";
-
-    const siteSelect = document.getElementById("site-select") || document.getElementById("siteSelect");
-    if (siteSelect) {
-      const hasOption = Array.from(siteSelect.options).some(opt => opt.value === sid);
-      if (hasOption) {
-        siteSelect.value = sid;
-      } else {
-        console.warn("[selectTypicalSite] site option not found:", sid);
-      }
+    if (!sid) {
+      console.warn("[selectTypicalSite] no site for category", category, gTypicalSites);
+      return;
     }
 
+    setSelectedSiteInUI(sid);
     await ensureSiteRows(sid);
     await refreshAll();
+
+    console.info("[selectTypicalSite]", {
+      category,
+      sid,
+      scope: state.scope,
+      siteId: state.siteId,
+    });
   }
   document.getElementById("btn-best")?.addEventListener("click", () => selectTypicalSite("best").catch(console.error));
   document.getElementById("btn-worst")?.addEventListener("click", () => selectTypicalSite("worst").catch(console.error));
