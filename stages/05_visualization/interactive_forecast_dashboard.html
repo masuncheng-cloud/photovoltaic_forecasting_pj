@@ -1819,42 +1819,47 @@ function pickSeasonDate(seasonKey) {
 async function selectSeasonDay(seasonKey) {
   syncStateFromControls();
 
-  const currentScope = state.scope;
-  const currentSiteId = state.siteId;
+  const beforeScope = state.scope;
+  const beforeSiteId = state.siteId;
 
-  const date = pickSeasonDate(seasonKey);
-  if (!date) {
-    console.warn("[selectSeasonDay] no date for season:", seasonKey);
+  const rep = pickSeasonRepresentative(seasonKey);
+  if (!rep || !rep.date) {
+    console.warn("[selectSeasonDay] no representative day for season", seasonKey, rep);
     return;
   }
 
-  console.info("[selectSeasonDay]", { seasonKey, date, scope: currentScope, siteId: currentSiteId });
-
-  // Keep scope and siteId from before the click
-  state.scope = currentScope;
-  state.siteId = currentSiteId;
-  state.startDate = date;
-  state.endDate = date;
+  state.startDate = rep.date;
+  state.endDate = rep.date;
   state.startHour = 6;
   state.endHour = 19;
-  setDateComboValue("start", date);
-  setDateComboValue("end", date);
-  document.getElementById("start-date").value = date;
-  document.getElementById("end-date").value = date;
+  setDateComboValue("start", rep.date);
+  setDateComboValue("end", rep.date);
+  document.getElementById("start-date").value = rep.date;
+  document.getElementById("end-date").value = rep.date;
   syncHourSelects();
 
-  const siteRadio = document.querySelector('input[name="scope"][value="site"]');
-  const cityRadio = document.querySelector('input[name="scope"][value="city"]');
-  if (state.scope === "site") {
-    if (siteRadio) siteRadio.checked = true;
-    if (cityRadio) cityRadio.checked = false;
-    preserveSiteSelectionIfNeeded();
-    if (state.siteId) await ensureSiteRows(state.siteId);
+  // If season_days gives a representative site, use it; otherwise keep the pre-click site
+  const targetSiteId = rep.siteId || beforeSiteId;
+
+  if (beforeScope === "site" || targetSiteId) {
+    setSelectedSiteInUI(targetSiteId);
+    if (targetSiteId) await ensureSiteRows(targetSiteId);
   } else {
+    state.scope = "city";
+    const cityRadio = document.querySelector('input[name="scope"][value="city"]');
+    const siteRadio = document.querySelector('input[name="scope"][value="site"]');
     if (cityRadio) cityRadio.checked = true;
     if (siteRadio) siteRadio.checked = false;
-    preserveSiteSelectionIfNeeded();
   }
+
+  console.info("[selectSeasonDay]", {
+    seasonKey,
+    date: rep.date,
+    representativeSiteId: rep.siteId,
+    representativeSiteName: rep.siteName,
+    targetSiteId: state.siteId,
+    scope: state.scope,
+  });
 
   await refreshAll();
 }
