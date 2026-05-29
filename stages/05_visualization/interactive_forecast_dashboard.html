@@ -1726,8 +1726,8 @@ function preserveSiteSelectionIfNeeded() {
   }
 
   const siteSelectWrap =
+    document.getElementById("site-select-group") ||
     document.getElementById("site-select-wrap") ||
-    document.getElementById("siteSelectWrap") ||
     document.querySelector(".site-select-wrap");
 
   if (siteSelectWrap) {
