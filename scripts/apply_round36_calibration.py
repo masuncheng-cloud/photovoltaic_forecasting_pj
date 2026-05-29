@@ -193,6 +193,32 @@ def main():
     df["power_pred_final"] = df["power_pred_final"].clip(lower=0)
     df["power_pred_final"] = df[["power_pred_final", "capacity_mw"]].min(axis=1)
 
+    # ── Round40 小时级最终列选择 ───────────────────────────────
+    # 背景：守门失败（BIAS=-16.6%），原因是 power_pred_cal 整体偏低
+    # 修复：边缘小时(6/7/18/19) 用 power_pred_cal*ratio（避免 ghi<5 硬置零），
+    #       其他小时(8-17) 用 power_pred*ratio（保持更优的 BIAS）
+    print("\n[Round40] 应用小时级最终列选择...")
+    EDGE_HOURS = [6, 7, 18, 19]
+    edge_mask = df["hour"].isin(EDGE_HOURS)
+
+    # 非边缘小时：重新用 power_pred（未校准）计算校准后预测
+    has_ratio_mask = df["calibrated_ratio"] != 1.0
+    non_edge_with_ratio = (~edge_mask) & has_ratio_mask
+
+    if non_edge_with_ratio.any():
+        # 对非边缘有校准的行：用 power_pred * ratio 替代
+        df.loc[non_edge_with_ratio, "power_pred_final"] = (
+            pd.to_numeric(df.loc[non_edge_with_ratio, "power_pred"], errors="coerce").fillna(0) *
+            df.loc[non_edge_with_ratio, "calibrated_ratio"]
+        ).clip(lower=0)
+        # 再 clip 到容量上限
+        cap_vals = pd.to_numeric(df.loc[non_edge_with_ratio, "capacity_mw"], errors="coerce").fillna(1e6)
+        df.loc[non_edge_with_ratio, "power_pred_final"] = df.loc[non_edge_with_ratio, "power_pred_final"].clip(upper=cap_vals)
+        n_fixed = int(non_edge_with_ratio.sum())
+        print(f"  非边缘小时({n_fixed:,}行) 已替换为 power_pred*ratio")
+    else:
+        print("  无非边缘校准行，跳过")
+
     # ── 回退逻辑 ───────────────────────────────────────────
     print("\n评估回退（使用 test 6-19h）...")
     test_eval = test_df[test_df["hour"].between(6, 19)].copy()
