@@ -105,16 +105,16 @@ CACHE_PATTERNS = [
 
 # ── 归档分类规则 ────────────────────────────────────────────────────────────────
 ARCHIVE_SCRIPT_PATTERNS = [
-    # Round 1-44 临时诊断/报告脚本
-    ("round1", "round2", "round3", "round4", "round5",
-     "round6", "round7", "round8", "round9", "round10",
-     "round11", "round12", "round13", "round14", "round15",
-     "round16", "round17", "round18", "round19", "round20",
-     "round21", "round22", "round23", "round24", "round25",
-     "round26", "round27", "round28", "round29", "round30",
-     "round31", "round32", "round33", "round34", "round35",
-     "round36", "round37", "round38", "round39",
-     "round40", "round41", "round42", "round43", "round44", "round45"),
+    # Round 1-45 临时诊断/报告脚本
+    "round1", "round2", "round3", "round4", "round5",
+    "round6", "round7", "round8", "round9", "round10",
+    "round11", "round12", "round13", "round14", "round15",
+    "round16", "round17", "round18", "round19", "round20",
+    "round21", "round22", "round23", "round24", "round25",
+    "round26", "round27", "round28", "round29", "round30",
+    "round31", "round32", "round33", "round34", "round35",
+    "round36", "round37", "round38", "round39",
+    "round40", "round41", "round42", "round43", "round44", "round45",
     # 旧归档脚本（已被新的替代）
     "archive_stale_outputs_round7.py",
     "archive_stale_artifacts_round14.py",
