@@ -3130,16 +3130,22 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // Date/hours — date changes handled by bindDateComboEvents(); hour changes handled by bindHourSelectEvents()
 
-  // Typical sites buttons
+  // Typical sites buttons — now use typical_sites.json (not site_metrics rankings)
   async function selectTypical(category) {
-    const sites = gSiteMetrics.filter(s => s.category === category);
-    if (!sites.length) return;
-    await selectSite(sites[0].site_id);
+    const norm = window.gTypicalSitesNorm || {};
+    const map = { best: norm.best, worst: norm.worst, normal: norm.normal, low_sample: norm.small };
+    const list = map[category];
+    if (!list || !list.length) {
+      console.warn("[selectTypical] empty category:", category, norm);
+      return;
+    }
+    const sid = list[0];
+    await selectSite(sid);
   }
-  document.getElementById("btn-best").addEventListener("click", () => selectTypical("best"));
-  document.getElementById("btn-worst").addEventListener("click", () => selectTypical("worst"));
-  document.getElementById("btn-normal").addEventListener("click", () => selectTypical("normal"));
-  document.getElementById("btn-low").addEventListener("click", () => selectTypical("low_sample"));
+  document.getElementById("btn-best")?.addEventListener("click", () => selectTypical("best").catch(console.error));
+  document.getElementById("btn-worst")?.addEventListener("click", () => selectTypical("worst").catch(console.error));
+  document.getElementById("btn-normal")?.addEventListener("click", () => selectTypical("normal").catch(console.error));
+  document.getElementById("btn-low")?.addEventListener("click", () => selectTypical("low_sample").catch(console.error));
 
   // Midday buttons — current date range 10-14
   const btnCurrentMidday = document.getElementById("btn-current-midday");
