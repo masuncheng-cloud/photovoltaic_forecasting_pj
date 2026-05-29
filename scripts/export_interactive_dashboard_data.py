@@ -288,7 +288,7 @@ def export_index(df, site_names, dashboard_root, round_name="unknown", pred_col=
         ),
         "min_date": min_date,
         "max_date": max_date,
-        "default_start_date": min_date,
+        "default_start_date": "2025-09-01",
         "default_end_date": max_date,
         "total_rows": int(len(history_df)),
         "total_sites": int(history_df["site_id"].nunique()),
