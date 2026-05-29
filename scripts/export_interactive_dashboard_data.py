@@ -1497,6 +1497,8 @@ def export_hourly_prediction_summary(output_root, dashboard_root, final_df=None,
                 city_nrmse_by_hour = df_csv.groupby("hour")["city_nrmse_pct"].mean().reset_index()
             else:
                 city_nrmse_by_hour = df_csv[["hour", "city_nrmse_pct"]].copy()
+            city_nrmse_by_hour["hour"] = pd.to_numeric(city_nrmse_by_hour["hour"], errors="coerce")
+            city_nrmse_by_hour = city_nrmse_by_hour.dropna(subset=["hour"]).groupby("hour")["city_nrmse_pct"].mean().reset_index()
             compute_from_df = True  # still need rows and site_nrmse
 
         # 正确口径：先按 (site_id, hour) 算 RMSE/capacity，再对站点取平均
