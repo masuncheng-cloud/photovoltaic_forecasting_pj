@@ -179,6 +179,12 @@ def load_predictions(output_root):
     pred_col = resolve_prediction_column(df)
     print(f"  [AUTO] Prediction column: {pred_col}")
 
+    if "power_pred_final" in df.columns and pred_col != "power_pred_final":
+        raise RuntimeError(
+            f"检测到 power_pred_final 存在，但导出脚本选择了 {pred_col}，"
+            f"请修复预测列优先级"
+        )
+
     # ── ensure standard columns exist ────────────────────────────────────────
     df["time"] = pd.to_datetime(df["time"], errors="coerce")
     if "hour" not in df.columns:
