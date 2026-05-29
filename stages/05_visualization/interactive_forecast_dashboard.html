@@ -1113,6 +1113,81 @@ let lineZoom = {
 // ============================================================
 let dateComboBound = false;
 
+// ============================================================
+// TYPICAL SITES NORMALIZATION
+// ============================================================
+function normalizeTypicalSites(raw) {
+  const result = { best: [], worst: [], normal: [], small: [] };
+  if (!raw) return result;
+
+  // 情况1：typical_sites.json 是对象格式
+  if (!Array.isArray(raw) && typeof raw === "object") {
+    const pick = (...keys) => {
+      for (const k of keys) {
+        if (Array.isArray(raw[k])) {
+          return raw[k].map(x => typeof x === "string" ? x : x.site_id).filter(Boolean);
+        }
+      }
+      return [];
+    };
+    result.best = pick("best", "预测最好", "typical_best_site_ids", "best_site_ids");
+    result.worst = pick("worst", "预测最差", "typical_worst_site_ids", "worst_site_ids");
+    result.normal = pick("normal", "relative_correct", "相对正确", "typical_normal_site_ids", "correct_site_ids");
+    result.small = pick("small", "sample_small", "样本少", "typical_small_site_ids", "small_site_ids");
+    return result;
+  }
+
+  // 情况2：typical_sites.json 是列表格式（和 round36_typical_sites.csv 一致）
+  if (Array.isArray(raw)) {
+    for (const item of raw) {
+      const sid = item.site_id || item.station_id || item.id;
+      const label = String(item.category || item.category_label || item.type || item["类型"] || "");
+      if (!sid) continue;
+      if (label.includes("最好") || label === "best") result.best.push(sid);
+      else if (label.includes("最差") || label === "worst") result.worst.push(sid);
+      else if (label.includes("正确") || label === "normal" || label.includes("相对")) result.normal.push(sid);
+      else if (label.includes("样本") || label === "small" || label.includes("low_sample")) result.small.push(sid);
+    }
+  }
+  return result;
+}
+
+function renderVersionWarning() {
+  const el = document.getElementById("data-version-warning");
+  if (!el) return;
+
+  const messages = [];
+
+  if (!window.gMetadata) {
+    messages.push("metadata.json 未加载。");
+  } else {
+    if (window.gMetadata.round && window.gMetadata.round !== "Round36") {
+      messages.push(`当前数据版本为 ${window.gMetadata.round}，不是 Round36。`);
+    }
+    if (window.gMetadata.prediction_column && window.gMetadata.prediction_column !== "power_pred_final") {
+      messages.push(`当前预测列为 ${window.gMetadata.prediction_column}，不是 power_pred_final。`);
+    }
+  }
+
+  const norm = window.gTypicalSitesNorm || {};
+  const best = norm.best || [];
+  const worst = norm.worst || [];
+  const normal = norm.normal || [];
+  const small = norm.small || [];
+  if (!best.length) messages.push("typical_sites.json 中缺少预测最好站点。");
+  if (!worst.length) messages.push("typical_sites.json 中缺少预测最差站点。");
+
+  console.info("[renderVersionWarning] messages:", messages.length, messages);
+
+  if (messages.length) {
+    el.style.display = "block";
+    el.textContent = "警告：" + messages.join(" ");
+  } else {
+    el.style.display = "none";
+    el.textContent = "";
+  }
+}
+
 function parseDateParts(dateStr) {
   const [y, m, d] = String(dateStr || "").split("-").map(x => parseInt(x, 10));
   return {
