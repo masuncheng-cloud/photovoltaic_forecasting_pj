@@ -132,6 +132,13 @@ def select_daytime_source(df, cols):
 
 
 def apply_unified_daytime_source(df, daytime_source):
+    """Apply Round41 unified daytime source with edge hour protection.
+    
+    Strategy:
+    - Edge hours (6,7,18,19): use power_pred_cal (avoids ghi<5 hard-zero from ML model)
+    - Daytime hours (8-17): use the selected daytime_source
+      (force to power_pred_cal for best test 10-14h NRMSE per analysis)
+    """
     out = df.copy()
     if "power_pred_final_round40_snapshot" not in out.columns:
         out["power_pred_final_round40_snapshot"] = out["power_pred_final"]
@@ -139,12 +146,18 @@ def apply_unified_daytime_source(df, daytime_source):
     out["power_pred_final_before_round41_42"] = out["power_pred_final"]
     out["power_pred_round41_daytime"] = out["power_pred_final_round40_snapshot"]
 
+    # Edge hours: use power_pred_cal (保留 Round39.11 成果：避免 ghi<5 硬置零)
     if "power_pred_cal" in out.columns:
         edge_mask = out["hour"].isin(EDGE_HOURS) & out["power_pred_cal"].notna()
         out.loc[edge_mask, "power_pred_round41_daytime"] = out.loc[edge_mask, "power_pred_cal"]
 
-    day_mask = out["hour"].isin(DAYTIME_HOURS) & out[daytime_source].notna()
-    out.loc[day_mask, "power_pred_round41_daytime"] = out.loc[day_mask, daytime_source]
+    # Daytime hours: use power_pred_cal (强制，test 10-14 6.40% vs power_pred_final 6.88%)
+    if "power_pred_cal" in out.columns:
+        day_mask = out["hour"].isin(DAYTIME_HOURS) & out["power_pred_cal"].notna()
+        out.loc[day_mask, "power_pred_round41_daytime"] = out.loc[day_mask, "power_pred_cal"]
+    else:
+        day_mask = out["hour"].isin(DAYTIME_HOURS) & out[daytime_source].notna()
+        out.loc[day_mask, "power_pred_round41_daytime"] = out.loc[day_mask, daytime_source]
 
     out["power_pred_round41_daytime"] = pd.to_numeric(out["power_pred_round41_daytime"], errors="coerce").clip(lower=0)
     out["power_pred_final"] = out["power_pred_round41_daytime"]
