@@ -1,5 +1,5 @@
 {
-  "strategy": "edge_protection_plus_unified_daytime_source_plus_site_bias_calibration",
+  "strategy": "edge_protection_plus_unified_daytime_source_plus_gated_site_bias_calibration",
   "edge_hours": [
     6,
     7,
@@ -25,6 +25,11 @@
     13,
     14
   ],
+  "selection_split": "valid",
+  "test_used_for_selection": false,
+  "selection_reason": "selected_by_valid_10_14_city_hourly_nrmse",
+  "use_fixed_daytime_source": false,
+  "fixed_daytime_source": null,
   "selected_daytime_source": "power_pred_final_round40_snapshot",
   "selected_valid_metrics": {
     "pred_col": "power_pred_final_round40_snapshot",

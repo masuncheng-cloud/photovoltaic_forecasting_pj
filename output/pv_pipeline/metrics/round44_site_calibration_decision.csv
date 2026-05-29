@@ -1,0 +1,2 @@
+﻿decision,use_site_calibration,site_improve_valid_pp,city_delta_valid_pp,bias_valid_pct,bias_ok,eval_no_cal_city_nrmse,eval_no_cal_site_mean_nrmse,eval_no_cal_bias,eval_with_cal_city_nrmse,eval_with_cal_site_mean_nrmse,eval_with_cal_bias
+disabled_fallback_to_no_cal,False,-0.273952,0.002994,-1.486369,True,5.393474,15.490353,-2.887998,5.396468,15.764304,-1.486369

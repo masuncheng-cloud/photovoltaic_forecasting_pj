@@ -1,0 +1,26 @@
+[
+  {
+    "decision": "disabled_fallback_to_no_cal",
+    "use_site_calibration": false,
+    "site_improve_valid_pp": -0.273952,
+    "city_delta_valid_pp": 0.002994,
+    "bias_valid_pct": -1.486369,
+    "bias_ok": true,
+    "eval_no_cal_valid": {
+      "split": "valid",
+      "pred_col": "tmp_pred",
+      "city_nrmse_pct": 5.393473701662524,
+      "city_bias_pct": -2.887997785279642,
+      "site_mean_nrmse_pct": 15.49035250905124,
+      "site_median_nrmse_pct": 14.638862522270571
+    },
+    "eval_with_cal_valid": {
+      "split": "valid",
+      "pred_col": "tmp_pred",
+      "city_nrmse_pct": 5.3964677955100075,
+      "city_bias_pct": -1.4863686623044996,
+      "site_mean_nrmse_pct": 15.764304477234889,
+      "site_median_nrmse_pct": 14.762576175974672
+    }
+  }
+]
