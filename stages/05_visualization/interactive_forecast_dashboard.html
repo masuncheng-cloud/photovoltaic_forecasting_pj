@@ -3192,7 +3192,7 @@ function drawHourlyNrmseChart() {
   svg.setAttribute("height", H);
 
   const hours = data.map(d => d.hour);
-  const siteVals = data.map(d => d.site_nrmse_mean_pct);
+  const siteVals = data.map(d => d.site_avg_nrmse_pct);
   const cityVals = data.map(d => d.city_nrmse_pct);
 
   const maxX = 19;
@@ -3283,7 +3283,7 @@ function drawHourlyNrmseChart() {
     g.appendChild(line);
   }
 
-  buildLinePoints(siteVals, "#2563eb", "site_nrmse_mean_pct");
+  buildLinePoints(siteVals, "#2563eb", "site_avg_nrmse_pct");
   buildLinePoints(cityVals, "#f97316", "city_nrmse_pct");
 
   // Legend
