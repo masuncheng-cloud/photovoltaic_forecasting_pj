@@ -3113,29 +3113,21 @@ document.addEventListener("DOMContentLoaded", () => {
   // Midday buttons — current date range 10-14
   const btnCurrentMidday = document.getElementById("btn-current-midday");
   if (btnCurrentMidday) {
-    btnCurrentMidday.addEventListener("click", () => {
+    btnCurrentMidday.addEventListener("click", async () => {
       // Keep current scope (city or site), only change hour range
       state.startHour = 10;
       state.endHour = 14;
-
-      // Sync radio only if in city mode
-      if (state.scope === "city") {
-        const cityRadio = document.querySelector('input[name="scope"][value="city"]');
-        if (cityRadio) cityRadio.checked = true;
-      }
-
       syncHourSelects();
-
-      if (typeof onScopeChange === "function") onScopeChange();
+      if (typeof onScopeChange === "function") await onScopeChange();
       if (!validateDateRange(true)) return;
-      refreshAll();
+      await refreshAll();
     });
   }
 
   // Typical midday date
   const btnTypicalMidday = document.getElementById("btn-typical-midday");
   if (btnTypicalMidday) {
-    btnTypicalMidday.addEventListener("click", () => {
+    btnTypicalMidday.addEventListener("click", async () => {
       if (!gMiddayByDate || !gMiddayByDate.length) {
         alert("没有可用的全市10-14典型日数据");
         return;
@@ -3173,10 +3165,9 @@ document.addEventListener("DOMContentLoaded", () => {
       syncHiddenDateInputs();
 
       syncHourSelects();
-
-      if (typeof onScopeChange === "function") onScopeChange();
+      if (typeof onScopeChange === "function") await onScopeChange();
       validateDateRange(false);
-      refreshAll();
+      await refreshAll();
     });
   }
 
@@ -3184,7 +3175,7 @@ document.addEventListener("DOMContentLoaded", () => {
   ["spring", "summer", "autumn", "winter"].forEach(s => {
     const btn = document.getElementById("btn-" + s);
     if (!btn) return;
-    btn.addEventListener("click", () => {
+    btn.addEventListener("click", async () => {
       const season = gSeasonDays.find(sd => sd.season === s);
       if (!season || !season.available) return;
       state.scope = "city";
@@ -3200,13 +3191,21 @@ document.addEventListener("DOMContentLoaded", () => {
       state.startHour = 6;
       state.endHour = 19;
       syncHourSelects();
-      onScopeChange();
-      refreshAll();
+      await onScopeChange();
+      await refreshAll();
     });
   });
 
   // Refresh
-  document.getElementById("btn-refresh").addEventListener("click", refreshAll);
+  document.getElementById("btn-refresh").addEventListener("click", async () => {
+    // Reload all data fresh
+    if (state.scope === "site" && state.siteId) {
+      // Invalidate cache for current site
+      delete siteSeriesCache[state.siteId];
+      await ensureSiteRows(state.siteId);
+    }
+    await refreshAll();
+  });
 
   // Scatter x-axis toggle (new site-level scatter)
   document.querySelectorAll(".tab-btn").forEach(btn => {
