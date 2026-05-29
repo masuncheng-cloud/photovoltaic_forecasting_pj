@@ -204,10 +204,11 @@ def main():
             continue
         cap = site_test["capacity_mw"].iloc[0]
 
-        # 校准前 NRMSE
+        # 校准前 NRMSE（用 physics-calibrated pred_cal）
         nrmse_before = nrmse(
             site_test["power_mw"].values,
-            site_test["power_pred"].values, cap)
+            (pd.to_numeric(site_test["power_pred_cal"], errors="coerce")
+             if "power_pred_cal" in site_test else site_test["power_pred"]).values, cap)
 
         # 校准后 NRMSE（从 df 中获取）
         site_pred_final = df.loc[site_test.index, "power_pred_final"]
@@ -230,8 +231,10 @@ def main():
         print(f"  回退 {len(rollback_sids)} 个站点（test NRMSE 恶化 > {ROLLBACK_THRESHOLD_PCT}%）:")
         for _, r in rollback_df.iterrows():
             print(f"    {r['site_id']}: {r['nrmse_before']:.2f}% → {r['nrmse_after']:.2f}% (Δ={r['delta']:+.2f}%)")
-        # 回退
+        # 回退：用 physics-calibrated pred_cal（避免 ghi<5 硬置零）
         df.loc[df["site_id"].isin(rollback_sids), "power_pred_final"] = \
+            df.loc[df["site_id"].isin(rollback_sids), "power_pred_cal"] \
+            if "power_pred_cal" in df.columns else \
             df.loc[df["site_id"].isin(rollback_sids), "power_pred"]
         df.loc[df["site_id"].isin(rollback_sids), "calibration_applied"] = False
         rollback_df.to_csv(METRICS / "round36_calibration_rollback.csv",
