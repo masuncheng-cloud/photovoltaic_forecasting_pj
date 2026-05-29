@@ -1482,7 +1482,40 @@ def export_hourly_prediction_summary(output_root, dashboard_root, final_df=None,
     compute_from_df = True
     city_nrmse_by_hour = None
     site_avg_nrmse_from_csv = None
-    if csv_path.exists():
+    if consistent_csv_path.exists():
+        # Prefer the _consistent CSV which has all fields pre-computed
+        print(f"  Loading consistent hourly CSV: {consistent_csv_path}")
+        df_cons = pd.read_csv(consistent_csv_path)
+        col_map = {
+            "小时": "hour", "小时（时）": "hour",
+            "站点平均NRMSE（%）": "site_avg_nrmse_pct",
+            "站点平均 NRMSE（%）": "site_avg_nrmse_pct",
+            "site_avg_nrmse_pct": "site_avg_nrmse_pct",
+            "城市NRMSE（%）": "city_nrmse_pct",
+            "城市 NRMSE（%）": "city_nrmse_pct",
+            "city_nrmse_pct": "city_nrmse_pct",
+        }
+        df_cons = df_cons.rename(columns={k: v for k, v in col_map.items() if k in df_cons.columns})
+        if "hour" in df_cons.columns:
+            df_cons["hour"] = pd.to_numeric(df_cons["hour"], errors="coerce")
+            df_cons = df_cons[df_cons["hour"].between(6, 19)]
+        if "city_nrmse_pct" in df_cons.columns:
+            city_nrmse_by_hour = df_cons[["hour", "city_nrmse_pct"]].copy()
+        if "site_avg_nrmse_pct" in df_cons.columns:
+            site_avg_nrmse_from_csv = df_cons[["hour", "site_avg_nrmse_pct"]].copy()
+        # Build hourly from CSV data directly (skip PKL computation)
+        if site_avg_nrmse_from_csv is not None:
+            rows_by_hour = eval_df.groupby("hour").size().reset_index(name="rows")
+            hourly = rows_by_hour.merge(site_avg_nrmse_from_csv, on="hour", how="left")
+            if city_nrmse_by_hour is not None:
+                hourly = hourly.merge(city_nrmse_by_hour, on="hour", how="left")
+        else:
+            rows_by_hour = eval_df.groupby("hour").size().reset_index(name="rows")
+            hourly = rows_by_hour.copy()
+            if city_nrmse_by_hour is not None:
+                hourly = hourly.merge(city_nrmse_by_hour, on="hour", how="left")
+        compute_from_df = False  # done, don't fall through
+    elif csv_path.exists():
         print(f"  Loading hourly CSV: {csv_path}")
         df_csv = pd.read_csv(csv_path)
         col_map = {
@@ -1526,7 +1559,6 @@ def export_hourly_prediction_summary(output_root, dashboard_root, final_df=None,
         rows_by_hour = eval_df.groupby("hour").size().reset_index(name="rows")
         site_nrmse_by_hour = site_hour_rmse.groupby("hour")["nrmse_pct"].mean().reset_index(name="site_avg_nrmse_pct")
         site_nrmse_by_hour["site_avg_nrmse_pct"] = site_nrmse_by_hour["site_avg_nrmse_pct"].round(3)
-
         hourly = rows_by_hour.merge(site_nrmse_by_hour, on="hour", how="outer")
         if city_nrmse_by_hour is not None:
             hourly = hourly.merge(city_nrmse_by_hour, on="hour", how="left")
