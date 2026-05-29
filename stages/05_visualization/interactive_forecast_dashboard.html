@@ -1407,23 +1407,25 @@ async function loadAll() {
   if (badgePredCol) badgePredCol.textContent = metaPredCol + (metaGenAt ? " | " + metaGenAt : "");
   if (verBadge) verBadge.style.display = "block";
 
-  // Version warning: check typical sites match expected
+  // Version warning: check metadata consistency
   const warningEl = document.getElementById("data-version-warning");
   const warningText = document.getElementById("version-warning-text");
   const validSites = (metrics || []).filter(s => !s.is_all_zero_history);
   const bestSites = [...validSites].sort((a, b) => (a.nrmse_pct || 999) - (b.nrmse_pct || 999)).slice(0, 5).map(s => s.site_id);
   const worstSites = [...validSites].sort((a, b) => (b.nrmse_pct || 0) - (a.nrmse_pct || 0)).slice(0, 5).map(s => s.site_id);
-  const bestMatch = gExpectedBestSites.every(v => bestSites.includes(v));
-  const worstMatch = gExpectedWorstSites.every(v => worstSites.includes(v));
-  const oldSites = ["S017", "S012", "S019", "S045", "S053", "S115"];
-  const hasOldSites = [...bestSites, ...worstSites].some(s => oldSites.includes(s));
-  if (!bestMatch || !worstMatch || hasOldSites) {
+  const expectedBest = (meta && meta.typical_best_site_ids) || gExpectedBestSites;
+  const expectedWorst = (meta && meta.typical_worst_site_ids) || gExpectedWorstSites;
+  const sameSet = (a, b) => a.length === b.length && a.every(x => b.includes(x));
+  const bestMatch = sameSet(bestSites, expectedBest);
+  const worstMatch = sameSet(worstSites, expectedWorst);
+  const predColOk = (meta && meta.prediction_column) ? meta.prediction_column === "power_pred_final" : true;
+  if (!bestMatch || !worstMatch || !predColOk) {
     if (warningEl) warningEl.style.display = "block";
     if (warningText) {
       const parts = [];
-      if (!bestMatch) parts.push(`预测最好站点不是 [${gExpectedBestSites.join(", ")}]（当前：[${bestSites.join(", ")}]）`);
-      if (!worstMatch) parts.push(`预测最差站点不是 [${gExpectedWorstSites.join(", ")}]（当前：[${worstSites.join(", ")}]）`);
-      if (hasOldSites) parts.push(`仍显示旧数据典型站点，请确认数据已刷新`);
+      if (!bestMatch) parts.push(`预测最好站点不是 [${expectedBest.join(", ")}]（当前：[${bestSites.join(", ")}]）`);
+      if (!worstMatch) parts.push(`预测最差站点不是 [${expectedWorst.join(", ")}]（当前：[${worstSites.join(", ")}]）`);
+      if (!predColOk) parts.push(`预测列为 ${meta.prediction_column}，不是 power_pred_final`);
       warningText.textContent = "警告：" + parts.join("；") + "。请重新运行 export_interactive_dashboard_data.py";
     }
   }

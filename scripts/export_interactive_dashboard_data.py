@@ -359,6 +359,22 @@ def write_metadata(dashboard_root, round_name, pred_col, source_path):
     return meta
 
 
+def export_typical_sites(dashboard_root, output_root, round_name):
+    """Export typical_sites.json from round-specific metrics, no fallback to old rounds."""
+    metrics_dir = Path(output_root) / "metrics"
+    round_num = "".join(filter(str.isdigit, round_name))
+    typical_csv = metrics_dir / f"round{round_num}_typical_sites.csv"
+    if not typical_csv.exists():
+        raise FileNotFoundError(f"典型站点文件不存在: {typical_csv}")
+    typical_df = pd.read_csv(typical_csv)
+    records = typical_df.to_dict(orient="records")
+    out_path = Path(dashboard_root) / "typical_sites.json"
+    with open(out_path, "w", encoding="utf-8") as f:
+        json.dump(records, f, ensure_ascii=False, indent=2)
+    print(f"  [OK] typical_sites.json ({len(records)} records)")
+    return records
+
+
 def export_city_series(df, dashboard_root):
     """Export city_series.json with city-level aggregated data."""
     df_f = build_history_frame(df)
