@@ -1747,7 +1747,7 @@ function setSelectedSiteInUI(siteId) {
     document.querySelector('select[name="site_id"]') ||
     document.querySelector('select[name="siteId"]');
 
-  // 3. Show site select wrapper
+  // 3. Show site select wrapper (explicitly set flex since div has inline display:none)
   const siteSelectWrap =
     document.getElementById("site-select-group") ||
     document.getElementById("site-select-wrap") ||
@@ -1758,7 +1758,7 @@ function setSelectedSiteInUI(siteId) {
     (siteSelect ? siteSelect.parentElement : null);
 
   if (siteSelectWrap) {
-    siteSelectWrap.style.display = "";
+    siteSelectWrap.style.display = "flex";
     siteSelectWrap.hidden = false;
     siteSelectWrap.classList.remove("hidden", "is-hidden", "d-none");
   }
