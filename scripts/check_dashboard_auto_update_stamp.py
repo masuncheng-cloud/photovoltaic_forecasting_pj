@@ -119,7 +119,7 @@ def main():
     warns = df[df["status"] == "WARN"]
 
     print(f"\n结果汇总：PASS={len(df[df['status']=='PASS'])}, FAIL={len(fails)}, WARN={len(warns)}")
-    print(df[["check", "value", "status"]].to_string(index=False))
+    print(df[["check", "value", "status"]].to_string(index=False)))
 
     if len(fails) > 0:
         print(f"\n[FAIL] {len(fails)} 项检查失败")
