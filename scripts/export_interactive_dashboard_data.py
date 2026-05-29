@@ -378,11 +378,15 @@ def export_typical_sites(dashboard_root, output_root, round_name):
 
 def export_city_series(df, dashboard_root):
     """Export city_series.json with city-level aggregated data."""
-    # 统一列名：actual_mw/pred_mw（Round39.11 也用 physics-calibrated pred_cal）
+    # 统一列名：actual_mw/pred_mw（Round39.11: power_pred_final = power_pred_cal * calibrated_ratio）
     if "actual_mw" not in df.columns:
         df["actual_mw"] = df["power_mw"]
+    # 使用 power_pred_final（与 export_site_series 保持一致）
     if "pred_mw" not in df.columns:
-        df["pred_mw"] = df["power_pred_cal"] if "power_pred_cal" in df.columns else df["power_pred"]
+        df["pred_mw"] = (
+            df["power_pred_final"] if "power_pred_final" in df.columns else
+            (df["power_pred_cal"] if "power_pred_cal" in df.columns else df["power_pred"])
+        )
 
     df_f = build_history_frame(df)
     df_f = df_f[
