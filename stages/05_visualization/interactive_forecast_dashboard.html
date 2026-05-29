@@ -2705,7 +2705,8 @@ function selectSite(siteId) {
 // ============================================================
 // SCOPE CHANGE
 // ============================================================
-function onScopeChange() {
+async function onScopeChange() {
+  syncStateFromControls();
   const isSite = state.scope === "site";
   document.getElementById("site-select-group").style.display = isSite ? "flex" : "none";
   // In site mode: keep buttons enabled but they'll use current site data
@@ -2722,11 +2723,16 @@ function onScopeChange() {
   }
 
   if (isSite) {
-    const ok = ensureDefaultSiteSelected();
-    if (!ok) {
+    const siteSelect = document.getElementById("site-select") || document.getElementById("siteSelect");
+    if (!state.siteId && siteSelect && siteSelect.options.length > 0) {
+      state.siteId = siteSelect.value || siteSelect.options[0].value;
+      siteSelect.value = state.siteId;
+    }
+    if (!state.siteId) {
       showStatusMessage("没有可用站点数据，无法展示单站点曲线");
       return false;
     }
+    await ensureSiteRows(state.siteId);
   }
 
   if (!validateDateRange(true)) {
