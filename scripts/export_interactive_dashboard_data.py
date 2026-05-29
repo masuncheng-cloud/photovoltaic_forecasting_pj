@@ -1828,6 +1828,19 @@ def main():
     print("\n[8] Exporting season_days.json...")
     export_season_days(df, dashboard_root)
 
+    print("\n[8b] Preparing df for season best days (add actual_mw/pred_mw cols)...")
+    if "actual_mw" not in df.columns:
+        df["actual_mw"] = df["power_mw"]
+    if "pred_mw" not in df.columns:
+        pred_col_used = resolve_prediction_column(df)
+        df["pred_mw"] = df[pred_col_used]
+
+    print("\n[8c] Exporting season_best_days_city.json...")
+    export_season_best_days_city(df, dashboard_root)
+
+    print("\n[8d] Exporting season_best_days_by_site.json...")
+    export_season_best_days_by_site(df, dashboard_root)
+
     print("\n[9] Exporting scatter_site_hour.json...")
     scatter_data = export_scatter_site_hour(df, site_names, metrics_df, dashboard_root)
 
