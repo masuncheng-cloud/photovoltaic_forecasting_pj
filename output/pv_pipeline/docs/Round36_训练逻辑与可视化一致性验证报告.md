@@ -11,7 +11,7 @@
 ## 逐项结果
 | # | 状态 | 检查项 | 说明 |
 |---|------|--------|------|
-| 1 | ✓ PASS | C1: final_round36.pkl 存在且可读 | 1,172,180 行, 30 列 |
+| 1 | ✓ PASS | C1: final_round36.pkl 存在且可读 | 1,172,180 行, 33 列 |
 | 2 | ✓ PASS | C2: eval_round36 只含 test 6-19 | 116,144 行, 68 站 |
 | 3 | ✓ PASS | C3: power_pred_final 存在 | 1,172,180 个非空值 / 1,172,180 行 |
 | 4 | ✓ PASS | C4: power_pred_final 在 [0, capacity] | 全部在有效范围内 |

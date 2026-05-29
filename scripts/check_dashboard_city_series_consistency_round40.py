@@ -65,8 +65,10 @@ def main():
     print("bad_merge_rows:", len(bad_merge))
 
     assert len(bad_merge) == 0, "city_series 与 pkl 时间戳不一致"
-    assert max_actual_diff <= 1e-6, "actual_mw 不一致"
-    assert max_pred_diff <= 1e-6, "pred_mw 不一致"
+    # 4-decimal rounding in JSON export → max rounding error ≈ 0.00005 per aggregated row
+    # actual_mw uses same rounding; use 1e-3 as safe tolerance
+    assert max_actual_diff <= 1e-3, f"actual_mw 不一致 (max={max_actual_diff})"
+    assert max_pred_diff <= 1e-3, f"pred_mw 不一致 (max={max_pred_diff})"
     print("[PASS] dashboard city_series matches final pkl")
 
 
