@@ -161,7 +161,7 @@ def write_report(df, all_pass):
 
     if all_pass:
         lines.append("\n## 结论\n")
-        lines.append("**全部站点通过**：pred_mw 与 power_pred_cal、actual_mw 与 power_mw 完全一致，"
+        lines.append("**全部站点通过**：pred_mw 与 power_pred_final、actual_mw 与 power_mw 完全一致，"
                      "n_json == n_pkl_6_19 == n_matched。\n")
     else:
         lines.append("\n## 结论\n")
