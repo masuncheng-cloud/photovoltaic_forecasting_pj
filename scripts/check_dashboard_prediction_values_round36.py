@@ -2,7 +2,7 @@
 check_dashboard_prediction_values_round36.py
 ==========================================
 全量校验可视化 site_series/*.json 中的 pred_mw / actual_mw
-是否与 distributed_predictions_final_round36.pkl 中的 power_pred_cal / power_mw 完全一致。
+是否与 distributed_predictions_final_round36.pkl 中的 power_pred_final / power_mw 完全一致。
 
 口径：split != future，hour in 6..19
 验收：
@@ -77,9 +77,9 @@ def check_consistency(pkl_df, json_data):
             jdf[["time", "actual_mw", "pred_mw", "capacity_mw"]].rename(
                 columns={"capacity_mw": "cap_json",
                          "actual_mw": "actual_json", "pred_mw": "pred_json"}),
-            pkl_site[["time", "power_mw", "power_pred_cal", "capacity_mw"]].rename(
+            pkl_site[["time", "power_mw", "power_pred_final", "capacity_mw"]].rename(
                 columns={"capacity_mw": "cap_pkl",
-                         "power_mw": "actual_pkl", "power_pred_cal": "pred_pkl"}),
+                         "power_mw": "actual_pkl", "power_pred_final": "pred_pkl"}),
             on="time", how="inner")
         n_matched = len(merged)
         count_ok = (n_json == n_pkl_6_19 == n_matched)
