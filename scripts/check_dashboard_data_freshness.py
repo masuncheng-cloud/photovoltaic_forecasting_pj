@@ -182,9 +182,11 @@ def main() -> int:
         j_val = float(j.iloc[0]["site_avg_nrmse_pct"])
         c_val = float(c.iloc[0]["site_avg_nrmse_pct"])
         diff = abs(j_val - c_val)
-        status = "MATCH" if diff < 1e-6 else f"MISMATCH (diff={diff:.6f})"
+        # JSON 保留 3 位小数，CSV 保留 6 位；允许 0.001 误差（对应 3 位舍入）
+        tolerance = 0.001
+        status = "MATCH" if diff < tolerance else f"MISMATCH (diff={diff:.6f})"
         print(f"       h={h:2d}: JSON={j_val:.3f}%, CSV={c_val:.3f}% [{status}]")
-        if diff >= 1e-6:
+        if diff >= tolerance:
             all_match = False
 
     if not all_match:
