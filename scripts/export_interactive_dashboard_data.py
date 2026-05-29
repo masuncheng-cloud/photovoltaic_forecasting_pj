@@ -798,11 +798,18 @@ def export_midday_city(df, dashboard_root):
 
 def export_season_days(df, dashboard_root):
     """Export season_days.json with one representative day per season."""
+    # 强制使用 power_pred_final（与 city_series/site_series 保持一致）
+    df = df.copy()
+    if "pred_mw" not in df.columns:
+        df["pred_mw"] = (
+            df["power_pred_final"] if "power_pred_final" in df.columns else
+            (df["power_pred_cal"] if "power_pred_cal" in df.columns else df["power_pred"])
+        )
     df_f = build_history_frame(df)
     df_f = df_f[
         df_f["hour"].between(6, 19)
         & df_f["power_mw"].notna()
-        & df_f["power_pred"].notna()
+        & df_f["pred_mw"].notna()
     ].copy()
 
     df_f["month"] = pd.to_datetime(df_f["date"]).dt.month
