@@ -3064,16 +3064,24 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // Scope radio
   document.querySelectorAll('input[name="scope"]').forEach(r => {
-    r.addEventListener("change", () => {
+    r.addEventListener("change", async () => {
       state.scope = r.value;
-      if (onScopeChange() !== false) {
-        refreshAll();
+      if (state.scope === "site") {
+        // Ensure site data is loaded before refresh
+        const ok = await onScopeChange();
+        if (ok !== false) {
+          await refreshAll();
+        }
+      } else {
+        if (onScopeChange() !== false) {
+          await refreshAll();
+        }
       }
     });
   });
 
   // Site select
-  document.getElementById("site-select").addEventListener("change", e => {
+  document.getElementById("site-select").addEventListener("change", async e => {
     state.siteId = e.target.value;
     if (state.siteId) {
       document.querySelector('input[name="scope"][value="site"]').checked = true;
@@ -3081,8 +3089,11 @@ document.addEventListener("DOMContentLoaded", () => {
     } else {
       state.scope = "city";
     }
+    if (state.scope === "site" && state.siteId) {
+      await ensureSiteRows(state.siteId);
+    }
     if (onScopeChange() !== false) {
-      refreshAll();
+      await refreshAll();
     }
   });
 
