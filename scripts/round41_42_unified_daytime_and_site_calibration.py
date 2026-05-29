@@ -1,17 +1,18 @@
 """
 round41_42_unified_daytime_and_site_calibration.py
 ====================================================
-Round44: 训练逻辑与可视化问题总收口 — 修正版
+Round44（修正版）：训练逻辑与可视化问题总收口
 
 修改内容（对比 Round41/42 原版）：
-1. daytime_source 由 valid 集选择（禁止 test 集 snooping）
-2. 增加合理化验证：若 valid 选中的来源在 test 10-14 明显差于 power_pred_cal（>1pp），
-   则回退到 power_pred_cal。这不是 "test 选最优"，而是"防止选一个已知明显差的东西"。
-3. 站点级校准增加 valid 集守门：站点平均 NRMSE 至少下降 0.2pp、
-   全市 NRMSE 上升不超过 0.3pp、BIAS 绝对值不超过 15%，三项全部满足才启用。
-   若不满足则自动回退到不做站点校准的候选。
-4. 输出 round44_site_calibration_decision.csv，记录完整守门决策过程。
-5. round41_42_selection_info.json 明确标注 selection_split=valid 及 test_used_for_selection=false。
+1. daytime_source 由 valid 集选择（严格禁止 test 集 snooping）
+   — Round45 修正确认：完全禁用任何 test 参考，不允许 fallback
+2. 站点级校准增加 valid 集守门：三条件全满足才启用，否则自动回退
+3. 输出 round44_site_calibration_decision.csv，记录完整守门决策过程
+4. round41_42_selection_info.json 明确标注 selection_split=valid 及 test_used_for_selection=false
+
+Round45 修正确认：
+- 删除 verify_and_maybe_override（test fallback 逻辑）
+- 完全信任 valid 集选择结果
 """
 
 from pathlib import Path
@@ -30,10 +31,6 @@ METRIC_DIR.mkdir(parents=True, exist_ok=True)
 EDGE_HOURS = [6, 7, 18, 19]
 DAYTIME_HOURS = list(range(8, 18))
 FOCUS_HOURS = [10, 11, 12, 13, 14]
-
-# 回退阈值：如果 valid 选中的候选在 test 10-14 比 power_pred_cal 差超过此值，则用 power_pred_cal
-# 这不是 test 选最优，而是"已知 power_pred_cal 在 test 明显更好"时的一个安全阀
-TEST_FALLBACK_DELTA = 1.0  # pp
 
 # 先验工程开关（默认关闭）
 USE_FIXED_DAYTIME_SOURCE = False
@@ -141,7 +138,7 @@ def city_hour_metrics(df, pred_col, split, hours):
 def select_daytime_source(df, cols):
     """评估各候选在 valid 集 focus hours 上的表现，选择最优。
 
-    严格只用 valid 集，不参考 test 集任何指标做选择。
+    严格只用 valid 集，不参考 test 集任何指标。
     """
     rows = []
     for col in cols:
@@ -158,48 +155,12 @@ def select_daytime_source(df, cols):
     return table, selected
 
 
-def verify_and_maybe_override(df, valid_selected, cols):
-    """若 valid 选中的候选在 test 10-14 远差于 power_pred_cal，回退到 power_pred_cal。
-
-    注意：这不是 test 选最优。这是利用已知的先验知识（power_pred_cal 在 test 明显更好）
-    作为安全阀，避免选一个 valid 表现好但 test 已知明显差的方向。
-
-    先验规则：power_pred_cal 在历史 test 数据上就是更好，这是领域知识，不算 snooping。
-    """
-    if valid_selected not in cols:
-        return valid_selected, "fallback_not_in_candidates"
-
-    if "power_pred_cal" not in cols:
-        return valid_selected, "power_pred_cal_not_available"
-
-    if valid_selected == "power_pred_cal":
-        return valid_selected, "already_power_pred_cal"
-
-    # 对比 test 10-14
-    m_valid = city_hour_metrics(df, valid_selected, "test", FOCUS_HOURS)
-    m_cal = city_hour_metrics(df, "power_pred_cal", "test", FOCUS_HOURS)
-
-    if m_valid is None or m_cal is None:
-        return valid_selected, "test_metrics_unavailable"
-
-    delta = m_valid["mean_hourly_city_nrmse_pct"] - m_cal["mean_hourly_city_nrmse_pct"]
-
-    if delta > TEST_FALLBACK_DELTA:
-        print(f"[INFO] valid 选中 {valid_selected} (test 10-14={m_valid['mean_hourly_city_nrmse_pct']:.4f}%)")
-        print(f"       但 power_pred_cal (test 10-14={m_cal['mean_hourly_city_nrmse_pct']:.4f}%)")
-        print(f"       差距 {delta:.4f}pp > {TEST_FALLBACK_DELTA}pp，回退到 power_pred_cal")
-        print(f"       原因：valid 选择被 test 已知明显更差的候选覆盖，这是安全阀，不算 test snooping")
-        return "power_pred_cal", "fallback_to_power_pred_cal_reasonably_better_on_test"
-    else:
-        return valid_selected, "valid_selection_accepted"
-
-
 def apply_unified_daytime_source(df, daytime_source):
     """应用统一日间来源 + 边缘时段保护。
 
     策略：
     - 边缘时段（6,7,18,19）：使用 power_pred_cal
-    - 日间时段（8-17）：使用经过合理化验证的 daytime_source
+    - 日间时段（8-17）：使用 valid 集选择的 daytime_source
     """
     out = df.copy()
     if "power_pred_final_round40_snapshot" not in out.columns:
@@ -208,12 +169,12 @@ def apply_unified_daytime_source(df, daytime_source):
     out["power_pred_final_before_round41_42"] = out["power_pred_final"]
     out["power_pred_round41_daytime"] = out["power_pred_final_round40_snapshot"]
 
-    # 边缘时段：使用 power_pred_cal（保留历史成果）
+    # 边缘时段：使用 power_pred_cal
     if "power_pred_cal" in out.columns:
         edge_mask = out["hour"].isin(EDGE_HOURS) & out["power_pred_cal"].notna()
         out.loc[edge_mask, "power_pred_round41_daytime"] = out.loc[edge_mask, "power_pred_cal"]
 
-    # 日间时段：使用经过验证的 daytime_source
+    # 日间时段：使用 valid 集选择的 daytime_source
     day_mask = out["hour"].isin(DAYTIME_HOURS) & out[daytime_source].notna()
     out.loc[day_mask, "power_pred_round41_daytime"] = out.loc[day_mask, daytime_source]
 
@@ -299,7 +260,6 @@ def evaluate_candidate(df, pred_col, split="valid"):
     work["capacity_mw"] = pd.to_numeric(work["capacity_mw"], errors="coerce")
     work = work[work["actual_mw"].notna() & work["pred_mw"].notna()].copy()
 
-    # city
     city = work.groupby("time", as_index=False).agg(
         actual_mw=("actual_mw", "sum"),
         pred_mw=("pred_mw", "sum"),
@@ -311,7 +271,6 @@ def evaluate_candidate(df, pred_col, split="valid"):
     city_nrmse = city_rmse_val / max(city_cap, 1e-9) * 100
     city_bias = (city["pred_mw"].sum() - city["actual_mw"].sum()) / max(city["actual_mw"].sum(), 1e-9) * 100
 
-    # site
     site_rows = []
     for sid, g in work.groupby("site_id"):
         err = g["pred_mw"] - g["actual_mw"]
@@ -394,33 +353,12 @@ def main():
         selection_table = pd.DataFrame([{
             "pred_col": daytime_source,
             "selection_reason": selection_reason,
-            "note": "USE_FIXED_DAYTIME_SOURCE=True",
         }])
         selected = {"pred_col": daytime_source, "selection_reason": selection_reason}
     else:
         selection_table, selected = select_daytime_source(df, cols)
-        valid_selected = selected["pred_col"]
-
-        # -----------------------------------------------------------
-        # 步骤 1b：合理化验证——若 valid 选中的在 test 已知明显差，则回退
-        # -----------------------------------------------------------
-        daytime_source, override_reason = verify_and_maybe_override(df, valid_selected, cols)
-
-        if override_reason.startswith("fallback"):
-            selection_reason = f"selected_by_valid_but_{override_reason}"
-        else:
-            selection_reason = "selected_by_valid_10_14_city_hourly_nrmse"
-
-        # 重新生成 selection_table（反映最终选择的列）
-        rows2 = []
-        for col in cols:
-            m = city_hour_metrics(df, col, "valid", FOCUS_HOURS)
-            if m is not None:
-                rows2.append(m)
-        selection_table = pd.DataFrame(rows2).sort_values(
-            ["mean_hourly_city_nrmse_pct", "mean_abs_bias_pct"],
-            ascending=[True, True],
-        )
+        daytime_source = selected["pred_col"]
+        selection_reason = "selected_by_valid_10_14_city_hourly_nrmse"
 
     selection_table.to_csv(
         METRIC_DIR / "round41_42_daytime_source_selection.csv",
@@ -428,11 +366,8 @@ def main():
         encoding="utf-8-sig",
     )
 
-    # 收集 valid 和 test 指标用于记录
+    # 收集 valid 指标用于记录
     final_valid_metric = city_hour_metrics(df, daytime_source, "valid", FOCUS_HOURS)
-    final_test_metric = city_hour_metrics(df, daytime_source, "test", FOCUS_HOURS)
-    cal_valid_metric = city_hour_metrics(df, "power_pred_cal", "valid", FOCUS_HOURS) if "power_pred_cal" in cols else None
-    cal_test_metric = city_hour_metrics(df, "power_pred_cal", "test", FOCUS_HOURS) if "power_pred_cal" in cols else None
 
     selection_info = {
         "strategy": "edge_protection_plus_valid_selected_daytime_source_plus_gated_site_bias_calibration",
@@ -445,11 +380,7 @@ def main():
         "use_fixed_daytime_source": USE_FIXED_DAYTIME_SOURCE,
         "fixed_daytime_source": FIXED_DAYTIME_SOURCE if USE_FIXED_DAYTIME_SOURCE else None,
         "selected_daytime_source": daytime_source,
-        "test_fallback_delta_pp": TEST_FALLBACK_DELTA,
         "final_valid_metrics": final_valid_metric,
-        "final_test_metrics": final_test_metric,
-        "power_pred_cal_valid_metrics": cal_valid_metric,
-        "power_pred_cal_test_metrics": cal_test_metric,
     }
     (METRIC_DIR / "round41_42_selection_info.json").write_text(
         json.dumps(selection_info, ensure_ascii=False, indent=2),
@@ -517,20 +448,6 @@ def main():
     # -----------------------------------------------------------
     # 步骤 5：输出站点校准决策记录
     # -----------------------------------------------------------
-    decision_records = [{
-        "decision": cal_decision,
-        "use_site_calibration": use_site_cal,
-        "site_improve_valid_pp": round(site_improve, 6),
-        "city_delta_valid_pp": round(city_delta, 6),
-        "bias_valid_pct": round(eval_with_cal["city_bias_pct"], 6),
-        "bias_ok": bias_ok,
-        "eval_no_cal_valid": eval_no_cal,
-        "eval_with_cal_valid": eval_with_cal,
-    }]
-    (METRIC_DIR / "round44_site_calibration_decision.json").write_text(
-        json.dumps(decision_records, ensure_ascii=False, indent=2),
-        encoding="utf-8",
-    )
     decision_csv = pd.DataFrame([{
         "decision": cal_decision,
         "use_site_calibration": use_site_cal,
