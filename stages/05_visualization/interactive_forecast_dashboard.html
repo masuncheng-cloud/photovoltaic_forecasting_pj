@@ -1120,36 +1120,94 @@ function normalizeTypicalSites(raw) {
   const result = { best: [], worst: [], normal: [], small: [] };
   if (!raw) return result;
 
-  // 情况1：typical_sites.json 是对象格式
+  const pushUnique = (key, sid) => {
+    if (!sid) return;
+    sid = String(sid).trim();
+    if (!sid) return;
+    if (!result[key].includes(sid)) result[key].push(sid);
+  };
+
   if (!Array.isArray(raw) && typeof raw === "object") {
-    const pick = (...keys) => {
+    const pickArray = (...keys) => {
       for (const k of keys) {
-        if (Array.isArray(raw[k])) {
-          return raw[k].map(x => typeof x === "string" ? x : x.site_id).filter(Boolean);
-        }
+        if (Array.isArray(raw[k])) return raw[k];
       }
       return [];
     };
-    result.best = pick("best", "预测最好", "typical_best_site_ids", "best_site_ids");
-    result.worst = pick("worst", "预测最差", "typical_worst_site_ids", "worst_site_ids");
-    result.normal = pick("normal", "relative_correct", "相对正确", "typical_normal_site_ids", "correct_site_ids");
-    result.small = pick("small", "sample_small", "样本少", "typical_small_site_ids", "small_site_ids");
+
+    for (const x of pickArray("best", "预测最好", "typical_best_site_ids", "best_site_ids")) {
+      pushUnique("best", typeof x === "string" ? x : x.site_id);
+    }
+    for (const x of pickArray("worst", "预测最差", "typical_worst_site_ids", "worst_site_ids")) {
+      pushUnique("worst", typeof x === "string" ? x : x.site_id);
+    }
+    for (const x of pickArray("normal", "relative_correct", "相对正确", "typical_normal_site_ids", "correct_site_ids")) {
+      pushUnique("normal", typeof x === "string" ? x : x.site_id);
+    }
+    for (const x of pickArray("small", "sample_small", "low_sample", "few_sample", "样本少", "少样本", "数据少", "typical_small_site_ids", "small_site_ids")) {
+      pushUnique("small", typeof x === "string" ? x : x.site_id);
+    }
     return result;
   }
 
-  // 情况2：typical_sites.json 是列表格式（和 round36_typical_sites.csv 一致）
   if (Array.isArray(raw)) {
     for (const item of raw) {
       const sid = item.site_id || item.station_id || item.id;
-      const label = String(item.category || item.category_label || item.type || item["类型"] || "");
+      const label = String(item.category || item.category_label || item.type || item.label || item["类型"] || "");
+      const labelLower = label.toLowerCase();
       if (!sid) continue;
-      if (label.includes("最好") || label === "best") result.best.push(sid);
-      else if (label.includes("最差") || label === "worst") result.worst.push(sid);
-      else if (label.includes("正确") || label === "normal" || label.includes("相对")) result.normal.push(sid);
-      else if (label.includes("样本") || label === "small" || label.includes("low_sample")) result.small.push(sid);
+      if (label.includes("最好") || labelLower === "best") {
+        pushUnique("best", sid);
+      } else if (label.includes("最差") || labelLower === "worst") {
+        pushUnique("worst", sid);
+      } else if (label.includes("正确") || label.includes("相对") || labelLower === "normal" || labelLower.includes("correct")) {
+        pushUnique("normal", sid);
+      } else if (
+        label.includes("样本少") || label.includes("少样本") || label.includes("数据少") ||
+        labelLower.includes("small") || labelLower.includes("low_sample") ||
+        labelLower.includes("few_sample") || labelLower.includes("sample_small")
+      ) {
+        pushUnique("small", sid);
+      }
     }
   }
+
   return result;
+}
+
+function getFallbackSmallSampleSites() {
+  const rows = Array.isArray(gSiteMetrics) ? gSiteMetrics : [];
+  return rows
+    .filter(r => {
+      const sid = r.site_id || r.station_id || r.id;
+      const rowsCount = Number(r.full_history_rows ?? r.rows ?? r.sample_count ?? 0);
+      const posRows = Number(r.full_history_positive_rows ?? r.positive_rows ?? r.positive_count ?? 0);
+      return sid && rowsCount > 0 && posRows > 0;
+    })
+    .sort((a, b) => {
+      const ar = Number(a.full_history_rows ?? a.rows ?? a.sample_count ?? 0);
+      const br = Number(b.full_history_rows ?? b.rows ?? b.sample_count ?? 0);
+      return ar - br;
+    })
+    .slice(0, 5)
+    .map(r => r.site_id || r.station_id || r.id);
+}
+
+function pickTypicalSite(category) {
+  const norm = window.gTypicalSitesNorm || {};
+  const map = { best: norm.best, worst: norm.worst, normal: norm.normal, low_sample: norm.small, small: norm.small };
+  let list = map[category] || [];
+
+  if ((!list || !list.length) && (category === "small" || category === "low_sample")) {
+    list = getFallbackSmallSampleSites();
+    console.warn("[pickTypicalSite] small category empty in typical_sites, fallback to site_metrics:", list);
+  }
+
+  if (!list || !list.length) {
+    console.warn("[pickTypicalSite] empty category:", category, norm);
+    return null;
+  }
+  return list[0];
 }
 
 function renderVersionWarning() {
@@ -3130,22 +3188,45 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // Date/hours — date changes handled by bindDateComboEvents(); hour changes handled by bindHourSelectEvents()
 
-  // Typical sites buttons — now use typical_sites.json (not site_metrics rankings)
-  async function selectTypical(category) {
-    const norm = window.gTypicalSitesNorm || {};
-    const map = { best: norm.best, worst: norm.worst, normal: norm.normal, low_sample: norm.small };
-    const list = map[category];
-    if (!list || !list.length) {
-      console.warn("[selectTypical] empty category:", category, norm);
-      return;
+  // Typical sites buttons — now use typical_sites.json with fallback
+  async function selectTypicalSite(category) {
+    const sid = pickTypicalSite(category);
+    if (!sid) return;
+
+    console.info("[selectTypicalSite]", { category, sid, scope: state.scope });
+
+    state.scope = "site";
+    state.siteId = sid;
+
+    const siteRadio = document.querySelector('input[name="scope"][value="site"]');
+    if (siteRadio) siteRadio.checked = true;
+    const cityRadio = document.querySelector('input[name="scope"][value="city"]');
+    if (cityRadio) cityRadio.checked = false;
+
+    // Show site select wrap
+    const siteSelectWrap =
+      document.getElementById("site-select-wrap") ||
+      document.getElementById("siteSelectWrap") ||
+      document.querySelector(".site-select-wrap");
+    if (siteSelectWrap) siteSelectWrap.style.display = "";
+
+    const siteSelect = document.getElementById("site-select") || document.getElementById("siteSelect");
+    if (siteSelect) {
+      const hasOption = Array.from(siteSelect.options).some(opt => opt.value === sid);
+      if (hasOption) {
+        siteSelect.value = sid;
+      } else {
+        console.warn("[selectTypicalSite] site option not found:", sid);
+      }
     }
-    const sid = list[0];
-    await selectSite(sid);
+
+    await ensureSiteRows(sid);
+    await refreshAll();
   }
-  document.getElementById("btn-best")?.addEventListener("click", () => selectTypical("best").catch(console.error));
-  document.getElementById("btn-worst")?.addEventListener("click", () => selectTypical("worst").catch(console.error));
-  document.getElementById("btn-normal")?.addEventListener("click", () => selectTypical("normal").catch(console.error));
-  document.getElementById("btn-low")?.addEventListener("click", () => selectTypical("low_sample").catch(console.error));
+  document.getElementById("btn-best")?.addEventListener("click", () => selectTypicalSite("best").catch(console.error));
+  document.getElementById("btn-worst")?.addEventListener("click", () => selectTypicalSite("worst").catch(console.error));
+  document.getElementById("btn-normal")?.addEventListener("click", () => selectTypicalSite("normal").catch(console.error));
+  document.getElementById("btn-low")?.addEventListener("click", () => selectTypicalSite("small").catch(console.error));
 
   // Midday buttons — current date range 10-14
   const btnCurrentMidday = document.getElementById("btn-current-midday");
