@@ -311,6 +311,31 @@ def write_metadata(dashboard_root, round_name, pred_col, source_path):
     """Write metadata.json for the dashboard page to display version info."""
     history_dir = Path(dashboard_root) / "site_series"
     n_sites = len(list(history_dir.glob("*.json"))) if history_dir.exists() else 0
+
+    # ── Force read Round36 metrics (no fallback to old rounds) ─────────────────
+    metrics_dir = Path(source_path).parent.parent / "metrics"
+    round_num = "".join(filter(str.isdigit, round_name))  # e.g. "36"
+    typical_csv = metrics_dir / f"round{round_num}_typical_sites.csv"
+    if not typical_csv.exists():
+        raise FileNotFoundError(
+            f"典型站点文件不存在: {typical_csv}，请确认 Round36 训练已完成"
+        )
+    typical_df = pd.read_csv(typical_csv)
+    best = typical_df[typical_df["类型"] == "预测最好"]["site_id"].tolist()
+    worst = typical_df[typical_df["类型"] == "预测最差"]["site_id"].tolist()
+
+    # ── Validate typical sites against known Round36 values ───────────────────
+    expected_best = ["S062", "S023", "S049", "S047", "S056"]
+    expected_worst = ["S007", "S063", "S065", "S041", "S072"]
+    if set(best) != set(expected_best):
+        raise RuntimeError(
+            f"Round36 预测最好站点不匹配：当前 {best}，期望 {expected_best}"
+        )
+    if set(worst) != set(expected_worst):
+        raise RuntimeError(
+            f"Round36 预测最差站点不匹配：当前 {worst}，期望 {expected_worst}"
+        )
+
     meta = {
         "round": round_name,
         "prediction_column": pred_col,
@@ -322,11 +347,15 @@ def write_metadata(dashboard_root, round_name, pred_col, source_path):
         "exclude_future": True,
         "data_root": "output/pv_pipeline/interactive_dashboard",
         "total_site_files": n_sites,
+        "typical_best_site_ids": best,
+        "typical_worst_site_ids": worst,
     }
     out_path = Path(dashboard_root) / "metadata.json"
     with open(out_path, "w", encoding="utf-8") as f:
         json.dump(meta, f, ensure_ascii=False, indent=2)
     print(f"  [OK] metadata.json ({round_name}, {pred_col})")
+    print(f"       typical_best={best}")
+    print(f"       typical_worst={worst}")
     return meta
 
 
