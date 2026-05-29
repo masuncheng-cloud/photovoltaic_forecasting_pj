@@ -1472,11 +1472,16 @@ def export_hourly_prediction_summary(output_root, dashboard_root, final_df=None,
     """
     metrics_dir = Path(output_root) / "metrics"
     rn = "".join(filter(str.isdigit, round_name))
+    # Try multiple CSV naming patterns
     csv_path = metrics_dir / f"round{rn}_city_hourly_nrmse.csv"
+    if not csv_path.exists():
+        csv_path = metrics_dir / f"round{rn}_hourly_nrmse_consistent.csv"
+    consistent_csv_path = metrics_dir / f"round{rn}_hourly_nrmse_consistent.csv"
 
     # Determine if we need to compute from eval_df
     compute_from_df = True
     city_nrmse_by_hour = None
+    site_avg_nrmse_from_csv = None
     if csv_path.exists():
         print(f"  Loading hourly CSV: {csv_path}")
         df_csv = pd.read_csv(csv_path)
