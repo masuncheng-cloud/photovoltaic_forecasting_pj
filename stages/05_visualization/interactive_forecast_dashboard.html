@@ -981,17 +981,17 @@ tbody td {
   </div>
   <svg id="scatter-chart"></svg>
   <div id="scatter-desc" style="font-size:11px;color:#718096;margin-top:6px;">
-    本图每个点代表一个具备有效发电样本的站点。横轴为该站点历史样本数（train/valid/test，不包含 future），纵轴为测试集 6-19 点 NRMSE。点越靠右表示历史数据越多，点越靠下表示预测精度越高。0 值占比 100% 或无正功率样本的站点不参与本图统计，单独列入下方"无有效发电样本站点"。全量 0 值占比包含夜间正常 0 值；测试集 6-19 点 0 值占比更适合解释最终测试误差是否受白天 0 值影响。
+    本图每个点代表一个具备有效发电样本的站点。横轴为该站点历史样本数（train/valid/test，不包含 future），纵轴为测试集 6-19 点 NRMSE。点越靠右表示历史数据越多，点越靠下表示预测精度越高。0 值占比 100% 或无正功率样本的站点不参与本图统计，单独列入下方"无有效发电样本站点"。全量 0 值占比包含夜间正常 0 值；测试集 6-19 点 0 值占比更适合解释最终测试误差是否受白天 0 值影响。横轴可切换为"训练验证正功率样本"：统计 train + valid 阶段 6-19 点 power_mw > 0 的样本数，更接近模型实际可学习的数据规模。样本量只是经验参考，容量映射、异常0值、限电、遮挡和气象匹配仍会影响最终 NRMSE。
   </div>
 
   <div id="sample-req-table-wrap" style="margin-top:12px;">
-    <div class="section-title" style="font-size:12px;">达到不同 NRMSE 阈值的全量历史样本量分布</div>
+    <div class="section-title" style="font-size:12px;" id="threshold-table-title">达到不同 NRMSE 阈值的全量历史样本量分布</div>
     <table id="threshold-table">
       <thead>
         <tr>
           <th>NRMSE阈值</th><th>达标站点数</th><th>总站点数</th><th>达标比例</th>
-          <th>全量样本最小值</th><th>全量样本25分位</th><th>全量样本中位数</th>
-          <th>全量样本75分位</th><th>全量样本最大值</th>
+          <th id="thresh-col-1-title">全量样本最小值</th><th id="thresh-col-2-title">全量样本25分位</th><th id="thresh-col-3-title">全量样本中位数</th>
+          <th id="thresh-col-4-title">全量样本75分位</th><th id="thresh-col-5-title">全量样本最大值</th>
           <th>正功率样本中位数</th>
         </tr>
       </thead>
