@@ -3065,26 +3065,6 @@ function renderSampleReqBinsTable() {
   });
 }
 
-function updateThresholdTable(totalShown) {
-  const tbody = document.querySelector("#threshold-table tbody");
-  if (!tbody) return;
-  tbody.innerHTML = "";
-  gThresholdSummary.forEach(t => {
-    const row = document.createElement("tr");
-    row.innerHTML = `
-      <td>${t.threshold_pct}%</td>
-      <td>${t.qualified_points}</td>
-      <td>${totalShown}</td>
-      <td>${fmt2(t.qualified_ratio_pct)}%</td>
-      <td>${t.min_sample_count != null ? t.min_sample_count : "-"}</td>
-      <td>${t.p25_sample_count != null ? t.p25_sample_count : "-"}</td>
-      <td>${t.median_sample_count != null ? t.median_sample_count : "-"}</td>
-      <td>${t.p75_sample_count != null ? t.p75_sample_count : "-"}</td>
-    `;
-    tbody.appendChild(row);
-  });
-}
-
 // ============================================================
 // TOOLTIP
 // ============================================================
