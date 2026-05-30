@@ -968,7 +968,8 @@ tbody td {
   <div id="scatter-controls">
     <span class="ctrl-label">横轴口径：</span>
     <div class="tab-bar">
-      <button class="tab-btn active" data-xaxis="full">全量历史样本数</button>
+      <button class="tab-btn active" data-xaxis="full" title="该站点 train/valid/test 的总样本数">全量历史样本数</button>
+      <button class="tab-btn" data-xaxis="tv_positive" title="统计 train + valid 阶段、6-19 点、真实功率 power_mw > 0 的样本数，更接近模型实际可学习的有效发电样本量。">训练验证正功率样本</button>
     </div>
     <div class="legend-row" style="margin-left:auto;">
       <div class="legend-item"><div class="legend-dot" style="background:#38a169"></div>预测最好</div>
@@ -1094,8 +1095,137 @@ let state = {
   endHour: 19,
   hourRangeValid: true,
   scatterHourFilter: "all",
-  scatterXAxis: "full",
+  scatterXAxis: "full",   // "full" | "tv_positive"
 };
+
+// ================================================================
+// SAMPLE SCATTER X-AXIS CONFIG
+// ================================================================
+const SAMPLE_X_AXIS_CONFIG = {
+  full: {
+    label: "全量历史样本数",
+    field: "full_history_rows",
+    axisLabel: "单站点全量历史样本数（行）",
+    sectionTitle: "单站点全量历史样本数与测试集 NRMSE 关系",
+    bins: [
+      [0, 5000, "0-5000"],
+      [5000, 10000, "5000-10000"],
+      [10000, 15000, "10000-15000"],
+      [15000, 20000, "15000-20000"],
+      [20000, 26000, "20000-26000"],
+      [26000, 28000, "26000-28000"],
+      [28000, Infinity, "28000+"],
+    ],
+    binsCol: "median_full_history_rows",
+    threshCols: {
+      min:    "min_full_history_rows",
+      p25:    "p25_full_history_rows",
+      median: "median_full_history_rows",
+      p75:    "p75_full_history_rows",
+      max:    "max_full_history_rows",
+    },
+    threshTitle: "全量历史样本量分布",
+    threshColTitle: "全量样本",
+  },
+  tv_positive: {
+    label: "训练验证正功率样本",
+    field: "train_valid_positive_rows",
+    axisLabel: "训练+验证阶段6-19点正功率样本量（行）",
+    sectionTitle: "训练验证正功率样本量与测试集 NRMSE 关系",
+    bins: [
+      [0, 1000, "0-1000"],
+      [1000, 2000, "1000-2000"],
+      [2000, 3000, "2000-3000"],
+      [3000, 5000, "3000-5000"],
+      [5000, 8000, "5000-8000"],
+      [8000, 11000, "8000-11000"],
+      [11000, Infinity, "11000+"],
+    ],
+    binsCol: "median_train_valid_positive_rows",
+    threshCols: {
+      min:    "min_tv_positive_rows",
+      p25:    "p25_tv_positive_rows",
+      median: "median_tv_positive_rows",
+      p75:    "p75_tv_positive_rows",
+      max:    "max_tv_positive_rows",
+    },
+    threshTitle: "训练验证正功率样本量分布",
+    threshColTitle: "正功率样本",
+  },
+};
+
+// Build derived threshold/bins data from gScatterSite for each axis mode
+function buildThresholdData(chartData, mode) {
+  const cfg = SAMPLE_X_AXIS_CONFIG[mode];
+  const field = cfg.field;
+  const thresholds = [5, 10, 15, 20, 25];
+  const results = [];
+  for (const thresh of thresholds) {
+    const qualified = chartData.filter(p => (p.test_nrmse_pct || 0) <= thresh);
+    const vals = qualified.map(p => p[field] || 0).sort((a, b) => a - b);
+    const cnt = vals.length;
+    const total = chartData.length;
+    const pct = n => vals.length > 0 ? vals[Math.max(0, Math.floor(vals.length * n) - 1)] || 0 : null;
+    results.push({
+      threshold_pct: thresh,
+      qualified_sites: cnt,
+      total_sites: total,
+      qualified_ratio_pct: total > 0 ? +(cnt / total * 100).toFixed(2) : 0,
+      min_tv_positive_rows:    vals.length > 0 ? vals[0] : null,
+      p25_tv_positive_rows:    pct(0.25),
+      median_tv_positive_rows: pct(0.50),
+      p75_tv_positive_rows:    pct(0.75),
+      max_tv_positive_rows:    vals.length > 0 ? vals[vals.length - 1] : null,
+      min_full_history_rows:    null,
+      p25_full_history_rows:   null,
+      median_full_history_rows: null,
+      p75_full_history_rows:   null,
+      max_full_history_rows:    null,
+    });
+  }
+  return results;
+}
+
+function buildBinsData(chartData, mode) {
+  const cfg = SAMPLE_X_AXIS_CONFIG[mode];
+  const field = cfg.field;
+  const rows = [];
+  for (const [lo, hi, label] of cfg.bins) {
+    const bucket = chartData.filter(p => {
+      const v = p[field] || 0;
+      return v >= lo && v < hi;
+    });
+    const nrmseVals = bucket.map(p => p.test_nrmse_pct).filter(v => v != null).sort((a, b) => a - b);
+    const medianField = bucket.map(p => p[cfg.binsCol] || p[field] || 0).filter(v => v != null).sort((a, b) => a - b);
+    const medianFieldFn = arr => arr.length > 0 ? arr[Math.floor(arr.length / 2)] : null;
+    const sortedNrmse = nrmseVals;
+    rows.push({
+      sample_bin: label,
+      site_count: bucket.length,
+      median_full_history_rows: medianFieldFn(medianField),
+      median_train_valid_positive_rows: medianFieldFn(medianField),
+      mean_nrmse_pct: nrmseVals.length > 0 ? +(nrmseVals.reduce((a, b) => a + b, 0) / nrmseVals.length).toFixed(4) : null,
+      median_nrmse_pct: sortedNrmse.length > 0 ? sortedNrmse[Math.floor(sortedNrmse.length / 2)] : null,
+      p25_nrmse_pct: sortedNrmse.length > 0 ? sortedNrmse[Math.floor(sortedNrmse.length / 4)] : null,
+      p75_nrmse_pct: sortedNrmse.length > 0 ? sortedNrmse[Math.floor(3 * sortedNrmse.length / 4)] : null,
+      best_nrmse_pct: sortedNrmse.length > 0 ? sortedNrmse[0] : null,
+      worst_nrmse_pct: sortedNrmse.length > 0 ? sortedNrmse[sortedNrmse.length - 1] : null,
+    });
+  }
+  return rows;
+}
+
+// Global computed data (recomputed on axis mode change)
+let gThresholdByMode = { full: [], tv_positive: [] };
+let gBinsByMode = { full: [], tv_positive: [] };
+
+function recomputeThresholdAndBins() {
+  const data = (gScatterSite && gScatterSite.length > 0) ? gScatterSite : [];
+  gThresholdByMode.full = buildThresholdData(data, "full");
+  gThresholdByMode.tv_positive = buildThresholdData(data, "tv_positive");
+  gBinsByMode.full = buildBinsData(data, "full");
+  gBinsByMode.tv_positive = buildBinsData(data, "tv_positive");
+}
 
 // Line chart zoom state
 let gLineRowsFull = [];
