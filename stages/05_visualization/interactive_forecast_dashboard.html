@@ -2791,11 +2791,19 @@ function drawScatterChart(data) {
 
   if (!chartData || chartData.length === 0) return;
 
-  // Determine x-axis field (always full_history_rows per Round30)
-  const xField = "full_history_rows";
+  // Determine x-axis field from current mode
+  const mode = state.scatterXAxis || "full";
+  const axisCfg = SAMPLE_X_AXIS_CONFIG[mode] || SAMPLE_X_AXIS_CONFIG["full"];
+  const xField = axisCfg.field;
 
-  const xVals = chartData.map(p => p[xField] || 0);
-  const yVals = chartData.map(p => p["test_nrmse_pct"] || 0);
+  // Filter valid points (has finite x value > 0)
+  const validPoints = chartData.filter(p => {
+    const xv = Number(p[xField]);
+    return isFinite(xv) && xv > 0;
+  });
+
+  const xVals = validPoints.map(p => Number(p[xField]));
+  const yVals = validPoints.map(p => p["test_nrmse_pct"] || 0);
 
   const maxX = Math.max(...xVals, 1) * 1.05;
   const maxY = Math.max(...yVals.filter(v => isFinite(v)), 30) * 1.15;
@@ -2872,8 +2880,8 @@ function drawScatterChart(data) {
     }));
   }
 
-  // Axis titles
-  const xAxisLabel = "单站点全量历史样本数（行）";
+  // Dynamic axis title
+  const xAxisLabel = axisCfg.axisLabel;
   g.appendChild(svgNS("text", {
     x: (ML + cw / 2).toFixed(1), y: (H - 4).toFixed(1),
     "text-anchor": "middle", fill: "#718096", "font-size": "11",
@@ -2888,8 +2896,8 @@ function drawScatterChart(data) {
   g.appendChild(yAxisTitle);
 
   // Dots
-  chartData.forEach(p => {
-    const xVal = p[xField] || 0;
+  validPoints.forEach(p => {
+    const xVal = Number(p[xField]) || 0;
     const yVal = p["test_nrmse_pct"] || 0;
     const cx = xOf(xVal).toFixed(1);
     const cy = yOf(yVal).toFixed(1);
@@ -2910,17 +2918,23 @@ function drawScatterChart(data) {
 
   svg.appendChild(g);
 
-  // Update threshold table with new site-level summary
+  // Recompute threshold/bins data for current mode and render tables
+  recomputeThresholdAndBins();
+  updateThresholdTableTitle();
+  updateBinsTableTitle();
   renderSampleReqSummaryTable();
+  renderSampleReqBinsTable();
 }
 
 function showSiteScatterTooltip(e, p, xField) {
   const tip = document.getElementById("tooltip");
+  const tvPositive = p.train_valid_positive_rows != null ? p.train_valid_positive_rows : (p["train_valid_positive_rows_6_19"] || "-");
   tip.innerHTML = `
     <div style="font-weight:600;margin-bottom:4px">${p.site_id} ${p.site_name || ""}</div>
     <div class="tip-label">容量</div><div class="tip-val">${fmt2(p.capacity_mw || 0)} MW</div>
     <div class="tip-label">全量历史样本数</div><div class="tip-val">${fmtInt(p.full_history_rows || 0)} 行</div>
     <div class="tip-label">全量正功率样本数</div><div class="tip-val">${fmtInt(p.full_history_positive_rows || 0)} 行</div>
+    <div class="tip-label">训练验证6-19点正功率样本数</div><div class="tip-val">${typeof tvPositive === "number" ? fmtInt(tvPositive) + " 行" : "-"}</div>
     <div class="tip-label">全量0值占比</div><div class="tip-val">${fmt2(p.full_history_zero_ratio_pct || 0)}%</div>
     <div class="tip-label">测试集6-19点0值占比</div><div class="tip-val">${fmt2(p.test_daytime_zero_ratio_6_19_pct || 0)}%</div>
     <div class="tip-label">记录日期范围</div><div class="tip-val">${p.full_history_start_date || "-"} ~ ${p.full_history_end_date || "-"}</div>
@@ -2934,24 +2948,69 @@ function showSiteScatterTooltip(e, p, xField) {
   moveTooltip(e);
 }
 
+function updateThresholdTableTitle() {
+  const el = document.getElementById("threshold-table-title");
+  if (!el) return;
+  const cfg = SAMPLE_X_AXIS_CONFIG[state.scatterXAxis] || SAMPLE_X_AXIS_CONFIG["full"];
+  el.textContent = "达到不同 NRMSE 阈值的" + cfg.threshTitle;
+  // Update column headers
+  const titles = [cfg.threshColTitle + "最小值", cfg.threshColTitle + "25分位", cfg.threshColTitle + "中位数", cfg.threshColTitle + "75分位", cfg.threshColTitle + "最大值"];
+  const ids = ["thresh-col-1-title", "thresh-col-2-title", "thresh-col-3-title", "thresh-col-4-title", "thresh-col-5-title"];
+  ids.forEach((id, i) => {
+    const th = document.getElementById(id);
+    if (th) th.textContent = titles[i];
+  });
+}
+
+function updateBinsTableTitle() {
+  const el = document.getElementById("bins-table-title");
+  if (!el) return;
+  const cfg = SAMPLE_X_AXIS_CONFIG[state.scatterXAxis] || SAMPLE_X_AXIS_CONFIG["full"];
+  el.textContent = "按" + cfg.label + "分箱的 NRMSE 分布";
+}
+
 function renderSampleReqSummaryTable() {
   const tbody = document.querySelector("#threshold-table tbody");
   if (!tbody) return;
   tbody.innerHTML = "";
-  const data = gSampleReqSummary || [];
+  const mode = state.scatterXAxis || "full";
+  const data = gThresholdByMode[mode] || [];
+  const cfg = SAMPLE_X_AXIS_CONFIG[mode] || SAMPLE_X_AXIS_CONFIG["full"];
+  if (data.length === 0) {
+    // Fallback to original gSampleReqSummary if not yet computed
+    const fallback = gSampleReqSummary || [];
+    fallback.forEach(t => {
+      const row = document.createElement("tr");
+      row.innerHTML = `
+        <td>${t.threshold_pct}%</td>
+        <td>${t.qualified_sites}</td>
+        <td>${t.total_sites}</td>
+        <td>${fmt2(t.qualified_ratio_pct)}%</td>
+        <td>${fmtInt(t.min_full_history_rows)}</td>
+        <td>${fmtInt(t.p25_full_history_rows)}</td>
+        <td>${fmtInt(t.median_full_history_rows)}</td>
+        <td>${fmtInt(t.p75_full_history_rows)}</td>
+        <td>${fmtInt(t.max_full_history_rows)}</td>
+        <td>${fmtInt(t.median_train_valid_positive_rows)}</td>
+      `;
+      tbody.appendChild(row);
+    });
+    return;
+  }
   data.forEach(t => {
     const row = document.createElement("tr");
+    const tc = cfg.threshCols;
     row.innerHTML = `
       <td>${t.threshold_pct}%</td>
       <td>${t.qualified_sites}</td>
       <td>${t.total_sites}</td>
       <td>${fmt2(t.qualified_ratio_pct)}%</td>
-      <td>${fmtInt(t.min_full_history_rows)}</td>
-      <td>${fmtInt(t.p25_full_history_rows)}</td>
-      <td>${fmtInt(t.median_full_history_rows)}</td>
-      <td>${fmtInt(t.p75_full_history_rows)}</td>
-      <td>${fmtInt(t.max_full_history_rows)}</td>
-      <td>${fmtInt(t.median_train_valid_positive_rows)}</td>
+      <td>${t[tc.min] != null ? fmtInt(t[tc.min]) : "-"}</td>
+      <td>${t[tc.p25] != null ? fmtInt(t[tc.p25]) : "-"}</td>
+      <td>${t[tc.median] != null ? fmtInt(t[tc.median]) : "-"}</td>
+      <td>${t[tc.p75] != null ? fmtInt(t[tc.p75]) : "-"}</td>
+      <td>${t[tc.max] != null ? fmtInt(t[tc.max]) : "-"}</td>
+      <td>${t.median_train_valid_positive_rows != null ? fmtInt(t.median_train_valid_positive_rows) : "-"}</td>
     `;
     tbody.appendChild(row);
   });
@@ -2961,13 +3020,38 @@ function renderSampleReqBinsTable() {
   const tbody = document.querySelector("#sample-bins-table tbody");
   if (!tbody) return;
   tbody.innerHTML = "";
-  const data = gSampleReqBins || [];
+  const mode = state.scatterXAxis || "full";
+  const data = gBinsByMode[mode] || [];
+  if (data.length === 0) {
+    // Fallback to original gSampleReqBins
+    const fallback = gSampleReqBins || [];
+    fallback.forEach(b => {
+      const row = document.createElement("tr");
+      row.innerHTML = `
+        <td>${b.sample_bin}</td>
+        <td>${b.site_count}</td>
+        <td>${fmtInt(b.median_full_history_rows)}</td>
+        <td>${fmtInt(b.median_full_history_positive_rows)}</td>
+        <td>${fmtInt(b.median_train_valid_positive_rows)}</td>
+        <td>${b.mean_nrmse_pct != null ? fmt2(b.mean_nrmse_pct) : "-"}</td>
+        <td>${b.median_nrmse_pct != null ? fmt2(b.median_nrmse_pct) : "-"}</td>
+        <td>${b.p25_nrmse_pct != null ? fmt2(b.p25_nrmse_pct) : "-"}</td>
+        <td>${b.p75_nrmse_pct != null ? fmt2(b.p75_nrmse_pct) : "-"}</td>
+        <td>${b.best_nrmse_pct != null ? fmt2(b.best_nrmse_pct) : "-"}</td>
+        <td>${b.worst_nrmse_pct != null ? fmt2(b.worst_nrmse_pct) : "-"}</td>
+      `;
+      tbody.appendChild(row);
+    });
+    return;
+  }
+  const cfg = SAMPLE_X_AXIS_CONFIG[mode] || SAMPLE_X_AXIS_CONFIG["full"];
   data.forEach(b => {
     const row = document.createElement("tr");
+    const medianVal = b[cfg.binsCol] != null ? fmtInt(b[cfg.binsCol]) : "-";
     row.innerHTML = `
       <td>${b.sample_bin}</td>
       <td>${b.site_count}</td>
-      <td>${fmtInt(b.median_full_history_rows)}</td>
+      <td>${medianVal}</td>
       <td>${fmtInt(b.median_full_history_positive_rows)}</td>
       <td>${fmtInt(b.median_train_valid_positive_rows)}</td>
       <td>${b.mean_nrmse_pct != null ? fmt2(b.mean_nrmse_pct) : "-"}</td>
