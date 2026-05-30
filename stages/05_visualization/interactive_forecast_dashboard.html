@@ -3313,6 +3313,7 @@ async function refreshAll() {
 
   drawHourlyNrmseChart();
   if (!isSite) drawScatterChart(gScatterSite);
+  recomputeThresholdAndBins();
 }
 
 // ============================================================
