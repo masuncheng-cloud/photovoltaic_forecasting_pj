@@ -3727,6 +3727,12 @@ document.addEventListener("DOMContentLoaded", () => {
       document.querySelectorAll(".tab-btn[data-xaxis]").forEach(b => b.classList.remove("active"));
       btn.classList.add("active");
       state.scatterXAxis = xaxis;
+      // Update section title, table titles, then redraw
+      const scatterTitle = document.querySelector("#scatter-section .section-title");
+      if (scatterTitle) {
+        const cfg = SAMPLE_X_AXIS_CONFIG[xaxis] || SAMPLE_X_AXIS_CONFIG["full"];
+        scatterTitle.textContent = cfg.sectionTitle;
+      }
       if (state.scope !== "site") drawScatterChart(gScatterSite);
     });
   });
