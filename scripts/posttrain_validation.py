@@ -240,7 +240,7 @@ def run_validation(cfg: dict) -> ValidationCheck:
             c.fail("C9: 夜间/future 检查", str(e))
 
     # ── C10: hourly_nrmse_consistent.csv 存在 ───────────────────────────
-    hourly_csv = metrics_dir / "round46_hourly_nrmse_consistent.csv"
+    hourly_csv = metrics_dir / "hourly_nrmse_consistent.csv"
     if not hourly_csv.exists():
         c.fail("C10: hourly_nrmse_consistent.csv 存在", f"不存在: {hourly_csv.name}")
     else:
@@ -472,8 +472,8 @@ def run_validation(cfg: dict) -> ValidationCheck:
     try:
         canonical_full_pkl = tables_dir / ".." / "predictions" / "distributed_predictions_final_full.pkl"
         canonical_eval_pkl = tables_dir / ".." / "predictions" / "distributed_predictions_final_eval.pkl"
-        full_pkl_path = canonical_full_pkl if canonical_full_pkl.exists() else tables_dir / "distributed_predictions_final_round36.pkl"
-        eval_pkl_path = canonical_eval_pkl if canonical_eval_pkl.exists() else tables_dir / "distributed_predictions_final_eval_round36.pkl"
+        full_pkl_path = canonical_full_pkl
+        eval_pkl_path = canonical_eval_pkl
         if full_pkl_path.exists() and eval_pkl_path.exists():
             full_df = pd.read_pickle(full_pkl_path)
             eval_df = pd.read_pickle(eval_pkl_path)
