@@ -10,7 +10,7 @@
 8,WARN,C9: 夜间/future 不参与评估,pkl 中存在夜间和 future 记录（评估时会排除）
 9,PASS,C10: hourly_nrmse_consistent.csv 正确,"14 小时数据, NRMSE范围: 3.94%~16.98%"
 10,PASS,C11: dashboard 一致性校验,"68 站, 全部 PASS"
-11,PASS,C12: dashboard 数据新鲜,dashboard 晚于 canonical pkl 1.15h
+11,PASS,C12: dashboard 数据新鲜,dashboard 晚于 canonical pkl 1.23h
 12,PASS,C13: Git 不追踪 pkl,0 个
 13,PASS,C13: Git 不追踪 site_series JSON,0 个
 14,PASS,C14: 训练集样本量,"421,771 行（2023-01-01~2025-06-30 白天）"
