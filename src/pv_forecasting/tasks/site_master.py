@@ -97,7 +97,7 @@ def _std_ledger(df: pd.DataFrame, source_name: str) -> pd.DataFrame:
     return out
 
 
-def build_site_master(power_root: _Path) -> pd.DataFrame:
+def build_site_master(power_root: _Path, tables_dir: _Path | None = None) -> pd.DataFrame:
     f = load_ledger_files(power_root)
     dist_ledger = _std_ledger(read_excel_first_sheet(f["dist_ledger"]), "dist_ledger")
     dist_change = read_excel_first_sheet(f["dist_change"])
