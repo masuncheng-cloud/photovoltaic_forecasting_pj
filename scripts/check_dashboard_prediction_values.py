@@ -48,18 +48,25 @@ TOLERANCE = 1e-9
 
 
 def load_pkl(out_dir: Path) -> pd.DataFrame:
-    """从 output/pv_pipeline/tables 加载最终预测 pkl。"""
-    tables_dir = out_dir / "tables"
-    candidates = sorted(tables_dir.glob("distributed_predictions_final_round36.pkl"))
-    if not candidates:
-        candidates = sorted(tables_dir.glob("distributed_predictions_final_*.pkl"))
-    if not candidates:
-        raise FileNotFoundError(
-            f"找不到 distributed_predictions_final_*.pkl\n"
-            f"请先运行训练流程或确认文件路径。"
-        )
-    pkl_path = candidates[0]
-    print(f"  使用: {pkl_path.relative_to(PROJECT_ROOT)}")
+    """从 canonical 路径加载最终预测 pkl（兼容 fallback）。"""
+    # canonical 路径
+    canonical = out_dir / "predictions" / "distributed_predictions_final_full.pkl"
+    if canonical.exists():
+        pkl_path = canonical
+        print(f"  [canonical] 使用: {pkl_path.relative_to(PROJECT_ROOT)}")
+    else:
+        # fallback：legacy 路径
+        tables_dir = out_dir / "tables"
+        candidates = sorted(tables_dir.glob("distributed_predictions_final_round36.pkl"))
+        if not candidates:
+            candidates = sorted(tables_dir.glob("distributed_predictions_final_*.pkl"))
+        if not candidates:
+            raise FileNotFoundError(
+                f"找不到 distributed_predictions_final_*.pkl（canonical: {canonical}）\n"
+                f"请先运行训练流程或确认文件路径。"
+            )
+        pkl_path = candidates[0]
+        print(f"  [legacy fallback] 使用: {pkl_path.relative_to(PROJECT_ROOT)}")
     with open(pkl_path, "rb") as f:
         df = pickle.load(f)
     df["time"] = pd.to_datetime(df["time"])
