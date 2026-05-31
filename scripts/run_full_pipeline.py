@@ -275,6 +275,7 @@ def write_manifest(cfg: dict, cwd: Path) -> None:
     out_dir = cwd / cfg["data"]["output_root"]
     manifest = {
         "generated_at": datetime.now().isoformat(timespec="seconds"),
+        "pipeline_entry": "scripts/run_full_pipeline.py",
         "config": "configs/pipeline.yaml",
         "split": cfg.get("split", {}),
         "eval": cfg.get("eval", {}),
@@ -287,14 +288,29 @@ def write_manifest(cfg: dict, cwd: Path) -> None:
             "dashboard_dir":     "output/pv_pipeline/interactive_dashboard",
             "dashboard_index":    "output/pv_pipeline/interactive_dashboard/index.json",
         },
-        "manual_geo_overrides": "configs/manual_station_geo_overrides.csv",
+        "geo_overrides": {
+            "file": "configs/manual_station_geo_overrides.csv",
+            "low_confidence_sites": ["S116"],
+            "note": (
+                "S115: GEM WGS84 approximate, confidence=medium, "
+                "precision requires on-site confirmation. "
+                "S116: town-center approximation from Wikipedia, confidence=low, "
+                "MUST be replaced with actual PV-site coordinates from operator records."
+            ),
+        },
+        "station_count_note": (
+            "final_full may include all stations; "
+            "final_eval and dashboard include only stations with valid test 6-19 evaluation rows; "
+            "S115/S116 have has_geo=0 and no irradiance data, resulting in scene_v151=all night and all-zero predictions"
+        ),
         "notes": [
             "test set is only used for final evaluation",
             "dashboard data is exported after final prediction generation",
+            "BIAS = mean(pred - actual); BIAS < 0 means under-prediction",
             "NRMSE denominator: station capacity for site metrics, total capacity for city metrics",
             "all NRMSE values are in percent (%)",
             "final prediction column: power_pred_final (no fallback allowed)",
-            "site S115/S116 geo: from manual overrides, precision requires on-site confirmation",
+            "S115/S116: no irradiance data → scene_v151=all night → all predictions are 0",
         ],
     }
 

@@ -336,19 +336,53 @@ def run_validation(cfg: dict) -> ValidationCheck:
         except Exception as e:
             c.warn("C15: 站点数量检查", str(e))
 
-    # ── C16: manifest.json 存在 ─────────────────────────────────────────
+    # ── C16: manifest.json 严格验证 ────────────────────────────────
     manifest = out / "manifest.json"
     if not manifest.exists():
-        c.warn("C16: manifest.json 存在", "文件不存在（run_full_pipeline.py 未执行或 manifest 写入失败）")
+        c.fail("C16: manifest.json 存在", "文件不存在")
     else:
         try:
             m = json.loads(manifest.read_text(encoding="utf-8"))
-            gen_at = m.get("generated_at", "N/A")
-            final_col = m.get("prediction", {}).get("final_column", "N/A")
-            c.ok("C16: manifest.json 存在",
-                 f"生成时间={gen_at}, final_column={final_col}")
+            # 1. pipeline_entry
+            entry = m.get("pipeline_entry", "")
+            if entry == "scripts/run_full_pipeline.py":
+                c.ok("C16: manifest.pipeline_entry", entry)
+            else:
+                c.fail("C16: manifest.pipeline_entry",
+                       f"期望 scripts/run_full_pipeline.py，实际: {entry}")
+            # 2. final_prediction_column
+            fp_col = m.get("final_prediction_column", "")
+            expected_col = cfg.get("prediction", {}).get("final_column", "power_pred_final")
+            if fp_col == expected_col:
+                c.ok("C16: manifest.final_prediction_column", fp_col)
+            else:
+                c.fail("C16: manifest.final_prediction_column",
+                       f"期望 {expected_col}，实际: {fp_col}")
+            # 3. all artifacts exist
+            arts = m.get("artifacts", {})
+            missing_arts = []
+            for art_name, art_path in arts.items():
+                art_full = out / art_path
+                if not art_full.exists():
+                    missing_arts.append(f"{art_name}: {art_path}")
+            if not missing_arts:
+                c.ok("C16: manifest artifacts 全部存在", f"{len(arts)} 个文件")
+            else:
+                c.fail("C16: manifest artifacts", f"缺失: {missing_arts}")
+            # 4. manifest mtime >= final pkl mtime
+            fp = tables_dir / "distributed_predictions_final_round36.pkl"
+            if fp.exists():
+                pkl_mtime = fp.stat().st_mtime
+                man_mtime = manifest.stat().st_mtime
+                if man_mtime >= pkl_mtime:
+                    delta_h = (man_mtime - pkl_mtime) / 3600
+                    c.ok("C16: manifest 生成时间", f"晚于 final pkl {delta_h:.2f}h")
+                else:
+                    delta_h = (pkl_mtime - man_mtime) / 3600
+                    c.fail("C16: manifest 生成时间",
+                           f"早于 final pkl {delta_h:.2f}h")
         except Exception as e:
-            c.warn("C16: manifest.json 可读", str(e))
+            c.fail("C16: manifest.json 可读", str(e))
 
     # ── GEO1: S115/S116 不得缺经纬度 ─────────────────────────────────
     site_master_path = tables_dir / "site_master.csv"
