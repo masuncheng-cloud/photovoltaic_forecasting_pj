@@ -21,8 +21,11 @@ def _coalesce_columns(df: pd.DataFrame, target: str, candidates: list[str], defa
 
 
 def prepare_blend_training(inverse_pred: pd.DataFrame, site_master: pd.DataFrame) -> pd.DataFrame:
+    # Round54 修复：不再过滤 has_geo==1，保证含低置信度坐标的站点也能获得辐照融合特征
+    # 注意：lon/lat 仍为 NaN 的站点（如没有 override 的站）会在 IDW 时被排除
     cols = [c for c in ['site_id', 'lon', 'lat', 'county', 'coastal_flag'] if c in site_master.columns]
-    central_sites = site_master[(site_master['dev_type'] == '集中式') & (site_master['has_geo'] == 1)][cols].copy()
+    central_sites = site_master[site_master['dev_type'] == '集中式'][cols].copy()
+    central_sites = central_sites[central_sites['lon'].notna() & central_sites['lat'].notna()]
     data = inverse_pred.merge(central_sites, on='site_id', how='inner', suffixes=('', '_meta'))
     data = _coalesce_columns(data, 'county', ['county', 'county_meta', 'county_x', 'county_y'], default='unknown')
     data['county'] = data['county'].fillna('unknown')
@@ -102,8 +105,11 @@ def train_blend_model(train_df: pd.DataFrame, model_path: Path, metrics_path: Pa
 def infer_site_irradiance(inverse_pred: pd.DataFrame, site_master: pd.DataFrame, site_meteo: pd.DataFrame, blend_bundle) -> pd.DataFrame:
     central_cols = [c for c in ['site_id', 'lon', 'lat', 'county'] if c in site_master.columns]
     target_cols = [c for c in ['site_id', 'lon', 'lat', 'county', 'coastal_flag'] if c in site_master.columns]
-    central_sites = site_master[(site_master['dev_type'] == '集中式') & (site_master['has_geo'] == 1)][central_cols].copy()
-    target_sites = site_master[site_master['has_geo'] == 1][target_cols].copy()
+    # Round54 修复：不再过滤 has_geo==1；改为直接检查 lon/lat 非空
+    central_sites = site_master[site_master['dev_type'] == '集中式'][central_cols].copy()
+    central_sites = central_sites[central_sites['lon'].notna() & central_sites['lat'].notna()]
+    # target_sites：只保留有有效坐标的站点
+    target_sites = site_master[site_master['lon'].notna() & site_master['lat'].notna()][target_cols].copy()
     source = inverse_pred.merge(central_sites, on='site_id', how='inner', suffixes=('', '_meta'))
     source = _coalesce_columns(source, 'county', ['county', 'county_meta', 'county_x', 'county_y'], default='unknown')
     meteo = site_meteo[['time', 'site_id', 'ssrd_wm2']].rename(columns={'ssrd_wm2': 'era5_site_ssrd'})
