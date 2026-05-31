@@ -274,17 +274,17 @@ def run_validation(cfg: dict) -> ValidationCheck:
             c.warn("C11: dashboard_consistency 检查", str(e))
 
     # ── C12: 产物新鲜度（dashboard 晚于 final pkl）────────────────────
-    if fp.exists() and dash_dir.exists():
+    if canonical_full.exists() and dash_dir.exists():
         try:
             idx = dash_dir / "index.json"
             if not idx.exists():
                 c.fail("C12: dashboard index.json 存在", "不存在")
             else:
-                pkl_mtime = fp.stat().st_mtime
+                pkl_mtime = canonical_full.stat().st_mtime
                 idx_mtime = idx.stat().st_mtime
                 if idx_mtime >= pkl_mtime:
                     delta_h = (idx_mtime - pkl_mtime) / 3600
-                    c.ok("C12: dashboard 数据新鲜", f"dashboard 晚于 final pkl {delta_h:.2f}h")
+                    c.ok("C12: dashboard 数据新鲜", f"dashboard 晚于 canonical pkl {delta_h:.2f}h")
                 else:
                     delta_h = (pkl_mtime - idx_mtime) / 3600
                     c.fail("C12: dashboard 数据新鲜", f"dashboard 早于 final pkl {delta_h:.2f}h（数据已过期）")
