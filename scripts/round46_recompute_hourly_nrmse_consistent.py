@@ -13,6 +13,7 @@ Round46 Step 2: 用统一口径重新计算逐小时站点 NRMSE。
 """
 
 from pathlib import Path
+import shutil
 import json
 import math
 import numpy as np
@@ -162,8 +163,20 @@ def main():
     summary = summary.merge(city_hour[["hour", "city_nrmse_pct"]], on="hour", how="left")
     summary = summary.sort_values("hour")
 
-    site_hour.to_csv(METRIC_DIR / "round46_site_hour_nrmse_consistent.csv", index=False, encoding="utf-8-sig")
-    summary.to_csv(METRIC_DIR / "round46_hourly_nrmse_consistent.csv", index=False, encoding="utf-8-sig")
+    # 写 canonical 路径（正式名）
+    METRIC_DIR.mkdir(parents=True, exist_ok=True)
+    METRIC_DIR_SITE_HOUR = METRIC_DIR  # same dir
+    METRIC_DIR_SUMMARY   = METRIC_DIR
+    METRIC_DIR_SITE_HOUR.mkdir(parents=True, exist_ok=True)
+    METRIC_DIR_SUMMARY.mkdir(parents=True, exist_ok=True)
+    METRIC_DIR_SITE_HOUR_CSV = METRIC_DIR / "hourly_site_nrmse_consistent.csv"
+    METRIC_DIR_SUMMARY_CSV   = METRIC_DIR / "hourly_nrmse_consistent.csv"
+
+    site_hour.to_csv(METRIC_DIR_SITE_HOUR_CSV, index=False, encoding="utf-8-sig")
+    summary.to_csv(METRIC_DIR_SUMMARY_CSV, index=False, encoding="utf-8-sig")
+    # 兼容 round46/round36 名称
+    shutil.copy2(METRIC_DIR_SITE_HOUR_CSV, METRIC_DIR / "round46_site_hour_nrmse_consistent.csv")
+    shutil.copy2(METRIC_DIR_SUMMARY_CSV,   METRIC_DIR / "round46_hourly_nrmse_consistent.csv")
 
     # 写 dashboard JSON（统一口径，替换旧文件）
     records = []
