@@ -322,18 +322,9 @@ def write_metadata(dashboard_root, round_name, pred_col, source_path):
             f"典型站点文件不存在: {typical_csv}，请确认训练已完成"
         )
     typical_df = pd.read_csv(typical_csv)
+    # typical_best/worst 从 canonical 指标文件动态生成，不再硬编码
     best = typical_df[typical_df["类型"] == "预测最好"]["site_id"].tolist()
     worst = typical_df[typical_df["类型"] == "预测最差"]["site_id"].tolist()
-
-    # ── Validate typical sites ─────────────────────────────────────────────
-    # Round54: S115/S116 修复后进入最差榜（从全0变为有真实预测，NRMSE仍高但链路已生效）
-    # best 站点与 Round36 一致；worst 新增 S115（替换 S065）
-    expected_best = ["S062", "S023", "S049", "S047", "S056"]
-    expected_worst = ["S058", "S063", "S041", "S072", "S115"]
-    if set(best) != set(expected_best):
-        print(f"[WARN] 预测最好站点与 Round54 预期略有差异：当前 {best}")
-    if set(worst) != set(expected_worst):
-        print(f"[WARN] 预测最差站点与 Round54 预期略有差异：当前 {worst}")
 
     meta = {
         "round": round_name,
