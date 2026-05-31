@@ -287,7 +287,7 @@ def run_validation(cfg: dict) -> ValidationCheck:
                     c.ok("C12: dashboard 数据新鲜", f"dashboard 晚于 canonical pkl {delta_h:.2f}h")
                 else:
                     delta_h = (pkl_mtime - idx_mtime) / 3600
-                    c.fail("C12: dashboard 数据新鲜", f"dashboard 早于 final pkl {delta_h:.2f}h（数据已过期）")
+                    c.fail("C12: dashboard 数据新鲜", f"dashboard 早于 canonical pkl {delta_h:.2f}h（数据已过期）")
         except Exception as e:
             c.warn("C12: 新鲜度检查", str(e))
 
