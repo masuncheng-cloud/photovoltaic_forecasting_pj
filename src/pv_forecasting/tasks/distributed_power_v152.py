@@ -75,7 +75,7 @@ def _scene_v151(df: pd.DataFrame) -> pd.Series:
         (g.values[mask_unknown_day] < 120) | (k.values[mask_unknown_day] < 0.18), 'low',
         np.where(ramp.values[mask_unknown_day] > 140, 'ramp',
         np.where(g.values[mask_unknown_day] > 520, 'clear_peak', 'mid')))
-    )
+
     # elev 缺失且夜间
     mask_unknown_night = ~elev_known & ~mask_unknown_day
     scene[mask_unknown_night] = 'night'
