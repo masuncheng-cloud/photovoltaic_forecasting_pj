@@ -5,7 +5,7 @@ exists_site_metrics.json,PASS,67744
 exists_typical_sites.json,PASS,2331
 exists_season_best_days_city.json,PASS,1229
 exists_season_best_days_by_site.json,PASS,108978
-exists_dashboard_update_stamp.json,PASS,36770
+exists_dashboard_update_stamp.json,PASS,36773
 city_series_not_empty,PASS,15344
 city_series_has_time,PASS,True
 city_series_has_actual_mw,PASS,True
