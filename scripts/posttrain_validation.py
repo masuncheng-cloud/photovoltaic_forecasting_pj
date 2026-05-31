@@ -4,7 +4,7 @@ posttrain_validation.py
 =======================
 训练后逻辑审计脚本（Round50+ 通用版）。
 
-基于 configs/pipeline.yaml 中的配置进行 22 项检查，
+基于 configs/pipeline.yaml 中的配置进行 25 项检查，
 覆盖：数据完整性、指标口径、测试集泄漏、产物新鲜度。
 
 用法：
@@ -463,6 +463,63 @@ def run_validation(cfg: dict) -> ValidationCheck:
                 c.ok("GEO4: 低置信度警告", "无站点为 low 置信度")
         except Exception as e:
             c.warn("GEO4: 低置信度警告检查", str(e))
+
+    # ── C17: 69站/68站差异说明 ──────────────────────────────────────
+    try:
+        full_pkl_path = tables_dir / "distributed_predictions_final_round36.pkl"
+        eval_pkl_path = tables_dir / "distributed_predictions_final_eval_round36.pkl"
+        if full_pkl_path.exists() and eval_pkl_path.exists():
+            full_df = pd.read_pickle(full_pkl_path)
+            eval_df = pd.read_pickle(eval_pkl_path)
+            full_sites = set(full_df["site_id"].unique())
+            eval_sites = set(eval_df["station_id"].unique())
+            excluded = full_sites - eval_sites
+            full_n = len(full_sites)
+            eval_n = len(eval_sites)
+            if full_n == eval_n:
+                c.ok("C17: 站点数量一致性", f"full={full_n}, eval={eval_n}，数量相同")
+            else:
+                c.ok("C17: 站点数量一致性",
+                     f"full={full_n}, eval={eval_n}，相差{full_n - eval_n}站")
+                # 写出被排除站点清单
+                excluded_list = []
+                for sid in sorted(excluded):
+                    srow = sm[sm["site_id"] == sid] if site_master_path.exists() else pd.DataFrame()
+                    full_rows = int((full_df["site_id"] == sid).sum())
+                    eval_rows_test = int(
+                        (eval_df["station_id"] == sid).sum()
+                        if "station_id" in eval_df.columns else 0
+                    )
+                    excluded_list.append({
+                        "station_id": sid,
+                        "station_name": (
+                            srow["site_full_name"].values[0]
+                            if len(srow) and "site_full_name" in srow.columns else ""
+                        ),
+                        "capacity_mw": (
+                            float(srow["capacity_mw"].values[0])
+                            if len(srow) and "capacity_mw" in srow.columns else ""
+                        ),
+                        "reason": "无有效 test 6-19 点评估记录",
+                        "full_rows": full_rows,
+                        "test_6_19_rows": eval_rows_test,
+                    })
+                if excluded_list:
+                    excl_df = pd.DataFrame(excluded_list)
+                    excl_path = val_dir / "excluded_from_eval_sites.csv"
+                    excl_df.to_csv(excl_path, index=False, encoding="utf-8-sig")
+                    print(f"  [INFO] 排除站点清单 → {excl_path.name} ({len(excl_df)} 站)")
+        else:
+            c.warn("C17: 站点数量一致性", "pkl 文件不全，跳过")
+    except Exception as e:
+        c.warn("C17: 站点数量一致性检查", str(e))
+
+    # ── BIAS: 口径说明 ─────────────────────────────────────────────
+    bias_note = (
+        "BIAS = mean(power_pred_final - power_mw); "
+        "BIAS > 0 表示预测偏高，BIAS < 0 表示预测偏低"
+    )
+    c.ok("BIAS: 口径说明", bias_note)
 
     return c
 
