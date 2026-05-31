@@ -313,11 +313,13 @@ def write_metadata(dashboard_root, round_name, pred_col, source_path):
 
     # ── Force read Round36 metrics (no fallback to old rounds) ─────────────────
     metrics_dir = Path(source_path).parent.parent / "metrics"
-    round_num = "".join(filter(str.isdigit, round_name))  # e.g. "36"
+    round_num = "".join(filter(str.isdigit, round_name))  # e.g. "36" from "Round36", or "" from "canonical"
+    if not round_num:
+        round_num = "36"  # canonical path still uses Round36-compatible metrics
     typical_csv = metrics_dir / f"round{round_num}_typical_sites.csv"
     if not typical_csv.exists():
         raise FileNotFoundError(
-            f"典型站点文件不存在: {typical_csv}，请确认 Round36 训练已完成"
+            f"典型站点文件不存在: {typical_csv}，请确认训练已完成"
         )
     typical_df = pd.read_csv(typical_csv)
     best = typical_df[typical_df["类型"] == "预测最好"]["site_id"].tolist()
@@ -362,6 +364,8 @@ def export_typical_sites(dashboard_root, output_root, round_name):
     """Export typical_sites.json from round-specific metrics, no fallback to old rounds."""
     metrics_dir = Path(output_root) / "metrics"
     round_num = "".join(filter(str.isdigit, round_name))
+    if not round_num:
+        round_num = "36"
     typical_csv = metrics_dir / f"round{round_num}_typical_sites.csv"
     if not typical_csv.exists():
         raise FileNotFoundError(f"典型站点文件不存在: {typical_csv}")
