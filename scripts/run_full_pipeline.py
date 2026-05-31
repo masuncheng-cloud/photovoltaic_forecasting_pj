@@ -47,6 +47,7 @@ run_full_pipeline.py
 """
 
 import argparse
+import hashlib
 import json
 import subprocess
 import sys
