@@ -1,7 +1,7 @@
 
 from __future__ import annotations
 
-from pathlib import Path
+from pathlib import Path as _Path
 from typing import Dict, List
 
 import numpy as np
@@ -9,9 +9,6 @@ import pandas as pd
 
 from ..core.data_io import load_ledger_files, read_excel_first_sheet
 from ..core.utils import calc_capacity_bucket, infer_install_group, is_coastal, normalize_site_name
-from pathlib import Path as _Path
-import numpy as np
-import pandas as pd
 
 
 OVERRIDE_PATH = _Path(__file__).resolve().parents[2] / "configs" / "manual_station_geo_overrides.csv"
@@ -61,9 +58,6 @@ def _apply_geo_overrides(sites: pd.DataFrame) -> pd.DataFrame:
 
 
 LEDGER_COL_MAP = {
-
-
-LEDGER_COL_MAP = {
     "调度全称": "site_full_name",
     "调度简称": "site_short_name",
     "开发方式": "dev_type",
@@ -103,7 +97,7 @@ def _std_ledger(df: pd.DataFrame, source_name: str) -> pd.DataFrame:
     return out
 
 
-def build_site_master(power_root: Path) -> pd.DataFrame:
+def build_site_master(power_root: _Path) -> pd.DataFrame:
     f = load_ledger_files(power_root)
     dist_ledger = _std_ledger(read_excel_first_sheet(f["dist_ledger"]), "dist_ledger")
     dist_change = read_excel_first_sheet(f["dist_change"])
