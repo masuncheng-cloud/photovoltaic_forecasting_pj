@@ -480,7 +480,9 @@ def run_validation(cfg: dict) -> ValidationCheck:
             full_df = pd.read_pickle(full_pkl_path)
             eval_df = pd.read_pickle(eval_pkl_path)
             full_sites = set(full_df["site_id"].unique())
-            eval_sites = set(eval_df["station_id"].unique())
+            # eval pkl 列名与 full pkl 一致（均为 site_id）
+            eval_id_col = "site_id"
+            eval_sites = set(eval_df[eval_id_col].unique())
             excluded = full_sites - eval_sites
             full_n = len(full_sites)
             eval_n = len(eval_sites)
@@ -494,10 +496,7 @@ def run_validation(cfg: dict) -> ValidationCheck:
                 for sid in sorted(excluded):
                     srow = sm[sm["site_id"] == sid] if site_master_path.exists() else pd.DataFrame()
                     full_rows = int((full_df["site_id"] == sid).sum())
-                    eval_rows_test = int(
-                        (eval_df["station_id"] == sid).sum()
-                        if "station_id" in eval_df.columns else 0
-                    )
+                    eval_rows_test = int((eval_df["site_id"] == sid).sum())
                     excluded_list.append({
                         "station_id": sid,
                         "station_name": (
