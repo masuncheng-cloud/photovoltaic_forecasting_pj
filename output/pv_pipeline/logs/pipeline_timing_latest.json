@@ -1,16 +1,16 @@
 {
   "mode": "audit-only",
-  "generated_at": "2026-05-31T22:01:57",
-  "total_seconds": 15.592,
-  "total_minutes": 0.26,
+  "generated_at": "2026-05-31T22:34:48",
+  "total_seconds": 20.826,
+  "total_minutes": 0.347,
   "steps": [
     {
       "step": "[12] 训练后逻辑审计",
       "status": "PASS",
-      "seconds": 5.56,
-      "minutes": 0.093,
-      "started_at": "2026-05-31T22:01:42",
-      "finished_at": "2026-05-31T22:01:47",
+      "seconds": 6.908,
+      "minutes": 0.115,
+      "started_at": "2026-05-31T22:34:27",
+      "finished_at": "2026-05-31T22:34:34",
       "error": "",
       "outputs": [
         "/home/ac/data16t/msc/photovoltaic_forecasting_pj/scripts/posttrain_validation.py"
@@ -19,10 +19,10 @@
     {
       "step": "[13] Dashboard 预测值校验",
       "status": "PASS",
-      "seconds": 10.032,
-      "minutes": 0.167,
-      "started_at": "2026-05-31T22:01:47",
-      "finished_at": "2026-05-31T22:01:57",
+      "seconds": 13.918,
+      "minutes": 0.232,
+      "started_at": "2026-05-31T22:34:34",
+      "finished_at": "2026-05-31T22:34:48",
       "error": "",
       "outputs": [
         "/home/ac/data16t/msc/photovoltaic_forecasting_pj/scripts/check_dashboard_prediction_values.py"
@@ -33,10 +33,10 @@
     {
       "step": "[13] Dashboard 预测值校验",
       "status": "PASS",
-      "seconds": 10.032,
-      "minutes": 0.167,
-      "started_at": "2026-05-31T22:01:47",
-      "finished_at": "2026-05-31T22:01:57",
+      "seconds": 13.918,
+      "minutes": 0.232,
+      "started_at": "2026-05-31T22:34:34",
+      "finished_at": "2026-05-31T22:34:48",
       "error": "",
       "outputs": [
         "/home/ac/data16t/msc/photovoltaic_forecasting_pj/scripts/check_dashboard_prediction_values.py"
@@ -45,10 +45,10 @@
     {
       "step": "[12] 训练后逻辑审计",
       "status": "PASS",
-      "seconds": 5.56,
-      "minutes": 0.093,
-      "started_at": "2026-05-31T22:01:42",
-      "finished_at": "2026-05-31T22:01:47",
+      "seconds": 6.908,
+      "minutes": 0.115,
+      "started_at": "2026-05-31T22:34:27",
+      "finished_at": "2026-05-31T22:34:34",
       "error": "",
       "outputs": [
         "/home/ac/data16t/msc/photovoltaic_forecasting_pj/scripts/posttrain_validation.py"

@@ -26,5 +26,11 @@
 24,PASS,GEO3: 置信度,S115 confidence=medium
 25,PASS,GEO3: 置信度,S116 confidence=low
 26,WARN,GEO4: 低置信度警告,S116 confidence=low，精确光伏场区中心有待甲方/运维台账确认
-27,PASS,C17: 站点数量一致性,"full=69, eval=68，相差1站"
-28,PASS,BIAS: 口径说明,BIAS = mean(power_pred_final - power_mw); BIAS > 0 表示预测偏高，BIAS < 0 表示预测偏低
+27,PASS,GEO5: S115 scene_v151 test 10-14,"scene 正常 {'mid': 378, 'clear_peak': 183, 'low': 49}，非 all-night"
+28,PASS,GEO5: S115 g_blend_pred test 10-14,max=828.0，正常
+29,PASS,GEO5: S115 power_pred_final test 10-14,610/610 行非0，正常
+30,PASS,GEO5: S116 scene_v151 test 10-14,"scene 正常 {'mid': 370, 'clear_peak': 186, 'low': 54}，非 all-night"
+31,PASS,GEO5: S116 g_blend_pred test 10-14,max=835.7，正常
+32,PASS,GEO5: S116 power_pred_final test 10-14,610/610 行非0，正常
+33,PASS,C17: 站点数量一致性,"full=69, eval=68，相差1站"
+34,PASS,BIAS: 口径说明,BIAS = mean(power_pred_final - power_mw); BIAS > 0 表示预测偏高，BIAS < 0 表示预测偏低

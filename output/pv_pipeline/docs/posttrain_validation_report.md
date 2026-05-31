@@ -1,6 +1,6 @@
 # 训练后逻辑审计报告
 
-**生成时间**: 2026-05-31 22:01:47
+**生成时间**: 2026-05-31 22:34:34
 **最终预测列**: power_pred_final
 **评估口径**: split=test, hour=6-19
 
@@ -8,7 +8,7 @@
 
 | 状态 | 数量 |
 |------|------|
-| PASS | 26 |
+| PASS | 32 |
 | FAIL | 0 |
 | WARN | 3 |
 
@@ -43,8 +43,14 @@
 | 25 | ✓ PASS | GEO3: 置信度 | S115 confidence=medium |
 | 26 | ✓ PASS | GEO3: 置信度 | S116 confidence=low |
 | 27 | ⚠ WARN | GEO4: 低置信度警告 | S116 confidence=low，精确光伏场区中心有待甲方/运维台账确认 |
-| 28 | ✓ PASS | C17: 站点数量一致性 | full=69, eval=68，相差1站 |
-| 29 | ✓ PASS | BIAS: 口径说明 | BIAS = mean(power_pred_final - power_mw); BIAS > 0 表示预测偏高，BIAS < 0 表示预测偏低 |
+| 28 | ✓ PASS | GEO5: S115 scene_v151 test 10-14 | scene 正常 {'mid': 378, 'clear_peak': 183, 'low': 49}，非 all-night |
+| 29 | ✓ PASS | GEO5: S115 g_blend_pred test 10-14 | max=828.0，正常 |
+| 30 | ✓ PASS | GEO5: S115 power_pred_final test 10-14 | 610/610 行非0，正常 |
+| 31 | ✓ PASS | GEO5: S116 scene_v151 test 10-14 | scene 正常 {'mid': 370, 'clear_peak': 186, 'low': 54}，非 all-night |
+| 32 | ✓ PASS | GEO5: S116 g_blend_pred test 10-14 | max=835.7，正常 |
+| 33 | ✓ PASS | GEO5: S116 power_pred_final test 10-14 | 610/610 行非0，正常 |
+| 34 | ✓ PASS | C17: 站点数量一致性 | full=69, eval=68，相差1站 |
+| 35 | ✓ PASS | BIAS: 口径说明 | BIAS = mean(power_pred_final - power_mw); BIAS > 0 表示预测偏高，BIAS < 0 表示预测偏低 |
 
 ## 训练切分
 
@@ -59,4 +65,4 @@
 
 ## 结论
 
-**26 项 PASS，3 项 WARN，全部检查通过（或仅警告）。**
+**32 项 PASS，3 项 WARN，全部检查通过（或仅警告）。**
