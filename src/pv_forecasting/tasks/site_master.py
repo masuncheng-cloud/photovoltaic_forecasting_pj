@@ -9,6 +9,58 @@ import pandas as pd
 
 from ..core.data_io import load_ledger_files, read_excel_first_sheet
 from ..core.utils import calc_capacity_bucket, infer_install_group, is_coastal, normalize_site_name
+from pathlib import Path as _Path
+import numpy as np
+import pandas as pd
+
+
+OVERRIDE_PATH = _Path(__file__).resolve().parents[2] / "configs" / "manual_station_geo_overrides.csv"
+
+
+def _apply_geo_overrides(sites: pd.DataFrame) -> pd.DataFrame:
+    """对指定站点应用人工经纬度覆盖，重算 has_geo。"""
+    if not OVERRIDE_PATH.exists():
+        return sites
+
+    overrides = pd.read_csv(OVERRIDE_PATH)
+    overrides = overrides.dropna(subset=["station_id", "latitude", "longitude"])
+    if overrides.empty:
+        return sites
+
+    sites = sites.copy()
+    applied = []
+    for _, row in overrides.iterrows():
+        sid = str(row["station_id"]).strip()
+        lat = float(row["latitude"])
+        lon = float(row["longitude"])
+        src = str(row.get("geo_source", "manual")).strip()
+        conf = str(row.get("confidence", "")).strip()
+        note = str(row.get("note", "")).strip()
+
+        mask = sites["site_id"].astype(str).str.strip().eq(sid)
+        if not mask.any():
+            print(f"[GEO] WARNING: override station '{sid}' not found in site_master, skipping")
+            continue
+
+        sites.loc[mask, "lat"] = lat
+        sites.loc[mask, "lon"] = lon
+        sites.loc[mask, "geo_source"] = src
+        sites.loc[mask, "geo_confidence"] = conf
+        sites.loc[mask, "geo_note"] = note
+        applied.append(sid)
+        print(f"[GEO] Applied override: {sid} lat={lat}, lon={lon}, confidence={conf}")
+
+    # 重算 has_geo：经纬度均非空即视为有地理信息
+    sites["has_geo"] = sites[["lon", "lat"]].notna().all(axis=1).astype(int)
+    sites["longitude"] = sites["lon"]
+    sites["latitude"] = sites["lat"]
+    if applied:
+        print(f"[GEO] Overrides applied to {len(applied)} stations. "
+              f"has_geo recomputed. has_geo=1 count: {sites['has_geo'].sum()}")
+    return sites
+
+
+LEDGER_COL_MAP = {
 
 
 LEDGER_COL_MAP = {
@@ -103,4 +155,20 @@ def build_site_master(power_root: Path) -> pd.DataFrame:
     all_sites["lon"] = pd.to_numeric(all_sites["lon"], errors="coerce")
     all_sites["lat"] = pd.to_numeric(all_sites["lat"], errors="coerce")
     all_sites["commission_date"] = pd.to_datetime(all_sites["commission_date"], errors="coerce")
+
+    # ── 应用人工经纬度覆盖（Round54 修复）──────────────────────────────
+    all_sites = _apply_geo_overrides(all_sites)
+
+    # ── 写出 canonical 元数据 ───────────────────────────────────────────
+    _out = _Path(__file__).resolve().parents[2] / "output" / "pv_pipeline"
+    tables_dir = _out / "tables"
+    tables_dir.mkdir(parents=True, exist_ok=True)
+
+    canonical_csv = tables_dir / "station_metadata_canonical.csv"
+    canonical_pkl = tables_dir / "station_metadata_canonical.pkl"
+    all_sites.to_csv(canonical_csv, index=False, encoding="utf-8-sig")
+    all_sites.to_pickle(canonical_pkl)
+    print(f"[GEO] station_metadata_canonical.csv → {canonical_csv} ({len(all_sites)} stations)")
+    print(f"[GEO] station_metadata_canonical.pkl → {canonical_pkl} ({len(all_sites)} stations)")
+
     return all_sites
