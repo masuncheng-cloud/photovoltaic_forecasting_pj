@@ -652,6 +652,15 @@ def compute_summary(df_eval: pd.DataFrame, site_df: pd.DataFrame) -> dict:
 
 # ── Main ────────────────────────────────────────────────────────────────
 
+def build_cap_by_site(df: pd.DataFrame) -> pd.Series:
+    """Build per-site capacity lookup."""
+    return (
+        df[["site_id", "capacity_mw"]]
+        .drop_duplicates("site_id")
+        .set_index("site_id")["capacity_mw"]
+    )
+
+
 def main():
     print("=" * 60)
     print("综合误差诊断 — diagnose_prediction_error_drivers.py")
@@ -663,6 +672,9 @@ def main():
     # 统一口径
     df = eval_frame(df_eval)
 
+    # Build capacity lookup once
+    cap_by_site = build_cap_by_site(df)
+
     print(f"\n[1] 计算站点级误差...")
     site_df = compute_error_by_site(df, sm_names, geo_conf)
     site_path = OUT_DIR / "round57_error_by_site.csv"
@@ -670,7 +682,7 @@ def main():
     print(f"    → {site_path} ({len(site_df)} sites)")
 
     print(f"\n[2] 计算小时级误差...")
-    hour_df = compute_error_by_hour(df)
+    hour_df = compute_error_by_hour(df, cap_by_site)
     hour_path = OUT_DIR / "round57_error_by_hour.csv"
     hour_df.to_csv(hour_path, index=False, encoding="utf-8-sig")
     print(f"    → {hour_path} ({len(hour_df)} hours)")
@@ -682,19 +694,19 @@ def main():
     print(f"    → {site_hour_path} ({len(site_hour_df)} rows)")
 
     print(f"\n[4] 计算月份误差...")
-    month_df = compute_error_by_month(df)
+    month_df = compute_error_by_month(df, cap_by_site)
     month_path = OUT_DIR / "round57_error_by_month.csv"
     month_df.to_csv(month_path, index=False, encoding="utf-8-sig")
     print(f"    → {month_path} ({len(month_df)} months)")
 
     print(f"\n[5] 计算场景误差...")
-    scene_df = compute_error_by_scene(df)
+    scene_df = compute_error_by_scene(df, cap_by_site)
     scene_path = OUT_DIR / "round57_error_by_scene.csv"
     scene_df.to_csv(scene_path, index=False, encoding="utf-8-sig")
     print(f"    → {scene_path} ({len(scene_df)} scenes)")
 
     print(f"\n[6] 计算优先处理站点...")
-    priority_df = compute_priority_sites(site_df)
+    priority_df = compute_priority_sites(site_df, site_hour_df)
     priority_path = OUT_DIR / "round57_priority_sites.csv"
     priority_df.to_csv(priority_path, index=False, encoding="utf-8-sig")
     print(f"    → {priority_path} ({len(priority_df)} sites)")
