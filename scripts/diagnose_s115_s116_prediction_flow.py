@@ -20,100 +20,85 @@ OUT.parent.mkdir(parents=True, exist_ok=True)
 TARGETS = ["S115", "S116"]
 
 FILES = [
-    ("v159",          "output/pv_pipeline/tables/distributed_predictions_v159.pkl"),
-    ("round36_final", "output/pv_pipeline/tables/distributed_predictions_final_round36.pkl"),
-    ("round36_eval",  "output/pv_pipeline/tables/distributed_predictions_final_eval_round36.pkl"),
-    ("canonical_full","output/pv_pipeline/predictions/distributed_predictions_final_full.pkl"),
-    ("canonical_eval","output/pv_pipeline/predictions/distributed_predictions_final_eval.pkl"),
+    ("v159",           "output/pv_pipeline/tables/distributed_predictions_v159.pkl"),
+    ("round36_final",  "output/pv_pipeline/tables/distributed_predictions_final_round36.pkl"),
+    ("round36_eval",   "output/pv_pipeline/tables/distributed_predictions_final_eval_round36.pkl"),
+    ("canonical_full", "output/pv_pipeline/predictions/distributed_predictions_final_full.pkl"),
+    ("canonical_eval", "output/pv_pipeline/predictions/distributed_predictions_final_eval.pkl"),
 ]
 
-
-def load_and_normalize(path: Path) -> tuple[pd.DataFrame, dict]:
-    """加载 pkl/csv，返回 (df, meta)。meta 包含 id_col / has_split / scopes。"""
-    meta = {}
-    if path.suffix == ".pkl":
-        df = pd.read_pickle(path)
-    elif path.suffix == ".csv":
-        df = pd.read_csv(path)
-    else:
-        return pd.DataFrame(), meta
-
-    # id 列
-    for col in ["station_id", "site_id"]:
-        if col in df.columns:
-            df[col] = df[col].astype(str)
-            meta["id_col"] = col
-            break
-
-    # time 列
-    if "timestamp" in df.columns:
-        df["_time"] = pd.to_datetime(df["timestamp"], errors="coerce")
-    elif "time" in df.columns:
-        df["_time"] = pd.to_datetime(df["time"], errors="coerce")
-    else:
-        df["_time"] = pd.NaT
-
-    if df["_time"].notna().any():
-        df["_hour"] = df["_time"].dt.hour
-    else:
-        df["_hour"] = np.nan
-
-    # split 列
-    meta["has_split"] = "split" in df.columns
-    if meta["has_split"]:
-        df["split"] = df["split"].astype(str)
-
-    return df, meta
+PRED_COLS = ["power_pred_final", "power_pred_cal", "power_pred"]
 
 
-def build_scopes(df: pd.DataFrame, meta: dict) -> dict[str, pd.DataFrame]:
-    """构建 scope 分组。"""
-    scopes = {}
-    if meta.get("has_split"):
-        scopes["all"] = df
-        for sp in ["train", "valid", "test", "future"]:
-            sub = df[df.get("split", pd.Series()) == sp]
-            if not sub.empty:
-                scopes[f"test"] = sub
-                break
-        t = scopes.get("test", df)
-        scopes["test"] = t
-        if "_hour" in df.columns:
-            scopes["test_6_19"] = t[t["_hour"].between(6, 19)]
-            scopes["test_10_14"] = t[t["_hour"].between(10, 14)]
-    else:
-        scopes["all"] = df
-        if "_hour" in df.columns:
-            scopes["hours_6_19"] = df[df["_hour"].between(6, 19)]
-            scopes["hours_10_14"] = df[df["_hour"].between(10, 14)]
-    return {k: v for k, v in scopes.items() if not v.empty}
+def _numeric_stats(s: pd.Series) -> dict:
+    sn = pd.to_numeric(s, errors="coerce")
+    return {
+        "n": int(sn.notna().sum()),
+        "mean": float(sn.mean()) if sn.notna().any() else np.nan,
+        "max": float(sn.max()) if sn.notna().any() else np.nan,
+        "zero_ratio": float((sn.fillna(0).abs() < 1e-9).mean()) if len(sn) else np.nan,
+    }
 
 
-def summarize_scope(scope_df: pd.DataFrame) -> dict:
-    """汇总一个 scope 的关键统计。"""
-    row = {"rows": len(scope_df)}
-    PRED_COLS = ["power_pred_final", "power_pred_cal", "power_pred"]
-    for col in ["has_geo", "solar_elevation_deg", "clear_sky_ghi", "clearsky_ghi",
-                "g_blend_pred", "scene_v151", "scene", "power_mw"] + PRED_COLS:
-        if col not in scope_df.columns:
+def summarize(df: pd.DataFrame, alias: str, scope: str) -> dict:
+    id_col = "site_id" if "site_id" in df.columns else "station_id" if "station_id" in df.columns else None
+    row = {
+        "file_alias": alias, "scope": scope, "station_id": "ALL",
+        "rows": len(df),
+    }
+    if id_col:
+        row["n_sites"] = int(df[id_col].nunique())
+    for col in ["has_geo", "solar_elevation_deg", "clear_sky_ghi", "g_blend_pred",
+                "scene_v151", "power_mw"] + PRED_COLS:
+        if col not in df.columns:
             continue
-        s = scope_df[col]
+        s = df[col]
         if s.dtype == object or str(s.dtype) == "string":
             vc = s.astype(str).value_counts(dropna=False).head(6)
             row[f"{col}_values"] = dict(vc)
         else:
-            sn = pd.to_numeric(s, errors="coerce")
-            row[f"{col}_n"] = int(sn.notna().sum())
-            row[f"{col}_mean"] = float(sn.mean()) if sn.notna().any() else np.nan
-            row[f"{col}_max"] = float(sn.max()) if sn.notna().any() else np.nan
-            row[f"{col}_zero_ratio"] = float(
-                (sn.fillna(0).abs() < 1e-9).mean()
-            ) if len(sn) else np.nan
+            st = _numeric_stats(s)
+            row[f"{col}_n"] = st["n"]
+            row[f"{col}_mean"] = st["mean"]
+            row[f"{col}_max"] = st["max"]
+            row[f"{col}_zero_ratio"] = st["zero_ratio"]
     return row
 
 
+def per_station_summarize(df: pd.DataFrame, alias: str, scope: str) -> list[dict]:
+    """对 S115/S116 逐站汇总。"""
+    id_col = "site_id" if "site_id" in df.columns else "station_id" if "station_id" in df.columns else None
+    if id_col is None:
+        return []
+    rows = []
+    for sid in TARGETS:
+        sdf = df[df[id_col].astype(str) == sid]
+        if sdf.empty:
+            continue
+        row = {
+            "file_alias": alias, "scope": scope, "station_id": sid,
+            "rows": len(sdf),
+        }
+        for col in ["has_geo", "solar_elevation_deg", "clear_sky_ghi", "g_blend_pred",
+                    "scene_v151", "power_mw"] + PRED_COLS:
+            if col not in sdf.columns:
+                continue
+            s = sdf[col]
+            if s.dtype == object or str(s.dtype) == "string":
+                vc = s.astype(str).value_counts(dropna=False).head(6)
+                row[f"{col}_values"] = dict(vc)
+            else:
+                st = _numeric_stats(s)
+                row[f"{col}_n"] = st["n"]
+                row[f"{col}_mean"] = st["mean"]
+                row[f"{col}_max"] = st["max"]
+                row[f"{col}_zero_ratio"] = st["zero_ratio"]
+        rows.append(row)
+    return rows
+
+
 def diagnose() -> pd.DataFrame:
-    """执行全链路诊断。"""
+    """执行诊断。"""
     all_rows = []
 
     for alias, rel_path in FILES:
@@ -125,90 +110,132 @@ def diagnose() -> pd.DataFrame:
             })
             continue
         try:
-            df, meta = load_and_normalize(path)
-            id_col = meta.get("id_col")
-            if id_col is None:
-                all_rows.append({
-                    "file_alias": alias, "file": rel_path,
-                    "station_id": "", "scope": "NO_ID_COL", "rows": len(df)
-                })
-                continue
-
-            scopes = build_scopes(df, meta)
-
-            # 全站 per-scope
-            for scope_name, scope_df in scopes.items():
-                summary = summarize_scope(scope_df)
-                row = {
-                    "file_alias": alias,
-                    "file": str(path.relative_to(ROOT)),
-                    "station_id": "ALL",
-                    "scope": scope_name,
-                }
-                row.update(summary)
-                all_rows.append(row)
-
-            # S115/S116 per-scope
-            for sid in TARGETS:
-                sid_df = df[df[id_col] == sid]
-                if sid_df.empty:
-                    all_rows.append({
-                        "file_alias": alias, "file": str(path.relative_to(ROOT)),
-                        "station_id": sid, "scope": "NO_DATA", "rows": 0
-                    })
-                    continue
-                for scope_name, scope_df in scopes.items():
-                    # 对 v159 等无 split 的文件，scopes 来自全站，这里对站点再过滤
-                    if meta.get("has_split"):
-                        sub = sid_df
-                    else:
-                        sub = sid_df
-                    summary = summarize_scope(sub)
-                    row = {
-                        "file_alias": alias,
-                        "file": str(path.relative_to(ROOT)),
-                        "station_id": sid,
-                        "scope": scope_name,
-                    }
-                    row.update(summary)
-                    all_rows.append(row)
+            if path.suffix == ".pkl":
+                df = pd.read_pickle(path)
+            else:
+                df = pd.read_csv(path)
         except Exception as exc:
             all_rows.append({
                 "file_alias": alias, "file": rel_path,
                 "station_id": "", "scope": "ERROR", "rows": 0,
                 "error": repr(exc)
             })
+            continue
+
+        # 时间列
+        time_col = "timestamp" if "timestamp" in df.columns else "time"
+        if time_col in df.columns:
+            df["_time"] = pd.to_datetime(df[time_col], errors="coerce")
+            df["_hour"] = df["_time"].dt.hour
+        else:
+            df["_hour"] = np.nan
+
+        has_split = "split" in df.columns
+        if has_split:
+            df["split"] = df["split"].astype(str)
+
+        # 定义 scope：对全站，先按 split 选子集，再按 hour 选
+        if has_split:
+            scope_defs = [
+                ("all",          df),
+                ("train",        df[df["split"] == "train"]),
+                ("valid",        df[df["split"] == "valid"]),
+                ("test",         df[df["split"] == "test"]),
+                ("test_6_19",    df[(df["split"] == "test") & df["_hour"].between(6, 19)]),
+                ("test_10_14",   df[(df["split"] == "test") & df["_hour"].between(10, 14)]),
+            ]
+        else:
+            # 无 split：v159 等，用 hour 划分
+            scope_defs = [
+                ("all",          df),
+                ("hours_6_19",   df[df["_hour"].between(6, 19)]),
+                ("hours_10_14",  df[df["_hour"].between(10, 14)]),
+            ]
+
+        for scope_name, scope_df in scope_defs:
+            if scope_df.empty:
+                continue
+            # ALL 行
+            all_rows.append(summarize(scope_df, alias, scope_name))
+            # S115/S116 行
+            all_rows.extend(per_station_summarize(scope_df, alias, scope_name))
 
     return pd.DataFrame(all_rows)
 
 
-def print_diagnosis(df: pd.DataFrame):
-    """打印诊断结果和判定。"""
-    PRED_COLS = ["power_pred_final", "power_pred_cal", "power_pred"]
+def _get_state(row: dict) -> dict | None:
+    """从一行数据提取诊断状态。"""
+    if row is None or row.get("rows", 0) == 0:
+        return None
+    sv = row.get("scene_v151_values", {})
+    if isinstance(sv, str):
+        try:
+            sv = json.loads(sv)
+        except Exception:
+            sv = {}
+    scene_keys = set(str(k) for k in sv.keys()) if sv else set()
+    all_night = bool(scene_keys <= {"night"}) if scene_keys else False
 
-    # 打印摘要表
-    key_cols = [
+    gblend_max = row.get("g_blend_pred_max", 0)
+    gblend_ok = bool(gblend_max > 1e-9) if not np.isnan(gblend_max) else False
+
+    pred_ok = False
+    for pc in PRED_COLS:
+        v = row.get(f"{pc}_mean", np.nan)
+        if not np.isnan(v) and abs(v) > 1e-9:
+            pred_ok = True
+            break
+
+    return {
+        "all_night": all_night,
+        "gblend_ok": gblend_ok,
+        "pred_ok": pred_ok,
+        "rows": row.get("rows", 0),
+    }
+
+
+def print_diagnosis(df: pd.DataFrame):
+    """打印诊断结果。"""
+    PREF_SCOPES = ["test_10_14", "test_6_19", "test", "valid", "train",
+                   "hours_10_14", "hours_6_19", "all"]
+
+    print("\n" + "=" * 160)
+    print("S115/S116 产物链路诊断摘要")
+    print("=" * 160)
+
+    # 打印 S115/S116 行（按 scope）
+    key_cols = [c for c in [
         "file_alias", "station_id", "scope", "rows",
         "g_blend_pred_mean", "g_blend_pred_max",
         "scene_v151_values",
         "power_pred_final_mean", "power_pred_final_max",
-    ]
-    key_cols = [c for c in key_cols if c in df.columns]
+        "power_pred_cal_mean", "power_pred_cal_max",
+        "power_mw_mean",
+    ] if c in df.columns]
 
-    # 过滤有意义行
-    mask = (df["station_id"].isin(TARGETS + ["ALL"])) & ~df["scope"].isin(["MISSING", "NO_ID_COL", "ERROR"])
-    sub = df[key_cols][mask].copy()
-    sub["scene_v151_values"] = sub["scene_v151_values"].apply(
-        lambda x: str(x) if isinstance(x, dict) else x
+    sub = df[df["station_id"].isin(TARGETS)].copy()
+    # 优先打印 test scope
+    sub["_scope_order"] = sub["scope"].map(
+        lambda s: PREF_SCOPES.index(s) if s in PREF_SCOPES else 99
     )
+    sub = sub.sort_values(["station_id", "_scope_order"])
 
-    print("\n" + "=" * 140)
-    print("S115/S116 产物链路摘要")
-    print("=" * 140)
-    pd.set_option("display.max_colwidth", 40)
+    def fmt_scene(v):
+        if isinstance(v, dict):
+            return str(v)
+        if isinstance(v, str):
+            try:
+                return str(json.loads(v))
+            except Exception:
+                return v
+        return str(v)
+
+    sub["scene_v151_values"] = sub["scene_v151_values"].apply(fmt_scene)
+
+    pd.set_option("display.max_colwidth", 50)
     pd.set_option("display.width", 200)
-    print(sub.to_string(index=False))
-    print("=" * 140)
+    print(sub[key_cols].to_string(index=False))
+    print("=" * 160)
 
     # 判定
     print("\n=== 判定结论 ===")
@@ -219,97 +246,73 @@ def print_diagnosis(df: pd.DataFrame):
             if rows.empty:
                 continue
 
-            # 找最佳 scope（优先 test_10_14）
-            best_scope = None
-            best_row = None
-            for sc in ["test_10_14", "test_6_19", "test", "hours_10_14", "hours_6_19", "all"]:
-                match = rows[rows["scope"] == sc]
-                if not match.empty:
-                    best_scope = sc
-                    best_row = match.iloc[0]
+            # 最佳 scope
+            best = None
+            for sc in PREF_SCOPES:
+                m = rows[rows["scope"] == sc]
+                if not m.empty and m.iloc[0].get("rows", 0) > 0:
+                    best = m.iloc[0].to_dict()
                     break
-            if best_row is None:
-                best_row = rows.iloc[0]
-                best_scope = rows.iloc[0]["scope"]
+            if best is None:
+                best = rows.iloc[0].to_dict()
 
-            scene_vals = best_row.get("scene_v151_values", {})
-            if isinstance(scene_vals, dict):
-                scene_keys = set(scene_vals.keys())
-            else:
-                scene_keys = set()
+            st = _get_state(best)
+            if st is None:
+                print(f"    {alias:20s}: 无数据")
+                continue
 
-            scene_all_night = scene_keys <= {"night"} if scene_keys else False
+            scene_vals = best.get("scene_v151_values", {})
+            if isinstance(scene_vals, str):
+                try:
+                    scene_vals = json.loads(scene_vals)
+                except Exception:
+                    scene_vals = {}
+            scene_str = str(dict(scene_vals))[:60] if scene_vals else "N/A"
 
-            gblend_max = best_row.get("g_blend_pred_max", np.nan)
-            gblend_mean = best_row.get("g_blend_pred_mean", np.nan)
-
-            pred_nonzero = False
-            for pc in PRED_COLS:
-                v = best_row.get(f"{pc}_mean", np.nan)
-                if not np.isnan(v) and abs(v) > 1e-9:
-                    pred_nonzero = True
-                    break
-
-            rows_count = best_row.get("rows", 0)
-
-            print(f"    {alias:20s} [{best_scope}] rows={rows_count}: "
-                  f"scene={dict(scene_vals) if scene_vals else 'N/A'} "
-                  f"all_night={scene_all_night} "
-                  f"gblend_max={float(gblend_max):.1f} "
-                  f"pred>0={pred_nonzero}")
+            print(f"    {alias:20s} [{best['scope']}] rows={st['rows']:6d}: "
+                  f"scene={scene_str} "
+                  f"all_night={st['all_night']} "
+                  f"gblend_ok={st['gblend_ok']} "
+                  f"pred_ok={st['pred_ok']}")
 
         # 总体判定
-        v159_r = df[(df["file_alias"] == "v159") & (df["station_id"] == sid)]
-        can_r  = df[(df["file_alias"] == "canonical_full") & (df["station_id"] == sid)]
-
-        def get_state(r):
-            if r.empty:
-                return None
-            # best scope
-            for sc in ["test_10_14", "test_6_19", "test", "hours_10_14", "hours_6_19", "all"]:
-                m = r[r["scope"] == sc]
-                if not m.empty:
-                    r = m.iloc[0]
+        vs = None
+        cs = None
+        for alias, _ in FILES:
+            rows = df[(df["file_alias"] == alias) & (df["station_id"] == sid)]
+            if rows.empty:
+                continue
+            for sc in PREF_SCOPES:
+                m = rows[rows["scope"] == sc]
+                if not m.empty and m.iloc[0].get("rows", 0) > 0:
+                    r = _get_state(m.iloc[0].to_dict())
+                    if r is not None:
+                        if alias == "v159":
+                            vs = r
+                        if alias == "canonical_full":
+                            cs = r
                     break
-            sv = r.get("scene_v151_values", {})
-            if isinstance(sv, dict):
-                sk = set(sv.keys())
-            else:
-                sk = set()
-            all_night = bool(sk <= {"night"}) if sk else False
-            gblend_ok = bool(r.get("g_blend_pred_max", 0) > 1e-9)
-            pred_ok = False
-            for pc in PRED_COLS:
-                v = r.get(f"{pc}_mean", np.nan)
-                if not np.isnan(v) and abs(v) > 1e-9:
-                    pred_ok = True
-                    break
-            return dict(all_night=all_night, gblend_ok=gblend_ok, pred_ok=pred_ok, rows=r.get("rows", 0))
 
-        vs = get_state(v159_r)
-        cs = get_state(can_r)
-
-        print(f"\n  汇总:")
+        print(f"\n  汇总 {sid}:")
         print(f"    v159:       {vs}")
         print(f"    canonical:  {cs}")
 
         if vs is None or cs is None:
             print(f"    → 数据不足，无法判定")
-        elif not vs["all_night"] and vs["pred_ok"] and cs["all_night"] and not cs["pred_ok"]:
-            print(f"    → 情况 A: v159正常，canonical回退（后处理/校准/同步覆盖）")
-        elif not vs["all_night"] and vs["pred_ok"] and not cs["all_night"] and cs["pred_ok"]:
-            print(f"    → 正常: v159和canonical都正常，pred非0，scene有白天成分")
-        elif vs["all_night"] or not vs["pred_ok"]:
-            print(f"    → 情况 C: v159本身异常，需要 geo-refresh 或 full 重训")
-        else:
-            print(f"    → 待进一步诊断")
+        elif vs["pred_ok"] and cs["pred_ok"] and not vs["all_night"] and not cs["all_night"]:
+            print(f"    → 正常: v159 和 canonical 都正常，pred非0，scene有白天成分")
+        elif vs["pred_ok"] and cs["pred_ok"] and vs["all_night"] and cs["all_night"]:
+            print(f"    → 情况 D: v159 和 canonical 都是 all_night，pred却非0（矛盾）")
+        elif vs["pred_ok"] and not cs["pred_ok"] and cs["all_night"]:
+            print(f"    → 情况 A: v159正常，canonical回退")
+        elif not vs["pred_ok"] or vs["all_night"]:
+            print(f"    → 情况 C: v159本身异常（all_night={vs['all_night'] if vs else 'N/A'} pred_ok={vs['pred_ok'] if vs else 'N/A'}）")
 
 
 def main():
     df = diagnose()
-    out = df[~df["scope"].isin(["MISSING", "ERROR", "NO_ID_COL"])]
-    out.to_csv(OUT, index=False, encoding="utf-8-sig")
-    print(f"[OK] written {OUT}, rows={len(out)}")
+    df.to_csv(OUT, index=False, encoding="utf-8-sig")
+    print(f"[OK] written {OUT}, rows={len(df)}")
     print_diagnosis(df)
 
 
