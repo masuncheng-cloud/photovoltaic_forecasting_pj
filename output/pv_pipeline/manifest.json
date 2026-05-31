@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-05-31T15:49:32",
+  "generated_at": "2026-05-31T23:16:09",
   "pipeline_entry": "scripts/run_full_pipeline.py",
   "config": "configs/pipeline.yaml",
   "split": {
@@ -30,19 +30,28 @@
     "dashboard_dir": "output/pv_pipeline/interactive_dashboard",
     "dashboard_index": "output/pv_pipeline/interactive_dashboard/index.json"
   },
+  "artifact_hashes": {
+    "final_full_pkl_sha256": "bc358ebb91e67acef810e8576df780956d9a934d95dce1eb09a4fbbf70f2a742",
+    "final_eval_pkl_sha256": "07917888fa755e74ee75533f57e1afd8f167f5f35f8570c3b186e5be01314b72",
+    "hourly_nrmse_csv_sha256": "7fdab09d2840b3bb02827df8c0504138ab8750f6819ea340e6b14d43dba5d559",
+    "site_metrics_csv_sha256": "dd594143e0db1fc8d1276b35c9e2cad9f02263ac5c476490bd34203a511672af",
+    "dashboard_index_sha256": "2e76ca8a2b156ea17c2504f91876a014c5e0a0e3da34a4c774381e8747e21deb"
+  },
   "geo_overrides": {
     "file": "configs/manual_station_geo_overrides.csv",
     "low_confidence_sites": [
       "S116"
     ],
-    "note": "S115: GEM WGS84 approximate confidence=medium. S116: town-center from Wikipedia confidence=low, MUST be replaced with actual PV-site coords from operator records."
+    "note": "S115: GEM WGS84 approximate, confidence=medium, precision requires on-site confirmation. S116: town-center approximation from Wikipedia, confidence=low, MUST be replaced with actual PV-site coordinates from operator records."
   },
-  "station_count_note": "final_full may include all stations; final_eval and dashboard include only stations with valid test 6-19 evaluation rows. S115/S116 have has_geo=0 and no irradiance data, resulting in scene_v151=all night and all-zero predictions.",
+  "station_count_note": "final_full may include all stations; final_eval and dashboard include only stations with valid test 6-19 evaluation rows; S115/S116 have has_geo=0 and no irradiance data; scene_v151 all-night in 'all' scope is normal (includes nighttime hours); test 10-14 daytime window should have non-night scenes per GEO5 checks",
   "notes": [
+    "test set is only used for final evaluation",
+    "dashboard data is exported after final prediction generation",
     "BIAS = mean(pred - actual); BIAS < 0 means under-prediction",
     "NRMSE denominator: station capacity for site metrics, total capacity for city metrics",
     "all NRMSE values are in percent (%)",
     "final prediction column: power_pred_final (no fallback allowed)",
-    "S115/S116: no irradiance data → scene_v151=all night → all predictions are 0"
+    "Round56 修正说明：S115/S116 scene_v151=all-night in full scope（含夜间）为正常；test 10-14 评估窗口以 GEO5 检查为准，链路正常。"
   ]
 }
