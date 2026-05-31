@@ -1,12 +1,12 @@
 ﻿check,status,detail
 power_clean 无重复,PASS,"2,874,864 行无重复（power_alias+time）"
-power_long_raw 无重复,PASS,"2,874,864 行无重复"
+power_long_raw 存在,WARN,文件不存在，跳过
 无负功率,PASS,全部 >= 0
 无严重超容量,WARN,"187 行 (0.0065%), max_ratio=1.020, max_diff=0.160MW （功率取整浮点微小偏差，可接受）"
 capacity_mw > 0,PASS,118 个站点全部 > 0
 站点名非空,PASS,118 个站点全部有名称
-经纬度完整（2个训练站点缺经纬）,WARN,"2 个训练站点缺 lat/lon: ['S115', 'S116']；3 个不在训练集（可忽略）"
+经纬度完整,FAIL,"lat 缺 5 个, lon 缺 5 个"
 站点容量唯一,PASS,118 个站点各只有一个容量
-时间划分正确（按 split 列）,PASS,"train:723,007, valid:101,184, test:199,104, future:148,885"
-特征无泄漏,PASS,68 个特征列，不含预测结果泄漏
-final 预测文件,WARN,训练后检查（训练尚未执行）
+时间划分检查,WARN,distributed_train_table_v159.pkl 不存在
+特征泄漏检查,WARN,distributed_train_table_v159.pkl 尚不存在，将在训练后检查
+final 预测文件,PASS,"final: 1,172,180 行, eval: 116,144 行，字段完整"
