@@ -401,11 +401,13 @@ def run_validation(cfg: dict) -> ValidationCheck:
                 row = sm[sm["site_id"] == sid]
                 if len(row) == 0:
                     continue
-                conf = str(row.get("geo_confidence", [None])[0]).strip()
-                if not conf or conf == "nan":
+                conf_series = sm["geo_confidence"] if "geo_confidence" in sm.columns else pd.Series(dtype=str)
+                row_conf = conf_series[row.index].values[0]
+                conf_str = str(row_conf).strip() if not pd.isna(row_conf) else ""
+                if not conf_str or conf_str == "nan":
                     c.fail("GEO3: 置信度", f"{sid} geo_confidence 为空")
                 else:
-                    c.ok("GEO3: 置信度", f"{sid} confidence={conf}")
+                    c.ok("GEO3: 置信度", f"{sid} confidence={conf_str}")
         except Exception as e:
             c.warn("GEO3: 置信度检查", str(e))
 
@@ -415,7 +417,8 @@ def run_validation(cfg: dict) -> ValidationCheck:
             sm = pd.read_csv(site_master_path)
             low_conf = sm[
                 sm["site_id"].isin(["S115", "S116"]) &
-                sm.get("geo_confidence", pd.Series([""] * len(sm))).eq("low")
+                (sm["geo_confidence"] == "low") if "geo_confidence" in sm.columns
+                else pd.Series([False] * len(sm))
             ]
             if len(low_conf) > 0:
                 for _, row in low_conf.iterrows():

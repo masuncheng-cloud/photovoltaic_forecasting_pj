@@ -20,5 +20,6 @@
 18,PASS,GEO1: 经纬度覆盖,"S116 lat=34.2983, lon=119.2318"
 19,PASS,GEO2: 坐标范围,"S115 (34.5933, 119.2172) 在连云港范围内"
 20,PASS,GEO2: 坐标范围,"S116 (34.2983, 119.2318) 在连云港范围内"
-21,WARN,GEO3: 置信度检查,0
-22,WARN,GEO4: 低置信度警告,S116 confidence=low，精确光伏场区中心有待甲方/运维台账确认
+21,PASS,GEO3: 置信度,S115 confidence=medium
+22,PASS,GEO3: 置信度,S116 confidence=low
+23,WARN,GEO4: 低置信度警告,S116 confidence=low，精确光伏场区中心有待甲方/运维台账确认
