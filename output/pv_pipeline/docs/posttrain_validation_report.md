@@ -1,6 +1,6 @@
 # 训练后逻辑审计报告
 
-**生成时间**: 2026-05-31 23:00:32
+**生成时间**: 2026-05-31 23:13:38
 **最终预测列**: power_pred_final
 **评估口径**: split=test, hour=6-19
 
@@ -10,7 +10,7 @@
 |------|------|
 | PASS | 32 |
 | FAIL | 0 |
-| WARN | 3 |
+| WARN | 4 |
 
 ## 逐项结果
 
@@ -35,22 +35,23 @@
 | 17 | ✓ PASS | C16: manifest.pipeline_entry | scripts/run_full_pipeline.py |
 | 18 | ✓ PASS | C16: manifest.final_prediction_column | power_pred_final |
 | 19 | ✓ PASS | C16: manifest artifacts 全部存在 | 6 个文件 |
-| 20 | ⚠ WARN | C16: manifest 生成时间 | manifest 早于 canonical full pkl 5.64h（可能被 auto-sync 覆盖，artifact 一致性已验证） |
-| 21 | ✓ PASS | GEO1: 经纬度覆盖 | S115 lat=34.5933, lon=119.2172 |
-| 22 | ✓ PASS | GEO1: 经纬度覆盖 | S116 lat=34.2983, lon=119.2318 |
-| 23 | ✓ PASS | GEO2: 坐标范围 | S115 (34.5933, 119.2172) 在连云港范围内 |
-| 24 | ✓ PASS | GEO2: 坐标范围 | S116 (34.2983, 119.2318) 在连云港范围内 |
-| 25 | ✓ PASS | GEO3: 置信度 | S115 confidence=medium |
-| 26 | ✓ PASS | GEO3: 置信度 | S116 confidence=low |
-| 27 | ⚠ WARN | GEO4: 低置信度警告 | S116 confidence=low，精确光伏场区中心有待甲方/运维台账确认 |
-| 28 | ✓ PASS | GEO5: S115 scene_v151 test 10-14 | scene 正常 {'mid': 378, 'clear_peak': 183, 'low': 49}，非 all-night |
-| 29 | ✓ PASS | GEO5: S115 g_blend_pred test 10-14 | max=828.0，正常 |
-| 30 | ✓ PASS | GEO5: S115 power_pred_final test 10-14 | 610/610 行非0，正常 |
-| 31 | ✓ PASS | GEO5: S116 scene_v151 test 10-14 | scene 正常 {'mid': 370, 'clear_peak': 186, 'low': 54}，非 all-night |
-| 32 | ✓ PASS | GEO5: S116 g_blend_pred test 10-14 | max=835.7，正常 |
-| 33 | ✓ PASS | GEO5: S116 power_pred_final test 10-14 | 610/610 行非0，正常 |
-| 34 | ✓ PASS | C17: 站点数量一致性 | full=69, eval=68，相差1站 |
-| 35 | ✓ PASS | BIAS: 口径说明 | BIAS = mean(power_pred_final - power_mw); BIAS > 0 表示预测偏高，BIAS < 0 表示预测偏低 |
+| 20 | ⚠ WARN | C16: artifact hash 验证 | manifest 中无有效 hash 信息（可能由旧版 pipeline 生成） |
+| 21 | ⚠ WARN | C16: manifest 生成时间 | manifest 早于 pkl 5.64h（可能因 auto-sync 或并发写入）；内容一致性以 hash 为准 |
+| 22 | ✓ PASS | GEO1: 经纬度覆盖 | S115 lat=34.5933, lon=119.2172 |
+| 23 | ✓ PASS | GEO1: 经纬度覆盖 | S116 lat=34.2983, lon=119.2318 |
+| 24 | ✓ PASS | GEO2: 坐标范围 | S115 (34.5933, 119.2172) 在连云港范围内 |
+| 25 | ✓ PASS | GEO2: 坐标范围 | S116 (34.2983, 119.2318) 在连云港范围内 |
+| 26 | ✓ PASS | GEO3: 置信度 | S115 confidence=medium |
+| 27 | ✓ PASS | GEO3: 置信度 | S116 confidence=low |
+| 28 | ⚠ WARN | GEO4: 低置信度警告 | S116 confidence=low，精确光伏场区中心有待甲方/运维台账确认 |
+| 29 | ✓ PASS | GEO5: S115 scene_v151 test 10-14 | scene 正常 {'mid': 378, 'clear_peak': 183, 'low': 49}，非 all-night |
+| 30 | ✓ PASS | GEO5: S115 g_blend_pred test 10-14 | max=828.0，正常 |
+| 31 | ✓ PASS | GEO5: S115 power_pred_final test 10-14 | 610/610 行非0，正常 |
+| 32 | ✓ PASS | GEO5: S116 scene_v151 test 10-14 | scene 正常 {'mid': 370, 'clear_peak': 186, 'low': 54}，非 all-night |
+| 33 | ✓ PASS | GEO5: S116 g_blend_pred test 10-14 | max=835.7，正常 |
+| 34 | ✓ PASS | GEO5: S116 power_pred_final test 10-14 | 610/610 行非0，正常 |
+| 35 | ✓ PASS | C17: 站点数量一致性 | full=69, eval=68，相差1站 |
+| 36 | ✓ PASS | BIAS: 口径说明 | BIAS = mean(power_pred_final - power_mw); BIAS > 0 表示预测偏高，BIAS < 0 表示预测偏低 |
 
 ## 训练切分
 
@@ -65,4 +66,4 @@
 
 ## 结论
 
-**32 项 PASS，3 项 WARN，全部检查通过（或仅警告）。**
+**32 项 PASS，4 项 WARN，全部检查通过（或仅警告）。**

@@ -18,19 +18,20 @@
 16,PASS,C16: manifest.pipeline_entry,scripts/run_full_pipeline.py
 17,PASS,C16: manifest.final_prediction_column,power_pred_final
 18,PASS,C16: manifest artifacts 全部存在,6 个文件
-19,WARN,C16: manifest 生成时间,manifest 早于 canonical full pkl 5.64h（可能被 auto-sync 覆盖，artifact 一致性已验证）
-20,PASS,GEO1: 经纬度覆盖,"S115 lat=34.5933, lon=119.2172"
-21,PASS,GEO1: 经纬度覆盖,"S116 lat=34.2983, lon=119.2318"
-22,PASS,GEO2: 坐标范围,"S115 (34.5933, 119.2172) 在连云港范围内"
-23,PASS,GEO2: 坐标范围,"S116 (34.2983, 119.2318) 在连云港范围内"
-24,PASS,GEO3: 置信度,S115 confidence=medium
-25,PASS,GEO3: 置信度,S116 confidence=low
-26,WARN,GEO4: 低置信度警告,S116 confidence=low，精确光伏场区中心有待甲方/运维台账确认
-27,PASS,GEO5: S115 scene_v151 test 10-14,"scene 正常 {'mid': 378, 'clear_peak': 183, 'low': 49}，非 all-night"
-28,PASS,GEO5: S115 g_blend_pred test 10-14,max=828.0，正常
-29,PASS,GEO5: S115 power_pred_final test 10-14,610/610 行非0，正常
-30,PASS,GEO5: S116 scene_v151 test 10-14,"scene 正常 {'mid': 370, 'clear_peak': 186, 'low': 54}，非 all-night"
-31,PASS,GEO5: S116 g_blend_pred test 10-14,max=835.7，正常
-32,PASS,GEO5: S116 power_pred_final test 10-14,610/610 行非0，正常
-33,PASS,C17: 站点数量一致性,"full=69, eval=68，相差1站"
-34,PASS,BIAS: 口径说明,BIAS = mean(power_pred_final - power_mw); BIAS > 0 表示预测偏高，BIAS < 0 表示预测偏低
+19,WARN,C16: artifact hash 验证,manifest 中无有效 hash 信息（可能由旧版 pipeline 生成）
+20,WARN,C16: manifest 生成时间,manifest 早于 pkl 5.64h（可能因 auto-sync 或并发写入）；内容一致性以 hash 为准
+21,PASS,GEO1: 经纬度覆盖,"S115 lat=34.5933, lon=119.2172"
+22,PASS,GEO1: 经纬度覆盖,"S116 lat=34.2983, lon=119.2318"
+23,PASS,GEO2: 坐标范围,"S115 (34.5933, 119.2172) 在连云港范围内"
+24,PASS,GEO2: 坐标范围,"S116 (34.2983, 119.2318) 在连云港范围内"
+25,PASS,GEO3: 置信度,S115 confidence=medium
+26,PASS,GEO3: 置信度,S116 confidence=low
+27,WARN,GEO4: 低置信度警告,S116 confidence=low，精确光伏场区中心有待甲方/运维台账确认
+28,PASS,GEO5: S115 scene_v151 test 10-14,"scene 正常 {'mid': 378, 'clear_peak': 183, 'low': 49}，非 all-night"
+29,PASS,GEO5: S115 g_blend_pred test 10-14,max=828.0，正常
+30,PASS,GEO5: S115 power_pred_final test 10-14,610/610 行非0，正常
+31,PASS,GEO5: S116 scene_v151 test 10-14,"scene 正常 {'mid': 370, 'clear_peak': 186, 'low': 54}，非 all-night"
+32,PASS,GEO5: S116 g_blend_pred test 10-14,max=835.7，正常
+33,PASS,GEO5: S116 power_pred_final test 10-14,610/610 行非0，正常
+34,PASS,C17: 站点数量一致性,"full=69, eval=68，相差1站"
+35,PASS,BIAS: 口径说明,BIAS = mean(power_pred_final - power_mw); BIAS > 0 表示预测偏高，BIAS < 0 表示预测偏低
