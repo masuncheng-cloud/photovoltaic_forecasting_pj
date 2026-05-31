@@ -171,8 +171,13 @@ if (TABLES / "site_master.csv").exists():
     miss_lon = sm[lon_col].isna().sum()
     train_df_exists = (TABLES / "distributed_train_table_v159.pkl").exists()
     if miss_lat > 0 or miss_lon > 0:
+        sm_missing = sm[sm[lat_col].isna() | sm[lon_col].isna()]
         if not train_df_exists:
-            c.fail("经纬度完整", f"{lat_col} 缺 {miss_lat} 个, {lon_col} 缺 {miss_lon} 个")
+            # 训练表尚未生成，只能 WARN（训练前审计阶段正常情况）
+            c.warn("经纬度完整",
+                   f"{lat_col} 缺 {miss_lat} 个, {lon_col} 缺 {miss_lon} 个；"
+                   f"缺经纬度站点: {list(sm_missing['site_id'])}。"
+                   f"训练表尚不存在，无法判断是否影响训练。")
         else:
             # 检查缺经纬度的站点是否在训练集中
             df_train_check = pd.read_pickle(TABLES / "distributed_train_table_v159.pkl")
