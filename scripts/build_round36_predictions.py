@@ -2,23 +2,34 @@
 build_round36_predictions.py
 =============================
 将 v159 训练输出（distributed_predictions_v159.pkl）整合为：
-  - distributed_predictions_final_round36.pkl（含 train/valid/test/future，含 power_pred_raw）
-  - distributed_predictions_final_eval_round36.pkl（只含 test 6-19h）
+
+  Canonical 路径（正式输出）:
+    output/pv_pipeline/predictions/distributed_predictions_final_full.pkl  ← 含 train/valid/test/future
+    output/pv_pipeline/predictions/distributed_predictions_final_eval.pkl  ← 仅 test 6-19h
+
+  兼容路径（从 canonical 同步，供历史脚本兼容）:
+    output/pv_pipeline/tables/distributed_predictions_final_round36.pkl
+    output/pv_pipeline/tables/distributed_predictions_final_eval_round36.pkl
 
 用法：
   python scripts/build_round36_predictions.py
 """
-import os, sys, pickle, time
+import os, sys, pickle, time, shutil
 from pathlib import Path
 
 PROJECT_ROOT = Path(__file__).parent.parent.resolve()
 sys.path.insert(0, str(PROJECT_ROOT / "src"))
 
-TABLES = PROJECT_ROOT / "output" / "pv_pipeline" / "tables"
-METRICS = PROJECT_ROOT / "output" / "pv_pipeline" / "metrics"
+TABLES     = PROJECT_ROOT / "output" / "pv_pipeline" / "tables"
+PREDICTIONS = PROJECT_ROOT / "output" / "pv_pipeline" / "predictions"
+METRICS    = PROJECT_ROOT / "output" / "pv_pipeline" / "metrics"
 
-OUT_FULL = TABLES / "distributed_predictions_final_round36.pkl"
-OUT_EVAL = TABLES / "distributed_predictions_final_eval_round36.pkl"
+# Canonical 路径（正式输出）
+OUT_FULL = PREDICTIONS / "distributed_predictions_final_full.pkl"
+OUT_EVAL = PREDICTIONS / "distributed_predictions_final_eval.pkl"
+# 兼容路径（历史别名）
+OUT_FULL_LEGACY = TABLES / "distributed_predictions_final_round36.pkl"
+OUT_EVAL_LEGACY = TABLES / "distributed_predictions_final_eval_round36.pkl"
 
 SPLIT_START = {
     "train":  "2023-01-01",
@@ -105,8 +116,11 @@ def main():
     df = df.sort_values(["site_id", "time"]).reset_index(drop=True)
 
     # ── 保存 full pkl ────────────────────────────────────
+    PREDICTIONS.mkdir(parents=True, exist_ok=True)
+    TABLES.mkdir(parents=True, exist_ok=True)
     print(f"\n保存 full pkl: {OUT_FULL}")
     df.to_pickle(OUT_FULL)
+    shutil.copy2(OUT_FULL, OUT_FULL_LEGACY)  # 兼容
     print(f"  行数: {len(df):,}, 列: {list(df.columns)}")
 
     # ── 保存 eval pkl（只含 test 6-19h）───────────────────
@@ -114,6 +128,7 @@ def main():
     df_eval = df_eval.sort_values(["site_id", "time"]).reset_index(drop=True)
     print(f"\n保存 eval pkl: {OUT_EVAL}")
     df_eval.to_pickle(OUT_EVAL)
+    shutil.copy2(OUT_EVAL, OUT_EVAL_LEGACY)  # 兼容
     print(f"  行数: {len(df_eval):,}, 站点: {df_eval['site_id'].nunique()}")
 
     # ── 统计 ─────────────────────────────────────────────
