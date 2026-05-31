@@ -6,10 +6,12 @@ Round46 Step 2: 用统一口径重新计算逐小时站点 NRMSE。
 口径：先按每个 (site_id, hour) 组合算 RMSE/capacity，再对站点取平均。
 不再混用 eval_df.groupby("hour").apply(...) 混站点 RMSE 的错误逻辑。
 
-输出：
-- round46_site_hour_nrmse_consistent.csv
-- round46_hourly_nrmse_consistent.csv
-- hourly_prediction_summary.json（替换 dashboard 中的旧文件）
+输出（canonical 路径，round46 兼容名同步复制）：
+- hourly_site_nrmse_consistent.csv  ← canonical
+- hourly_nrmse_consistent.csv       ← canonical
+- round46_site_hour_nrmse_consistent.csv  ← 兼容
+- round46_hourly_nrmse_consistent.csv      ← 兼容
+- hourly_prediction_summary.json
 """
 
 from pathlib import Path
@@ -202,8 +204,10 @@ def main():
     print("[OK] pkl:", pkl)
     print(summary[["hour", "site_count", "site_avg_nrmse_pct", "site_median_nrmse_pct", "active_site_avg_nrmse_pct", "city_nrmse_pct"]].to_string(index=False))
     print("[OK] wrote:")
-    print(" -", METRIC_DIR / "round46_site_hour_nrmse_consistent.csv")
-    print(" -", METRIC_DIR / "round46_hourly_nrmse_consistent.csv")
+    print(" -", METRIC_DIR_SITE_HOUR_CSV)
+    print(" -", METRIC_DIR_SUMMARY_CSV)
+    print(" -", METRIC_DIR / "round46_site_hour_nrmse_consistent.csv",  "(兼容)")
+    print(" -", METRIC_DIR / "round46_hourly_nrmse_consistent.csv",       "(兼容)")
     print(" -", DASH_DIR / "hourly_prediction_summary.json")
 
 

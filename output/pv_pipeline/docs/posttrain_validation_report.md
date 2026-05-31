@@ -1,6 +1,6 @@
 # 训练后逻辑审计报告
 
-**生成时间**: 2026-05-31 15:18:04
+**生成时间**: 2026-05-31 15:48:56
 **最终预测列**: power_pred_final
 **评估口径**: split=test, hour=6-19
 
@@ -8,16 +8,16 @@
 
 | 状态 | 数量 |
 |------|------|
-| PASS | 21 |
-| FAIL | 0 |
+| PASS | 24 |
+| FAIL | 2 |
 | WARN | 3 |
 
 ## 逐项结果
 
 | # | 状态 | 检查项 | 说明 |
 |---|------|--------|------|
-| 1 | ✓ PASS | C1: 最终预测 pkl 存在且可读 | distributed_predictions_final_round36.pkl, 1,172,180 行, 27 列, 69 站 |
-| 2 | ✓ PASS | C2: eval pkl 数据范围正确 | 仅含 test 6-19h, 116,144 行, 68 站 |
+| 1 | ✓ PASS | C1: 最终预测 pkl 存在且可读 | canonical: distributed_predictions_final_full.pkl, 1,172,180 行, 27 列, 69 站 |
+| 2 | ✓ PASS | C2: eval pkl 数据范围正确 | (canonical) 仅含 test 6-19h, 116,144 行, 68 站 |
 | 3 | ✓ PASS | C3: 最终预测列存在 | power_pred_final: 1,172,180/1,172,180 (100.0%) |
 | 4 | ✓ PASS | C4: 真实功率列存在 | power_mw: 1,172,180/1,172,180 |
 | 5 | ✓ PASS | C5: split 口径正确 | 值=['future', 'test', 'train', 'valid'], test行数=199,104 |
@@ -32,14 +32,19 @@
 | 14 | ✓ PASS | C13: Git 不追踪 site_series JSON | 0 个 |
 | 15 | ✓ PASS | C14: 训练集样本量 | 421,771 行（2023-01-01~2025-06-30 白天） |
 | 16 | ✓ PASS | C15: 站点数量合理 | 69 个站点 |
-| 17 | ⚠ WARN | C16: manifest.json 存在 | 文件不存在（run_full_pipeline.py 未执行或 manifest 写入失败） |
-| 18 | ✓ PASS | GEO1: 经纬度覆盖 | S115 lat=34.5933, lon=119.2172 |
-| 19 | ✓ PASS | GEO1: 经纬度覆盖 | S116 lat=34.2983, lon=119.2318 |
-| 20 | ✓ PASS | GEO2: 坐标范围 | S115 (34.5933, 119.2172) 在连云港范围内 |
-| 21 | ✓ PASS | GEO2: 坐标范围 | S116 (34.2983, 119.2318) 在连云港范围内 |
-| 22 | ✓ PASS | GEO3: 置信度 | S115 confidence=medium |
-| 23 | ✓ PASS | GEO3: 置信度 | S116 confidence=low |
-| 24 | ⚠ WARN | GEO4: 低置信度警告 | S116 confidence=low，精确光伏场区中心有待甲方/运维台账确认 |
+| 17 | ✗ FAIL | C16: manifest.pipeline_entry | 期望 scripts/run_full_pipeline.py，实际:  |
+| 18 | ✓ PASS | C16: manifest.final_prediction_column | power_pred_final |
+| 19 | ✗ FAIL | C16: manifest artifacts | 缺失: ['final_full_pkl: output/pv_pipeline/predictions/distributed_predictions_final_full.pkl', 'final_eval_pkl: output/pv_pipeline/predictions/distributed_predictions_final_eval.pkl', 'hourly_nrmse_csv: output/pv_pipeline/metrics/hourly_nrmse_consistent.csv', 'site_metrics_csv: output/pv_pipeline/metrics/site_metrics_consistent.csv', 'dashboard_dir: output/pv_pipeline/interactive_dashboard', 'dashboard_index: output/pv_pipeline/interactive_dashboard/index.json'] |
+| 20 | ✓ PASS | C16: manifest 生成时间 | 晚于 canonical full pkl 0.94h |
+| 21 | ✓ PASS | GEO1: 经纬度覆盖 | S115 lat=34.5933, lon=119.2172 |
+| 22 | ✓ PASS | GEO1: 经纬度覆盖 | S116 lat=34.2983, lon=119.2318 |
+| 23 | ✓ PASS | GEO2: 坐标范围 | S115 (34.5933, 119.2172) 在连云港范围内 |
+| 24 | ✓ PASS | GEO2: 坐标范围 | S116 (34.2983, 119.2318) 在连云港范围内 |
+| 25 | ✓ PASS | GEO3: 置信度 | S115 confidence=medium |
+| 26 | ✓ PASS | GEO3: 置信度 | S116 confidence=low |
+| 27 | ⚠ WARN | GEO4: 低置信度警告 | S116 confidence=low，精确光伏场区中心有待甲方/运维台账确认 |
+| 28 | ⚠ WARN | C17: 站点数量一致性检查 | 'station_id' |
+| 29 | ✓ PASS | BIAS: 口径说明 | BIAS = mean(power_pred_final - power_mw); BIAS > 0 表示预测偏高，BIAS < 0 表示预测偏低 |
 
 ## 训练切分
 
@@ -54,4 +59,4 @@
 
 ## 结论
 
-**21 项 PASS，3 项 WARN，全部检查通过（或仅警告）。**
+**2 项 FAIL，不合格。请修复后重新运行训练流程。**
