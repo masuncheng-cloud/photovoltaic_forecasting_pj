@@ -15,25 +15,34 @@ run_full_pipeline.py
     所有训练参数统一在 configs/pipeline.yaml 中管理，
     不允许在脚本中硬编码 split 日期、小时范围或预测列名。
 
-训练链路（按顺序执行）：
-    [1/9] 训练前数据审计           → pretrain_audit_round36.py
-    [2/9] 分布式功率模型训练       → stages/03_power/train_distributed_model_v159.py
-    [3/9] 构建最终预测文件         → build_round36_predictions.py
-    [4/9] 站点有效性分层           → build_site_validity_round36.py
-    [5/9] 偏差校准                 → apply_round36_calibration.py
-    [6/9] 指标重算                 → compute_round36_metrics.py
-    [7/9] 训练后统一收口           → post_training_finalize_outputs.py
-    [8/9] 训练后逻辑审计           → scripts/posttrain_validation.py
-    [9/9] Dashboard 校验           → scripts/check_dashboard_prediction_values.py
+训练链路（共 15 步）：
+    [1]  站点元数据构建              → stages/01_data/build_site_master.py
+    [2]  应用人工经纬度覆盖          → scripts/apply_manual_geo_overrides.py
+    [3]  数据清洗与气象插值          → stages/01_data/prepare_meteo_and_power.py
+    [4]  辐照融合                   → stages/02_irradiance/train_irradiance_blend.py
+    [5]  训练前数据审计              → scripts/pretrain_audit_round36.py
+    [6]  分布式功率模型训练          → stages/03_power/train_distributed_model_v159.py
+    [7]  构建最终预测文件            → scripts/build_round36_predictions.py
+    [8]  站点有效性分层              → scripts/build_site_validity_round36.py
+    [9]  偏差校准                   → scripts/apply_round36_calibration.py
+    [10] 指标重算                   → scripts/compute_round36_metrics.py
+    [11] 训练后统一收口             → scripts/post_training_finalize_outputs.py
+    [12] 训练后逻辑审计             → scripts/posttrain_validation.py
+    [13] Dashboard 预测值校验        → scripts/check_dashboard_prediction_values.py
+    [14] 同步正式产物文件名          → （内嵌，Python 函数）
+    [15] 写出 manifest.json          → （内嵌，Python 函数）
 
-最终产物：
-    output/pv_pipeline/tables/distributed_predictions_final_round36.pkl
-    output/pv_pipeline/metrics/round46_hourly_nrmse_consistent.csv
+正式产物（同步后路径）：
+    output/pv_pipeline/predictions/distributed_predictions_final_full.pkl
+    output/pv_pipeline/predictions/distributed_predictions_final_eval.pkl
+    output/pv_pipeline/metrics/hourly_nrmse_consistent.csv
+    output/pv_pipeline/metrics/site_metrics_consistent.csv
     output/pv_pipeline/interactive_dashboard/index.json
     output/pv_pipeline/manifest.json
 """
 
 import argparse
+import shutil
 import subprocess
 import sys
 import json
@@ -65,90 +74,92 @@ def load_config(cfg_path: str | None = None) -> dict:
 
 
 STEPS = [
-    # ── 数据准备（Stage 01）───────────────────────────────
     {
-        "id": "1/11",
+        "id": "1",
         "name": "站点元数据构建",
         "script": "stages/01_data/build_site_master.py",
         "required": True,
         "timeout": 60,
     },
     {
-        "id": "2/11",
-        "name": "数据清洗与气象插值（Stage 01）",
+        "id": "2",
+        "name": "应用人工经纬度覆盖",
+        "script": "scripts/apply_manual_geo_overrides.py",
+        "required": True,
+        "timeout": 60,
+    },
+    {
+        "id": "3",
+        "name": "数据清洗与气象插值",
         "script": "stages/01_data/prepare_meteo_and_power.py",
         "required": True,
         "timeout": 300,
     },
-    # ── 辐照反演与融合（Stage 02）────────────────────────
     {
-        "id": "3/11",
-        "name": "辐照融合（Stage 02）",
+        "id": "4",
+        "name": "辐照融合",
         "script": "stages/02_irradiance/train_irradiance_blend.py",
         "required": True,
         "timeout": 600,
     },
-    # ── 训练前审计（原有 Step 1，现为 Step 4）────────────
     {
-        "id": "4/11",
+        "id": "5",
         "name": "训练前数据审计",
         "script": "scripts/pretrain_audit_round36.py",
         "required": True,
         "timeout": 120,
     },
-    # ── 分布式功率模型训练（原有 Step 2，现为 Step 5）────
     {
-        "id": "5/11",
+        "id": "6",
         "name": "分布式功率模型训练",
         "script": "stages/03_power/train_distributed_model_v159.py",
         "required": True,
         "timeout": 1800,
     },
-    # ── 后处理（原有 Step 3-9，现为 Step 6-11）──────────
     {
-        "id": "6/11",
+        "id": "7",
         "name": "构建最终预测文件",
         "script": "scripts/build_round36_predictions.py",
         "required": True,
         "timeout": 300,
     },
     {
-        "id": "7/11",
+        "id": "8",
         "name": "站点有效性分层",
         "script": "scripts/build_site_validity_round36.py",
         "required": True,
         "timeout": 120,
     },
     {
-        "id": "8/11",
+        "id": "9",
         "name": "偏差校准",
         "script": "scripts/apply_round36_calibration.py",
         "required": True,
         "timeout": 120,
     },
     {
-        "id": "9/11",
+        "id": "10",
         "name": "指标重算",
         "script": "scripts/compute_round36_metrics.py",
         "required": True,
         "timeout": 300,
     },
     {
-        "id": "10/11",
+        "id": "11",
         "name": "训练后统一收口",
         "script": "scripts/post_training_finalize_outputs.py",
         "required": True,
         "timeout": 600,
     },
     {
-        "id": "11/12",
+        "id": "12",
         "name": "训练后逻辑审计",
         "script": "scripts/posttrain_validation.py",
         "required": True,
         "timeout": 300,
     },
     {
-        "id": "12/12",
+        "id": "13",
         "name": "Dashboard 预测值校验",
         "script": "scripts/check_dashboard_prediction_values.py",
         "required": True,
@@ -163,9 +174,9 @@ def run_step(step: dict, python: str, cwd: Path, cfg: dict) -> bool:
     full_path = cwd / script
     if not full_path.exists():
         if step["required"]:
-            print(f"\n[FAIL] {step['id']} 必需步骤脚本不存在: {full_path}")
+            print(f"\n[FAIL] [{step['id']}] 必需步骤脚本不存在: {full_path}")
             return False
-        print(f"\n[WARN] {step['id']} 可选步骤脚本不存在，跳过: {full_path}")
+        print(f"\n[WARN] [{step['id']}] 可选步骤脚本不存在，跳过: {full_path}")
         return True
 
     # Stage 01/02 脚本需要 --data-root 和 --output-root
@@ -177,7 +188,7 @@ def run_step(step: dict, python: str, cwd: Path, cfg: dict) -> bool:
 
     print()
     print("=" * 60)
-    print(f"开始: [{step['id']}] {step['name']}")
+    print(f"开始: [{step['id']}/{len(STEPS)}] {step['name']}")
     print(f"脚本: {script}")
     print("=" * 60)
 
@@ -195,60 +206,103 @@ def run_step(step: dict, python: str, cwd: Path, cfg: dict) -> bool:
         print(result.stderr.decode("utf-8", errors="replace")[-500:])
 
     if result.returncode == 0:
-        print(f"\n[PASS] [{step['id']}] {step['name']}")
+        print(f"\n[PASS] [{step['id']}/{len(STEPS)}] {step['name']}")
         return True
     else:
-        print(f"\n[FAIL] [{step['id']}] {step['name']} — exit {result.returncode}")
+        print(f"\n[FAIL] [{step['id']}/{len(STEPS)}] {step['name']} — exit {result.returncode}")
         if step["required"]:
             print("\n[STOP] 必需步骤失败。请修复后重新运行本脚本。")
             print("（已成功的步骤无需重复，脚本会按顺序跳过已完成的中间文件）")
         return not step["required"]
 
 
+def sync_canonical_paths(cwd: Path) -> None:
+    """
+    将 round36/round46 历史文件名同步到正式 canonical 路径。
+    兼容过渡：保留历史文件，同时建立正式入口。
+    """
+    out = cwd / "output" / "pv_pipeline"
+    tables_dir = out / "tables"
+    preds_dir = out / "predictions"
+    metrics_dir = out / "metrics"
+
+    preds_dir.mkdir(parents=True, exist_ok=True)
+    metrics_dir.mkdir(parents=True, exist_ok=True)
+
+    copies = [
+        # (source, destination)
+        (
+            tables_dir / "distributed_predictions_final_round36.pkl",
+            preds_dir / "distributed_predictions_final_full.pkl",
+        ),
+        (
+            tables_dir / "distributed_predictions_final_eval_round36.pkl",
+            preds_dir / "distributed_predictions_final_eval.pkl",
+        ),
+        (
+            metrics_dir / "round46_hourly_nrmse_consistent.csv",
+            metrics_dir / "hourly_nrmse_consistent.csv",
+        ),
+        (
+            metrics_dir / "round36_site_metrics.csv",
+            metrics_dir / "site_metrics_consistent.csv",
+        ),
+    ]
+
+    print()
+    print("=" * 60)
+    print("同步正式产物文件名")
+    print("=" * 60)
+
+    all_ok = True
+    for src, dst in copies:
+        if not src.exists():
+            print(f"[WARN] 源文件不存在，跳过: {src}")
+            all_ok = False
+            continue
+        shutil.copy2(src, dst)
+        mtime = datetime.fromtimestamp(dst.stat().st_mtime).strftime("%Y-%m-%d %H:%M:%S")
+        print(f"[COPY] {src.name}")
+        print(f"       → {dst.relative_to(cwd)} [{mtime}]")
+
+    if all_ok:
+        print(f"\n[OK] 4 个正式产物文件已同步")
+    print("=" * 60)
+
+
 def write_manifest(cfg: dict, cwd: Path) -> None:
     """写出 manifest.json，记录训练元信息。"""
-    import yaml
-    from scripts.common_paths import output_root
-
     out_dir = cwd / cfg["data"]["output_root"]
     manifest = {
-        "generated_at": datetime.now().isoformat(),
-        "config": str(cwd / "configs" / "pipeline.yaml"),
-        "pipeline_version": "v1.0",
+        "generated_at": datetime.now().isoformat(timespec="seconds"),
+        "config": "configs/pipeline.yaml",
         "split": cfg.get("split", {}),
         "eval": cfg.get("eval", {}),
-        "prediction": cfg.get("prediction", {}),
-        "final_artifacts": {
-            "final_predictions_pkl": str(
-                out_dir / "tables" / "distributed_predictions_final_round36.pkl"
-            ),
-            "eval_predictions_pkl": str(
-                out_dir / "tables" / "distributed_predictions_final_eval_round36.pkl"
-            ),
-            "hourly_nrmse_csv": str(
-                out_dir / "metrics" / "round46_hourly_nrmse_consistent.csv"
-            ),
-            "site_metrics_csv": str(
-                out_dir / "metrics" / "round36_site_metrics.csv"
-            ),
-            "dashboard_dir": str(
-                out_dir / "interactive_dashboard"
-            ),
+        "final_prediction_column": cfg.get("prediction", {}).get("final_column", "power_pred_final"),
+        "artifacts": {
+            "final_full_pkl":    "output/pv_pipeline/predictions/distributed_predictions_final_full.pkl",
+            "final_eval_pkl":    "output/pv_pipeline/predictions/distributed_predictions_final_eval.pkl",
+            "hourly_nrmse_csv":  "output/pv_pipeline/metrics/hourly_nrmse_consistent.csv",
+            "site_metrics_csv":  "output/pv_pipeline/metrics/site_metrics_consistent.csv",
+            "dashboard_dir":     "output/pv_pipeline/interactive_dashboard",
+            "dashboard_index":    "output/pv_pipeline/interactive_dashboard/index.json",
         },
+        "manual_geo_overrides": "configs/manual_station_geo_overrides.csv",
         "notes": [
-            "唯一正式训练入口: python scripts/run_full_pipeline.py",
-            "最终预测列: power_pred_final（不允许回退）",
-            "评估口径: split=test, hour=6-19",
-            "站点NRMSE分母: capacity_mw",
-            "城市NRMSE分母: 参与评估站点装机容量之和",
-            "所有指标均为百分比（%）",
+            "test set is only used for final evaluation",
+            "dashboard data is exported after final prediction generation",
+            "NRMSE denominator: station capacity for site metrics, total capacity for city metrics",
+            "all NRMSE values are in percent (%)",
+            "final prediction column: power_pred_final (no fallback allowed)",
+            "site S115/S116 geo: from manual overrides, precision requires on-site confirmation",
         ],
     }
 
     manifest_path = out_dir / "manifest.json"
+    manifest_path.parent.mkdir(parents=True, exist_ok=True)
     with open(manifest_path, "w", encoding="utf-8") as f:
         json.dump(manifest, f, ensure_ascii=False, indent=2)
-    print(f"\n[OK] manifest.json → {manifest_path}")
+    print(f"[OK] manifest.json → {manifest_path}")
 
 
 def main():
@@ -269,13 +323,12 @@ def main():
         "--skip",
         type=str,
         default="",
-        help="跳过指定步骤 ID，逗号分隔，如 --skip 1/9,2/9",
+        help="跳过指定步骤 ID，逗号分隔，如 --skip 1,2,3",
     )
     args = parser.parse_args()
 
     python = args.python
     if not Path(python).exists():
-        # fallback to conda
         conda_py = "/home/ac/anaconda3/bin/python3"
         if Path(conda_py).exists():
             python = conda_py
@@ -290,7 +343,6 @@ def main():
     print(f"共 {len(STEPS)} 步")
     print()
 
-    # 加载配置
     try:
         cfg = load_config(args.config)
     except Exception as e:
@@ -299,10 +351,10 @@ def main():
 
     skip_ids = set(args.skip.split(",")) - {""}
 
-    # 运行步骤
+    # 运行步骤 1-13
     for step in STEPS:
         if step["id"] in skip_ids:
-            print(f"\n[SKIP] [{step['id']}] {step['name']}（用户跳过）")
+            print(f"\n[SKIP] [{step['id']}/{len(STEPS)}] {step['name']}（用户跳过）")
             continue
         ok = run_step(step, python, cwd, cfg)
         if not ok:
@@ -311,7 +363,10 @@ def main():
             print("="*60)
             sys.exit(1)
 
-    # 写出 manifest
+    # Step 14：同步正式产物文件名
+    sync_canonical_paths(cwd)
+
+    # Step 15：写出 manifest.json
     try:
         write_manifest(cfg, cwd)
     except Exception as e:
@@ -322,11 +377,13 @@ def main():
     print("✓ 完整训练流水线全部完成！")
     print("=" * 60)
     print()
-    print("最终产物：")
-    print("  - output/pv_pipeline/tables/distributed_predictions_final_round36.pkl")
-    print("  - output/pv_pipeline/metrics/round46_hourly_nrmse_consistent.csv")
-    print("  - output/pv_pipeline/interactive_dashboard/index.json")
-    print("  - output/pv_pipeline/manifest.json")
+    print("正式产物：")
+    print("  output/pv_pipeline/predictions/distributed_predictions_final_full.pkl")
+    print("  output/pv_pipeline/predictions/distributed_predictions_final_eval.pkl")
+    print("  output/pv_pipeline/metrics/hourly_nrmse_consistent.csv")
+    print("  output/pv_pipeline/metrics/site_metrics_consistent.csv")
+    print("  output/pv_pipeline/interactive_dashboard/index.json")
+    print("  output/pv_pipeline/manifest.json")
     print()
     print("启动可视化看板：")
     print("  cd /home/ac/data16t/msc/photovoltaic_forecasting_pj")
