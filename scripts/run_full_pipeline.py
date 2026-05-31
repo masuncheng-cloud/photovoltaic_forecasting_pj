@@ -227,7 +227,14 @@ STEPS = [
     {
         "id": "11",
         "name": "训练后统一收口",
+        "desc": "11a 重算指标, 11b 导出看板, 11c 看板stamp, 11d 看板回归",
         "script": "scripts/post_training_finalize_outputs.py",
+        "subs": [
+            {"id": "11a", "name": "recompute_hourly_nrmse_consistent", "desc": "重算逐小时 NRMSE 指标"},
+            {"id": "11b", "name": "export_interactive_dashboard_data", "desc": "导出可视化看板数据"},
+            {"id": "11c", "name": "dashboard_stamp_check", "desc": "看板新鲜度stamp检查"},
+            {"id": "11d", "name": "dashboard_regression_check", "desc": "看板回归检查"},
+        ],
         "required": True,
         "timeout": 600,
     },
