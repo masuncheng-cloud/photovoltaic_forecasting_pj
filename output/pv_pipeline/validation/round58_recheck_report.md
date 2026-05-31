@@ -1,11 +1,11 @@
 # Round58 Round57 诊断口径独立复核报告
 ## 1. 复核结论
-- **HOUR_SITE_CITY_IDENTICAL**（high）：**存在**  - 证据：Round57 hour: site_mean_nrmse == city_nrmse for all rows = True  - 修复建议：Separate station-mean NRMSE and city-aggregated NRMSE calculations- **HOUR_CITY_NRMSE_MISMATCH**（high）：**存在**  - 证据：max abs diff Round57 city_nrmse vs independent recalc = 2670.8262%  - 修复建议：Replace hourly city NRMSE with city-aggregated formula- **HOUR_SITE_NRMSE_MISMATCH**（high）：**存在**  - 证据：max abs diff Round57 site_mean vs independent recalc = 2660.2773%  - 修复建议：Replace hourly site_mean NRMSE with per-site mean NRMSE- **MONTH_CITY_NRMSE_MISMATCH**（high）：**存在**  - 证据：max abs diff Round57 monthly city vs independent recalc = 2058.1690%  - 修复建议：Replace monthly metrics with independent formula- **MONTH_CONCLUSION_MAY_BE_WRONG**（medium）：未确认  - 证据：Round57 worst month=9, recalculated worst month=9- **MAIN_BAD_HOURS_EMPTY**（medium）：**存在**  - 证据：main_bad_hours column all NaN in priority_sites  - 修复建议：Join top-3 bad hours from site-hour metrics into priority_sites- **DAYTIME_SCENE_NIGHT_OVERTRIGGER**（medium）：**存在**  - 证据：daytime_scene_night flagged sites=68/68 (100%)  - 修复建议：Use test 10-14 or daytime-specific night ratio instead of broad 6-19 night ratio- **NAN_BIAS_NEEDS_SEPARATE_CLASS**（medium）：**存在**  - 证据：sites with NaN bias=5/68. Sites: station_id                                            risk_flags
-      S003            high_actual_zero_ratio|daytime_scene_night
-      S044            high_actual_zero_ratio|daytime_scene_night
-      S069            high_actual_zero_ratio|daytime_scene_night
-      S076 high_nrmse|high_actual_zero_ratio|daytime_scene_night
-      S077            high_actual_zero_ratio|daytime_scene_night  - 修复建议：Classify as zero_actual_sum, not over/under prediction- **HOUR_METRICS_SHOULD_DIFFER**（low）：**存在**  - 证据：mean abs diff between site_mean and city columns = 0.000000% (should be > 1%)  - 修复建议：Ensure site_mean and city_nrmse use different denominators
+- **HOUR_SITE_CITY_IDENTICAL**（high）：未确认  - 证据：Round57 hour: site_mean_nrmse == city_nrmse for all rows = False- **HOUR_CITY_NRMSE_MISMATCH**（high）：未确认  - 证据：max abs diff Round57 city_nrmse vs independent recalc = 0.0000%- **HOUR_SITE_NRMSE_MISMATCH**（high）：未确认  - 证据：max abs diff Round57 site_mean vs independent recalc = 0.0000%- **MONTH_CITY_NRMSE_MISMATCH**（high）：未确认  - 证据：max abs diff Round57 monthly city vs independent recalc = 0.0000%- **MONTH_CONCLUSION_MAY_BE_WRONG**（medium）：未确认  - 证据：Round57 worst month=9, recalculated worst month=9- **MAIN_BAD_HOURS_EMPTY**（medium）：未确认  - 证据：main_bad_hours column all NaN in priority_sites- **DAYTIME_SCENE_NIGHT_OVERTRIGGER**（medium）：未确认  - 证据：daytime_scene_night flagged sites=0/68 (0%)- **NAN_BIAS_NEEDS_SEPARATE_CLASS**（medium）：**存在**  - 证据：sites with NaN bias=5/68. Sites: station_id                                        risk_flags
+      S003            zero_actual_sum|high_actual_zero_ratio
+      S044            zero_actual_sum|high_actual_zero_ratio
+      S069            zero_actual_sum|high_actual_zero_ratio
+      S076 high_nrmse|zero_actual_sum|high_actual_zero_ratio
+      S077            zero_actual_sum|high_actual_zero_ratio  - 修复建议：Classify as zero_actual_sum, not over/under prediction- **HOUR_METRICS_SHOULD_DIFFER**（low）：未确认  - 证据：mean abs diff between site_mean and city columns = 5.817743% (should be > 1%)
 ## 2. 小时级复算结果
 | hour | rows | site_mean_nrmse% | city_nrmse% | bias% | P/A |
 |-----|-----:|----------------:|------------:|------:|----:|
