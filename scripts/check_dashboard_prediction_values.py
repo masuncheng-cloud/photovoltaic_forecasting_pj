@@ -21,6 +21,7 @@ Dashboard 预测值一致性全量校验（Round50+ 通用版）。
 import argparse
 import json
 import os
+import pickle
 import sys
 from datetime import datetime
 from pathlib import Path
@@ -235,9 +236,6 @@ def write_outputs(result_df: pd.DataFrame, cfg: dict, out_dir: Path):
 
 
 def main():
-    import argparse
-    import pickle
-
     parser = argparse.ArgumentParser(description="Dashboard 预测值一致性校验")
     parser.add_argument("--config", type=str, default=None)
     args = parser.parse_args()

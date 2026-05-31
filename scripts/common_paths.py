@@ -29,13 +29,13 @@ def config_path() -> Path:
     return project_root() / "configs" / "pipeline.yaml"
 
 
-def load_config(config_path: Optional[str] = None) -> dict:
+def load_config(cfg_path: Optional[str] = None) -> dict:
     """
     加载流水线配置。
 
     Args:
-        config_path: 可选，指定配置文件路径。
-                     默认为 configs/pipeline.yaml。
+        cfg_path: 可选，指定配置文件路径。
+                  默认为 configs/pipeline.yaml。
 
     Returns:
         配置字典。
@@ -44,7 +44,10 @@ def load_config(config_path: Optional[str] = None) -> dict:
         FileNotFoundError: 配置文件不存在。
         yaml.YAMLError: YAML 解析失败。
     """
-    path = Path(config_path) if config_path else config_path()
+    if cfg_path is None:
+        path = config_path()
+    else:
+        path = Path(cfg_path)
     if not path.exists():
         raise FileNotFoundError(f"pipeline config not found: {path}")
     with open(path, "r", encoding="utf-8") as f:
