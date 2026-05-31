@@ -93,33 +93,27 @@ def run_validation(cfg: dict) -> ValidationCheck:
     print(f"split: {sp}")
     print()
 
-    # ── C1: final pkl 存在且可读（优先 canonical） ──────────────────────
+    # ── C1: final pkl 存在且可读（canonical only） ──────────────────────
     canonical_full = tables_dir / ".." / "predictions" / "distributed_predictions_final_full.pkl"
-    candidates = [canonical_full.resolve()] if canonical_full.exists() else []
-    candidates += sorted(tables_dir.glob("distributed_predictions_final_round36.pkl"))
-    if not candidates:
-        c.fail("C1: 最终预测 pkl 存在", "找不到 distributed_predictions_final_full.pkl 或 round36 兼容文件")
-    else:
-        fp = candidates[0]
+    if canonical_full.exists():
+        fp = canonical_full.resolve()
         try:
             df = pd.read_pickle(fp)
             df["time"] = pd.to_datetime(df["time"])
             if "hour" not in df.columns:
                 df["hour"] = df["time"].dt.hour
-            src = "canonical" if "predictions" in str(fp) else "legacy"
             c.ok("C1: 最终预测 pkl 存在且可读",
-                 f"{src}: {fp.name}, {len(df):,} 行, {len(df.columns)} 列, {df['site_id'].nunique()} 站")
+                 f"canonical: {fp.name}, {len(df):,} 行, {len(df.columns)} 列, {df['site_id'].nunique()} 站")
         except Exception as e:
             c.fail("C1: 最终预测 pkl 可读", str(e))
-
-    # ── C2: eval pkl 只含 test 6-19 ──────────────────────────────────────
-    canonical_eval = tables_dir / ".." / "predictions" / "distributed_predictions_final_eval.pkl"
-    eval_candidates = [canonical_eval.resolve()] if canonical_eval.exists() else []
-    eval_candidates += sorted(tables_dir.glob("distributed_predictions_final_eval_round36.pkl"))
-    if not eval_candidates:
-        c.warn("C2: eval pkl 存在", "找不到 distributed_predictions_final_eval.pkl")
     else:
-        ep = eval_candidates[0]
+        c.fail("C1: 最终预测 pkl 存在",
+               f"canonical 不存在: {canonical_full} （Round54 禁止 fallback）")
+
+    # ── C2: eval pkl 只含 test 6-19（canonical only） ──────────────────
+    canonical_eval = tables_dir / ".." / "predictions" / "distributed_predictions_final_eval.pkl"
+    if canonical_eval.exists():
+        ep = canonical_eval.resolve()
         try:
             de = pd.read_pickle(ep)
             de["time"] = pd.to_datetime(de["time"])
@@ -127,14 +121,16 @@ def run_validation(cfg: dict) -> ValidationCheck:
                 de["hour"] = de["time"].dt.hour
             split_ok = (de["split"] == eval_split).all()
             hour_ok = de["hour"].between(sh, eh).all()
-            src = "canonical" if "predictions" in str(ep) else "legacy"
             if split_ok and hour_ok:
                 c.ok("C2: eval pkl 数据范围正确",
-                     f"({src}) 仅含 {eval_split} {sh}-{eh}h, {len(de):,} 行, {de['site_id'].nunique()} 站")
+                     f"(canonical) 仅含 {eval_split} {sh}-{eh}h, {len(de):,} 行, {de['site_id'].nunique()} 站")
             else:
                 c.fail("C2: eval pkl 数据范围", f"split_ok={split_ok}, hour_ok={hour_ok}")
         except Exception as e:
             c.fail("C2: eval pkl 检查", str(e))
+    else:
+        c.fail("C2: eval pkl 存在",
+               f"canonical 不存在: {canonical_eval} （Round54 禁止 fallback）")
 
     # ── C3: 最终预测列存在且非空 ─────────────────────────────────────────
     if fp.exists():
