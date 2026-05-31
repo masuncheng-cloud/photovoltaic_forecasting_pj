@@ -1,16 +1,28 @@
 {
-  "mode": "dashboard-only",
-  "generated_at": "2026-05-31T22:39:22",
-  "total_seconds": 257.26,
-  "total_minutes": 4.288,
+  "mode": "eval-only",
+  "generated_at": "2026-05-31T22:44:23",
+  "total_seconds": 264.754,
+  "total_minutes": 4.413,
   "steps": [
+    {
+      "step": "[10] 指标重算",
+      "status": "PASS",
+      "seconds": 1.532,
+      "minutes": 0.026,
+      "started_at": "2026-05-31T22:39:59",
+      "finished_at": "2026-05-31T22:40:00",
+      "error": "",
+      "outputs": [
+        "/home/ac/data16t/msc/photovoltaic_forecasting_pj/scripts/compute_round36_metrics.py"
+      ]
+    },
     {
       "step": "[11] 训练后统一收口",
       "status": "PASS",
-      "seconds": 241.208,
-      "minutes": 4.02,
-      "started_at": "2026-05-31T22:35:05",
-      "finished_at": "2026-05-31T22:39:06",
+      "seconds": 247.595,
+      "minutes": 4.127,
+      "started_at": "2026-05-31T22:40:00",
+      "finished_at": "2026-05-31T22:44:08",
       "error": "",
       "outputs": [
         "/home/ac/data16t/msc/photovoltaic_forecasting_pj/scripts/post_training_finalize_outputs.py"
@@ -19,10 +31,10 @@
     {
       "step": "[12] 训练后逻辑审计",
       "status": "PASS",
-      "seconds": 6.423,
+      "seconds": 6.401,
       "minutes": 0.107,
-      "started_at": "2026-05-31T22:39:06",
-      "finished_at": "2026-05-31T22:39:13",
+      "started_at": "2026-05-31T22:44:08",
+      "finished_at": "2026-05-31T22:44:14",
       "error": "",
       "outputs": [
         "/home/ac/data16t/msc/photovoltaic_forecasting_pj/scripts/posttrain_validation.py"
@@ -31,10 +43,10 @@
     {
       "step": "[13] Dashboard 预测值校验",
       "status": "PASS",
-      "seconds": 9.629,
-      "minutes": 0.16,
-      "started_at": "2026-05-31T22:39:13",
-      "finished_at": "2026-05-31T22:39:22",
+      "seconds": 9.226,
+      "minutes": 0.154,
+      "started_at": "2026-05-31T22:44:14",
+      "finished_at": "2026-05-31T22:44:23",
       "error": "",
       "outputs": [
         "/home/ac/data16t/msc/photovoltaic_forecasting_pj/scripts/check_dashboard_prediction_values.py"
@@ -45,10 +57,10 @@
     {
       "step": "[11] 训练后统一收口",
       "status": "PASS",
-      "seconds": 241.208,
-      "minutes": 4.02,
-      "started_at": "2026-05-31T22:35:05",
-      "finished_at": "2026-05-31T22:39:06",
+      "seconds": 247.595,
+      "minutes": 4.127,
+      "started_at": "2026-05-31T22:40:00",
+      "finished_at": "2026-05-31T22:44:08",
       "error": "",
       "outputs": [
         "/home/ac/data16t/msc/photovoltaic_forecasting_pj/scripts/post_training_finalize_outputs.py"
@@ -57,10 +69,10 @@
     {
       "step": "[13] Dashboard 预测值校验",
       "status": "PASS",
-      "seconds": 9.629,
-      "minutes": 0.16,
-      "started_at": "2026-05-31T22:39:13",
-      "finished_at": "2026-05-31T22:39:22",
+      "seconds": 9.226,
+      "minutes": 0.154,
+      "started_at": "2026-05-31T22:44:14",
+      "finished_at": "2026-05-31T22:44:23",
       "error": "",
       "outputs": [
         "/home/ac/data16t/msc/photovoltaic_forecasting_pj/scripts/check_dashboard_prediction_values.py"
@@ -69,13 +81,25 @@
     {
       "step": "[12] 训练后逻辑审计",
       "status": "PASS",
-      "seconds": 6.423,
+      "seconds": 6.401,
       "minutes": 0.107,
-      "started_at": "2026-05-31T22:39:06",
-      "finished_at": "2026-05-31T22:39:13",
+      "started_at": "2026-05-31T22:44:08",
+      "finished_at": "2026-05-31T22:44:14",
       "error": "",
       "outputs": [
         "/home/ac/data16t/msc/photovoltaic_forecasting_pj/scripts/posttrain_validation.py"
+      ]
+    },
+    {
+      "step": "[10] 指标重算",
+      "status": "PASS",
+      "seconds": 1.532,
+      "minutes": 0.026,
+      "started_at": "2026-05-31T22:39:59",
+      "finished_at": "2026-05-31T22:40:00",
+      "error": "",
+      "outputs": [
+        "/home/ac/data16t/msc/photovoltaic_forecasting_pj/scripts/compute_round36_metrics.py"
       ]
     }
   ]
