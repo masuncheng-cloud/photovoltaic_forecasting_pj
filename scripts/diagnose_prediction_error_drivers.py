@@ -66,10 +66,10 @@ def load_data():
     sm = pd.read_csv(sm_path) if sm_path.exists() else None
     if sm is not None:
         sm_names = {}
-for _, row in sm.iterrows():
-    sid = str(row.get("site_id", ""))
-    name = str(row.get("site_full_name") or row.get("site_short_name") or sid)
-    sm_names[sid] = name
+        for _, row in sm.iterrows():
+            sid = str(row.get("site_id", ""))
+            name = str(row.get("site_full_name") or row.get("site_short_name") or sid)
+            sm_names[sid] = name
         print(f"[INFO] loaded site_master: {len(sm_names)} sites")
     else:
         sm_names = {}
