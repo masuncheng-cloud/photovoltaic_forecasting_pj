@@ -93,13 +93,14 @@ def eval_frame(df: pd.DataFrame) -> pd.DataFrame:
         df["month"] = df["time"].dt.month
     df["date"] = df["time"].dt.strftime("%Y-%m-%d")
 
-    result = df[
-        (df.get("split", pd.Series(["test"] * len(df))) == EVAL_SPLIT
-        & df["hour"].isin(EVAL_HOURS)
-        & df["power_mw"].notna()
-        & df[PRED_COL].notna()
-        & (df["capacity_mw"] > 0)
-    ].copy()
+    mask = pd.Series(True, index=df.index)
+    if "split" in df.columns:
+        mask = mask & (df["split"] == EVAL_SPLIT)
+    mask = mask & df["hour"].isin(EVAL_HOURS)
+    mask = mask & df["power_mw"].notna()
+    mask = mask & df[PRED_COL].notna()
+    mask = mask & (df["capacity_mw"] > 0)
+    result = df[mask].copy()
     print(f"[INFO] eval frame: {len(result)} rows, {result['site_id'].nunique()} sites")
     return result
 
