@@ -4,7 +4,7 @@ posttrain_validation.py
 =======================
 训练后逻辑审计脚本（Round50+ 通用版）。
 
-基于 configs/pipeline.yaml 中的配置进行 16 项检查，
+基于 configs/pipeline.yaml 中的配置进行 22 项检查，
 覆盖：数据完整性、指标口径、测试集泄漏、产物新鲜度。
 
 用法：
