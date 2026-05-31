@@ -263,18 +263,28 @@ def compute_error_by_site(df: pd.DataFrame, sm_names: dict, geo_conf: dict) -> p
         # has_geo（用 station_metadata 查，不在 eval 里）
         has_geo_ratio = 1.0  # 假设 eval 都有
 
-        # scene 分布
-        scene_night = 0.0
+        # scene 分布（白天 10-14 时段）
+        scene_night_10_14 = 0.0
         scene_low = 0.0
         scene_mid = 0.0
         scene_clear = 0.0
         if "scene_v151" in sdf.columns:
-            sc = sdf["scene_v151"].astype(str)
-            total = max(len(sc), 1)
-            scene_night = float(sc.eq("night").sum()) / total
-            scene_low = float(sc.eq("low").sum()) / total
-            scene_mid = float(sc.eq("mid").sum()) / total
-            scene_clear = float(sc.eq("clear_peak").sum()) / total
+            # 10-14 时段的 scene 分布
+            day_sdf = sdf[sdf["hour"].between(10, 14)]
+            if len(day_sdf) > 0:
+                sc_day = day_sdf["scene_v151"].astype(str)
+                total_day = max(len(sc_day), 1)
+                scene_night_10_14 = float(sc_day.eq("night").sum()) / total_day
+                scene_low = float(sc_day.eq("low").sum()) / total_day
+                scene_mid = float(sc_day.eq("mid").sum()) / total_day
+                scene_clear = float(sc_day.eq("clear_peak").sum()) / total_day
+            # 整体 scene（供参考）
+            sc_all = sdf["scene_v151"].astype(str)
+            total_all = max(len(sc_all), 1)
+            scene_night_overall = float(sc_all.eq("night").sum()) / total_all
+        else:
+            scene_night_10_14 = 0.0
+            scene_night_overall = 0.0
 
         row = {
             "station_id": sid,
@@ -296,7 +306,8 @@ def compute_error_by_site(df: pd.DataFrame, sm_names: dict, geo_conf: dict) -> p
             "max_power_ratio": round(max_ratio, 4),
             "has_geo_ratio": round(has_geo_ratio, 4),
             "geo_confidence": geo_conf.get(sid, ""),
-            "scene_night_ratio_6_19": round(scene_night, 4),
+            # scene_night_ratio_10_14 是新的精确口径
+            "scene_night_ratio_10_14": round(scene_night_10_14, 4),
             "scene_low_ratio": round(scene_low, 4),
             "scene_mid_ratio": round(scene_mid, 4),
             "scene_clear_peak_ratio": round(scene_clear, 4),
