@@ -440,80 +440,99 @@ def compute_error_by_site_hour(df: pd.DataFrame, sm_names: dict) -> pd.DataFrame
 
 # ── 4. error_by_month ───────────────────────────────────────────────────────
 
-def compute_error_by_month(df: pd.DataFrame) -> pd.DataFrame:
-    """月份误差统计。"""
+def compute_error_by_month(df: pd.DataFrame, cap_by_site: pd.Series) -> pd.DataFrame:
+    """月份误差统计（修正口径）。"""
     rows = []
     for month, mdf in df.groupby("month"):
         n = len(mdf)
-        actual = mdf["power_mw"].astype(float)
-        pred = mdf[PRED_COL].astype(float)
+        city_cap = float(cap_by_site.sum())
 
-        # city
-        actual_sum = float(actual.sum())
-        pred_sum = float(pred.sum())
-        cap_sum = float(mdf.groupby("time")["capacity_mw"].first().sum())
-        city_rmse = float(np.sqrt(((pred - actual) ** 2).mean()))
-        city_nrmse = float(city_rmse / max(cap_sum / n, 1e-9) * 100)
+        # site_mean_nrmse: mean of per-site NRMSE
+        site_vals = []
+        for sid, sdf in mdf.groupby("site_id"):
+            cap = float(cap_by_site.get(sid, np.nan))
+            if pd.isna(cap) or cap <= 0:
+                continue
+            v = _nrmse(sdf["power_mw"].values, sdf[PRED_COL].values, cap)
+            if np.isfinite(v):
+                site_vals.append(v)
+        site_mean_nrmse = float(np.nanmean(site_vals)) if site_vals else np.nan
 
-        bias = float((pred_sum - actual_sum) / max(actual_sum, 1e-9) * 100)
-        pa = float(pred_sum / max(actual_sum, 1e-9))
+        # city_nrmse: aggregated RMSE
+        agg = mdf.groupby("time", as_index=False).agg(
+            actual=("power_mw", "sum"),
+            pred=(PRED_COL, "sum"),
+        )
+        city_nrmse = _nrmse(agg["actual"].values, agg["pred"].values, city_cap)
 
-        # top error sites
-        mdf = mdf.copy()
-        mdf["abs_err"] = (mdf[PRED_COL].astype(float) - mdf["power_mw"].astype(float)).abs()
+        bias = _bias_pct(agg["actual"].values, agg["pred"].values)
+        pa = _pred_actual(agg["actual"].values, agg["pred"].values)
+
+        mdf_c = mdf.copy()
+        mdf_c["abs_err"] = (mdf_c[PRED_COL].astype(float) - mdf_c["power_mw"].astype(float)).abs()
         top_sites = (
-            mdf.groupby("site_id")["abs_err"].mean()
+            mdf_c.groupby("site_id")["abs_err"].mean()
             .nlargest(3).index.tolist()
         )
 
         rows.append({
             "month": int(month),
             "rows": n,
-            "site_mean_nrmse_percent": round(city_nrmse, 4),
+            "site_mean_nrmse_percent": round(site_mean_nrmse, 4),
             "city_nrmse_percent": round(city_nrmse, 4),
             "bias_percent_city": round(bias, 4),
             "pred_actual_ratio_city": round(pa, 4),
             "top_error_sites": "|".join(str(s) for s in top_sites),
         })
 
-    result = pd.DataFrame(rows).sort_values("month")
-    return result
+    return pd.DataFrame(rows).sort_values("month")
 
 
 # ── 5. error_by_scene ───────────────────────────────────────────────────────
 
-def compute_error_by_scene(df: pd.DataFrame) -> pd.DataFrame:
-    """场景误差统计。"""
+def compute_error_by_scene(df: pd.DataFrame, cap_by_site: pd.Series) -> pd.DataFrame:
+    """场景误差统计（修正口径）。"""
     if "scene_v151" not in df.columns:
         return pd.DataFrame([{
             "note": "final_eval 未包含 scene_v151 字段，无法做场景误差诊断",
         }])
 
+    city_cap = float(cap_by_site.sum())
     rows = []
     for scene, sdf in df.groupby("scene_v151"):
         n = len(sdf)
-        actual = sdf["power_mw"].astype(float)
-        pred = sdf[PRED_COL].astype(float)
-        cap_sum = float(sdf.groupby("time")["capacity_mw"].first().sum())
 
-        actual_sum = float(actual.sum())
-        pred_sum = float(pred.sum())
-        city_rmse = float(np.sqrt(((pred - actual) ** 2).mean()))
-        city_nrmse = float(city_rmse / max(cap_sum / n, 1e-9) * 100)
-        bias = float((pred_sum - actual_sum) / max(actual_sum, 1e-9) * 100)
-        pa = float(pred_sum / max(actual_sum, 1e-9))
+        # site_mean_nrmse
+        site_vals = []
+        for sid, ssdf in sdf.groupby("site_id"):
+            cap = float(cap_by_site.get(sid, np.nan))
+            if pd.isna(cap) or cap <= 0:
+                continue
+            v = _nrmse(ssdf["power_mw"].values, ssdf[PRED_COL].values, cap)
+            if np.isfinite(v):
+                site_vals.append(v)
+        site_mean_nrmse = float(np.nanmean(site_vals)) if site_vals else np.nan
 
-        sdf_copy = sdf.copy()
-        sdf_copy["abs_err"] = (sdf_copy[PRED_COL].astype(float) - sdf_copy["power_mw"].astype(float)).abs()
+        # city_nrmse
+        agg = sdf.groupby("time", as_index=False).agg(
+            actual=("power_mw", "sum"),
+            pred=(PRED_COL, "sum"),
+        )
+        city_nrmse = _nrmse(agg["actual"].values, agg["pred"].values, city_cap)
+        bias = _bias_pct(sdf["power_mw"].values, sdf[PRED_COL].values)
+        pa = _pred_actual(sdf["power_mw"].values, sdf[PRED_COL].values)
+
+        sdf_c = sdf.copy()
+        sdf_c["abs_err"] = (sdf_c[PRED_COL].astype(float) - sdf_c["power_mw"].astype(float)).abs()
         top_sites = (
-            sdf_copy.groupby("site_id")["abs_err"].mean()
+            sdf_c.groupby("site_id")["abs_err"].mean()
             .nlargest(3).index.tolist()
         )
 
         rows.append({
             "scene": str(scene),
             "rows": n,
-            "site_mean_nrmse_percent": round(city_nrmse, 4),
+            "site_mean_nrmse_percent": round(site_mean_nrmse, 4),
             "city_nrmse_percent": round(city_nrmse, 4),
             "bias_percent": round(bias, 4),
             "pred_actual_ratio": round(pa, 4),
