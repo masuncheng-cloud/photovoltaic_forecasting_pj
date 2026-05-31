@@ -154,8 +154,8 @@ def build_site_master(power_root: _Path, tables_dir: _Path | None = None) -> pd.
     all_sites = _apply_geo_overrides(all_sites)
 
     # ── 写出 canonical 元数据 ───────────────────────────────────────────
-    _out = _Path(__file__).resolve().parents[2] / "output" / "pv_pipeline"
-    tables_dir = _out / "tables"
+    if tables_dir is None:
+        tables_dir = _out / "tables"
     tables_dir.mkdir(parents=True, exist_ok=True)
 
     canonical_csv = tables_dir / "station_metadata_canonical.csv"

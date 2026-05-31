@@ -14,7 +14,8 @@ def main():
     parser = build_parser("Build site master")
     args = parser.parse_args()
     paths = make_paths(PROJECT_ROOT, args)
-    site_master = build_site_master(paths.power_root)
+    # Round54 修复：传入 paths.tables 作为 canonical 输出目录
+    site_master = build_site_master(paths.power_root, tables_dir=paths.tables)
     site_master.to_csv(paths.tables / "site_master.csv", index=False, encoding="utf-8-sig")
     print(f"[OK] site_master rows={len(site_master)} -> {paths.tables / 'site_master.csv'}")
 
