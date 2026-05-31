@@ -1,2 +1,0 @@
-﻿metric,round34_value_pct,round36_value_pct,delta_pp,source_round34,source_round36,status
-city_10_14_nrmse_pct,6.3103,4.2487,-2.0615,/root/autodl-tmp/photovoltaic_forecasting_pj/output/pv_pipeline/metrics/round34_city_hourly_nrmse.csv,/root/autodl-tmp/photovoltaic_forecasting_pj/output/pv_pipeline/metrics/round36_city_hourly_nrmse.csv,PASS

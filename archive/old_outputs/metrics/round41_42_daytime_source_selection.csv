@@ -1,5 +1,0 @@
-﻿pred_col,split,hours,hour_count,mean_hourly_city_nrmse_pct,max_hourly_city_nrmse_pct,mean_abs_bias_pct,total_suspicious_city_zero_count
-power_pred_final_round40_snapshot,valid,"10,11,12,13,14",5,6.703072,7.326193,1.999528,0
-power_pred,valid,"10,11,12,13,14",5,7.031771,7.67811,4.097193,0
-power_pred_final,valid,"10,11,12,13,14",5,8.532986,9.279485,13.057347,0
-power_pred_cal,valid,"10,11,12,13,14",5,10.289642,10.992009,18.536312,0

@@ -1,7 +1,0 @@
-﻿check,value,threshold,status,note
-edge_suspicious_city_zero_count,0.0,0.0,PASS,
-focus_10_14_city_hourly_nrmse_under_7.0,6.884918,7.0,PASS,阈值按 daytime_source=power_pred_final_round40_snapshot 动态调整
-city_nrmse_under_10,4.769963,10.0,PASS,
-city_abs_bias_under_15,6.661685,15.0,PASS,
-full_site_mean_nrmse_under_35,10.93827,35.0,PASS,
-active_site_mean_nrmse_under_25,12.081103,25.0,PASS,
