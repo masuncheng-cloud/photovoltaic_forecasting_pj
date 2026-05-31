@@ -544,42 +544,48 @@ def compute_error_by_scene(df: pd.DataFrame, cap_by_site: pd.Series) -> pd.DataF
 
 # ── 6. priority_sites ─────────────────────────────────────────────────────
 
-def compute_priority_sites(site_df: pd.DataFrame) -> pd.DataFrame:
+def compute_priority_sites(site_df: pd.DataFrame, site_hour_df: pd.DataFrame | None = None) -> pd.DataFrame:
     """优先处理站点清单。"""
     # 过滤掉全0和无意义站点
     valid = site_df[
-        (site_df["zero_ratio_6_19"] < 0.95)  # 至少有一些正功率
-        & (site_df["rows"] >= 50)  # 样本充足
+        (site_df["zero_ratio_6_19"] < 0.95)
+        & (site_df["rows"] >= 50)
     ].copy()
 
-    # 优先级：NRMSE * capacity 作为权重（容量越大影响越大）
+    # 优先级：NRMSE * capacity
     valid["priority_score"] = valid["nrmse_percent"] * valid["capacity_mw"]
-
-    # 排序：优先高 NRMSE 且大容量
     valid = valid.sort_values("priority_score", ascending=False)
+
+    # main_bad_hours from site_hour_df
+    bad_hours_map = {}
+    if site_hour_df is not None and len(site_hour_df):
+        for sid, sh in site_hour_df.groupby("site_id"):
+            sid = str(sid)
+            top3 = sh.nlargest(3, "nrmse_percent")
+            if len(top3):
+                hours = sorted([int(h) for h in top3["hour"].values])
+                bad_hours_map[sid] = "|".join(str(h) for h in hours)
 
     rows = []
     for rank, (_, row) in enumerate(valid.iterrows(), 1):
-        # 找最差的 3 个小时
-        hour_df = site_df[site_df["station_id"] == row["station_id"]]
-        if "hour" in [c for c in hour_df.columns]:
-            # reload hour data from site_df if available
-            pass
+        sid = str(row["station_id"])
         main_flags = [f for f in (row.get("risk_flags", "") or "").split("|") if f and f != "ok"]
 
         rows.append({
             "priority_rank": rank,
-            "station_id": row["station_id"],
-            "station_name": row.get("station_name", row["station_id"]),
+            "station_id": sid,
+            "station_name": row.get("station_name", sid),
             "capacity_mw": row["capacity_mw"],
             "nrmse_percent": row["nrmse_percent"],
             "bias_percent": row["bias_percent"],
             "pred_actual_ratio": row["pred_actual_ratio"],
             "zero_ratio_6_19": row["zero_ratio_6_19"],
-            "main_bad_hours": "",  # filled by caller if available
+            "main_bad_hours": bad_hours_map.get(sid, ""),
             "main_risk_flags": "|".join(main_flags[:3]),
             "recommended_next_action": recommend_action(
-                main_flags, row["nrmse_percent"], row["bias_percent"], row["pred_actual_ratio"]
+                main_flags, float(row["nrmse_percent"]),
+                float(row["bias_percent"]) if not pd.isna(row["bias_percent"]) else np.nan,
+                float(row["pred_actual_ratio"]) if not pd.isna(row["pred_actual_ratio"]) else np.nan,
             ),
         })
 
