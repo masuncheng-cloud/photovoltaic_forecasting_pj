@@ -173,6 +173,38 @@ def audit_full(cfg: dict) -> list[dict]:
                         "status": "PASS" if has_lat else "WARN",
                         "detail": f"{sid} 在 final pkl 中，latitude={'有效' if has_lat else '无效'}"
                     })
+                    # GEO5: S115/S116 test 10-14 scene/pred 检查（不能读 all scope）
+                    if "split" in df.columns:
+                        sdf = site_df[site_df["split"] == "test"].copy()
+                        if "_hour" not in df.columns:
+                            sdf["time"] = pd.to_datetime(sdf["time"], errors="coerce")
+                            sdf["_hour"] = sdf["time"].dt.hour
+                        sdf_test = sdf[sdf["_hour"].between(10, 14)]
+                        if not sdf_test.empty:
+                            scene_col = "scene_v151" if "scene_v151" in sdf_test.columns else None
+                            if scene_col:
+                                sv = sdf_test[scene_col].astype(str).value_counts().to_dict()
+                                all_night = set(str(k) for k in sv.keys()) <= {"night"}
+                                results.append({
+                                    "check": f"GEO5_{sid}_scene_test10_14",
+                                    "status": "FAIL" if all_night else "PASS",
+                                    "detail": f"{sid} scene_v151 test 10-14: {sv} {'[all-night!]' if all_night else '[正常]'}"
+                                })
+                            if "g_blend_pred" in sdf_test.columns:
+                                gmax = float(sdf_test["g_blend_pred"].max())
+                                results.append({
+                                    "check": f"GEO5_{sid}_gblend_test10_14",
+                                    "status": "FAIL" if gmax < 1e-9 else "PASS",
+                                    "detail": f"{sid} g_blend_pred max={gmax:.1f} {'[全0!]' if gmax < 1e-9 else '[正常]'}"
+                                })
+                            if "power_pred_final" in sdf_test.columns:
+                                nonzero = int((sdf_test["power_pred_final"].fillna(0).abs() > 1e-9).sum())
+                                total = len(sdf_test)
+                                results.append({
+                                    "check": f"GEO5_{sid}_pred_test10_14",
+                                    "status": "FAIL" if nonzero == 0 else "PASS",
+                                    "detail": f"{sid} power_pred_final: {nonzero}/{total} 行非0 {'[全0!]' if nonzero == 0 else '[正常]'}"
+                                })
         except Exception as e:
             results.append({"check": "final_pkl_readable", "status": "FAIL", "detail": str(e)})
     else:
