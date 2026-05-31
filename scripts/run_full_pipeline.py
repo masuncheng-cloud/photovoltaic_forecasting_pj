@@ -141,9 +141,16 @@ STEPS = [
         "timeout": 600,
     },
     {
-        "id": "11/11",
-        "name": "训练后逻辑审计 + Dashboard 校验",
+        "id": "11/12",
+        "name": "训练后逻辑审计",
         "script": "scripts/posttrain_validation.py",
+        "required": True,
+        "timeout": 300,
+    },
+    {
+        "id": "12/12",
+        "name": "Dashboard 预测值校验",
+        "script": "scripts/check_dashboard_prediction_values.py",
         "required": True,
         "timeout": 300,
     },
