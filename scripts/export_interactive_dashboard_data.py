@@ -353,14 +353,29 @@ def write_metadata(dashboard_root, round_name, pred_col, source_path):
 
 
 def export_typical_sites(dashboard_root, output_root, round_name):
-    """Export typical_sites.json from round-specific metrics, no fallback to old rounds."""
+    """Export typical_sites.json from canonical metrics, no hardcoded round number."""
     metrics_dir = Path(output_root) / "metrics"
-    round_num = "".join(filter(str.isdigit, round_name))
-    if not round_num:
-        round_num = "36"
-    typical_csv = metrics_dir / f"round{round_num}_typical_sites.csv"
-    if not typical_csv.exists():
-        raise FileNotFoundError(f"典型站点文件不存在: {typical_csv}")
+    # Canonical-first: try without round number, fall back to round36
+    if "canonical" in str(round_name).lower():
+        candidates = [
+            metrics_dir / "typical_sites.csv",
+            metrics_dir / "round36_typical_sites.csv",
+        ]
+    else:
+        candidates = [
+            metrics_dir / f"round{round_name}_typical_sites.csv",
+            metrics_dir / "typical_sites.csv",
+            metrics_dir / "round36_typical_sites.csv",
+        ]
+    typical_csv = None
+    for p in candidates:
+        if p.exists():
+            typical_csv = p
+            break
+    if typical_csv is None:
+        raise FileNotFoundError(
+            f"典型站点文件不存在。尝试了: {[str(p) for p in candidates]}"
+        )
     typical_df = pd.read_csv(typical_csv)
     records = typical_df.to_dict(orient="records")
     out_path = Path(dashboard_root) / "typical_sites.json"
