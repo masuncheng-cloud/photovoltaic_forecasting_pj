@@ -130,34 +130,32 @@ def resolve_prediction_column(df: pd.DataFrame) -> str:
 
 
 def find_latest_prediction_file(output_root):
-    """Auto-detect the latest distributed_predictions_final_roundXX.pkl.
-
-    Returns (Path, round_name_str) where round_name_str is like "Round36".
-    """
+    """Round54：优先读 canonical 路径，缺失才 fallback（不鼓励）。"""
     import re
     tables_dir = Path(output_root) / "tables"
+    preds_dir = Path(output_root) / "predictions"
+
+    # 1. canonical full
+    canonical = preds_dir / "distributed_predictions_final_full.pkl"
+    if canonical.exists():
+        return canonical, "canonical"
+
+    # 2. 找 roundXX 文件
     candidates = []
     for p in tables_dir.glob("distributed_predictions_final_round*.pkl"):
         m = re.search(r"round(\d+)", p.name, re.IGNORECASE)
         if m:
             candidates.append((int(m.group(1)), p))
-
     if candidates:
         candidates.sort(reverse=True, key=lambda x: x[0])
         num, path = candidates[0]
+        print(f"[WARN] canonical 不存在，使用 legacy: {path}")
         return path, f"Round{num}"
 
-    fallback = [
-        tables_dir / "distributed_predictions_final.pkl",
-        tables_dir / "distributed_predictions_final_full.pkl",
-        tables_dir / "distributed_predictions_v159.pkl",
-    ]
-    for p in fallback:
-        if p.exists():
-            return p, "unknown"
-
     raise FileNotFoundError(
-        "找不到 distributed_predictions_final_roundXX.pkl 或 fallback 预测文件"
+        "[ERROR] Round54 禁止 fallback。找不到 canonical:\n"
+        f"  {canonical}\n"
+        f"请先运行完整重训。"
     )
 
 
