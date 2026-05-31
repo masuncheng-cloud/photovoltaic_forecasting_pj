@@ -350,7 +350,7 @@ def run_validation(cfg: dict) -> ValidationCheck:
         except Exception as e:
             c.warn("C15: 站点数量检查", str(e))
 
-    # ── C16: manifest.json 严格验证 ────────────────────────────────
+    # ── C16: manifest.json 严格验证（hash 优先，mtime 仅作参考）───
     manifest = out / "manifest.json"
     if not manifest.exists():
         c.fail("C16: manifest.json 存在", "文件不存在")
@@ -373,8 +373,6 @@ def run_validation(cfg: dict) -> ValidationCheck:
                 c.fail("C16: manifest.final_prediction_column",
                        f"期望 {expected_col}，实际: {fp_col}")
             # 3. all artifacts exist
-            # manifest 中路径相对于 PROJECT_ROOT（如 "output/pv_pipeline/..."）
-            # 所以用 PROJECT_ROOT 解析，不重复拼接 out
             arts = m.get("artifacts", {})
             missing_arts = []
             for art_name, art_path in arts.items():
@@ -385,7 +383,41 @@ def run_validation(cfg: dict) -> ValidationCheck:
                 c.ok("C16: manifest artifacts 全部存在", f"{len(arts)} 个文件")
             else:
                 c.fail("C16: manifest artifacts", f"缺失: {missing_arts}")
-            # 4. manifest mtime >= final pkl mtime (使用 canonical)
+            # 4. hash 验证（核心）：manifest 中记录的 hash 是否与实际文件一致
+            hash_arts = m.get("artifact_hashes", {})
+            hash_key_map = {
+                "final_full_pkl_sha256":   "final_full_pkl",
+                "final_eval_pkl_sha256":   "final_eval_pkl",
+                "hourly_nrmse_csv_sha256": "hourly_nrmse_csv",
+                "site_metrics_csv_sha256": "site_metrics_csv",
+                "dashboard_index_sha256":   "dashboard_index",
+            }
+            hash_mismatches = []
+            hash_matches = []
+            for hash_key, art_name in hash_key_map.items():
+                recorded_hash = hash_arts.get(hash_key, "")
+                if not recorded_hash or recorded_hash == "FILE_NOT_FOUND":
+                    continue
+                art_path_str = arts.get(art_name, "")
+                if art_path_str:
+                    actual_path = PROJECT_ROOT / art_path_str
+                    actual_hash = file_sha256(actual_path)
+                    if actual_hash == recorded_hash:
+                        hash_matches.append(art_name)
+                    else:
+                        hash_mismatches.append(
+                            f"{art_name}: manifest={recorded_hash[:12]}..., actual={actual_hash[:12]}..."
+                        )
+            if hash_mismatches:
+                c.fail("C16: artifact hash 验证",
+                       f"有 {len(hash_mismatches)} 个文件 hash 不一致（内容被篡改或未重新生成）: {hash_mismatches}")
+            elif hash_matches:
+                c.ok("C16: artifact hash 验证",
+                     f"{len(hash_matches)}/{len(hash_key_map)} 个文件 hash 一致，内容完整性 PASS")
+            else:
+                c.warn("C16: artifact hash 验证",
+                       "manifest 中无有效 hash 信息（可能由旧版 pipeline 生成）")
+            # 5. mtime 参考：manifest mtime 不应严重滞后于 pkl mtime
             fp = tables_dir / ".." / "predictions" / "distributed_predictions_final_full.pkl"
             if fp.exists():
                 pkl_mtime = fp.stat().st_mtime
@@ -396,7 +428,7 @@ def run_validation(cfg: dict) -> ValidationCheck:
                 else:
                     delta_h = (pkl_mtime - man_mtime) / 3600
                     c.warn("C16: manifest 生成时间",
-                           f"manifest 早于 canonical full pkl {delta_h:.2f}h（可能被 auto-sync 覆盖，artifact 一致性已验证）")
+                           f"manifest 早于 pkl {delta_h:.2f}h（可能因 auto-sync 或并发写入）；内容一致性以 hash 为准")
         except Exception as e:
             c.fail("C16: manifest.json 可读", str(e))
 
