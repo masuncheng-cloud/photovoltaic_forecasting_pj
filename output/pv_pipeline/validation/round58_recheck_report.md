@@ -1,11 +1,11 @@
 # Round58 Round57 诊断口径独立复核报告
 ## 1. 复核结论
-- **HOUR_SITE_CITY_IDENTICAL**（high）：未确认  - 证据：Round57 hour: site_mean_nrmse == city_nrmse for all rows = False- **HOUR_CITY_NRMSE_MISMATCH**（high）：未确认  - 证据：max abs diff Round57 city_nrmse vs independent recalc = 0.0000%- **HOUR_SITE_NRMSE_MISMATCH**（high）：未确认  - 证据：max abs diff Round57 site_mean vs independent recalc = 0.0000%- **MONTH_CITY_NRMSE_MISMATCH**（high）：未确认  - 证据：max abs diff Round57 monthly city vs independent recalc = 0.0000%- **MONTH_CONCLUSION_MAY_BE_WRONG**（medium）：未确认  - 证据：Round57 worst month=9, recalculated worst month=9- **MAIN_BAD_HOURS_EMPTY**（medium）：未确认  - 证据：main_bad_hours column all NaN in priority_sites- **DAYTIME_SCENE_NIGHT_OVERTRIGGER**（medium）：未确认  - 证据：daytime_scene_night flagged sites=0/68 (0%)- **NAN_BIAS_NEEDS_SEPARATE_CLASS**（medium）：**存在**  - 证据：sites with NaN bias=5/68. Sites: station_id                                        risk_flags
+- **HOUR_SITE_CITY_IDENTICAL**（high）：未确认  - 证据：Round57 hour: site_mean_nrmse == city_nrmse for all rows = False- **HOUR_CITY_NRMSE_MISMATCH**（high）：未确认  - 证据：max abs diff Round57 city_nrmse vs independent recalc = 0.0000%- **HOUR_SITE_NRMSE_MISMATCH**（high）：未确认  - 证据：max abs diff Round57 site_mean vs independent recalc = 0.0000%- **MONTH_CITY_NRMSE_MISMATCH**（high）：未确认  - 证据：max abs diff Round57 monthly city vs independent recalc = 0.0000%- **MONTH_CONCLUSION_MAY_BE_WRONG**（medium）：未确认  - 证据：Round57 worst month=9, recalculated worst month=9- **MAIN_BAD_HOURS_EMPTY**（medium）：未确认  - 证据：main_bad_hours column all NaN in priority_sites- **DAYTIME_SCENE_NIGHT_OVERTRIGGER**（medium）：未确认  - 证据：daytime_scene_night flagged sites=0/68 (0%), mean scene_night_ratio_10_14=0.0- **NAN_BIAS_NEEDS_SEPARATE_CLASS**（medium）：未确认  - 证据：sites with NaN bias=5/68. Correctly classified as zero_actual_sum: True. Sites: station_id                                        risk_flags
       S003            zero_actual_sum|high_actual_zero_ratio
       S044            zero_actual_sum|high_actual_zero_ratio
       S069            zero_actual_sum|high_actual_zero_ratio
       S076 high_nrmse|zero_actual_sum|high_actual_zero_ratio
-      S077            zero_actual_sum|high_actual_zero_ratio  - 修复建议：Classify as zero_actual_sum, not over/under prediction- **HOUR_METRICS_SHOULD_DIFFER**（low）：未确认  - 证据：mean abs diff between site_mean and city columns = 5.817743% (should be > 1%)
+      S077            zero_actual_sum|high_actual_zero_ratio- **HOUR_METRICS_SHOULD_DIFFER**（low）：未确认  - 证据：mean abs diff between site_mean and city columns = 5.817743% (should be > 1%)
 ## 2. 小时级复算结果
 | hour | rows | site_mean_nrmse% | city_nrmse% | bias% | P/A |
 |-----|-----:|----------------:|------------:|------:|----:|
