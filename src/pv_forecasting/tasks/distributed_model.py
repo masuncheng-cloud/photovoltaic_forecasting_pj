@@ -22,6 +22,8 @@ def _ensure_time_cols(df: pd.DataFrame) -> pd.DataFrame:
 def _ensure_default_cols(df: pd.DataFrame) -> pd.DataFrame:
     out = df.copy()
 
+    # Round54 修复：solar_elevation_deg 默认 NaN 而非 0.0
+    # 如果填 0.0，会导致 _scene_v151 将所有 elev 缺失的行误判为 night
     defaults = {
         "quality_score": 0.5,
         "site_weight": 1.0,
@@ -31,12 +33,12 @@ def _ensure_default_cols(df: pd.DataFrame) -> pd.DataFrame:
         "strd_wm2": 300.0,
         "t2m_c": 15.0,
         "ssrd_wm2": 0.0,
-        "solar_elevation_deg": 0.0,
         "coastal_flag": 0,
         "capacity_bucket": "unknown",
         "install_group": "unknown",
         "county": "unknown",
     }
+    # solar_elevation_deg 不在这里填默认值；由 _scene_v151 处理 NaN
 
     for col, val in defaults.items():
         if col not in out.columns:
