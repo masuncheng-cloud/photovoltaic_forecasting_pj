@@ -218,55 +218,41 @@ def run_step(step: dict, python: str, cwd: Path, cfg: dict) -> bool:
 
 def sync_canonical_paths(cwd: Path) -> None:
     """
-    将 round36/round46 历史文件名同步到正式 canonical 路径。
-    兼容过渡：保留历史文件，同时建立正式入口。
+    验证 canonical 路径存在；若源脚本已直接写 canonical，则只做一致性检查；
+    若旧脚本仍写到 legacy 路径，则从中同步到 canonical。
     """
     out = cwd / "output" / "pv_pipeline"
-    tables_dir = out / "tables"
     preds_dir = out / "predictions"
     metrics_dir = out / "metrics"
-
     preds_dir.mkdir(parents=True, exist_ok=True)
-    metrics_dir.mkdir(parents=True, exist_ok=True)
 
-    copies = [
-        # (source, destination)
-        (
-            tables_dir / "distributed_predictions_final_round36.pkl",
-            preds_dir / "distributed_predictions_final_full.pkl",
-        ),
-        (
-            tables_dir / "distributed_predictions_final_eval_round36.pkl",
-            preds_dir / "distributed_predictions_final_eval.pkl",
-        ),
-        (
-            metrics_dir / "round46_hourly_nrmse_consistent.csv",
-            metrics_dir / "hourly_nrmse_consistent.csv",
-        ),
-        (
-            metrics_dir / "round36_site_metrics.csv",
-            metrics_dir / "site_metrics_consistent.csv",
-        ),
+    # canonical → (legacy copy target,  source-if-legacy-exists)
+    # Step 7 (build_predictions) 已直接写 canonical；本函数只做兜底检查
+    checks = [
+        (preds_dir / "distributed_predictions_final_full.pkl",   "predictions"),
+        (preds_dir / "distributed_predictions_final_eval.pkl",   "predictions"),
+        (metrics_dir / "hourly_nrmse_consistent.csv",            "metrics"),
+        (metrics_dir / "site_metrics_consistent.csv",            "metrics"),
     ]
 
     print()
     print("=" * 60)
-    print("同步正式产物文件名")
+    print("验证 canonical 正式产物")
     print("=" * 60)
 
     all_ok = True
-    for src, dst in copies:
-        if not src.exists():
-            print(f"[WARN] 源文件不存在，跳过: {src}")
+    for canonical_path, art_type in checks:
+        if canonical_path.exists():
+            mtime = datetime.fromtimestamp(canonical_path.stat().st_mtime).strftime("%Y-%m-%d %H:%M:%S")
+            print(f"[OK] {canonical_path.relative_to(cwd)} [{mtime}]")
+        else:
+            print(f"[FAIL] canonical 缺失: {canonical_path.relative_to(cwd)}")
             all_ok = False
-            continue
-        shutil.copy2(src, dst)
-        mtime = datetime.fromtimestamp(dst.stat().st_mtime).strftime("%Y-%m-%d %H:%M:%S")
-        print(f"[COPY] {src.name}")
-        print(f"       → {dst.relative_to(cwd)} [{mtime}]")
 
     if all_ok:
-        print(f"\n[OK] 4 个正式产物文件已同步")
+        print(f"\n[OK] 4 个 canonical 正式产物全部存在")
+    else:
+        print(f"\n[WARN] 部分 canonical 产物缺失，run_full_pipeline.py Step 7/10 可能未正常执行")
     print("=" * 60)
 
 

@@ -28,14 +28,21 @@ DASH_DIR.mkdir(parents=True, exist_ok=True)
 
 
 def find_final_pkl():
-    candidates = sorted(TABLE_DIR.glob("distributed_predictions_final_round*.pkl"))
+    # 优先读 canonical 路径
+    canonical = Path("output/pv_pipeline/predictions/distributed_predictions_final_eval.pkl")
+    if canonical.exists():
+        return canonical
+    # fallback legacy
+    candidates = sorted(TABLE_DIR.glob("distributed_predictions_final_eval_round36.pkl"))
     if candidates:
         return candidates[-1]
     for name in ["distributed_predictions_final_full.pkl", "distributed_predictions_final.pkl"]:
         p = TABLE_DIR / name
         if p.exists():
             return p
-    raise FileNotFoundError("找不到 distributed_predictions_final*.pkl")
+    raise FileNotFoundError(
+        "找不到预测文件（优先 canonical: output/pv_pipeline/predictions/distributed_predictions_final_eval.pkl）"
+    )
 
 
 def rmse(x):
