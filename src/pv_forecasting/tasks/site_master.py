@@ -11,7 +11,7 @@ from ..core.data_io import load_ledger_files, read_excel_first_sheet
 from ..core.utils import calc_capacity_bucket, infer_install_group, is_coastal, normalize_site_name
 
 
-OVERRIDE_PATH = _Path(__file__).resolve().parents[2] / "configs" / "manual_station_geo_overrides.csv"
+OVERRIDE_PATH = _Path(__file__).resolve().parents[3] / "configs" / "manual_station_geo_overrides.csv"
 
 
 def _apply_geo_overrides(sites: pd.DataFrame) -> pd.DataFrame:
