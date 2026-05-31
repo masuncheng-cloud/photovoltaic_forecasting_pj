@@ -375,18 +375,18 @@ def run_validation(cfg: dict) -> ValidationCheck:
                 c.ok("C16: manifest artifacts 全部存在", f"{len(arts)} 个文件")
             else:
                 c.fail("C16: manifest artifacts", f"缺失: {missing_arts}")
-            # 4. manifest mtime >= final pkl mtime
-            fp = tables_dir / "distributed_predictions_final_round36.pkl"
+            # 4. manifest mtime >= final pkl mtime (使用 canonical)
+            fp = tables_dir / ".." / "predictions" / "distributed_predictions_final_full.pkl"
             if fp.exists():
                 pkl_mtime = fp.stat().st_mtime
                 man_mtime = manifest.stat().st_mtime
                 if man_mtime >= pkl_mtime:
                     delta_h = (man_mtime - pkl_mtime) / 3600
-                    c.ok("C16: manifest 生成时间", f"晚于 final pkl {delta_h:.2f}h")
+                    c.ok("C16: manifest 生成时间", f"晚于 canonical full pkl {delta_h:.2f}h")
                 else:
                     delta_h = (pkl_mtime - man_mtime) / 3600
                     c.fail("C16: manifest 生成时间",
-                           f"早于 final pkl {delta_h:.2f}h")
+                           f"早于 canonical full pkl {delta_h:.2f}h")
         except Exception as e:
             c.fail("C16: manifest.json 可读", str(e))
 
@@ -472,8 +472,10 @@ def run_validation(cfg: dict) -> ValidationCheck:
 
     # ── C17: 69站/68站差异说明 ──────────────────────────────────────
     try:
-        full_pkl_path = tables_dir / "distributed_predictions_final_round36.pkl"
-        eval_pkl_path = tables_dir / "distributed_predictions_final_eval_round36.pkl"
+        canonical_full_pkl = tables_dir / ".." / "predictions" / "distributed_predictions_final_full.pkl"
+        canonical_eval_pkl = tables_dir / ".." / "predictions" / "distributed_predictions_final_eval.pkl"
+        full_pkl_path = canonical_full_pkl if canonical_full_pkl.exists() else tables_dir / "distributed_predictions_final_round36.pkl"
+        eval_pkl_path = canonical_eval_pkl if canonical_eval_pkl.exists() else tables_dir / "distributed_predictions_final_eval_round36.pkl"
         if full_pkl_path.exists() and eval_pkl_path.exists():
             full_df = pd.read_pickle(full_pkl_path)
             eval_df = pd.read_pickle(eval_pkl_path)
