@@ -109,28 +109,71 @@ def eval_frame(df: pd.DataFrame) -> pd.DataFrame:
     return result
 
 
+def _rmse(a, p):
+    a = np.asarray(a, dtype=float)
+    p = np.asarray(p, dtype=float)
+    if len(a) == 0:
+        return np.nan
+    return float(np.sqrt(np.mean((p - a) ** 2)))
+
+
+def _nrmse(a, p, den):
+    den = float(den)
+    if den <= 0:
+        return np.nan
+    return _rmse(a, p) / den * 100
+
+
+def _bias_pct(a, p):
+    a = np.asarray(a, dtype=float)
+    p = np.asarray(p, dtype=float)
+    a_sum = float(np.sum(a))
+    if abs(a_sum) < 1e-12:
+        return np.nan
+    return (float(np.sum(p)) - a_sum) / a_sum * 100
+
+
+def _pred_actual(a, p):
+    a = np.asarray(a, dtype=float)
+    p = np.asarray(p, dtype=float)
+    a_sum = float(np.sum(a))
+    if abs(a_sum) < 1e-12:
+        return np.nan
+    return float(np.sum(p)) / a_sum
+
+
 def compute_risk_flags(row: dict) -> list[str]:
     """根据行数据生成 risk_flags。"""
     flags = []
     nrmse = row.get("nrmse_percent", 0) or 0
-    bias = abs(row.get("bias_percent", 0) or 0)
+    bias_val = row.get("bias_percent")
+    bias = abs(bias_val) if bias_val is not None and not (isinstance(bias_val, float) and np.isnan(bias_val)) else 0
     pa_ratio = row.get("pred_actual_ratio", 1) or 1
+    # NaN pa_ratio means no valid actual sum
+    if pa_ratio is None or (isinstance(pa_ratio, float) and np.isnan(pa_ratio)):
+        pa_ratio = np.nan
     zero_ratio = row.get("zero_ratio_6_19", 0) or 0
     pred_zero = row.get("pred_zero_ratio_6_19", 0) or 0
     gblend_zero = row.get("g_blend_zero_ratio", 0) or 0
     has_geo_ratio = row.get("has_geo_ratio", 1) or 1
     geo_conf = str(row.get("geo_confidence", "")).strip()
     max_ratio = row.get("max_power_ratio", 0) or 0
-    scene_night = row.get("scene_night_ratio_6_19", 0) or 0
+    scene_night = row.get("scene_night_ratio_10_14", 0) or 0
 
     if nrmse >= 20:
         flags.append("high_nrmse")
-    if bias >= 20:
-        flags.append("high_bias")
-    if pa_ratio >= 1.25:
-        flags.append("over_prediction")
-    if pa_ratio <= 0.75 and pa_ratio > 0:
-        flags.append("under_prediction")
+    # Only apply bias flags if bias is valid (not NaN)
+    if not (isinstance(bias_val, float) and np.isnan(bias_val)):
+        if bias >= 20:
+            flags.append("high_bias")
+        if not np.isnan(pa_ratio):
+            if pa_ratio >= 1.25:
+                flags.append("over_prediction")
+            elif pa_ratio <= 0.75:
+                flags.append("under_prediction")
+    else:
+        # NaN bias means actual_sum is ~0 for this aggregation
+        flags.append("zero_actual_sum")
     if zero_ratio >= 0.5:
         flags.append("high_actual_zero_ratio")
     if pred_zero >= 0.5:
@@ -143,7 +186,8 @@ def compute_risk_flags(row: dict) -> list[str]:
         flags.append("low_confidence_geo")
     if max_ratio > 1.2:
         flags.append("capacity_or_power_outlier")
-    if scene_night > 0.2:
+    # scene_night is now computed from test 10-14 window
+    if scene_night > 0.05:
         flags.append("daytime_scene_night")
     if not flags:
         flags.append("ok")
