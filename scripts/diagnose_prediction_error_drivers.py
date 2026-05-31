@@ -193,8 +193,14 @@ def compute_error_by_site(df: pd.DataFrame, sm_names: dict, geo_conf: dict) -> p
 
         actual_sum = float(actual.sum())
         pred_sum = float(pred.sum())
-        bias_pct = float((pred_sum - actual_sum) / max(actual_sum, 1e-9) * 100)
-        pa_ratio = float(pred_sum / max(actual_sum, 1e-9))
+        if actual_sum < 1e-6:
+            bias_pct = float("nan")
+        else:
+            bias_pct = float((pred_sum - actual_sum) / max(actual_sum, 1e-9) * 100)
+        if actual_sum < 1e-6:
+            pa_ratio = float("nan")
+        else:
+            pa_ratio = float(pred_sum / max(actual_sum, 1e-9))
 
         pos_rows = int((actual > 0).sum())
         zero_ratio = float((actual == 0).mean())
@@ -640,7 +646,7 @@ def main():
     if not priority_df.empty:
         top10 = priority_df.head(10)
         print(top10[["priority_rank", "station_id", "station_name", "capacity_mw",
-                    "nrmse_percent", "bias_percent", "risk_flags", "recommended_next_action"]].to_string(index=False))
+                    "nrmse_percent", "bias_percent", "recommended_next_action"]].to_string(index=False))
     else:
         print("  无优先站点")
 
