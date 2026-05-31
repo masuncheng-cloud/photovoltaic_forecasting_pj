@@ -458,27 +458,6 @@ def _find_sub_script(sub_name: str, cwd: Path) -> Path | None:
         if path.exists():
             return path
     return None
-        result = subprocess.run(
-            cmd,
-            cwd=str(cwd),
-            check=False,
-            capture_output=True,
-        )
-
-        # 打印最后 2000 字符
-        if result.stdout:
-            print(result.stdout.decode("utf-8", errors="replace")[-2000:])
-        if result.stderr and result.returncode != 0:
-            print(result.stderr.decode("utf-8", errors="replace")[-500:])
-
-        if result.returncode == 0:
-            print(f"\n[PASS] [{step_id}] {step_name}")
-            return True
-        else:
-            print(f"\n[FAIL] [{step_id}] {step_name} — exit {result.returncode}")
-            if step["required"]:
-                print("\n[STOP] 必需步骤失败。请修复后重新运行本脚本。")
-            return not step["required"]
 
 
 # ─── Post-steps ───────────────────────────────────────────────────────────────
