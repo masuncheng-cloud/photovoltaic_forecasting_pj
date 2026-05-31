@@ -459,7 +459,9 @@ def write_manifest(cfg: dict, cwd: Path) -> None:
         "station_count_note": (
             "final_full may include all stations; "
             "final_eval and dashboard include only stations with valid test 6-19 evaluation rows; "
-            "S115/S116 have has_geo=0 and no irradiance data, resulting in scene_v151=all night and all-zero predictions"
+            "S115/S116 have has_geo=0 and no irradiance data; "
+            "scene_v151 all-night in 'all' scope is normal (includes nighttime hours); "
+            "test 10-14 daytime window should have non-night scenes per GEO5 checks"
         ),
         "notes": [
             "test set is only used for final evaluation",
@@ -468,7 +470,8 @@ def write_manifest(cfg: dict, cwd: Path) -> None:
             "NRMSE denominator: station capacity for site metrics, total capacity for city metrics",
             "all NRMSE values are in percent (%)",
             "final prediction column: power_pred_final (no fallback allowed)",
-            "S115/S116: no irradiance data → scene_v151=all night → all predictions are 0",
+            "Round56 修正说明：S115/S116 scene_v151=all-night in full scope（含夜间）为正常；"
+            "test 10-14 评估窗口以 GEO5 检查为准，链路正常。",
         ],
     }
 
