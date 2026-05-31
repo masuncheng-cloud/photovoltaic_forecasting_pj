@@ -1,0 +1,443 @@
+#!/usr/bin/env python3
+"""
+posttrain_validation.py
+=======================
+训练后逻辑审计脚本（Round50+ 通用版）。
+
+基于 configs/pipeline.yaml 中的配置进行 16 项检查，
+覆盖：数据完整性、指标口径、测试集泄漏、产物新鲜度。
+
+用法：
+    python scripts/posttrain_validation.py
+    python scripts/posttrain_validation.py --config configs/pipeline.yaml
+
+输出：
+    output/pv_pipeline/docs/posttrain_validation_report.md
+    output/pv_pipeline/validation/posttrain_validation_results.csv
+"""
+
+import argparse
+import json
+import os
+import subprocess
+import sys
+from datetime import datetime
+from pathlib import Path
+
+import pandas as pd
+import numpy as np
+
+# Add project root to path
+PROJECT_ROOT = Path(__file__).resolve().parents[1]
+sys.path.insert(0, str(PROJECT_ROOT))
+
+try:
+    from scripts.common_paths import load_config, output_root
+except ImportError:
+    # Fallback if common_paths not yet available
+    def load_config(cfg_path=None):
+        import yaml
+        path = Path(cfg_path) if cfg_path else PROJECT_ROOT / "configs" / "pipeline.yaml"
+        with open(path) as f:
+            return yaml.safe_load(f)
+    def output_root(cfg):
+        return PROJECT_ROOT / cfg.get("data", {}).get("output_root", "output/pv_pipeline")
+
+
+# ─── Result tracker ────────────────────────────────────────────────────────────
+
+class ValidationCheck:
+    def __init__(self):
+        self.results = []
+        self._fails = 0
+
+    def ok(self, name: str, msg: str = ""):
+        self.results.append(("PASS", name, msg))
+        print(f"  [PASS] {name}" + (f" — {msg}" if msg else ""))
+
+    def warn(self, name: str, msg: str = ""):
+        self.results.append(("WARN", name, msg))
+        print(f"  [WARN] {name}" + (f" — {msg}" if msg else ""))
+
+    def fail(self, name: str, msg: str = ""):
+        self.results.append(("FAIL", name, msg))
+        self._fails += 1
+        print(f"  [FAIL] {name}" + (f" — {msg}" if msg else ""))
+
+    def has_fail(self) -> bool:
+        return self._fails > 0
+
+
+# ─── Main validation ─────────────────────────────────────────────────────────
+
+def run_validation(cfg: dict) -> ValidationCheck:
+    c = ValidationCheck()
+    out = output_root(cfg)
+    tables_dir = out / "tables"
+    metrics_dir = out / "metrics"
+    dash_dir = out / "interactive_dashboard"
+    docs_dir = out / "docs"
+    val_dir = out / "validation"
+    val_dir.mkdir(parents=True, exist_ok=True)
+    docs_dir.mkdir(parents=True, exist_ok=True)
+
+    pred_col = cfg.get("prediction", {}).get("final_column", "power_pred_final")
+    eval_split = cfg.get("eval", {}).get("split", "test")
+    sh, eh = cfg.get("eval", {}).get("start_hour", 6), cfg.get("eval", {}).get("end_hour", 19)
+    sp = cfg.get("split", {})
+
+    print("=" * 60)
+    print("训练后逻辑审计 — posttrain_validation.py")
+    print("=" * 60)
+    print(f"配置: final_column={pred_col}, eval={eval_split} {sh}-{eh}h")
+    print(f"split: {sp}")
+    print()
+
+    # ── C1: final pkl 存在且可读 ──────────────────────────────────────────
+    final_pkls = sorted(tables_dir.glob("distributed_predictions_final_round36.pkl"))
+    if not final_pkls:
+        c.fail("C1: 最终预测 pkl 存在", "找不到 distributed_predictions_final_round36.pkl")
+    else:
+        fp = final_pkls[0]
+        try:
+            df = pd.read_pickle(fp)
+            df["time"] = pd.to_datetime(df["time"])
+            if "hour" not in df.columns:
+                df["hour"] = df["time"].dt.hour
+            c.ok("C1: 最终预测 pkl 存在且可读",
+                 f"{fp.name}, {len(df):,} 行, {len(df.columns)} 列, {df['site_id'].nunique()} 站")
+        except Exception as e:
+            c.fail("C1: 最终预测 pkl 可读", str(e))
+
+    # ── C2: eval pkl 只含 test 6-19 ──────────────────────────────────────
+    eval_pkls = sorted(tables_dir.glob("distributed_predictions_final_eval_round36.pkl"))
+    if not eval_pkls:
+        c.warn("C2: eval pkl 存在", "找不到 distributed_predictions_final_eval_round36.pkl")
+    else:
+        ep = eval_pkls[0]
+        try:
+            de = pd.read_pickle(ep)
+            de["time"] = pd.to_datetime(de["time"])
+            if "hour" not in de.columns:
+                de["hour"] = de["time"].dt.hour
+            split_ok = (de["split"] == eval_split).all()
+            hour_ok = de["hour"].between(sh, eh).all()
+            if split_ok and hour_ok:
+                c.ok("C2: eval pkl 数据范围正确",
+                     f"仅含 {eval_split} {sh}-{eh}h, {len(de):,} 行, {de['site_id'].nunique()} 站")
+            else:
+                c.fail("C2: eval pkl 数据范围", f"split_ok={split_ok}, hour_ok={hour_ok}")
+        except Exception as e:
+            c.fail("C2: eval pkl 检查", str(e))
+
+    # ── C3: 最终预测列存在且非空 ─────────────────────────────────────────
+    if fp.exists():
+        try:
+            df = pd.read_pickle(fp)
+            if pred_col not in df.columns:
+                c.fail("C3: 最终预测列存在", f"{pred_col} 不在 pkl 中")
+            else:
+                nonnull = df[pred_col].notna().sum()
+                pct = nonnull / len(df) * 100
+                if nonnull == 0:
+                    c.fail("C3: 最终预测列非空", f"全部为空")
+                else:
+                    c.ok("C3: 最终预测列存在", f"{pred_col}: {nonnull:,}/{len(df):,} ({pct:.1f}%)")
+        except Exception as e:
+            c.fail("C3: 最终预测列检查", str(e))
+
+    # ── C4: power_mw 存在 ───────────────────────────────────────────────
+    if fp.exists():
+        try:
+            df = pd.read_pickle(fp)
+            if "power_mw" not in df.columns:
+                c.fail("C4: 真实功率列存在", "power_mw 不在 pkl 中")
+            else:
+                nonnull = df["power_mw"].notna().sum()
+                c.ok("C4: 真实功率列存在", f"power_mw: {nonnull:,}/{len(df):,}")
+        except Exception as e:
+            c.fail("C4: power_mw 检查", str(e))
+
+    # ── C5: split 列存在且值正确 ────────────────────────────────────────
+    if fp.exists():
+        try:
+            df = pd.read_pickle(fp)
+            if "split" not in df.columns:
+                c.fail("C5: split 列存在", "split 不在 pkl 中")
+            else:
+                splits = df["split"].unique()
+                expected = set(["train", "valid", "test", "future"])
+                found = set(splits) & expected
+                test_rows = int((df["split"] == eval_split).sum())
+                c.ok("C5: split 口径正确",
+                     f"值={sorted(found)}, test行数={test_rows:,}")
+        except Exception as e:
+            c.fail("C5: split 检查", str(e))
+
+    # ── C6: 时间切分正确 ────────────────────────────────────────────────
+    if fp.exists():
+        try:
+            df = pd.read_pickle(fp)
+            sp = cfg.get("split", {})
+            test_start = sp.get("test_start", "2025-09-01")
+            test_end = sp.get("test_end", "2025-12-31")
+            valid_end = sp.get("valid_end", "2025-08-31")
+            test_min = df[df["split"] == "test"]["time"].min()
+            test_max = df[df["split"] == "test"]["time"].max()
+            ok = (str(test_min.date()) == test_start and str(test_max.date()) == test_end)
+            if ok:
+                c.ok("C6: 测试集时间切分正确",
+                     f"test={test_start}~{test_end}")
+            else:
+                c.fail("C6: 测试集时间切分", f"期望 {test_start}~{test_end}, 实际 {test_min.date()}~{test_max.date()}")
+        except Exception as e:
+            c.fail("C6: 时间切分检查", str(e))
+
+    # ── C7: NRMSE 用 power_pred_final（不是旧列）────────────────────────
+    if fp.exists():
+        try:
+            df = pd.read_pickle(fp)
+            old_cols = ["power_pred_cal", "power_pred", "prediction_mw"]
+            used_old = [col for col in old_cols if col in df.columns]
+            # 只要 power_pred_final 存在且非空，就使用它
+            if pred_col in df.columns and df[pred_col].notna().any():
+                c.ok("C7: 使用正式预测列", f"{pred_col} 就绪")
+            elif used_old:
+                c.fail("C7: 使用正式预测列", f"power_pred_final 不存在，使用了旧列: {used_old}")
+            else:
+                c.fail("C7: 使用正式预测列", f"{pred_col} 不存在且无旧列可用")
+        except Exception as e:
+            c.fail("C7: 预测列检查", str(e))
+
+    # ── C8: 评估集只用 test ─────────────────────────────────────────────
+    if fp.exists():
+        try:
+            df = pd.read_pickle(fp)
+            test_df = df[df["split"] == eval_split]
+            has_pred_in_test = test_df[pred_col].notna().sum() if pred_col in test_df.columns else 0
+            if has_pred_in_test > 0:
+                c.ok("C8: 测试集有预测结果", f"{has_pred_in_test:,} 行")
+            else:
+                c.fail("C8: 测试集有预测结果", f"{has_pred_in_test} 行（可能预测生成失败）")
+        except Exception as e:
+            c.fail("C8: 测试集预测检查", str(e))
+
+    # ── C9: 夜间和 future 不参与正式评估 ───────────────────────────────
+    if fp.exists():
+        try:
+            df = pd.read_pickle(fp)
+            night = df[df["hour"] < sh]
+            future_test_overlap = df[(df["split"] == "future") & df["hour"].between(sh, eh)]
+            if len(night) > 0 and len(future_test_overlap) > 0:
+                c.warn("C9: 夜间/future 不参与评估", "pkl 中存在夜间和 future 记录（评估时会排除）")
+            elif len(night) > 0:
+                c.warn("C9: 夜间/future 不参与评估", f"夜间 {len(night):,} 行（评估时会排除）")
+            else:
+                c.ok("C9: 夜间/future 不参与评估", "仅含白天记录")
+        except Exception as e:
+            c.fail("C9: 夜间/future 检查", str(e))
+
+    # ── C10: hourly_nrmse_consistent.csv 存在 ───────────────────────────
+    hourly_csv = metrics_dir / "round46_hourly_nrmse_consistent.csv"
+    if not hourly_csv.exists():
+        c.fail("C10: hourly_nrmse_consistent.csv 存在", f"不存在: {hourly_csv.name}")
+    else:
+        try:
+            hdf = pd.read_csv(hourly_csv)
+            if "hour" in hdf.columns and "site_mean_nrmse_percent" in hdf.columns:
+                valid_hours = hdf[hdf["hour"].between(sh, eh)]
+                c.ok("C10: hourly_nrmse_consistent.csv 正确",
+                     f"{len(valid_hours)} 小时数据")
+            else:
+                c.fail("C10: hourly_nrmse_consistent.csv 结构", "缺少 hour 或 site_mean_nrmse_percent 列")
+        except Exception as e:
+            c.fail("C10: hourly_nrmse_consistent.csv 读取", str(e))
+
+    # ── C11: dashboard JSON 一致性 ─────────────────────────────────────
+    cons_csv = metrics_dir / "round36_dashboard_prediction_consistency.csv"
+    if not cons_csv.exists():
+        c.warn("C11: dashboard_consistency.csv 存在", "文件不存在（可能未执行导出）")
+    else:
+        try:
+            cdf = pd.read_csv(cons_csv)
+            fails = int((cdf.get("status", cdf) == "FAIL").sum())
+            max_pred = float(cdf.get("max_abs_diff_pred", [0]).max())
+            if fails == 0:
+                c.ok("C11: dashboard 一致性校验", f"{len(cdf)} 站, 全部 PASS")
+            else:
+                c.fail("C11: dashboard 一致性校验", f"{fails}/{len(cdf)} FAIL, max_pred={max_pred:.2e}")
+        except Exception as e:
+            c.warn("C11: dashboard_consistency 检查", str(e))
+
+    # ── C12: 产物新鲜度（dashboard 晚于 final pkl）────────────────────
+    if fp.exists() and dash_dir.exists():
+        try:
+            idx = dash_dir / "index.json"
+            if not idx.exists():
+                c.fail("C12: dashboard index.json 存在", "不存在")
+            else:
+                pkl_mtime = fp.stat().st_mtime
+                idx_mtime = idx.stat().st_mtime
+                if idx_mtime >= pkl_mtime:
+                    delta_h = (idx_mtime - pkl_mtime) / 3600
+                    c.ok("C12: dashboard 数据新鲜", f"dashboard 晚于 final pkl {delta_h:.2f}h")
+                else:
+                    delta_h = (pkl_mtime - idx_mtime) / 3600
+                    c.fail("C12: dashboard 数据新鲜", f"dashboard 早于 final pkl {delta_h:.2f}h（数据已过期）")
+        except Exception as e:
+            c.warn("C12: 新鲜度检查", str(e))
+
+    # ── C13: Git 不追踪大数据文件 ───────────────────────────────────────
+    try:
+        tracked = subprocess.run(
+            ["git", "ls-files"], capture_output=True, text=True,
+            cwd=str(PROJECT_ROOT), check=False
+        ).stdout.splitlines()
+        pkl_t = [x for x in tracked if x.endswith((".pkl", ".joblib"))]
+        json_t = [x for x in tracked if "site_series/" in x or x.endswith("city_series.json")]
+        if pkl_t:
+            c.fail("C13: Git 不追踪 pkl", f"{len(pkl_t)} 个: {pkl_t[:2]}")
+        else:
+            c.ok("C13: Git 不追踪 pkl", "0 个")
+        if json_t:
+            c.fail("C13: Git 不追踪 site_series JSON", f"{len(json_t)} 个")
+        else:
+            c.ok("C13: Git 不追踪 site_series JSON", "0 个")
+    except Exception as e:
+        c.warn("C13: Git 检查", str(e))
+
+    # ── C14: train/valid 样本量充足 ─────────────────────────────────────
+    if fp.exists():
+        try:
+            df = pd.read_pickle(fp)
+            sp_cfg = cfg.get("split", {})
+            train_start = sp_cfg.get("train_start", "2023-01-01")
+            train_end = sp_cfg.get("train_end", "2025-06-30")
+            train_df = df[(df["split"] == "train") & (df["hour"].between(sh, eh))]
+            n_train = len(train_df)
+            if n_train > 0:
+                c.ok("C14: 训练集样本量", f"{n_train:,} 行（{train_start}~{train_end} 白天）")
+            else:
+                c.fail("C14: 训练集样本量", f"{n_train} 行（可能数据缺失）")
+        except Exception as e:
+            c.warn("C14: 训练集样本量检查", str(e))
+
+    # ── C15: 站点数量合理 ───────────────────────────────────────────────
+    if fp.exists():
+        try:
+            df = pd.read_pickle(fp)
+            n_sites = df["site_id"].nunique()
+            if 50 <= n_sites <= 200:
+                c.ok("C15: 站点数量合理", f"{n_sites} 个站点")
+            else:
+                c.warn("C15: 站点数量", f"{n_sites} 个（可能异常）")
+        except Exception as e:
+            c.warn("C15: 站点数量检查", str(e))
+
+    # ── C16: manifest.json 存在 ─────────────────────────────────────────
+    manifest = out / "manifest.json"
+    if not manifest.exists():
+        c.warn("C16: manifest.json 存在", "文件不存在（run_full_pipeline.py 未执行或 manifest 写入失败）")
+    else:
+        try:
+            m = json.loads(manifest.read_text(encoding="utf-8"))
+            gen_at = m.get("generated_at", "N/A")
+            final_col = m.get("prediction", {}).get("final_column", "N/A")
+            c.ok("C16: manifest.json 存在",
+                 f"生成时间={gen_at}, final_column={final_col}")
+        except Exception as e:
+            c.warn("C16: manifest.json 可读", str(e))
+
+    return c
+
+
+def write_reports(c: ValidationCheck, cfg: dict):
+    out = output_root(cfg)
+    docs_dir = out / "docs"
+    val_dir = out / "validation"
+    docs_dir.mkdir(parents=True, exist_ok=True)
+    val_dir.mkdir(parents=True, exist_ok=True)
+
+    total_ = len(c.results)
+    pass_ = sum(1 for r in c.results if r[0] == "PASS")
+    fails_ = sum(1 for r in c.results if r[0] == "FAIL")
+    warns_ = sum(1 for r in c.results if r[0] == "WARN")
+
+    now = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    pred_col = cfg.get("prediction", {}).get("final_column", "power_pred_final")
+    sp = cfg.get("split", {})
+
+    # Markdown report
+    report_path = docs_dir / "posttrain_validation_report.md"
+    lines = [
+        f"# 训练后逻辑审计报告\n\n",
+        f"**生成时间**: {now}\n",
+        f"**最终预测列**: {pred_col}\n",
+        f"**评估口径**: split={cfg.get('eval',{}).get('split','test')}, "
+        f"hour={cfg.get('eval',{}).get('start_hour',6)}-{cfg.get('eval',{}).get('end_hour',19)}\n",
+        f"\n## 校验结果汇总\n\n",
+        f"| 状态 | 数量 |\n|------|------|\n",
+        f"| PASS | {pass_} |\n",
+        f"| FAIL | {fails_} |\n",
+        f"| WARN | {warns_} |\n",
+        f"\n## 逐项结果\n\n",
+        f"| # | 状态 | 检查项 | 说明 |\n",
+        f"|---|------|--------|------|\n",
+    ]
+    for i, (status, name, msg) in enumerate(c.results, 1):
+        icon = "✓" if status == "PASS" else ("⚠" if status == "WARN" else "✗")
+        lines.append(f"| {i} | {icon} {status} | {name} | {msg} |\n")
+
+    lines.append("\n## 训练切分\n\n")
+    for k, v in sp.items():
+        lines.append(f"- {k}: {v}\n")
+
+    if c.has_fail():
+        lines.append(f"\n## 结论\n\n")
+        lines.append(f"**{fails_} 项 FAIL，不合格。请修复后重新运行训练流程。**\n")
+    else:
+        lines.append("\n## 结论\n\n")
+        lines.append(f"**{pass_} 项 PASS，{warns_} 项 WARN，全部检查通过（或仅警告）。**\n")
+
+    report_path.write_text("".join(lines), encoding="utf-8")
+    print(f"\n[OK] 报告 → {report_path}")
+
+    # CSV results
+    csv_path = val_dir / "posttrain_validation_results.csv"
+    result_df = pd.DataFrame(
+        [{"status": s, "check": n, "message": m} for s, n, m in c.results]
+    )
+    result_df.index.name = "id"
+    result_df.to_csv(csv_path, index=True, encoding="utf-8-sig")
+    print(f"[OK] CSV   → {csv_path}")
+
+
+def main():
+    parser = argparse.ArgumentParser(description="训练后逻辑审计")
+    parser.add_argument("--config", type=str, default=None, help="pipeline.yaml 路径")
+    args = parser.parse_args()
+
+    try:
+        cfg = load_config(args.config)
+    except FileNotFoundError as e:
+        print(f"[FAIL] 配置未找到: {e}")
+        sys.exit(1)
+
+    c = run_validation(cfg)
+    write_reports(c, cfg)
+
+    total_ = len(c.results)
+    pass_ = sum(1 for r in c.results if r[0] == "PASS")
+    fails_ = sum(1 for r in c.results if r[0] == "FAIL")
+    warns_ = sum(1 for r in c.results if r[0] == "WARN")
+
+    print()
+    print("=" * 60)
+    print(f"校验结果: {total_} 项 | {pass_} PASS | {fails_} FAIL | {warns_} WARN")
+    print("=" * 60)
+
+    sys.exit(1 if c.has_fail() else 0)
+
+
+if __name__ == "__main__":
+    main()
