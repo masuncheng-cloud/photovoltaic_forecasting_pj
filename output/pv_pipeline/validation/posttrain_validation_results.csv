@@ -8,7 +8,7 @@
 6,PASS,C7: 使用正式预测列,power_pred_final 就绪
 7,PASS,C8: 测试集有预测结果,"199,104 行"
 8,WARN,C9: 夜间/future 不参与评估,pkl 中存在夜间和 future 记录（评估时会排除）
-9,FAIL,C10: hourly_nrmse_consistent.csv 结构,缺少 hour 或 site_mean_nrmse_percent 列
+9,PASS,C10: hourly_nrmse_consistent.csv 正确,"14 小时数据, NRMSE范围: 3.50%~16.14%"
 10,PASS,C11: dashboard 一致性校验,"68 站, 全部 PASS"
 11,PASS,C12: dashboard 数据新鲜,dashboard 晚于 final pkl 18.27h
 12,PASS,C13: Git 不追踪 pkl,0 个

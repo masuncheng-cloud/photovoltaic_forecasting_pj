@@ -244,12 +244,14 @@ def run_validation(cfg: dict) -> ValidationCheck:
     else:
         try:
             hdf = pd.read_csv(hourly_csv)
-            if "hour" in hdf.columns and "site_mean_nrmse_percent" in hdf.columns:
+            required = ["hour", "site_avg_nrmse_pct"]  # 实际字段名
+            miss = [col for col in required if col not in hdf.columns]
+            if miss:
+                c.fail("C10: hourly_nrmse_consistent.csv 结构", f"缺少: {miss}")
+            else:
                 valid_hours = hdf[hdf["hour"].between(sh, eh)]
                 c.ok("C10: hourly_nrmse_consistent.csv 正确",
-                     f"{len(valid_hours)} 小时数据")
-            else:
-                c.fail("C10: hourly_nrmse_consistent.csv 结构", "缺少 hour 或 site_mean_nrmse_percent 列")
+                     f"{len(valid_hours)} 小时数据, NRMSE范围: {valid_hours['site_avg_nrmse_pct'].min():.2f}%~{valid_hours['site_avg_nrmse_pct'].max():.2f}%")
         except Exception as e:
             c.fail("C10: hourly_nrmse_consistent.csv 读取", str(e))
 
