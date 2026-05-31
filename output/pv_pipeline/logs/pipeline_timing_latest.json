@@ -1,8 +1,58 @@
 {
   "mode": "audit-only",
-  "generated_at": "2026-05-31T22:01:33",
-  "total_seconds": 0,
-  "total_minutes": 0.0,
-  "steps": [],
-  "top_5_by_seconds": []
+  "generated_at": "2026-05-31T22:01:57",
+  "total_seconds": 15.592,
+  "total_minutes": 0.26,
+  "steps": [
+    {
+      "step": "[12] 训练后逻辑审计",
+      "status": "PASS",
+      "seconds": 5.56,
+      "minutes": 0.093,
+      "started_at": "2026-05-31T22:01:42",
+      "finished_at": "2026-05-31T22:01:47",
+      "error": "",
+      "outputs": [
+        "/home/ac/data16t/msc/photovoltaic_forecasting_pj/scripts/posttrain_validation.py"
+      ]
+    },
+    {
+      "step": "[13] Dashboard 预测值校验",
+      "status": "PASS",
+      "seconds": 10.032,
+      "minutes": 0.167,
+      "started_at": "2026-05-31T22:01:47",
+      "finished_at": "2026-05-31T22:01:57",
+      "error": "",
+      "outputs": [
+        "/home/ac/data16t/msc/photovoltaic_forecasting_pj/scripts/check_dashboard_prediction_values.py"
+      ]
+    }
+  ],
+  "top_5_by_seconds": [
+    {
+      "step": "[13] Dashboard 预测值校验",
+      "status": "PASS",
+      "seconds": 10.032,
+      "minutes": 0.167,
+      "started_at": "2026-05-31T22:01:47",
+      "finished_at": "2026-05-31T22:01:57",
+      "error": "",
+      "outputs": [
+        "/home/ac/data16t/msc/photovoltaic_forecasting_pj/scripts/check_dashboard_prediction_values.py"
+      ]
+    },
+    {
+      "step": "[12] 训练后逻辑审计",
+      "status": "PASS",
+      "seconds": 5.56,
+      "minutes": 0.093,
+      "started_at": "2026-05-31T22:01:42",
+      "finished_at": "2026-05-31T22:01:47",
+      "error": "",
+      "outputs": [
+        "/home/ac/data16t/msc/photovoltaic_forecasting_pj/scripts/posttrain_validation.py"
+      ]
+    }
+  ]
 }
