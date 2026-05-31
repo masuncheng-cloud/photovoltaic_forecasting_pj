@@ -150,7 +150,7 @@ STEPS = [
 ]
 
 
-def run_step(step: dict, python: str, cwd: Path) -> bool:
+def run_step(step: dict, python: str, cwd: Path, cfg: dict) -> bool:
     """运行单个步骤。失败时根据 required 决定是否停止。"""
     script = step["script"]
     full_path = cwd / script
@@ -161,6 +161,13 @@ def run_step(step: dict, python: str, cwd: Path) -> bool:
         print(f"\n[WARN] {step['id']} 可选步骤脚本不存在，跳过: {full_path}")
         return True
 
+    # Stage 01/02 脚本需要 --data-root 和 --output-root
+    cmd = [python, str(full_path)]
+    if any(s in script for s in ["stages/01_data", "stages/02_irradiance"]):
+        data_root = str(cwd / cfg.get("data", {}).get("data_root", "data"))
+        output_root = str(cwd / cfg.get("data", {}).get("output_root", "output/pv_pipeline"))
+        cmd.extend(["--data-root", data_root, "--output-root", output_root])
+
     print()
     print("=" * 60)
     print(f"开始: [{step['id']}] {step['name']}")
@@ -168,7 +175,7 @@ def run_step(step: dict, python: str, cwd: Path) -> bool:
     print("=" * 60)
 
     result = subprocess.run(
-        [python, str(full_path)],
+        cmd,
         cwd=str(cwd),
         check=False,
         capture_output=True,
@@ -290,7 +297,7 @@ def main():
         if step["id"] in skip_ids:
             print(f"\n[SKIP] [{step['id']}] {step['name']}（用户跳过）")
             continue
-        ok = run_step(step, python, cwd)
+        ok = run_step(step, python, cwd, cfg)
         if not ok:
             print(f"\n{'='*60}")
             print("训练流程终止")
