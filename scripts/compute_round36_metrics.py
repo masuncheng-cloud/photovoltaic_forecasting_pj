@@ -36,10 +36,8 @@ PREDICTIONS = PROJECT_ROOT / "output" / "pv_pipeline" / "predictions"
 METRICS    = PROJECT_ROOT / "output" / "pv_pipeline" / "metrics"
 METRICS.mkdir(parents=True, exist_ok=True)
 
-# 优先读取 canonical 路径
+# Canonical 路径（必须存在）
 EVAL_PATH = PREDICTIONS / "distributed_predictions_final_eval.pkl"
-# 兼容：若 canonical 不存在则读 legacy 路径
-EVAL_PATH_LEGACY = TABLES / "distributed_predictions_final_eval_round36.pkl"
 SITE_VALIDITY_PATH = METRICS / "round36_site_validity.csv"
 
 
@@ -71,15 +69,13 @@ def main():
     print("指标重算（使用 canonical 路径）")
     print("=" * 60)
 
-    # 优先读 canonical，fallback 到 legacy
+    # canonical 路径（Round54：必须存在，缺失即 FAIL）
     if EVAL_PATH.exists():
         print(f"\n读取 canonical 预测文件: {EVAL_PATH}")
         df = pd.read_pickle(EVAL_PATH)
-    elif EVAL_PATH_LEGACY.exists():
-        print(f"\n[WARN] canonical 不存在，读取兼容文件: {EVAL_PATH_LEGACY}")
-        df = pd.read_pickle(EVAL_PATH_LEGACY)
     else:
-        print(f"[ERROR] 预测文件不存在:\n  canonical: {EVAL_PATH}\n  legacy:   {EVAL_PATH_LEGACY}")
+        print(f"[ERROR] canonical 预测文件不存在:\n  {EVAL_PATH}")
+        print("[ERROR] 无法 fallback 到 legacy 路径（Round54 禁止）。请先运行完整重训。")
         sys.exit(1)
     df["time"] = pd.to_datetime(df["time"])
     print(f"  行数: {len(df):,}, 列: {len(df.columns)}")
