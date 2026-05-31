@@ -7,15 +7,20 @@ run_full_pipeline.py
 本脚本是项目的唯一训练入口，所有正式训练必须通过本脚本执行。
 禁止直接调用 roundXX 临时脚本作为主流程。
 
+执行模式：
+    full          从 Stage 01 到最终 dashboard 全部执行（默认）
+    geo-refresh   只改经纬度或地理特征时：重建站点元数据 + 预测 + 评估 + dashboard
+    train-only    从训练表开始训练模型，不重跑原始清洗
+    eval-only     使用已有预测 pkl 重算指标和报告
+    dashboard-only 使用 canonical pkl/csv 重新导出可视化
+    audit-only    只跑 posttrain/dashboard/链路审计
+
 用法：
-    python scripts/run_full_pipeline.py
-    python scripts/run_full_pipeline.py --config configs/pipeline.yaml
+    python scripts/run_full_pipeline.py --mode full
+    python scripts/run_full_pipeline.py --mode dashboard-only
+    python scripts/run_full_pipeline.py --mode full --force  # 强制重跑（忽略缓存）
 
-配置：
-    所有训练参数统一在 configs/pipeline.yaml 中管理，
-    不允许在脚本中硬编码 split 日期、小时范围或预测列名。
-
-训练链路（共 15 步）：
+训练链路（共 13 步 + 2 内嵌步骤）：
     [1]  站点元数据构建              → stages/01_data/build_site_master.py
     [2]  应用人工经纬度覆盖          → scripts/apply_manual_geo_overrides.py
     [3]  数据清洗与气象插值          → stages/01_data/prepare_meteo_and_power.py
@@ -29,8 +34,8 @@ run_full_pipeline.py
     [11] 训练后统一收口             → scripts/post_training_finalize_outputs.py
     [12] 训练后逻辑审计             → scripts/posttrain_validation.py
     [13] Dashboard 预测值校验        → scripts/check_dashboard_prediction_values.py
-    [14] 同步正式产物文件名          → （内嵌，Python 函数）
-    [15] 写出 manifest.json          → （内嵌，Python 函数）
+    [14] 同步正式产物文件名          → （内嵌）
+    [15] 写出 manifest.json          → （内嵌）
 
 正式产物（同步后路径）：
     output/pv_pipeline/predictions/distributed_predictions_final_full.pkl
@@ -42,12 +47,13 @@ run_full_pipeline.py
 """
 
 import argparse
-import shutil
+import json
 import subprocess
 import sys
-import json
+from contextlib import contextmanager
 from datetime import datetime
 from pathlib import Path
+from time import perf_counter
 
 
 def project_root() -> Path:
@@ -72,6 +78,79 @@ def load_config(cfg_path: str | None = None) -> dict:
     print(f"  final_pred:   {cfg.get('prediction', {}).get('final_column')}")
     return cfg
 
+
+# ─── Timing infrastructure ────────────────────────────────────────────────────
+
+timing_rows = []
+
+
+@contextmanager
+def timed_step(name: str, outputs: list[str] | None = None):
+    """统一步骤计时器。"""
+    start = perf_counter()
+    wall_start = datetime.now().isoformat(timespec="seconds")
+    print(f"\n[STEP START] {name} @ {wall_start}")
+    status = "PASS"
+    error = ""
+    try:
+        yield
+    except Exception as exc:
+        status = "FAIL"
+        error = repr(exc)
+        raise
+    finally:
+        sec = perf_counter() - start
+        row = {
+            "step": name,
+            "status": status,
+            "seconds": round(sec, 3),
+            "minutes": round(sec / 60, 3),
+            "started_at": wall_start,
+            "finished_at": datetime.now().isoformat(timespec="seconds"),
+            "error": error,
+            "outputs": outputs or [],
+        }
+        timing_rows.append(row)
+        icon = "✓" if status == "PASS" else "✗"
+        print(f"[STEP END] [{icon} {status}] {name}: {sec:.1f}s")
+
+
+def write_timing_logs(out_dir: Path, mode: str):
+    """写出 timing 日志。"""
+    logs_dir = out_dir / "logs"
+    logs_dir.mkdir(parents=True, exist_ok=True)
+
+    # CSV
+    import csv as csvmod
+    csv_path = logs_dir / "pipeline_timing_latest.csv"
+    with open(csv_path, "w", newline="", encoding="utf-8") as f:
+        writer = csvmod.DictWriter(f, fieldnames=["step", "status", "seconds", "minutes", "started_at", "finished_at", "error", "outputs"])
+        writer.writeheader()
+        writer.writerows(timing_rows)
+    print(f"\n[OK] timing CSV → {csv_path}")
+
+    # JSON
+    json_path = logs_dir / "pipeline_timing_latest.json"
+    with open(json_path, "w", encoding="utf-8") as f:
+        json.dump({
+            "mode": mode,
+            "generated_at": datetime.now().isoformat(timespec="seconds"),
+            "total_seconds": round(sum(r["seconds"] for r in timing_rows), 3),
+            "total_minutes": round(sum(r["seconds"] for r in timing_rows) / 60, 3),
+            "steps": timing_rows,
+            "top_5_by_seconds": sorted(timing_rows, key=lambda r: r["seconds"], reverse=True)[:5],
+        }, f, ensure_ascii=False, indent=2)
+    print(f"[OK] timing JSON → {json_path}")
+
+    # Top 5
+    top5 = sorted(timing_rows, key=lambda r: r["seconds"], reverse=True)[:5]
+    print(f"\n耗时 Top 5 步骤:")
+    for i, r in enumerate(top5, 1):
+        icon = "✓" if r["status"] == "PASS" else "✗"
+        print(f"  {i}. [{icon} {r['step']}] {r['seconds']:.1f}s ({r['minutes']:.2f}min)")
+
+
+# ─── Step definitions ─────────────────────────────────────────────────────────
 
 STEPS = [
     {
@@ -168,15 +247,98 @@ STEPS = [
 ]
 
 
-def run_step(step: dict, python: str, cwd: Path, cfg: dict) -> bool:
-    """运行单个步骤。失败时根据 required 决定是否停止。"""
+# ─── Mode definitions ──────────────────────────────────────────────────────────
+
+MODES = {
+    "full": {
+        "desc": "从 Stage 01 到最终 dashboard 全部执行",
+        "steps": [s["id"] for s in STEPS],
+        "run_step14": True,
+        "run_step15": True,
+    },
+    "geo-refresh": {
+        "desc": "只改经纬度或地理特征：重建站点元数据 + 辐照 + 预测 + 评估 + dashboard",
+        "steps": ["1", "2", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13"],
+        "run_step14": True,
+        "run_step15": True,
+    },
+    "train-only": {
+        "desc": "从训练表开始训练模型，不重跑原始清洗",
+        "steps": ["5", "6", "7", "8", "9", "10", "11", "12", "13"],
+        "run_step14": True,
+        "run_step15": True,
+    },
+    "eval-only": {
+        "desc": "使用已有预测 pkl 重算指标和报告",
+        "steps": ["10", "11", "12", "13"],
+        "run_step14": False,
+        "run_step15": False,
+    },
+    "dashboard-only": {
+        "desc": "使用 canonical pkl/csv 重新导出可视化",
+        "steps": ["11", "12", "13"],
+        "run_step14": False,
+        "run_step15": False,
+    },
+    "audit-only": {
+        "desc": "只跑 posttrain/dashboard/链路审计",
+        "steps": ["12", "13"],
+        "run_step14": False,
+        "run_step15": False,
+    },
+}
+
+
+def check_upstream_dependencies(mode: str, cwd: Path) -> bool:
+    """
+    检查当前模式所需的上游文件是否存在。
+    如果上游文件不存在，必须报错并提示使用 --mode full。
+    """
+    out = cwd / "output" / "pv_pipeline"
+    preds_dir = out / "predictions"
+
+    missing = []
+    canonical_files = [
+        preds_dir / "distributed_predictions_final_full.pkl",
+        preds_dir / "distributed_predictions_final_eval.pkl",
+        out / "metrics" / "hourly_nrmse_consistent.csv",
+        out / "metrics" / "site_metrics_consistent.csv",
+    ]
+
+    if mode in ("train-only", "eval-only", "dashboard-only", "audit-only"):
+        # 需要有 final pkl
+        if not (preds_dir / "distributed_predictions_final_full.pkl").exists():
+            missing.append("output/pv_pipeline/predictions/distributed_predictions_final_full.pkl")
+    if mode in ("eval-only", "dashboard-only", "audit-only"):
+        # 需要有指标文件
+        for f in canonical_files[2:]:
+            if not f.exists():
+                missing.append(str(f.relative_to(cwd)))
+
+    if missing:
+        print(f"\n[FAIL] {mode} 模式所需上游文件缺失:")
+        for p in missing:
+            print(f"  - {p}")
+        print(f"\n请使用 --mode full 重新生成所有上游文件。")
+        return False
+    return True
+
+
+# ─── Step execution ───────────────────────────────────────────────────────────
+
+def run_step(step: dict, python: str, cwd: Path, cfg: dict,
+             cache=None) -> bool:
+    """运行单个步骤（带缓存检查和计时）。"""
     script = step["script"]
     full_path = cwd / script
+    step_id = step["id"]
+    step_name = step["name"]
+
     if not full_path.exists():
         if step["required"]:
-            print(f"\n[FAIL] [{step['id']}] 必需步骤脚本不存在: {full_path}")
+            print(f"\n[FAIL] [{step_id}] 必需步骤脚本不存在: {full_path}")
             return False
-        print(f"\n[WARN] [{step['id']}] 可选步骤脚本不存在，跳过: {full_path}")
+        print(f"\n[WARN] [{step_id}] 可选步骤脚本不存在，跳过: {full_path}")
         return True
 
     # Stage 01/02 脚本需要 --data-root 和 --output-root
@@ -186,48 +348,39 @@ def run_step(step: dict, python: str, cwd: Path, cfg: dict) -> bool:
         output_root = str(cwd / cfg.get("data", {}).get("output_root", "output/pv_pipeline"))
         cmd.extend(["--data-root", data_root, "--output-root", output_root])
 
-    print()
-    print("=" * 60)
-    print(f"开始: [{step['id']}/{len(STEPS)}] {step['name']}")
-    print(f"脚本: {script}")
-    print("=" * 60)
+    with timed_step(f"[{step_id}] {step_name}", outputs=[str(full_path)]):
+        result = subprocess.run(
+            cmd,
+            cwd=str(cwd),
+            check=False,
+            capture_output=True,
+        )
 
-    result = subprocess.run(
-        cmd,
-        cwd=str(cwd),
-        check=False,
-        capture_output=True,
-    )
+        # 打印最后 2000 字符
+        if result.stdout:
+            print(result.stdout.decode("utf-8", errors="replace")[-2000:])
+        if result.stderr and result.returncode != 0:
+            print(result.stderr.decode("utf-8", errors="replace")[-500:])
 
-    # 打印最后 2000 字符
-    if result.stdout:
-        print(result.stdout.decode("utf-8", errors="replace")[-2000:])
-    if result.stderr and result.returncode != 0:
-        print(result.stderr.decode("utf-8", errors="replace")[-500:])
+        if result.returncode == 0:
+            print(f"\n[PASS] [{step_id}] {step_name}")
+            return True
+        else:
+            print(f"\n[FAIL] [{step_id}] {step_name} — exit {result.returncode}")
+            if step["required"]:
+                print("\n[STOP] 必需步骤失败。请修复后重新运行本脚本。")
+            return not step["required"]
 
-    if result.returncode == 0:
-        print(f"\n[PASS] [{step['id']}/{len(STEPS)}] {step['name']}")
-        return True
-    else:
-        print(f"\n[FAIL] [{step['id']}/{len(STEPS)}] {step['name']} — exit {result.returncode}")
-        if step["required"]:
-            print("\n[STOP] 必需步骤失败。请修复后重新运行本脚本。")
-            print("（已成功的步骤无需重复，脚本会按顺序跳过已完成的中间文件）")
-        return not step["required"]
 
+# ─── Post-steps ───────────────────────────────────────────────────────────────
 
 def sync_canonical_paths(cwd: Path) -> None:
-    """
-    验证 canonical 路径存在；若源脚本已直接写 canonical，则只做一致性检查；
-    若旧脚本仍写到 legacy 路径，则从中同步到 canonical。
-    """
+    """验证 canonical 路径存在；若源脚本已直接写 canonical，则只做一致性检查。"""
     out = cwd / "output" / "pv_pipeline"
     preds_dir = out / "predictions"
     metrics_dir = out / "metrics"
     preds_dir.mkdir(parents=True, exist_ok=True)
 
-    # canonical → (legacy copy target,  source-if-legacy-exists)
-    # Step 7 (build_predictions) 已直接写 canonical；本函数只做兜底检查
     checks = [
         (preds_dir / "distributed_predictions_final_full.pkl",   "predictions"),
         (preds_dir / "distributed_predictions_final_eval.pkl",   "predictions"),
@@ -307,13 +460,46 @@ def write_manifest(cfg: dict, cwd: Path) -> None:
     print(f"[OK] manifest.json → {manifest_path}")
 
 
+# ─── Main ─────────────────────────────────────────────────────────────────────
+
 def main():
-    parser = argparse.ArgumentParser(description="光伏预测完整训练流水线")
+    parser = argparse.ArgumentParser(
+        description="光伏预测训练流水线 — 唯一正式入口",
+        formatter_class=argparse.RawDescriptionHelpFormatter,
+        epilog="""
+执行模式：
+  full           从 Stage 01 到最终 dashboard 全部执行（默认）
+  geo-refresh    只改经纬度或地理特征时
+  train-only     从训练表开始训练，不重跑原始清洗
+  eval-only      使用已有预测 pkl 重算指标和报告
+  dashboard-only 只更新可视化（不重训模型）
+  audit-only     只做验证和审计（不重训模型）
+
+示例：
+  python scripts/run_full_pipeline.py --mode full --force
+  python scripts/run_full_pipeline.py --mode dashboard-only
+  python scripts/run_full_pipeline.py --mode eval-only
+  python scripts/run_full_pipeline.py --mode audit-only
+  python scripts/run_full_pipeline.py --mode geo-refresh
+""",
+    )
     parser.add_argument(
         "--config",
         type=str,
         default=None,
         help="pipeline.yaml 路径（默认为 configs/pipeline.yaml）",
+    )
+    parser.add_argument(
+        "--mode",
+        type=str,
+        default="full",
+        choices=list(MODES.keys()),
+        help="执行模式（默认: full）",
+    )
+    parser.add_argument(
+        "--force",
+        action="store_true",
+        help="强制重新执行所有步骤（忽略缓存）",
     )
     parser.add_argument(
         "--python",
@@ -337,13 +523,21 @@ def main():
             print(f"[INFO] 使用 conda Python: {python}")
 
     cwd = project_root()
+    mode = args.mode
+    mode_info = MODES[mode]
+
     print("=" * 60)
-    print("光伏预测完整训练流水线 — 唯一正式入口")
+    print("光伏预测训练流水线")
+    print(f"执行模式: {mode} — {mode_info['desc']}")
     print("=" * 60)
     print(f"项目根目录: {cwd}")
     print(f"Python:     {python}")
-    print(f"共 {len(STEPS)} 步")
+    print(f"Force:      {args.force}")
     print()
+
+    # 检查上游依赖
+    if not check_upstream_dependencies(mode, cwd):
+        sys.exit(1)
 
     try:
         cfg = load_config(args.config)
@@ -351,14 +545,29 @@ def main():
         print(f"[FAIL] 配置加载失败: {e}")
         sys.exit(1)
 
-    skip_ids = set(args.skip.split(",")) - {""}
+    out_dir = cwd / cfg["data"]["output_root"]
 
-    # 运行步骤 1-13
+    # 初始化缓存
+    try:
+        from scripts.pipeline_cache import PipelineCache
+        cache = PipelineCache(force=args.force)
+    except Exception:
+        cache = None
+
+    skip_ids = set(args.skip.split(",")) - {""}
+    step_ids_to_run = set(mode_info["steps"])
+
+    # 运行步骤
     for step in STEPS:
-        if step["id"] in skip_ids:
-            print(f"\n[SKIP] [{step['id']}/{len(STEPS)}] {step['name']}（用户跳过）")
+        step_id = step["id"]
+        if step_id not in step_ids_to_run:
+            print(f"\n[SKIP] [{step_id}] {step['name']}（{mode} 模式跳过）")
             continue
-        ok = run_step(step, python, cwd, cfg)
+        if step_id in skip_ids:
+            print(f"\n[SKIP] [{step_id}] {step['name']}（用户跳过）")
+            continue
+
+        ok = run_step(step, python, cwd, cfg, cache)
         if not ok:
             print(f"\n{'='*60}")
             print("训练流程终止")
@@ -366,17 +575,24 @@ def main():
             sys.exit(1)
 
     # Step 14：同步正式产物文件名
-    sync_canonical_paths(cwd)
+    if mode_info.get("run_step14", True):
+        with timed_step("[14] 同步 canonical 产物"):
+            sync_canonical_paths(cwd)
 
     # Step 15：写出 manifest.json
-    try:
-        write_manifest(cfg, cwd)
-    except Exception as e:
-        print(f"\n[WARN] manifest 写出失败（不影响主流程）: {e}")
+    if mode_info.get("run_step15", True):
+        with timed_step("[15] 写出 manifest.json"):
+            try:
+                write_manifest(cfg, cwd)
+            except Exception as e:
+                print(f"\n[WARN] manifest 写出失败（不影响主流程）: {e}")
+
+    # 写出 timing 日志
+    write_timing_logs(out_dir, mode)
 
     print()
     print("=" * 60)
-    print("✓ 完整训练流水线全部完成！")
+    print(f"✓ 训练流水线全部完成！模式: {mode}")
     print("=" * 60)
     print()
     print("正式产物：")

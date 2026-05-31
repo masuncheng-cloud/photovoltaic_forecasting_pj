@@ -258,7 +258,7 @@ def run_validation(cfg: dict) -> ValidationCheck:
             c.fail("C10: hourly_nrmse_consistent.csv 读取", str(e))
 
     # ── C11: dashboard JSON 一致性 ─────────────────────────────────────
-    cons_csv = metrics_dir / "round36_dashboard_prediction_consistency.csv"
+    cons_csv = metrics_dir / "dashboard_prediction_consistency.csv"
     if not cons_csv.exists():
         c.warn("C11: dashboard_consistency.csv 存在", "文件不存在（可能未执行导出）")
     else:
