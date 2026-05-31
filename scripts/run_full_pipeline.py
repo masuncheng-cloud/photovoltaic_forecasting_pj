@@ -410,8 +410,19 @@ def sync_canonical_paths(cwd: Path) -> None:
     print("=" * 60)
 
 
+def file_sha256(path: Path) -> str:
+    """计算文件的 SHA256 哈希。"""
+    if not path.exists():
+        return "FILE_NOT_FOUND"
+    h = hashlib.sha256()
+    with path.open("rb") as f:
+        for chunk in iter(lambda: f.read(1024 * 1024), b""):
+            h.update(chunk)
+    return h.hexdigest()
+
+
 def write_manifest(cfg: dict, cwd: Path) -> None:
-    """写出 manifest.json，记录训练元信息。"""
+    """写出 manifest.json，记录训练元信息和 artifact hash。"""
     out_dir = cwd / cfg["data"]["output_root"]
     manifest = {
         "generated_at": datetime.now().isoformat(timespec="seconds"),
@@ -427,6 +438,13 @@ def write_manifest(cfg: dict, cwd: Path) -> None:
             "site_metrics_csv":  "output/pv_pipeline/metrics/site_metrics_consistent.csv",
             "dashboard_dir":     "output/pv_pipeline/interactive_dashboard",
             "dashboard_index":    "output/pv_pipeline/interactive_dashboard/index.json",
+        },
+        "artifact_hashes": {
+            "final_full_pkl_sha256":   file_sha256(out_dir / "predictions" / "distributed_predictions_final_full.pkl"),
+            "final_eval_pkl_sha256":   file_sha256(out_dir / "predictions" / "distributed_predictions_final_eval.pkl"),
+            "hourly_nrmse_csv_sha256": file_sha256(out_dir / "metrics" / "hourly_nrmse_consistent.csv"),
+            "site_metrics_csv_sha256": file_sha256(out_dir / "metrics" / "site_metrics_consistent.csv"),
+            "dashboard_index_sha256":   file_sha256(out_dir / "interactive_dashboard" / "index.json"),
         },
         "geo_overrides": {
             "file": "configs/manual_station_geo_overrides.csv",

@@ -17,6 +17,7 @@ posttrain_validation.py
 """
 
 import argparse
+import hashlib
 import json
 import os
 import subprocess
@@ -66,6 +67,17 @@ class ValidationCheck:
 
     def has_fail(self) -> bool:
         return self._fails > 0
+
+
+def file_sha256(path: Path) -> str:
+    """计算文件的 SHA256 哈希。"""
+    if not path.exists():
+        return "FILE_NOT_FOUND"
+    h = hashlib.sha256()
+    with path.open("rb") as f:
+        for chunk in iter(lambda: f.read(1024 * 1024), b""):
+            h.update(chunk)
+    return h.hexdigest()
 
 
 # ─── Main validation ─────────────────────────────────────────────────────────
