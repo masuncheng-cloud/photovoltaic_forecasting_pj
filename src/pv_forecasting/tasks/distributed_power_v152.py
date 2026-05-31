@@ -69,7 +69,7 @@ def _scene_v151(df: pd.DataFrame) -> pd.Series:
             (g.values[mask_known] < 120) | (k.values[mask_known] < 0.18), 'low',
             np.where(ramp.values[mask_known] > 140, 'ramp',
             np.where((g.values[mask_known] > 520) & (elev.values[mask_known] > 18), 'clear_peak', 'mid'))))
-    )
+
     mask_unknown_day = ~elev_known & (hour_arr >= 6) & (hour_arr <= 19)
     scene[mask_unknown_day] = np.where(
         (g.values[mask_unknown_day] < 120) | (k.values[mask_unknown_day] < 0.18), 'low',
