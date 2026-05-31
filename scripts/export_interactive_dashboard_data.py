@@ -311,15 +311,18 @@ def write_metadata(dashboard_root, round_name, pred_col, source_path):
     history_dir = Path(dashboard_root) / "site_series"
     n_sites = len(list(history_dir.glob("*.json"))) if history_dir.exists() else 0
 
-    # ── Force read Round36 metrics (no fallback to old rounds) ─────────────────
+    # ── typical sites from canonical metrics (no hardcoded round number) ──────
     metrics_dir = Path(source_path).parent.parent / "metrics"
-    round_num = "".join(filter(str.isdigit, round_name))  # e.g. "36" from "Round36", or "" from "canonical"
-    if not round_num:
-        round_num = "36"  # canonical path still uses Round36-compatible metrics
-    typical_csv = metrics_dir / f"round{round_num}_typical_sites.csv"
-    if not typical_csv.exists():
+    # Dynamic: derive typical sites from site_metrics_consistent.csv if canonical typical_sites not found
+    canonical_typical = metrics_dir / "typical_sites.csv"
+    fallback_typical = metrics_dir / f"round36_typical_sites.csv"
+    if canonical_typical.exists():
+        typical_csv = canonical_typical
+    elif fallback_typical.exists():
+        typical_csv = fallback_typical
+    else:
         raise FileNotFoundError(
-            f"典型站点文件不存在: {typical_csv}，请确认训练已完成"
+            f"典型站点文件不存在: canonical={canonical_typical}, fallback={fallback_typical}"
         )
     typical_df = pd.read_csv(typical_csv)
     # typical_best/worst 从 canonical 指标文件动态生成，不再硬编码
