@@ -350,6 +350,83 @@ def run_validation(cfg: dict) -> ValidationCheck:
         except Exception as e:
             c.warn("C16: manifest.json 可读", str(e))
 
+    # ── GEO1: S115/S116 不得缺经纬度 ─────────────────────────────────
+    site_master_path = tables_dir / "site_master.csv"
+    if not site_master_path.exists():
+        c.warn("GEO1: S115/S116 经纬度", "site_master.csv 不存在，跳过")
+    else:
+        try:
+            sm = pd.read_csv(site_master_path)
+            lat_col = "lat" if "lat" in sm.columns else "latitude"
+            lon_col = "lon" if "lon" in sm.columns else "longitude"
+            for sid in ["S115", "S116"]:
+                row = sm[sm["site_id"] == sid]
+                if len(row) == 0:
+                    c.fail("GEO1: 经纬度覆盖", f"{sid} 不在 site_master 中")
+                    continue
+                lat = row[lat_col].values[0]
+                lon = row[lon_col].values[0]
+                if pd.isna(lat) or pd.isna(lon):
+                    c.fail("GEO1: 经纬度覆盖", f"{sid} lat/lon 仍为空")
+                else:
+                    c.ok("GEO1: 经纬度覆盖", f"{sid} lat={lat}, lon={lon}")
+        except Exception as e:
+            c.warn("GEO1: 经纬度覆盖检查", str(e))
+
+    # ── GEO2: 坐标在连云港范围内 ───────────────────────────────────────
+    if site_master_path.exists():
+        try:
+            sm = pd.read_csv(site_master_path)
+            lat_col = "lat" if "lat" in sm.columns else "latitude"
+            lon_col = "lon" if "lon" in sm.columns else "longitude"
+            for sid in ["S115", "S116"]:
+                row = sm[sm["site_id"] == sid]
+                if len(row) == 0:
+                    continue
+                lat = float(row[lat_col].values[0])
+                lon = float(row[lon_col].values[0])
+                in_range = 33.9 <= lat <= 35.2 and 118.4 <= lon <= 119.9
+                if in_range:
+                    c.ok("GEO2: 坐标范围", f"{sid} ({lat}, {lon}) 在连云港范围内")
+                else:
+                    c.fail("GEO2: 坐标范围", f"{sid} ({lat}, {lon}) 不在连云港 [33.9-35.2N, 118.4-119.9E]")
+        except Exception as e:
+            c.warn("GEO2: 坐标范围检查", str(e))
+
+    # ── GEO3: geo_confidence 非空 ────────────────────────────────────
+    if site_master_path.exists():
+        try:
+            sm = pd.read_csv(site_master_path)
+            for sid in ["S115", "S116"]:
+                row = sm[sm["site_id"] == sid]
+                if len(row) == 0:
+                    continue
+                conf = str(row.get("geo_confidence", [None])[0]).strip()
+                if not conf or conf == "nan":
+                    c.fail("GEO3: 置信度", f"{sid} geo_confidence 为空")
+                else:
+                    c.ok("GEO3: 置信度", f"{sid} confidence={conf}")
+        except Exception as e:
+            c.warn("GEO3: 置信度检查", str(e))
+
+    # ── GEO4: low 置信度警告 ─────────────────────────────────────────
+    if site_master_path.exists():
+        try:
+            sm = pd.read_csv(site_master_path)
+            low_conf = sm[
+                sm["site_id"].isin(["S115", "S116"]) &
+                sm.get("geo_confidence", pd.Series([""] * len(sm))).eq("low")
+            ]
+            if len(low_conf) > 0:
+                for _, row in low_conf.iterrows():
+                    sid = row["site_id"]
+                    c.warn("GEO4: 低置信度警告",
+                           f"{sid} confidence=low，精确光伏场区中心有待甲方/运维台账确认")
+            else:
+                c.ok("GEO4: 低置信度警告", "无站点为 low 置信度")
+        except Exception as e:
+            c.warn("GEO4: 低置信度警告检查", str(e))
+
     return c
 
 
