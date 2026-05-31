@@ -65,66 +65,85 @@ def load_config(cfg_path: str | None = None) -> dict:
 
 
 STEPS = [
+    # ── 数据准备（Stage 01）───────────────────────────────
     {
-        "id": "1/9",
+        "id": "1/11",
+        "name": "站点元数据构建",
+        "script": "stages/01_data/build_site_master.py",
+        "required": True,
+        "timeout": 60,
+    },
+    {
+        "id": "2/11",
+        "name": "数据清洗与气象插值（Stage 01）",
+        "script": "stages/01_data/prepare_meteo_and_power.py",
+        "required": True,
+        "timeout": 300,
+    },
+    # ── 辐照反演与融合（Stage 02）────────────────────────
+    {
+        "id": "3/11",
+        "name": "辐照融合（Stage 02）",
+        "script": "stages/02_irradiance/train_irradiance_blend.py",
+        "required": True,
+        "timeout": 600,
+    },
+    # ── 训练前审计（原有 Step 1，现为 Step 4）────────────
+    {
+        "id": "4/11",
         "name": "训练前数据审计",
         "script": "scripts/pretrain_audit_round36.py",
         "required": True,
         "timeout": 120,
     },
+    # ── 分布式功率模型训练（原有 Step 2，现为 Step 5）────
     {
-        "id": "2/9",
+        "id": "5/11",
         "name": "分布式功率模型训练",
         "script": "stages/03_power/train_distributed_model_v159.py",
         "required": True,
         "timeout": 1800,
     },
+    # ── 后处理（原有 Step 3-9，现为 Step 6-11）──────────
     {
-        "id": "3/9",
+        "id": "6/11",
         "name": "构建最终预测文件",
         "script": "scripts/build_round36_predictions.py",
         "required": True,
         "timeout": 300,
     },
     {
-        "id": "4/9",
+        "id": "7/11",
         "name": "站点有效性分层",
         "script": "scripts/build_site_validity_round36.py",
         "required": True,
         "timeout": 120,
     },
     {
-        "id": "5/9",
+        "id": "8/11",
         "name": "偏差校准",
         "script": "scripts/apply_round36_calibration.py",
         "required": True,
         "timeout": 120,
     },
     {
-        "id": "6/9",
+        "id": "9/11",
         "name": "指标重算",
         "script": "scripts/compute_round36_metrics.py",
         "required": True,
         "timeout": 300,
     },
     {
-        "id": "7/9",
+        "id": "10/11",
         "name": "训练后统一收口",
         "script": "scripts/post_training_finalize_outputs.py",
         "required": True,
         "timeout": 600,
     },
     {
-        "id": "8/9",
-        "name": "训练后逻辑审计",
+        "id": "11/11",
+        "name": "训练后逻辑审计 + Dashboard 校验",
         "script": "scripts/posttrain_validation.py",
-        "required": True,
-        "timeout": 300,
-    },
-    {
-        "id": "9/9",
-        "name": "Dashboard 预测值校验",
-        "script": "scripts/check_dashboard_prediction_values.py",
         "required": True,
         "timeout": 300,
     },
