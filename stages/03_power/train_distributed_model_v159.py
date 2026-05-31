@@ -56,15 +56,59 @@ BETA_DEFAULT = 0.004
 
 
 def _scene_v151(df):
+    """
+    场景分类（Round54 修复版）。
+
+    修复：当 solar_elevation_deg 缺失时，不再 fallback 到 elev=-90 并全部判为 night。
+    - 如果 elev 有值：用 elev 判断是否夜间（elev <= 0 → night）
+    - 如果 elev 缺失（NaN）但小时在 6-19：用辐照 g_blend_pred 判断
+    - 如果辐照也缺失：返回 'day_missing_solar'（不是 night）
+    """
     g = pd.to_numeric(df.get('g_blend_pred', pd.Series(0.0, index=df.index)), errors='coerce').fillna(0.0)
-    elev = pd.to_numeric(df.get('solar_elevation_deg', pd.Series(-90.0, index=df.index)), errors='coerce').fillna(-90.0)
+    elev = pd.to_numeric(df.get('solar_elevation_deg', pd.Series(np.nan, index=df.index)), errors='coerce')
     ramp = pd.to_numeric(df.get('g_blend_pred_diff1', pd.Series(0.0, index=df.index)), errors='coerce').abs().fillna(0.0)
     k = pd.to_numeric(df.get('g_blend_pred_kt', pd.Series(0.0, index=df.index)), errors='coerce').fillna(0.0)
-    scene = np.where(elev <= 0, 'night',
-             np.where((g < 120) | (k < 0.18), 'low',
-             np.where(ramp > 140, 'ramp',
-             np.where((g > 520) & (elev > 18), 'clear_peak',
-             'mid'))))
+
+    # elev 缺失时，根据辐照和小时判断
+    elev_known = np.isfinite(elev.values)
+    hour = pd.to_numeric(df.get('hour', pd.Series(12, index=df.index)), errors='coerce')
+    if pd.api.types.is_integer_dtype(hour) or pd.api.types.is_float_dtype(hour):
+        hour_arr = hour.values
+    else:
+        hour_arr = pd.to_datetime(df["time"], errors="coerce").dt.hour.values
+
+    scene = np.empty(len(df), dtype=object)
+    # elev 已知
+    mask_known = elev_known
+    scene[mask_known] = np.where(
+        elev.values[mask_known] <= 0, 'night',
+        np.where(
+            (g.values[mask_known] < 120) | (k.values[mask_known] < 0.18), 'low',
+            np.where(
+                ramp.values[mask_known] > 140, 'ramp',
+                np.where(
+                    (g.values[mask_known] > 520) & (elev.values[mask_known] > 18), 'clear_peak',
+                    'mid'
+                )
+            )
+        )
+    )
+    # elev 缺失：白天用辐照/g_blend_pred 判断场景，夜间才判 night
+    mask_unknown_day = ~elev_known & (hour_arr >= 6) & (hour_arr <= 19)
+    scene[mask_unknown_day] = np.where(
+        (g.values[mask_unknown_day] < 120) | (k.values[mask_unknown_day] < 0.18), 'low',
+        np.where(
+            ramp.values[mask_unknown_day] > 140, 'ramp',
+            np.where(
+                g.values[mask_unknown_day] > 520, 'clear_peak',
+                'mid'
+            )
+        )
+    )
+    # elev 缺失且夜间
+    mask_unknown_night = ~elev_known & ~mask_unknown_day
+    scene[mask_unknown_night] = 'night'
+
     return pd.Series(scene, index=df.index, dtype='string')
 
 
