@@ -77,26 +77,68 @@ def scripts_to_archive(name: str) -> bool:
 
 
 def docs_to_archive(name: str) -> bool:
-    """判断 docs/ 下的文件是否应归档。"""
-    if re.search(r"Round\d+", name, re.IGNORECASE):
+    """判断 docs/ 下的文件是否应归档（Round48 之前的总结）。"""
+    # Round48 之前的总结文档归档
+    legacy_pattern = re.compile(r"^Round([0-9]{1,2})_", re.IGNORECASE)
+    m = legacy_pattern.match(name)
+    if m:
+        num = int(m.group(1))
+        if num < 48:
+            return True
+    # Round46_执行报告.md 等也归档
+    if re.search(r"^Round\d+", name):
         return True
-    if name in ("docs", "__init__.py"):
+    if name in ("README.md", "__init__.py"):
         return False
     return False
 
 
 def output_to_archive(rel_path: str) -> bool:
-    """判断 output/ 下的文件是否应归档。"""
+    """判断 output/pv_pipeline/ 下文件是否应归档。"""
     path_str = str(rel_path)
-    # roundXX 产物
-    if re.search(r"round\d+", path_str, re.IGNORECASE):
+
+    # ── 当前活跃文件（不归档）─────────────────────────────
+    active_roots = [
+        "output/pv_pipeline/tables/distributed_predictions_final_round36.pkl",
+        "output/pv_pipeline/metrics/round46_hourly_nrmse_consistent.csv",
+        "output/pv_pipeline/metrics/round46_site_hour_nrmse_consistent.csv",
+        "output/pv_pipeline/metrics/round48_station_data_requirement_analysis.csv",
+        "output/pv_pipeline/metrics/dashboard_prediction_consistency.csv",
+    ]
+    for active in active_roots:
+        if path_str == active or path_str.endswith(active):
+            return False
+
+    # ── Round48/49 当前活跃产物（按名称判断）──────────────
+    # docs/Round4X_执行*.md 和 docs/Round4X_执行报告*.md 是当前产物
+    # 但 output/pv_pipeline/docs/Round*.md 是历史总结，可以归档
+    if path_str.startswith("output/pv_pipeline/docs/"):
+        # 归档 output/pv_pipeline/docs/ 下的所有 Round 文档
+        if re.search(r"Round\d+", path_str):
+            return True
+        return False
+
+    # ── archive_before_round36（已经是旧归档，直接归档）────
+    if "archive_before_round36" in path_str:
         return True
-    # *before* 文件
+
+    # ── round34/35/40/41_42/44/45 历史产物（归档）──────
+    legacy_rounds = [
+        "round34", "round35", "round40",
+        "round41_42", "round44", "round45",
+    ]
+    for r in legacy_rounds:
+        if r in path_str.lower():
+            return True
+
+    # ── *before* 文件（归档）──────────────────────────────
     if "before" in path_str.lower():
         return True
-    # *backup* 文件
+
+    # ── *backup* 文件（归档）────────────────────────────
     if "backup" in path_str.lower():
         return True
+
     return False
 
 
