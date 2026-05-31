@@ -468,6 +468,68 @@ def run_validation(cfg: dict) -> ValidationCheck:
         except Exception as e:
             c.warn("GEO4: 低置信度警告检查", str(e))
 
+    # ── GEO5: S115/S116 在 test 评估窗口必须有白天 scene 和有效预测 ──────────
+    # 禁止对 S115/S116 的 scene_v151 all_night 误判为正常。
+    # 必须切到 test split + 评估时段，不能读 all scope（含大量夜间数据会掩盖问题）。
+    try:
+        fp = tables_dir / ".." / "predictions" / "distributed_predictions_final_full.pkl"
+        if fp.exists():
+            df_full = pd.read_pickle(fp)
+            df_full["time"] = pd.to_datetime(df_full["time"], errors="coerce")
+            df_full["hour"] = df_full["time"].dt.hour
+            df_full["split"] = df_full["split"].astype(str)
+
+            for sid in ["S115", "S116"]:
+                sdf = df_full[
+                    (df_full["site_id"] == sid)
+                    & (df_full["split"] == "test")
+                    & (df_full["hour"].between(10, 14))
+                ]
+                if sdf.empty:
+                    c.warn(f"GEO5: {sid} test 10-14 数据", "无评估数据")
+                    continue
+
+                scene_col = "scene_v151" if "scene_v151" in sdf.columns else None
+                scene_ok = False
+                if scene_col:
+                    scene_vals = sdf[scene_col].astype(str).value_counts().to_dict()
+                    scene_all_night = set(str(k) for k in scene_vals.keys()) <= {"night"}
+                    if scene_all_night:
+                        c.fail(f"GEO5: {sid} scene_v151 test 10-14",
+                               f"scene 全为 night！{scene_vals}（后处理/校准可能覆盖了预测）")
+                    else:
+                        scene_ok = True
+                        c.ok(f"GEO5: {sid} scene_v151 test 10-14",
+                             f"scene 正常 {scene_vals}，非 all-night")
+                else:
+                    c.warn(f"GEO5: {sid} scene_v151", "字段不存在")
+
+                # g_blend_pred 必须 > 0
+                if "g_blend_pred" in sdf.columns:
+                    gblend_max = float(sdf["g_blend_pred"].max())
+                    if gblend_max < 1e-9:
+                        c.fail(f"GEO5: {sid} g_blend_pred test 10-14",
+                               f"全部接近0（max={gblend_max:.2e}），辐照特征链路可能中断")
+                    else:
+                        c.ok(f"GEO5: {sid} g_blend_pred test 10-14",
+                             f"max={gblend_max:.1f}，正常")
+
+                # power_pred_final 必须 > 0
+                pred_col = pred_col  # from outer scope
+                if pred_col in sdf.columns:
+                    nonzero = (sdf[pred_col].fillna(0).abs() > 1e-9).sum()
+                    total = len(sdf)
+                    if nonzero == 0:
+                        c.fail(f"GEO5: {sid} power_pred_final test 10-14",
+                               f"全部为0！total={total}，后处理可能覆盖了预测")
+                    else:
+                        c.ok(f"GEO5: {sid} power_pred_final test 10-14",
+                             f"{nonzero}/{total} 行非0，正常")
+                elif scene_ok:
+                    c.warn(f"GEO5: {sid} power_pred_final", f"{pred_col} 字段不存在")
+    except Exception as e:
+        c.warn("GEO5: S115/S116 test 10-14 链路检查", str(e))
+
     # ── C17: 69站/68站差异说明 ──────────────────────────────────────
     try:
         canonical_full_pkl = tables_dir / ".." / "predictions" / "distributed_predictions_final_full.pkl"
