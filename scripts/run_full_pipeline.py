@@ -349,6 +349,10 @@ def run_step(step: dict, python: str, cwd: Path, cfg: dict,
         print(f"\n[WARN] [{step_id}] 可选步骤脚本不存在，跳过: {full_path}")
         return True
 
+    # Step 11 有 4 个独立子步骤，各自计时
+    if "subs" in step:
+        return run_step_with_subs(step, python, cwd, cfg)
+
     # Stage 01/02 脚本需要 --data-root 和 --output-root
     cmd = [python, str(full_path)]
     if any(s in script for s in ["stages/01_data", "stages/02_irradiance"]):
@@ -357,6 +361,103 @@ def run_step(step: dict, python: str, cwd: Path, cfg: dict,
         cmd.extend(["--data-root", data_root, "--output-root", output_root])
 
     with timed_step(f"[{step_id}] {step_name}", outputs=[str(full_path)]):
+        result = subprocess.run(
+            cmd,
+            cwd=str(cwd),
+            check=False,
+            capture_output=True,
+        )
+
+        if result.stdout:
+            print(result.stdout.decode("utf-8", errors="replace")[-2000:])
+        if result.stderr and result.returncode != 0:
+            print(result.stderr.decode("utf-8", errors="replace")[-500:])
+
+        if result.returncode == 0:
+            print(f"\n[PASS] [{step_id}] {step_name}")
+            return True
+        else:
+            print(f"\n[FAIL] [{step_id}] {step_name} — exit {result.returncode}")
+            if step["required"]:
+                print("\n[STOP] 必需步骤失败。请修复后重新运行本脚本。")
+            return not step["required"]
+
+
+def run_step_with_subs(step: dict, python: str, cwd: Path, cfg: dict) -> bool:
+    """Step 11：按子步骤执行，每个子步骤独立计时。"""
+    step_id = step["id"]
+    step_name = step["name"]
+    subs = step["subs"]
+
+    print(f"\n{'='*60}")
+    print(f"[STEP START] {step_id} {step_name}")
+    print(f"  子步骤: {[s['id'] for s in subs]}")
+    print(f"{'='*60}")
+
+    all_ok = True
+    for sub in subs:
+        sub_id = sub["id"]
+        sub_name = sub["name"]
+        sub_desc = sub.get("desc", "")
+        sub_script = _find_sub_script(sub_name, cwd)
+        if sub_script is None:
+            print(f"\n[WARN] [{sub_id}] {sub_name} — 脚本不存在，跳过")
+            continue
+
+        cmd = [python, str(sub_script)]
+        data_root = str(cwd / cfg.get("data", {}).get("data_root", "data"))
+        output_root = str(cwd / cfg.get("data", {}).get("output_root", "output/pv_pipeline"))
+        if "stages" in sub_script.name or "irradiance" in str(sub_script):
+            cmd.extend(["--data-root", data_root, "--output-root", output_root])
+
+        with timed_step(f"[{sub_id}] {sub_name} ({sub_desc})", outputs=[str(sub_script)]):
+            result = subprocess.run(cmd, cwd=str(cwd), check=False, capture_output=True)
+            if result.stdout:
+                print(result.stdout.decode("utf-8", errors="replace")[-1000:])
+            if result.stderr and result.returncode != 0:
+                print(result.stderr.decode("utf-8", errors="replace")[-500:])
+
+            if result.returncode == 0:
+                print(f"\n[PASS] [{sub_id}] {sub_name}")
+            else:
+                print(f"\n[FAIL] [{sub_id}] {sub_name} — exit {result.returncode}")
+                all_ok = False
+
+    print(f"\n{'='*60}")
+    icon = "✓" if all_ok else "✗"
+    print(f"[STEP END] [{icon} {'PASS' if all_ok else 'FAIL'}] {step_id} {step_name}")
+    print(f"{'='*60}")
+    return all_ok
+
+
+def _find_sub_script(sub_name: str, cwd: Path) -> Path | None:
+    """根据子步骤名称找到对应的脚本路径。"""
+    candidates = {
+        "recompute_hourly_nrmse_consistent": [
+            cwd / "scripts" / "compute_hourly_nrmse_consistent.py",
+            cwd / "scripts" / "round46_recompute_hourly_nrmse_consistent.py",
+        ],
+        "export_interactive_dashboard_data": [
+            cwd / "scripts" / "export_interactive_dashboard_data.py",
+        ],
+        "update_dashboard_after_training": [
+            cwd / "scripts" / "update_dashboard_after_training.py",
+        ],
+        "check_dashboard_auto_update_stamp": [
+            cwd / "scripts" / "check_dashboard_auto_update_stamp.py",
+        ],
+        "check_dashboard_data_freshness": [
+            cwd / "scripts" / "check_dashboard_data_freshness.py",
+        ],
+        "dashboard_regression_check": [
+            cwd / "scripts" / "round44_dashboard_regression_check.py",
+            cwd / "scripts" / "dashboard_regression_check.py",
+        ],
+    }
+    for path in candidates.get(sub_name, []):
+        if path.exists():
+            return path
+    return None
         result = subprocess.run(
             cmd,
             cwd=str(cwd),
