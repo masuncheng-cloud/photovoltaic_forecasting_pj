@@ -1,26 +1,29 @@
 """
 compute_round36_metrics.py
 =======================
-计算 Round36 所有评价指标，使用 power_pred_final。
+计算所有评价指标，使用 power_pred_final。
 
 指标说明：
   - 全市 NRMSE：先聚合到全市时间序列，再算 RMSE/容量
   - 站点 NRMSE：每个站点独立计算
   - 典型站点：从正常可排名站点中选最好、最差、相对正确各若干
+  - BIAS = mean(power_pred_final - power_mw)；BIAS < 0 表示预测偏低
 
+输入：output/pv_pipeline/predictions/distributed_predictions_final_eval.pkl
 输出（全部在 output/pv_pipeline/metrics/）：
-  round36_city_hourly_nrmse.csv
-  round36_site_hourly_nrmse.csv
-  round36_site_avg_hourly_nrmse.csv
-  round36_site_metrics.csv
-  round36_typical_sites.csv
-  round36_invalid_eval_sites.csv
-  round36_distribution_drift_sites.csv
-  round36_bias_sites.csv
+  city_hourly_nrmse.csv
+  site_hourly_nrmse.csv
+  site_avg_hourly_nrmse.csv
+  site_metrics_consistent.csv   ← canonical 正式名
+  typical_sites.csv
+  invalid_eval_sites.csv
+  distribution_drift_sites.csv
+  bias_sites.csv
 """
 import os
 import sys
 import pickle
+import shutil
 import pandas as pd
 import numpy as np
 from pathlib import Path
@@ -28,11 +31,15 @@ from pathlib import Path
 PROJECT_ROOT = Path(__file__).parent.parent.resolve()
 sys.path.insert(0, str(PROJECT_ROOT / "src"))
 
-TABLES  = PROJECT_ROOT / "output" / "pv_pipeline" / "tables"
-METRICS = PROJECT_ROOT / "output" / "pv_pipeline" / "metrics"
-os.makedirs(METRICS, exist_ok=True)
+TABLES     = PROJECT_ROOT / "output" / "pv_pipeline" / "tables"
+PREDICTIONS = PROJECT_ROOT / "output" / "pv_pipeline" / "predictions"
+METRICS    = PROJECT_ROOT / "output" / "pv_pipeline" / "metrics"
+METRICS.mkdir(parents=True, exist_ok=True)
 
-EVAL_PATH = TABLES / "distributed_predictions_final_eval_round36.pkl"
+# 优先读取 canonical 路径
+EVAL_PATH = PREDICTIONS / "distributed_predictions_final_eval.pkl"
+# 兼容：若 canonical 不存在则读 legacy 路径
+EVAL_PATH_LEGACY = TABLES / "distributed_predictions_final_eval_round36.pkl"
 SITE_VALIDITY_PATH = METRICS / "round36_site_validity.csv"
 
 
@@ -61,15 +68,19 @@ def mae(y_true, y_pred):
 
 def main():
     print("=" * 60)
-    print("Round36 指标重算")
+    print("指标重算（使用 canonical 路径）")
     print("=" * 60)
 
-    if not EVAL_PATH.exists():
-        print(f"[ERROR] {EVAL_PATH} 不存在！")
-        import sys; sys.exit(1)
-
-    print(f"\n读取预测文件: {EVAL_PATH}...")
-    df = pd.read_pickle(EVAL_PATH)
+    # 优先读 canonical，fallback 到 legacy
+    if EVAL_PATH.exists():
+        print(f"\n读取 canonical 预测文件: {EVAL_PATH}")
+        df = pd.read_pickle(EVAL_PATH)
+    elif EVAL_PATH_LEGACY.exists():
+        print(f"\n[WARN] canonical 不存在，读取兼容文件: {EVAL_PATH_LEGACY}")
+        df = pd.read_pickle(EVAL_PATH_LEGACY)
+    else:
+        print(f"[ERROR] 预测文件不存在:\n  canonical: {EVAL_PATH}\n  legacy:   {EVAL_PATH_LEGACY}")
+        sys.exit(1)
     df["time"] = pd.to_datetime(df["time"])
     print(f"  行数: {len(df):,}, 列: {len(df.columns)}")
 
@@ -161,8 +172,12 @@ def main():
             "n_samples": n, "capacity_mw": cap,
         })
     site_metrics_df = pd.DataFrame(site_metrics).sort_values("nrmse_pct")
-    site_metrics_df.to_csv(METRICS / "round36_site_metrics.csv", index=False, encoding="utf-8-sig")
-    print(f"  已保存: round36_site_metrics.csv ({len(site_metrics_df)} 行)")
+    # 写 canonical 路径
+    site_metrics_df.to_csv(METRICS / "site_metrics_consistent.csv", index=False, encoding="utf-8-sig")
+    # 同步兼容路径
+    shutil.copy2(METRICS / "site_metrics_consistent.csv",
+                  METRICS / "round36_site_metrics.csv")
+    print(f"  已保存: site_metrics_consistent.csv + round36_site_metrics.csv ({len(site_metrics_df)} 行)")
 
     # ── [5] 典型站点 ────────────────────────────────────────
     print("\n[5] 生成典型站点表...")
