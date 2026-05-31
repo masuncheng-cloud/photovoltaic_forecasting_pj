@@ -594,53 +594,56 @@ def compute_priority_sites(site_df: pd.DataFrame, site_hour_df: pd.DataFrame | N
 
 # ── Summary ────────────────────────────────────────────────────────────────
 
-def compute_summary(df_eval: pd.DataFrame, site_df: pd.DataFrame) -> dict:
-    """计算总览指标。"""
+def compute_summary(df_eval: pd.DataFrame, site_df: pd.DataFrame, cap_by_site: pd.Series) -> dict:
+    """计算总览指标（使用正确的 NRMSE 口径）。"""
     actual = df_eval["power_mw"].astype(float)
     pred = df_eval[PRED_COL].astype(float)
-    cap = df_eval["capacity_mw"].astype(float)
-    time_caps = df_eval.groupby("time")["capacity_mw"].first()
+    city_cap = float(cap_by_site.sum())
 
     actual_sum = float(actual.sum())
     pred_sum = float(pred.sum())
 
     mae = float((pred - actual).abs().mean())
     rmse = float(np.sqrt(((pred - actual) ** 2).mean()))
-    bias = float((pred_sum - actual_sum) / max(actual_sum, 1e-9) * 100)
-    pa = float(pred_sum / max(actual_sum, 1e-9))
 
-    # city NRMSE
-    city_rmse = float(np.sqrt(((pred - actual) ** 2).mean()))
-    cap_avg = float(cap.mean())
-    city_nrmse = float(city_rmse / max(cap_avg, 1e-9) * 100)
-
-    # 6-19 total
-    total_nrmse = float(city_rmse / max(cap_avg, 1e-9) * 100)
+    # overall city NRMSE: city-aggregated RMSE / city total capacity
+    agg = df_eval.groupby("time", as_index=False).agg(
+        actual_sum=("power_mw", "sum"),
+        pred_sum=(PRED_COL, "sum"),
+    )
+    city_nrmse_6_19 = float(_nrmse(
+        agg["actual_sum"].values, agg["pred_sum"].values, city_cap
+    ))
+    bias = float(_bias_pct(agg["actual_sum"].values, agg["pred_sum"].values))
+    pa = float(_pred_actual(agg["actual_sum"].values, agg["pred_sum"].values))
 
     # 10-14 subset
     df_10_14 = df_eval[df_eval["hour"].between(10, 14)]
     if len(df_10_14) > 0:
-        a14 = df_10_14["power_mw"].astype(float)
-        p14 = df_10_14[PRED_COL].astype(float)
-        c14 = df_10_14["capacity_mw"].astype(float)
-        r14 = float(np.sqrt(((p14 - a14) ** 2).mean()))
-        nrmse_10_14 = float(r14 / max(float(c14.mean()), 1e-9) * 100)
+        agg14 = df_10_14.groupby("time", as_index=False).agg(
+            actual_sum=("power_mw", "sum"),
+            pred_sum=(PRED_COL, "sum"),
+        )
+        nrmse_10_14 = float(_nrmse(
+            agg14["actual_sum"].values, agg14["pred_sum"].values, city_cap
+        ))
     else:
         nrmse_10_14 = np.nan
 
     # site mean
     site_nrmse = float(site_df["nrmse_percent"].mean())
 
-    # high error sites
+    # high error sites (handle NaN bias)
     high_nrmse = int((site_df["nrmse_percent"] >= 20).sum())
-    high_bias = int((site_df["bias_percent"].abs() >= 20).sum())
+    valid_bias = site_df["bias_percent"].dropna()
+    high_bias = int((valid_bias.abs() >= 20).sum())
 
     return {
         "total_rows": len(df_eval),
         "total_sites": int(df_eval["site_id"].nunique()),
         "mae_mw": round(mae, 4),
         "rmse_mw": round(rmse, 4),
-        "city_nrmse_6_19": round(total_nrmse, 4),
+        "city_nrmse_6_19": round(city_nrmse_6_19, 4),
         "city_nrmse_10_14": round(nrmse_10_14, 4) if not np.isnan(nrmse_10_14) else None,
         "site_mean_nrmse": round(site_nrmse, 4),
         "bias_percent": round(bias, 4),
@@ -712,7 +715,7 @@ def main():
     print(f"    → {priority_path} ({len(priority_df)} sites)")
 
     print(f"\n[7] 计算总览指标...")
-    summary = compute_summary(df, site_df)
+    summary = compute_summary(df, site_df, cap_by_site)
     summary_path = OUT_DIR / "round57_error_driver_summary.csv"
     pd.DataFrame([summary]).to_csv(summary_path, index=False, encoding="utf-8-sig")
     print(f"    → {summary_path}")
