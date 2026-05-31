@@ -324,45 +324,57 @@ def compute_error_by_site(df: pd.DataFrame, sm_names: dict, geo_conf: dict) -> p
 
 # ── 2. error_by_hour ────────────────────────────────────────────────────────
 
-def compute_error_by_hour(df: pd.DataFrame) -> pd.DataFrame:
-    """小时级误差统计。"""
+def compute_error_by_hour(df: pd.DataFrame, cap_by_site: pd.Series) -> pd.DataFrame:
+    """小时级误差统计（修正口径）。
+    - site_mean_nrmse: 先对每个站点算 NRMSE，再取平均（每站点用自己容量归一化）
+    - city_nrmse: 按时间戳聚合全城市实际/预测，再除以全城市总容量
+    """
+    city_cap = float(cap_by_site.sum())
     rows = []
     for hour, hdf in df.groupby("hour"):
         n = len(hdf)
 
-        # city-level
-        actual = hdf["power_mw"].astype(float)
-        pred = hdf[PRED_COL].astype(float)
-        cap_sum = float(hdf.groupby("time")["capacity_mw"].first().sum())
-        actual_sum = float(actual.sum())
-        pred_sum = float(pred.sum())
+        # site_mean_nrmse: mean of per-site NRMSE
+        site_vals = []
+        for sid, sdf in hdf.groupby("site_id"):
+            cap = float(cap_by_site.get(sid, np.nan))
+            if pd.isna(cap) or cap <= 0:
+                continue
+            v = _nrmse(sdf["power_mw"].values, sdf[PRED_COL].values, cap)
+            if np.isfinite(v):
+                site_vals.append(v)
+        site_mean_nrmse = float(np.nanmean(site_vals)) if site_vals else np.nan
 
-        city_rmse = float(np.sqrt(((pred - actual) ** 2).mean()))
-        city_nrmse = float(city_rmse / max(cap_sum / n, 1e-9) * 100)
+        # city_nrmse: RMSE of city-aggregated series / city total capacity
+        agg = hdf.groupby("time", as_index=False).agg(
+            actual=("power_mw", "sum"),
+            pred=(PRED_COL, "sum"),
+        )
+        city_nrmse = _nrmse(agg["actual"].values, agg["pred"].values, city_cap)
 
-        bias_city = float((pred_sum - actual_sum) / max(actual_sum, 1e-9) * 100)
-        pa_city = float(pred_sum / max(actual_sum, 1e-9))
-        mae_mean = float((pred - actual).abs().mean())
+        actual_sum = float(hdf["power_mw"].sum())
+        pred_sum = float(hdf[PRED_COL].sum())
+        bias_city = _bias_pct(agg["actual"].values, agg["pred"].values)
+        pa_city = _pred_actual(agg["actual"].values, agg["pred"].values)
+        mae_mean = float((hdf[PRED_COL].astype(float) - hdf["power_mw"].astype(float)).abs().mean())
 
-        # zero ratio
-        zero_actual = float((actual == 0).mean())
-        zero_pred = float((pred.fillna(0) == 0).mean())
+        zero_actual = float((hdf["power_mw"] == 0).mean())
+        zero_pred = float((hdf[PRED_COL].fillna(0) == 0).mean())
 
-        # top error sites (by abs error)
-        hdf = hdf.copy()
-        hdf["abs_err"] = (hdf[PRED_COL].astype(float) - hdf["power_mw"].astype(float)).abs()
+        hdf_c = hdf.copy()
+        hdf_c["abs_err"] = (hdf_c[PRED_COL].astype(float) - hdf_c["power_mw"].astype(float)).abs()
         top_sites = (
-            hdf.groupby("site_id")["abs_err"].mean()
+            hdf_c.groupby("site_id")["abs_err"].mean()
             .nlargest(3).index.tolist()
         )
 
         rows.append({
             "hour": int(hour),
             "rows": n,
-            "site_mean_nrmse_percent": round(city_nrmse, 4),
+            "site_mean_nrmse_percent": round(site_mean_nrmse, 4),
             "city_nrmse_percent": round(city_nrmse, 4),
             "mae_mw_mean": round(mae_mean, 4),
-            "rmse_mw_mean": round(city_rmse, 4),
+            "rmse_mw_mean": round(_rmse(hdf["power_mw"].values, hdf[PRED_COL].values), 4),
             "bias_percent_city": round(bias_city, 4),
             "pred_actual_ratio_city": round(pa_city, 4),
             "actual_sum": round(actual_sum, 4),
@@ -372,8 +384,7 @@ def compute_error_by_hour(df: pd.DataFrame) -> pd.DataFrame:
             "top_error_sites": "|".join(top_sites),
         })
 
-    result = pd.DataFrame(rows).sort_values("hour")
-    return result
+    return pd.DataFrame(rows).sort_values("hour")
 
 
 # ── 3. error_by_site_hour ────────────────────────────────────────────────────
