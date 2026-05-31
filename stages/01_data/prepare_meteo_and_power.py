@@ -17,8 +17,21 @@ def main():
     args = parser.parse_args()
     paths = make_paths(PROJECT_ROOT, args)
 
-    site_master = pd.read_csv(paths.tables / "site_master.csv")
-    site_geo = site_master[site_master["has_geo"] == 1][["site_id", "lon", "lat"]].copy()
+    # ── 优先读取 canonical 元数据（含 override 已应用）─────────────────
+    canonical = paths.tables / "station_metadata_canonical.csv"
+    if canonical.exists():
+        site_master = pd.read_csv(canonical)
+        print(f"[INFO] loaded canonical station metadata: {len(site_master)} sites, "
+              f"has_geo={site_master['has_geo'].sum()}")
+    else:
+        site_master = pd.read_csv(paths.tables / "site_master.csv")
+        print(f"[WARN] canonical not found, using site_master.csv")
+
+    # ── 对所有站点（含 has_geo==0）插值 ERA5 ───────────────────────
+    # Round54 修复：不再过滤 has_geo==1，保证 S115/S116 也能获得 ERA5 特征
+    site_geo = site_master[["site_id", "lon", "lat"]].copy()
+    print(f"[INFO] ERA5 插值站点数: {len(site_geo)} "
+          f"(含 has_geo==0: {(site_geo['lon'].isna() | site_geo['lat'].isna()).sum()})")
     meteo_frames = []
     tcc_strd_frames = []
     for year_dir in [paths.year_2023, paths.year_2024, paths.year_2025]:
