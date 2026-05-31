@@ -36,7 +36,7 @@ def main():
     print(f"power_root: {paths.power_root}")
     print(f"output:     {paths.tables}")
 
-    site_master = build_site_master(paths.power_root)
+    site_master = build_site_master(paths.power_root, tables_dir=paths.tables)
     # build_site_master 已输出 station_metadata_canonical.csv/pkl
 
     # 同时覆盖旧的 site_master.csv（Stage 01/02 读取）
