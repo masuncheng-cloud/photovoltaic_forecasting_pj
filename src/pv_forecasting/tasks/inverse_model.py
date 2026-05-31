@@ -28,14 +28,39 @@ def _coalesce_columns(df: pd.DataFrame, target: str, candidates: list[str], defa
 
 
 def _scene_label(df: pd.DataFrame) -> pd.Series:
+    """
+    场景分类（Round54 修复版）：elev 缺失时用辐照 ssrd_wm2 判断。
+    """
     g = df["ssrd_wm2"].fillna(0)
-    elev = df.get("solar_elevation_deg", pd.Series(-90, index=df.index)).fillna(-90)
+    elev = df.get("solar_elevation_deg", pd.Series(np.nan, index=df.index))
     ramp = df.get("ssrd_wm2_diff1", pd.Series(0, index=df.index)).abs().fillna(0)
-    out = np.where(elev <= 0, "night",
-          np.where(g < 120, "low",
-          np.where(ramp > 140, "ramp",
-          np.where(g > 650, "clear_peak", "mid"))))
-    return pd.Series(out, index=df.index, dtype="string")
+
+    elev_known = np.isfinite(elev.values)
+    # 白天判断：hour 6-19
+    hour = pd.to_numeric(df.get("hour", pd.Series(12, index=df.index)), errors="coerce")
+    if pd.api.types.is_integer_dtype(hour) or pd.api.types.is_float_dtype(hour):
+        hour_arr = hour.values
+    else:
+        hour_arr = pd.to_datetime(df["time"], errors="coerce").dt.hour.values
+
+    scene = np.empty(len(df), dtype=object)
+    # elev 已知：elev <= 0 → night
+    mask_known = elev_known
+    scene[mask_known] = np.where(
+        elev.values[mask_known] <= 0, "night",
+        np.where(g.values[mask_known] < 120, "low",
+        np.where(ramp.values[mask_known] > 140, "ramp",
+        np.where(g.values[mask_known] > 650, "clear_peak", "mid"))))
+    # elev 缺失：白天用辐照判断（不默认 night）
+    mask_unknown_day = ~elev_known & (hour_arr >= 6) & (hour_arr <= 19)
+    scene[mask_unknown_day] = np.where(
+        g.values[mask_unknown_day] < 120, "low",
+        np.where(ramp.values[mask_unknown_day] > 140, "ramp",
+        np.where(g.values[mask_unknown_day] > 650, "clear_peak", "mid")))
+    # elev 缺失且夜间
+    mask_unknown_night = ~elev_known & ~mask_unknown_day
+    scene[mask_unknown_night] = "night"
+    return pd.Series(scene, index=df.index, dtype="string")
 
 
 
