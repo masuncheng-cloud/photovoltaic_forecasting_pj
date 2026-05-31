@@ -1,5 +1,5 @@
 {
-  "finalized_at": "2026-05-29T23:34:51",
+  "finalized_at": "2026-05-31T14:22:38",
   "python": "/home/ac/anaconda3/bin/python3",
   "steps": [
     {
@@ -19,6 +19,11 @@
     },
     {
       "name": "check_dashboard_auto_update_stamp",
+      "returncode": 0,
+      "status": "ok"
+    },
+    {
+      "name": "check_dashboard_data_freshness",
       "returncode": 0,
       "status": "ok"
     },
