@@ -1,5 +1,3 @@
 step,status,seconds,minutes,started_at,finished_at,error,outputs
-[10] 指标重算,PASS,1.532,0.026,2026-05-31T22:39:59,2026-05-31T22:40:00,,['/home/ac/data16t/msc/photovoltaic_forecasting_pj/scripts/compute_round36_metrics.py']
-[11] 训练后统一收口,PASS,247.595,4.127,2026-05-31T22:40:00,2026-05-31T22:44:08,,['/home/ac/data16t/msc/photovoltaic_forecasting_pj/scripts/post_training_finalize_outputs.py']
-[12] 训练后逻辑审计,PASS,6.401,0.107,2026-05-31T22:44:08,2026-05-31T22:44:14,,['/home/ac/data16t/msc/photovoltaic_forecasting_pj/scripts/posttrain_validation.py']
-[13] Dashboard 预测值校验,PASS,9.226,0.154,2026-05-31T22:44:14,2026-05-31T22:44:23,,['/home/ac/data16t/msc/photovoltaic_forecasting_pj/scripts/check_dashboard_prediction_values.py']
+[12] 训练后逻辑审计,PASS,6.792,0.113,2026-05-31T23:00:25,2026-05-31T23:00:32,,['/home/ac/data16t/msc/photovoltaic_forecasting_pj/scripts/posttrain_validation.py']
+[13] Dashboard 预测值校验,PASS,9.668,0.161,2026-05-31T23:00:32,2026-05-31T23:00:42,,['/home/ac/data16t/msc/photovoltaic_forecasting_pj/scripts/check_dashboard_prediction_values.py']
