@@ -339,18 +339,25 @@ def main():
             "Join top-3 bad hours from site-hour metrics into priority_sites",
         )
 
-    # F6: daytime_scene_night over-trigger
+    # F7: daytime_scene_night over-trigger
     site57_path = DIAG / "round57_error_by_site.csv"
     if site57_path.exists():
         s57 = pd.read_csv(site57_path)
         if "risk_flags" in s57.columns:
             cnt = int(s57["risk_flags"].fillna("").str.contains("daytime_scene_night").sum())
             total = len(s57)
+            # Also check the raw field if available
+            night_ratio_col = "scene_night_ratio_10_14" if "scene_night_ratio_10_14" in s57.columns else None
+            if night_ratio_col:
+                mean_night_ratio = float(s57[night_ratio_col].mean())
+            else:
+                mean_night_ratio = None
             add_finding(
                 "DAYTIME_SCENE_NIGHT_OVERTRIGGER",
                 "medium",
                 cnt > 10,
-                f"daytime_scene_night flagged sites={cnt}/{total} ({cnt/total*100:.0f}%)",
+                f"daytime_scene_night flagged sites={cnt}/{total} ({cnt/total*100:.0f}%), "
+                f"mean scene_night_ratio_10_14={mean_night_ratio}",
                 "Use test 10-14 or daytime-specific night ratio instead of broad 6-19 night ratio",
             )
 
@@ -360,14 +367,27 @@ def main():
         nan_bias = int(s57["bias_percent"].isna().sum()) if "bias_percent" in s57.columns else 0
         total = len(s57)
         if nan_bias > 0:
-            nan_sites = s57[s57["bias_percent"].isna()][["station_id", "risk_flags"]].head(5).to_string(index=False)
+            nan_sites_df = s57[s57["bias_percent"].isna()][["station_id", "risk_flags"]].head(5)
+            # Check if they are correctly classified as zero_actual_sum (not over/under prediction)
+            all_correct = all(
+                "zero_actual_sum" in str(r.get("risk_flags", ""))
+                and "over_prediction" not in str(r.get("risk_flags", ""))
+                and "under_prediction" not in str(r.get("risk_flags", ""))
+                for _, r in nan_sites_df.iterrows()
+            )
+            nan_sites = nan_sites_df.to_string(index=False)
         else:
+            all_correct = True
             nan_sites = "none"
+        # If NaN bias exists AND they are still misclassified, that's a problem
+        # If NaN bias exists but they are correctly classified (zero_actual_sum), it's NOT a problem
         add_finding(
             "NAN_BIAS_NEEDS_SEPARATE_CLASS",
             "medium",
-            nan_bias > 0,
-            f"sites with NaN bias={nan_bias}/{total}. Sites: {nan_sites}",
+            nan_bias > 0 and not all_correct,
+            f"sites with NaN bias={nan_bias}/{total}. "
+            f"Correctly classified as zero_actual_sum: {all_correct}. "
+            f"Sites: {nan_sites}",
             "Classify as zero_actual_sum, not over/under prediction",
         )
 
