@@ -131,17 +131,18 @@ def output_to_archive(rel_path: str) -> bool:
         if path_str == p or path_str.endswith(p):
             return False
 
-    # ── output/pv_pipeline/docs/ 下的 Round 文档（归档 Round47 及之前）──────
+    # ── output/pv_pipeline/docs/ 下的 Round 文档────────────────
+    # Round47 及之前归档，Round48+ 保留
     docs_round_match = re.match(
         r"output/pv_pipeline/docs/Round(\d+)_", path_str
     )
     if docs_round_match:
         num = int(docs_round_match.group(1))
-        # 保留 Round48+ 的执行文档（已标注 above）
-        # Round47 及之前归档
-        if num < 48:
-            return True
-        # Round48 及之后不在保护列表中的（理论上应该都在上面了）
+        return num < 48  # Round47 及之前归档
+
+    # ── 排除 docs 目录本身 ──────────────────────────────
+    # 跳过 output/pv_pipeline/docs/ 下的非 Round 文件（当前没有）
+    if path_str.startswith("output/pv_pipeline/docs/"):
         return False
 
     # ── archive_before_round36（已经是旧归档目录，归档）────
