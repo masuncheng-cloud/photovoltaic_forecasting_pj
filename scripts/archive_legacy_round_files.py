@@ -98,31 +98,57 @@ def output_to_archive(rel_path: str) -> bool:
     path_str = str(rel_path)
 
     # ── 当前活跃文件（不归档）─────────────────────────────
-    active_roots = [
+    protected_paths = [
         "output/pv_pipeline/tables/distributed_predictions_final_round36.pkl",
+        "output/pv_pipeline/tables/distributed_predictions_final_eval_round36.pkl",
+        "output/pv_pipeline/tables/distributed_predictions_final_full.pkl",
         "output/pv_pipeline/metrics/round46_hourly_nrmse_consistent.csv",
         "output/pv_pipeline/metrics/round46_site_hour_nrmse_consistent.csv",
         "output/pv_pipeline/metrics/round48_station_data_requirement_analysis.csv",
         "output/pv_pipeline/metrics/dashboard_prediction_consistency.csv",
+        "output/pv_pipeline/metrics/site_test_daytime_zero_ratio_summary.csv",
+        "output/pv_pipeline/metrics/audit_data_integrity.csv",
+        "output/pv_pipeline/metrics/audit_metric_overall.csv",
+        "output/pv_pipeline/metrics/audit_metric_recompute.csv",
+        "output/pv_pipeline/metrics/audit_site_mapping.csv",
+        "output/pv_pipeline/metrics/audit_split_integrity.csv",
+        "output/pv_pipeline/metrics/calibration_ablation_by_site.csv",
+        "output/pv_pipeline/metrics/data_quality_metrics.csv",
+        "output/pv_pipeline/metrics/distributed_metrics_by_county_fixed.csv",
+        "output/pv_pipeline/metrics/distributed_metrics_by_site_fixed.csv",
+        "output/pv_pipeline/metrics/distributed_metrics_fixed.csv",
+        "output/pv_pipeline/metrics/pr_month_comparison.csv",
+        "output/pv_pipeline/metrics/power_on_metrics_v159.csv",
+        "output/pv_pipeline/metrics/power_scene_summary_v159.csv",
+        "output/pv_pipeline/metrics/top_day_zero_sites.csv",
+        "output/pv_pipeline/metrics/分布式光伏预测_逐小时平均NRMSE.csv",
+        "output/pv_pipeline/metrics/分布式光伏预测_逐小时平均相对误差.csv",
+        "output/pv_pipeline/docs/Round48_样本量需求分析数据说明.md",
+        "output/pv_pipeline/docs/Round49_执行报告_样本量散点图新增训练验证正功率样本横轴.md",
+        "output/pv_pipeline/docs/Round50_工程收口与训练逻辑审计执行报告.md",
     ]
-    for active in active_roots:
-        if path_str == active or path_str.endswith(active):
+    for p in protected_paths:
+        if path_str == p or path_str.endswith(p):
             return False
 
-    # ── Round48/49 当前活跃产物（按名称判断）──────────────
-    # docs/Round4X_执行*.md 和 docs/Round4X_执行报告*.md 是当前产物
-    # 但 output/pv_pipeline/docs/Round*.md 是历史总结，可以归档
-    if path_str.startswith("output/pv_pipeline/docs/"):
-        # 归档 output/pv_pipeline/docs/ 下的所有 Round 文档
-        if re.search(r"Round\d+", path_str):
+    # ── output/pv_pipeline/docs/ 下的 Round 文档（归档 Round47 及之前）──────
+    docs_round_match = re.match(
+        r"output/pv_pipeline/docs/Round(\d+)_", path_str
+    )
+    if docs_round_match:
+        num = int(docs_round_match.group(1))
+        # 保留 Round48+ 的执行文档（已标注 above）
+        # Round47 及之前归档
+        if num < 48:
             return True
+        # Round48 及之后不在保护列表中的（理论上应该都在上面了）
         return False
 
-    # ── archive_before_round36（已经是旧归档，直接归档）────
+    # ── archive_before_round36（已经是旧归档目录，归档）────
     if "archive_before_round36" in path_str:
         return True
 
-    # ── round34/35/40/41_42/44/45 历史产物（归档）──────
+    # ── 历史 round 产物（归档）──────────────────────────
     legacy_rounds = [
         "round34", "round35", "round40",
         "round41_42", "round44", "round45",
@@ -131,7 +157,7 @@ def output_to_archive(rel_path: str) -> bool:
         if r in path_str.lower():
             return True
 
-    # ── *before* 文件（归档）──────────────────────────────
+    # ── *before* 文件（归档）────────────────────────────
     if "before" in path_str.lower():
         return True
 
