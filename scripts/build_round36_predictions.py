@@ -141,9 +141,15 @@ def main():
     for s, c in eval_counts.items():
         print(f"  {s}: {c:,}")
 
-    print("\n[OK] build_round36_predictions.py 完成！")
-    print(f"  full: {OUT_FULL}")
-    print(f"  eval: {OUT_EVAL}")
+    print(f"""
+[OK] build_round36_predictions.py 完成！
+  canonical:
+    full: {OUT_FULL}
+    eval: {OUT_EVAL}
+  兼容:
+    full: {OUT_FULL_LEGACY}
+    eval: {OUT_EVAL_LEGACY}
+""")
 
 
 if __name__ == "__main__":
