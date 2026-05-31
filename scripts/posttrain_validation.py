@@ -365,10 +365,12 @@ def run_validation(cfg: dict) -> ValidationCheck:
                 c.fail("C16: manifest.final_prediction_column",
                        f"期望 {expected_col}，实际: {fp_col}")
             # 3. all artifacts exist
+            # manifest 中路径相对于 PROJECT_ROOT（如 "output/pv_pipeline/..."）
+            # 所以用 PROJECT_ROOT 解析，不重复拼接 out
             arts = m.get("artifacts", {})
             missing_arts = []
             for art_name, art_path in arts.items():
-                art_full = out / art_path
+                art_full = PROJECT_ROOT / art_path
                 if not art_full.exists():
                     missing_arts.append(f"{art_name}: {art_path}")
             if not missing_arts:
