@@ -1,4 +1,4 @@
-﻿station_id,station_name,hour,rows,nrmse_percent,mae_mw,rmse_mw,bias_percent,pred_actual_ratio,actual_zero_ratio,pred_zero_ratio,scene_main,risk_flags
+﻿site_id,station_name,hour,rows,nrmse_percent,mae_mw,rmse_mw,bias_percent,pred_actual_ratio,actual_zero_ratio,pred_zero_ratio,scene_main,risk_flags
 S002,华筑泰宝光伏电站,6,122,17.888,0.3568,0.5903,-100.0,0.0,0.5574,1.0,night,high_bias
 S002,华筑泰宝光伏电站,7,122,17.9533,0.3936,0.5925,-98.3774,0.0162,0.0738,0.9836,low,high_bias|under_prediction
 S002,华筑泰宝光伏电站,8,122,17.3241,0.3994,0.5717,-60.5658,0.3943,0.0082,0.0,low,high_bias|under_prediction

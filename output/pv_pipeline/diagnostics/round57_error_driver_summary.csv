@@ -1,2 +1,2 @@
 ﻿total_rows,total_sites,mae_mw,rmse_mw,city_nrmse_6_19,city_nrmse_10_14,site_mean_nrmse,bias_percent,pred_actual_ratio,high_nrmse_sites,high_bias_sites
-116144,68,0.4477,0.9322,16.3074,20.9881,11.4087,1.3872,1.0139,4,22
+116144,68,0.4477,0.9322,4.4364,6.242,11.4087,1.3872,1.0139,4,22

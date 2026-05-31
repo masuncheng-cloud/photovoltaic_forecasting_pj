@@ -418,7 +418,7 @@ def compute_error_by_site_hour(df: pd.DataFrame, sm_names: dict) -> pd.DataFrame
             scene_main = str(vc.index[0]) if len(vc) else ""
 
         row = {
-            "station_id": sid,
+            "site_id": sid,
             "station_name": sm_names.get(sid, sid),
             "hour": int(hour),
             "rows": n,
