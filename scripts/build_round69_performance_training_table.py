@@ -70,8 +70,11 @@ def main():
     # Reconstruct round67 lgb predictions for residual features
     print("\n[INFO] Reconstructing round67 model predictions...")
 
-    # Use stored feature columns exactly as training
-    feat_cols = store["feat_cols"]
+    # Load model store and use stored feature columns exactly as training
+    with open(MODEL_STORE, "rb") as f:
+        store = pickle.load(f)
+    models = store["models"]
+    feat_cols = list(store["feat_cols"])
     print(f"  Using stored feat_cols ({len(feat_cols)}): {feat_cols}")
 
     for model_name in ["lgb", "hgb", "ridge"]:
