@@ -52,22 +52,29 @@ def site_mean_nrmse(df, pred_col):
 
 def city_nrmse(df, pred_col):
     """
-    Per-hour RMSE / per-hour mean capacity, averaged across hours.
-    Matches the formula used by hourly_nrmse_consistent.csv (round46 script).
-    - For each hour: RMSE(hour_actual, hour_pred) / mean(hour_timestamp_capacities) * 100
-    - Then average across hours.
+    Round46/hourly_nrmse_consistent.csv 口径:
+    1. Per-timestamp 聚合 actual_sum / pred_sum
+    2. 每个小时: RMSE(err) / mean(capacity_sum_per_timestamp) * 100
+    3. 跨小时平均
     """
     vals = []
     for h, hdf in df.groupby("hour"):
         if len(hdf) == 0:
             continue
-        # Per-timestamp capacity_sum, then mean across timestamps for this hour
-        ts_cap = hdf.groupby("time")["capacity_mw"].transform("sum")
-        cap_h = float(ts_cap.mean())
+        # Per-timestamp aggregation
+        agg = hdf.groupby("time", as_index=False).agg(
+            actual=("power_mw", "sum"),
+            pred=(pred_col, "sum"),
+            cap_sum=("capacity_mw", "sum"),
+        )
+        # RMSE of aggregated errors
+        err = agg["pred"].values - agg["actual"].values
+        r = rmse(err)
+        # capacity_sum is constant per timestamp (all sites have same cap), mean is total_cap
+        cap_h = float(agg["cap_sum"].mean())
         if cap_h <= 0:
             continue
-        r = _rmse(hdf["power_mw"].values, hdf[pred_col].values) / cap_h * 100
-        vals.append(r)
+        vals.append(r / cap_h * 100)
     return float(np.nanmean(vals)) if vals else np.nan
 
 
