@@ -1,0 +1,12 @@
+{
+  "recommend_adopt": false,
+  "adopted_col": "power_pred_final",
+  "baseline_col": "power_pred_final",
+  "passing_candidates": [
+    "power_pred_round73_autumn_winter_residual",
+    "power_pred_round73_noon_bias_guard",
+    "power_pred_round73_high_error_shrinkage"
+  ],
+  "best_backtest_delta": null,
+  "reason": "no candidate passed all backtest guards"
+}

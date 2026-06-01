@@ -131,24 +131,27 @@ def main():
 
     # 决策
     print("\n[Decision]")
-    # 通过条件：至少2个回测窗口，且秋冬(wA/wB)上满足
-    guards_pass = {}
-    for cand in candidate_cols:
-        if cand not in compare_df["candidate"].values:
-            guards_pass[cand] = False
-            continue
-        cand_rows = compare_df[compare_df["candidate"] == cand]
-        n_pass = int((cand_rows["bad_sites"] == 0).sum())
-        n_autumn_pass = int(
-            cand_rows[cand_rows["window"].isin(["window_A", "window_B"])]["bad_sites"].eq(0).sum()
-        )
-        guards_pass[cand] = n_pass >= 2 and n_autumn_pass >= 1
+    if len(compare_df) == 0:
+        passing = []
+    else:
+        # 通过条件：至少2个回测窗口，且秋冬(wA/wB)上满足
+        guards_pass = {}
+        for cand in candidate_cols:
+            if cand not in compare_df["candidate"].values:
+                guards_pass[cand] = False
+                continue
+            cand_rows = compare_df[compare_df["candidate"] == cand]
+            n_pass = int((cand_rows["bad_sites"] == 0).sum())
+            n_autumn_pass = int(
+                cand_rows[cand_rows["window"].isin(["window_A", "window_B"])]["bad_sites"].eq(0).sum()
+            )
+            guards_pass[cand] = n_pass >= 2 and n_autumn_pass >= 1
 
-    passing = [c for c, v in guards_pass.items() if v]
+        passing = [c for c, v in guards_pass.items() if v]
     print(f"  通过门控: {passing}")
 
     # test 最终评估（只用 wC 作为 valid 代理）
-    wC_df = windows["window_C"]
+    wC_df = backtest_windows.get("window_C")
     best_cand = None
     best_delta = float("inf")
     for cand in passing:
