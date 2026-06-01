@@ -294,6 +294,12 @@ MODES = {
         "run_step14": False,
         "run_step15": False,
     },
+    "round64-experiment": {
+        "desc": "Round64 安全残差融合实验：基线复核 -> 权重融合 -> test评估 -> 决策 -> 导出候选dashboard",
+        "steps": [],
+        "run_step14": False,
+        "run_step15": False,
+    },
 }
 
 
