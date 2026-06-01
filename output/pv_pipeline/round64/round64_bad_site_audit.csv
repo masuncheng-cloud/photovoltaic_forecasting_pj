@@ -1,0 +1,1 @@
+﻿site_id,capacity_mw,test_samples,test_positive_samples,test_zero_ratio,round61_nrmse,round63_lgb_nrmse,round64_safe_nrmse,delta_round64_vs_round61,delta_round63_vs_round61,mae_round64,rmse_round64,pred_sum,actual_sum,pred_actual_ratio
