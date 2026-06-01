@@ -58,8 +58,12 @@ def check_candidate_diff(df: pd.DataFrame, baseline_col: str,
     median_abs_diff = float(np.median(abs_diff)) if len(abs_diff) > 0 else 0.0
     mean_diff = float(np.mean(diff)) if len(diff) > 0 else 0.0
 
-    # 唯一站点数
-    changed_sites = int(df.loc[mask & (abs_diff > 1e-8), "site_id"].nunique()) if "site_id" in df.columns else 0
+    # 唯一站点数（用过滤后的数组找索引）
+    changed_mask = mask.copy()
+    changed_mask[~changed_mask] = False  # only keep True where both finite
+    changed_mask[changed_mask] = changed  # only True where abs_diff > 1e-8
+    idx_changed = np.where(changed_mask)[0]
+    site_ids_changed = df.iloc[idx_changed]["site_id"].nunique() if len(idx_changed) > 0 and "site_id" in df.columns else 0
 
     # 检验是否完全相同
     is_identical = bool(np.allclose(cand_f, bl_f, atol=1e-8, equal_nan=True))
