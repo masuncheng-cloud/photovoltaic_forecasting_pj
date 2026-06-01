@@ -188,11 +188,10 @@ def main():
     # ── Apply same weights to test ──────────────────────────────────
     print("\n[INFO] Applying weights to test set...")
 
-    # Build lookup from valid
+    # Build lookup from valid - key=(site_id, time_block) -> weight
     weight_lookup = {}
-    for _, row in valid_df.groupby(["site_id", "time_block"]).first().iterrows():
-        key = (str(row["site_id"]), row["time_block"])
-        weight_lookup[key] = row["blend_weight"]
+    for (sid, blk), grp in valid_df.groupby(["site_id", "time_block"]):
+        weight_lookup[(str(sid), blk)] = grp["blend_weight"].iloc[0]
 
     test_df["blend_weight"] = test_df.apply(
         lambda r: weight_lookup.get((str(r["site_id"]), r["time_block"]), 0.0), axis=1
@@ -264,14 +263,16 @@ def main():
     compare_valid.to_csv(ROUND68 / "round68_lgb_safe_blend_valid_compare.csv", index=False, encoding="utf-8-sig")
 
     # Test compare
-    bad_base_t = sum(1 for sid, sdf in test_df.groupby("site_id")
-                     if float(sdf["capacity_mw"].iloc[0]) > 0
-                     and (rmse(sdf["power_mw"].values, sdf[baseline_col].values) / float(sdf["capacity_mw"].iloc[0]) * 100
-                          - rmse(sdf["power_mw"].values, sdf[baseline_col].values) / float(sdf["capacity_mw"].iloc[0]) * 100) > 1.0)
-    bad_blend_t = sum(1 for sid, sdf in test_df.groupby("site_id")
-                       if float(sdf["capacity_mw"].iloc[0]) > 0
-                       and (rmse(sdf["power_mw"].values, sdf["pred_blend"].values) / float(sdf["capacity_mw"].iloc[0]) * 100
-                            - rmse(sdf["power_mw"].values, sdf[baseline_col].values) / float(sdf["capacity_mw"].iloc[0]) * 100) > 1.0)
+    bad_base_t = 0
+    bad_blend_t = 0
+    for sid, sdf in test_df.groupby("site_id"):
+        cap = float(sdf["capacity_mw"].iloc[0])
+        if cap <= 0:
+            continue
+        r_base = rmse(sdf["power_mw"].values, sdf[baseline_col].values) / cap * 100
+        r_blend = rmse(sdf["power_mw"].values, sdf["pred_blend"].values) / cap * 100
+        if r_blend - r_base > 1.0:
+            bad_blend_t += 1
 
     compare_test = pd.DataFrame([{
         "candidate": "round64_final",
