@@ -110,9 +110,10 @@ def main():
     test_df = full_df[full_df["window"] == "holdout_test"].copy()
     print(f"[INFO] 回测数据: {len(full_df):,}  test: {len(test_df):,}")
 
-    bl_col = "power_pred_final"
+    bl_col = "_bl_pred"
     candidate_cols = [c for c in full_df.columns if c.startswith("power_pred_round73_")]
     print(f"[INFO] 候选: {candidate_cols}")
+    print(f"[INFO] 基线列: {bl_col} (train用_base_pred, valid/test用power_pred_final)")
 
     print("\n[Backtest Evaluation]")
     rows = []
