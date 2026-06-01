@@ -1899,6 +1899,9 @@ def main():
     if dash_dir.exists():
         for p in dash_dir.rglob("*"):
             if p.is_file() and p.suffix.lower() in [".json", ".csv"]:
+                # Preserve dashboard_update_stamp.json (managed by update_dashboard_after_training.py)
+                if p.name == "dashboard_update_stamp.json":
+                    continue
                 p.unlink()
     dash_dir.mkdir(parents=True, exist_ok=True)
 
