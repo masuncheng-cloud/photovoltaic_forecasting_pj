@@ -106,12 +106,14 @@ def evaluate_on_valid(candidates_df, pred_col, hour_range=(6, 19)):
     # 10-14 subset
     df_10_14 = df_v[df_v["hour"].between(10, 14)]
     c_nrmse_10_14 = city_nrmse(df_10_14, pred_col) if len(df_10_14) > 0 else np.nan
+    sm_nrmse_10_14 = site_mean_nrmse(df_10_14, pred_col) if len(df_10_14) > 0 else np.nan
 
     return {
         "pred_col": pred_col,
         "sm_nrmse_6_19": round(sm_nrmse_6_19, 4),
         "c_nrmse_6_19": round(c_nrmse_6_19, 4),
         "c_nrmse_10_14": round(c_nrmse_10_14, 4) if not np.isnan(c_nrmse_10_14) else np.nan,
+        "sm_nrmse_10_14": round(sm_nrmse_10_14, 4) if not np.isnan(sm_nrmse_10_14) else np.nan,
         "bias_6_19": round(bias, 4),
         "abs_bias_6_19": round(abs(bias), 4),
     }
