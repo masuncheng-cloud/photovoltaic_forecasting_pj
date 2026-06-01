@@ -1,27 +1,27 @@
 {
-  "timestamp": "2026-06-01T15:32:52.730661",
+  "timestamp": "2026-06-01T17:00:14.293109",
   "mode": "apply",
   "artifacts": [
     {
       "artifact": "final_full_pkl",
       "path": "output/pv_pipeline/predictions/distributed_predictions_final_full.pkl",
-      "sha256": "044eb723094251aa8bd6efabd3a79c174d950b423361b61b38bd63f6c7e75884",
-      "bytes": 351348466,
+      "sha256": "1b30a9cb4ebcc7ad2d6e83b1d40061a95b0604ce43819165c3ec842deba2c440",
+      "bytes": 414399427,
       "exists": true
     },
     {
       "artifact": "final_eval_pkl",
       "path": "output/pv_pipeline/predictions/distributed_predictions_final_eval.pkl",
-      "sha256": "60614f81497c7119ba6fcc2620de7058220d95c4e6febe76b6b8a0fb29b6e826",
-      "bytes": 67889104,
+      "sha256": "ef9e7b9640ae79d1ca88f0127c7893c962074cf38c7bd6f2bf33a34dad9cb4f7",
+      "bytes": 80586151,
       "exists": true
     },
     {
       "artifact": "dashboard_metadata",
       "path": "output/pv_pipeline/interactive_dashboard/metadata.json",
-      "sha256": "7b2312624059c1b7d069e617ec5c9820a764554b24810ca2bfb736f07bbbc8ec",
-      "bytes": 677,
-      "exists": true
+      "sha256": null,
+      "bytes": 0,
+      "exists": false
     },
     {
       "artifact": "metrics_distributed_metrics_by_hour_fixed",
@@ -241,5 +241,5 @@
       "exists": true
     }
   ],
-  "all_exist": true
+  "all_exist": false
 }
