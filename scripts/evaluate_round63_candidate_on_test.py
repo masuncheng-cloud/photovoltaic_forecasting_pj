@@ -194,13 +194,13 @@ def main():
     hour_df.to_csv(OUT / "round63_test_hourly_compare.csv", index=False, encoding="utf-8-sig")
 
     print(f"{'Hour':>5}", end="")
-    for _, row in overall_rows:
+    for row in overall_rows:
         print(f" {row['candidate']:>16}", end="")
     print()
     for _, r in hour_df.iterrows():
         flag = "*" if int(r["hour"]) in hours_of_interest else " "
         print(f"{flag}{int(r['hour']):>4}", end="")
-        for _, row in overall_rows:
+        for row in overall_rows:
             v = r.get(row["candidate"], np.nan)
             print(f" {v:>16.4f}" if not np.isnan(v) else f" {'nan':>16}", end="")
         print()
@@ -213,16 +213,21 @@ def main():
     site_rows = []
     for sid in key_sites:
         row = {"site_id": sid}
-        for pred_col, label in overall_rows:
+        for entry in overall_rows:
+            cand_label = entry["candidate"]
+            pred_col = candidates[[x for x, y in candidates].index(cand_label) if y == cand_label][0] if cand_label in [y for x, y in candidates] else None
+            if pred_col is None:
+                row[cand_label] = np.nan
+                continue
             sdf = df_test[(df_test["site_id"] == sid) & df_test["hour"].between(6, 19)]
             if len(sdf) == 0:
-                row[label["candidate"]] = np.nan
+                row[cand_label] = np.nan
                 continue
             cap = float(sdf["capacity_mw"].iloc[0])
             if cap <= 0:
-                row[label["candidate"]] = np.nan
+                row[cand_label] = np.nan
                 continue
-            row[label["candidate"]] = round(
+            row[cand_label] = round(
                 rmse(sdf["power_mw"].values, sdf[pred_col].values) / cap * 100, 4
             )
         site_rows.append(row)
@@ -230,12 +235,12 @@ def main():
     site_df = pd.DataFrame(site_rows)
     site_df.to_csv(OUT / "round63_test_site_compare.csv", index=False, encoding="utf-8-sig")
     print(f"{'Site':>6}", end="")
-    for _, row in overall_rows:
+    for row in overall_rows:
         print(f" {row['candidate']:>16}", end="")
     print()
     for _, r in site_df.iterrows():
         print(f"{r['site_id']:>6}", end="")
-        for _, row in overall_rows:
+        for row in overall_rows:
             v = r.get(row["candidate"], np.nan)
             print(f" {v:>16.4f}" if not np.isnan(v) else f" {'nan':>16}", end="")
         print()
