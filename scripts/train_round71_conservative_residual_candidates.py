@@ -131,29 +131,32 @@ def main():
     def apply_candidate_residual(split_df, model, features, clip_val, candidate_col, noon_only=False):
         """对 split_df 应用残差模型，clip 后加到 baseline 上。"""
         result_df = split_df.copy()
-        mask = result_df["hour"].isin(focus_hours) if noon_only else slice(None)
-        X = prep_X(result_df[mask], features)
+        if noon_only:
+            focus_mask = result_df["hour"].isin(focus_hours)
+            non_focus_mask = ~focus_mask
+        else:
+            focus_mask = pd.Series(True, index=result_df.index)
+            non_focus_mask = pd.Series(False, index=result_df.index)
+
+        X = prep_X(result_df[focus_mask], features)
         residual_pred = model.predict(X)
         residual_pred = np.clip(residual_pred, -clip_val, clip_val)
-        cap = result_df.loc[mask, cap_col].values.astype(float)
-        # 优先用 power_pred_final，如果为空则回退到 power_pred
+        cap = result_df.loc[focus_mask, cap_col].values.astype(float)
         bl_vals = np.where(
-            pd.notna(result_df.loc[mask, bl_col].values),
-            result_df.loc[mask, bl_col].values,
-            result_df.loc[mask, "power_pred"].values,
+            pd.notna(result_df.loc[focus_mask, bl_col].values),
+            result_df.loc[focus_mask, bl_col].values,
+            result_df.loc[focus_mask, "power_pred"].values,
         )
-        result_df.loc[mask, candidate_col] = np.clip(
+        result_df.loc[focus_mask, candidate_col] = np.clip(
             bl_vals + residual_pred * cap, 0, cap
         )
-        # 非 focus 时段保持 baseline（power_pred_final 优先）
-        non_mask = ~mask
-        if non_mask.any():
+        if non_focus_mask.any():
             bl_non = np.where(
-                pd.notna(result_df.loc[non_mask, bl_col].values),
-                result_df.loc[non_mask, bl_col].values,
-                result_df.loc[non_mask, "power_pred"].values,
+                pd.notna(result_df.loc[non_focus_mask, bl_col].values),
+                result_df.loc[non_focus_mask, bl_col].values,
+                result_df.loc[non_focus_mask, "power_pred"].values,
             )
-            result_df.loc[non_mask, candidate_col] = bl_non
+            result_df.loc[non_focus_mask, candidate_col] = bl_non
         return result_df
 
     # ═══════════════════════════════════════════════════════════════════════
