@@ -1,0 +1,23 @@
+{
+  "weight_distribution": {
+    "dawn_00": 52,
+    "dawn_25": 0,
+    "dawn_50": 1,
+    "dawn_75": 4,
+    "dawn_100": 11,
+    "day_00": 54,
+    "day_25": 4,
+    "day_50": 2,
+    "day_75": 0,
+    "day_100": 8,
+    "dusk_00": 53,
+    "dusk_25": 0,
+    "dusk_50": 2,
+    "dusk_75": 0,
+    "dusk_100": 13
+  },
+  "guard_thresholds": {
+    "site_scene_max_pp": 0.3,
+    "site_hard_max_pp": 1.0
+  }
+}
