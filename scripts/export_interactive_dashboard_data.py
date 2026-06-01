@@ -96,6 +96,29 @@ def parse_args():
         default="output/pv_pipeline/interactive_dashboard",
         help="Output directory for dashboard JSON files",
     )
+    parser.add_argument(
+        "--prediction-pkl",
+        type=str,
+        default=None,
+        help="Path to a specific prediction pkl file (overrides auto-detection)",
+    )
+    parser.add_argument(
+        "--prediction-col",
+        type=str,
+        default=None,
+        help="Prediction column to use (e.g. power_pred_round64_safe)",
+    )
+    parser.add_argument(
+        "--label",
+        type=str,
+        default=None,
+        help="Label for this dashboard export (e.g. 'Round64 safe candidate')",
+    )
+    parser.add_argument(
+        "--exclude-future",
+        action="store_true",
+        help="Exclude future split data from export",
+    )
     return parser.parse_args()
 
 
