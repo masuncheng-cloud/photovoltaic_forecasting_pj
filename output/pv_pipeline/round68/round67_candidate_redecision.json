@@ -1,0 +1,70 @@
+{
+  "baseline": "power_pred_final",
+  "baseline_valid_metrics": {
+    "sm_nrmse": 15.8893,
+    "city_nrmse": 5.2283,
+    "city_10_14": 6.8857,
+    "abs_bias": 3.0632,
+    "extreme": 10674
+  },
+  "selected_candidate": null,
+  "decision": "keep_round64_final",
+  "reason": "All candidates fail valid gates. sm_nrmse_better=['hgb', 'lgb']. Keeping round64_final.",
+  "passed_candidates": [],
+  "candidates_detail": {
+    "ridge": {
+      "passed": false,
+      "failed_checks": [
+        "bad_site_gt_1pp == 0",
+        "city_nrmse <= 5.2783",
+        "city_10_14 <= 6.8857",
+        "sm_nrmse <= 15.8893"
+      ],
+      "metrics": {
+        "sm_nrmse": 16.1007,
+        "city_nrmse": 5.6861,
+        "city_10_14": 7.2006,
+        "bias": -3.2559,
+        "abs_bias": 3.2559,
+        "bad_1pp": 18,
+        "extreme": 9549
+      }
+    },
+    "hgb": {
+      "passed": false,
+      "failed_checks": [
+        "bad_site_gt_1pp == 0",
+        "city_nrmse <= 5.2783",
+        "city_10_14 <= 6.8857",
+        "abs_bias <= 3.5632"
+      ],
+      "metrics": {
+        "sm_nrmse": 15.697,
+        "city_nrmse": 6.5132,
+        "city_10_14": 8.4484,
+        "bias": -10.8454,
+        "abs_bias": 10.8454,
+        "bad_1pp": 21,
+        "extreme": 9606
+      }
+    },
+    "lgb": {
+      "passed": false,
+      "failed_checks": [
+        "bad_site_gt_1pp == 0",
+        "city_nrmse <= 5.2783",
+        "city_10_14 <= 6.8857",
+        "abs_bias <= 3.5632"
+      ],
+      "metrics": {
+        "sm_nrmse": 15.3879,
+        "city_nrmse": 6.4431,
+        "city_10_14": 8.2878,
+        "bias": -10.1345,
+        "abs_bias": 10.1345,
+        "bad_1pp": 19,
+        "extreme": 9282
+      }
+    }
+  }
+}

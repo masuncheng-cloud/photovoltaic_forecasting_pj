@@ -1,0 +1,4 @@
+﻿candidate,check_bad_site_gt_1pp == 0,check_city_nrmse <= 5.2783,check_city_10_14 <= 6.8857,check_sm_nrmse <= 15.8893,check_extreme_count <= 10674,check_abs_bias <= 3.5632,actual_bad_site_gt_1pp == 0,actual_city_nrmse <= 5.2783,actual_city_10_14 <= 6.8857,actual_sm_nrmse <= 15.8893,actual_extreme_count <= 10674,actual_abs_bias <= 3.5632,overall,failed_checks
+ridge,FAIL,FAIL,FAIL,FAIL,PASS,PASS,18 bad sites,5.6861,7.2006,16.1007,9549,3.2559,FAIL,"bad_site_gt_1pp == 0, city_nrmse <= 5.2783, city_10_14 <= 6.8857, sm_nrmse <= 15.8893"
+hgb,FAIL,FAIL,FAIL,PASS,PASS,FAIL,21 bad sites,6.5132,8.4484,15.6970,9606,10.8454,FAIL,"bad_site_gt_1pp == 0, city_nrmse <= 5.2783, city_10_14 <= 6.8857, abs_bias <= 3.5632"
+lgb,FAIL,FAIL,FAIL,PASS,PASS,FAIL,19 bad sites,6.4431,8.2878,15.3879,9282,10.1345,FAIL,"bad_site_gt_1pp == 0, city_nrmse <= 5.2783, city_10_14 <= 6.8857, abs_bias <= 3.5632"
