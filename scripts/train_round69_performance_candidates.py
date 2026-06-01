@@ -65,7 +65,7 @@ def rmse(actual, pred):
 
 
 def train_and_predict(df_train, df_eval, feat_cols, target_col, weights=None, lgb_kw=None):
-    """Train lgb on train, predict train+eval."""
+    """Train lgb on train, predict eval separately."""
     X_train = prep_X(df_train, feat_cols)
     y_train = df_train[target_col].values.astype(float)
     X_eval = prep_X(df_eval, feat_cols)
@@ -89,9 +89,8 @@ def train_and_predict(df_train, df_eval, feat_cols, target_col, weights=None, lg
 
     model = LGBMRegressor(**params)
     model.fit(X_train, y_train, sample_weight=weights)
-    pred_train = model.predict(X_train)
     pred_eval = model.predict(X_eval)
-    return model, pred_train, pred_eval
+    return model, pred_eval
 
 
 def main():
