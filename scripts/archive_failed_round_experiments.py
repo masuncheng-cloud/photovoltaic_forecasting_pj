@@ -49,7 +49,10 @@ def main():
         dest = None
         if exists and args.apply:
             dest = archive_root / path.name
-            shutil.copy2(path, dest)
+            if path.is_dir():
+                shutil.copytree(path, dest, dirs_exist_ok=True)
+            else:
+                shutil.copy2(path, dest)
             archived = True
         elif exists and args.dry_run:
             dest = archive_root / path.name

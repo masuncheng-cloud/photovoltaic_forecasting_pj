@@ -1,0 +1,17 @@
+{
+  "recommend_adopt": true,
+  "adopted_col": "power_pred_round71_safe_blend",
+  "baseline_city_nrmse": 5.252,
+  "baseline_site_nrmse": 14.1965,
+  "passing_candidates": [
+    "power_pred_round71_seasonal_residual",
+    "power_pred_round71_noon_conservative"
+  ],
+  "best_blend_weights": {
+    "w1": 0.25,
+    "w2": 0.0,
+    "w3": 0.0
+  },
+  "best_blend_delta": -0.1095,
+  "reason": "safe_blend improves city_nrmse by 0.109pp in both windows"
+}

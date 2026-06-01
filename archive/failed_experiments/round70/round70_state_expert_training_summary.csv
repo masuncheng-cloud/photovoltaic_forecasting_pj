@@ -1,0 +1,4 @@
+﻿state,n_train,n_valid,valid_rmse,valid_nrmse,trained
+active,302907,47237,1.0955,18.81,True
+weak,22610,2570,0.0416,0.64,True
+inactive,96254,9217,0.0,0.0,True

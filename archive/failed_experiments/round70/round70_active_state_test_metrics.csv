@@ -1,0 +1,2 @@
+﻿split,accuracy,macro_f1,inactive_recall,weak_recall,active_recall,n_test
+test,0.7832,0.6779,0.7796,0.6711,0.7962,116144

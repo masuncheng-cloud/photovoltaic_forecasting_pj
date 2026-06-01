@@ -1,0 +1,39 @@
+{
+  "round71_diagnosis": true,
+  "conditions": {
+    "A_seasonal_drift": {
+      "成立": true,
+      "test_avg_nrmse": 4.031,
+      "valid_avg_nrmse": 5.2506,
+      "test_avg_abs_bias": 2.191,
+      "valid_avg_abs_bias": 4.8569,
+      "nrmse_drift_pp": -1.2196,
+      "bias_drift_pp": -2.6659,
+      "允许训练": true
+    },
+    "B_recency": {
+      "成立": false,
+      "early_positive_rate": 0.7478,
+      "recent_positive_rate": 0.8628,
+      "valid_positive_rate": 0.8438,
+      "test_positive_rate": 0.677,
+      "允许训练": false
+    },
+    "C_noon_bias": {
+      "成立": true,
+      "noon_bias_pct": 5.5959,
+      "all_bias_pct": 0.5208,
+      "noon_vs_all_bias_delta": 5.0752,
+      "允许训练": true
+    }
+  },
+  "train_samples": 421771,
+  "valid_samples": 59024,
+  "test_samples": 116144,
+  "high_error_sites": 45,
+  "recommended_candidates": [
+    "seasonal_residual_lgb",
+    "noon_conservative_residual"
+  ],
+  "halt_reason": null
+}

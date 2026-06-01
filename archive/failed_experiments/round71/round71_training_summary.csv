@@ -1,0 +1,4 @@
+﻿split,n_rows,residual_mean,residual_std,residual_clipped_mean,residual_clipped_std,positive_rate,n_sites
+test,116144,-0.009483,0.113122,-0.008053,0.0449,0.677,68
+train,421771,0.007252,0.118712,0.004549,0.045764,0.7718,68
+valid,59024,0.014082,0.148631,0.006042,0.053478,0.8438,68
