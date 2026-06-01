@@ -85,6 +85,12 @@ def main():
         mask = full_df["time"].between(start, end)
         full_df.loc[mask, "window"] = wname
 
+    # 构建统一基线列（覆盖 train 行的 NaN 问题）
+    # train 窗口用 _base_pred（parquet 中有），test/valid 用 power_pred_final
+    full_df["_bl_pred"] = full_df["power_pred_final"].copy()
+    train_mask = full_df["window"].isin(["window_A", "window_B"])
+    full_df.loc[train_mask, "_bl_pred"] = full_df.loc[train_mask, "_base_pred"].values
+
     # 回测窗口（不含 holdout_test）
     backtest_windows = {k: full_df[full_df["window"] == k] for k in ["window_A", "window_B", "window_C"]}
     test_df = full_df[full_df["window"] == "holdout_test"].copy()
