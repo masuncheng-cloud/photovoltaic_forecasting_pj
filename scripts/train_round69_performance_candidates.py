@@ -153,9 +153,9 @@ def main():
     # ── Candidate 3: residual lgb ───────────────────────────────────────
     print("\n[CAND3] round69_residual_lgb...")
     col3 = "power_pred_round69_residual_lgb"
-    train_df["residual_tgt"] = (train_df["power_mw"] - train_df["power_pred_final"]) / train_df["capacity_mw"].clip(lower=0.1)
-    valid_df["residual_tgt"] = (valid_df["power_mw"] - valid_df["power_pred_final"]) / valid_df["capacity_mw"].clip(lower=0.1)
-    test_df["residual_tgt"]  = (test_df["power_mw"]  - test_df["power_pred_final"])  / test_df["capacity_mw"].clip(lower=0.1)
+    train_df["residual_tgt"] = ((train_df["power_mw"] - train_df["power_pred_final"]) / train_df["capacity_mw"].clip(lower=0.1)).fillna(0)
+    valid_df["residual_tgt"] = ((valid_df["power_mw"] - valid_df["power_pred_final"]) / valid_df["capacity_mw"].clip(lower=0.1)).fillna(0)
+    test_df["residual_tgt"]  = ((test_df["power_mw"]  - test_df["power_pred_final"])  / test_df["capacity_mw"].clip(lower=0.1)).fillna(0)
 
     model_res = train_lgb(train_df, FEAT_EXT, "residual_tgt")
 
