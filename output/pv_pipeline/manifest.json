@@ -31,9 +31,9 @@
     "site_metrics_csv": "output/pv_pipeline/metrics/site_metrics_consistent.csv"
   },
   "artifact_hashes": {
-    "final_full_pkl": "1b30a9cb4ebcc7ad2d6e83b1d40061a95b0604ce43819165c3ec842deba2c440",
+    "final_full_pkl": "d528169285c9e4df7db476b40b642e6165afe01351a71d8fc0b1098f58bc1708",
     "final_eval_pkl": "ef9e7b9640ae79d1ca88f0127c7893c962074cf38c7bd6f2bf33a34dad9cb4f7",
-    "dashboard_metadata": null,
+    "dashboard_metadata": "ef2c632908445175e94eb7e45713d02cf3cc1817e9f456d33528d4f72cfbafc5",
     "metrics_distributed_metrics_by_hour_fixed": "aa8db40dfd7eaa1a3887d3248a88dfd47cd1b56682a493ee25b68203c88ded19",
     "metrics_hourly_nrmse_consistent": "e2ef1130f18d1916b3b74b2f92b76bbaa5964fe728826a44bc57194ee8dabb2e",
     "metrics_hourly_site_nrmse_consistent": "7327f8cd645763eb09b4833ea359c79f8774fd05eadbd6c84e57eeef2e2ca3c8",
@@ -102,5 +102,5 @@
   },
   "final_round": "Round64",
   "prediction_column": "power_pred_final",
-  "hashes_updated_at": "2026-06-01T17:00:14.293669"
+  "hashes_updated_at": "2026-06-01T23:09:20.258272"
 }
