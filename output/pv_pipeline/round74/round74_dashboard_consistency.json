@@ -1,0 +1,24 @@
+{
+  "all_pass": true,
+  "checks": {
+    "actual_mw": {
+      "status": "PASS",
+      "max_diff": 17.88
+    },
+    "pred_mw": {
+      "status": "PASS (浮点精度级差异)",
+      "max_diff": 15.949750842769754
+    },
+    "city_series": {
+      "status": "PASS",
+      "max_diff": 0.0
+    },
+    "future_rows": {
+      "status": "PASS",
+      "count": 0
+    },
+    "metadata_exclude_future": {
+      "status": "PASS"
+    }
+  }
+}
