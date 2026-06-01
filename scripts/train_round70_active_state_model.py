@@ -182,6 +182,20 @@ def main():
     train_df["pred_state_prob_weak"] = proba_train[:, 1]
     train_df["pred_state_prob_inactive"] = proba_train[:, 0]
 
+    # valid_df 和 test_df 也加上分类概率（Stage 1 只加了 valid_c/test_c）
+    valid_df = valid_df.copy()
+    test_df = test_df.copy()
+    proba_valid = clf.predict_proba(prep_X(valid_df, CLF_FEATURES))
+    proba_test = clf.predict_proba(prep_X(test_df, CLF_FEATURES))
+    valid_df["pred_state"] = np.array([rev_label_map[p] for p in np.argmax(proba_valid, axis=1)])
+    valid_df["pred_state_prob_active"] = proba_valid[:, 2]
+    valid_df["pred_state_prob_weak"] = proba_valid[:, 1]
+    valid_df["pred_state_prob_inactive"] = proba_valid[:, 0]
+    test_df["pred_state"] = np.array([rev_label_map[p] for p in np.argmax(proba_test, axis=1)])
+    test_df["pred_state_prob_active"] = proba_test[:, 2]
+    test_df["pred_state_prob_weak"] = proba_test[:, 1]
+    test_df["pred_state_prob_inactive"] = proba_test[:, 0]
+
     # 样本权重（向量化，避免 apply）
     w_cfg = cfg.get("sample_weight", {})
     focus_hours_set = set(cfg.get("focus_hours", [10, 11, 12, 13, 14]))
