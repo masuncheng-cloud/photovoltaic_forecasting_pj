@@ -1951,6 +1951,7 @@ def main():
             print(f"  Excluded future: {before} -> {len(df)} rows")
         round_name = "custom"
         pred_col = args.prediction_col or "power_pred_round64_safe"
+        pred_path = args.prediction_pkl
         print(f"  Shape: {df.shape}, sites: {df['site_id'].nunique()}")
         print(f"  Splits: {sorted(df['split'].unique().tolist())}")
     else:
@@ -2080,7 +2081,8 @@ def main():
 
     # [11d] Write metadata.json
     print("\n[11d] Writing metadata.json...")
-    meta = write_metadata(dashboard_root, round_name, pred_col, pred_path)
+    meta = write_metadata(dashboard_root, round_name, pred_col, pred_path,
+                          label=args.label, official_final=(not bool(args.prediction_pkl)))
 
     # [11e] Export typical_sites.json
     print("\n[11e] Exporting typical_sites.json...")
