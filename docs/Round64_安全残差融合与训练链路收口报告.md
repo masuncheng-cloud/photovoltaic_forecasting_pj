@@ -88,7 +88,37 @@ Round64 safe 同时改善 sm（-0.14pp）和 bad_sites（0），city_nrmse 略�
 
 ## 6. 结论
 
-详见 `scripts/select_round64_final_decision.py` 的自动判定结果。
+**valid 集决策：adopt_round64_candidate（5/5 检查全部 PASS）**
+
+| 检查项 | 阈值 | 结果 |
+|--------|------|------|
+| sm_nrmse_6_19 不差于 R61+0.10pp | delta=-0.14pp | PASS |
+| city_nrmse_6_19 不差于 R61+0.05pp | delta=-0.15pp | PASS |
+| city_nrmse_10_14 不劣于 R61 | delta=-0.02pp | PASS |
+| 变差>+1pp 站点数 == 0 | bad_sites=0 | PASS |
+| 10-14点 sm_nrmse 不变差 | delta=-0.05pp | PASS |
+
+**test 集指标（最终评估）：**
+
+| 指标 | Round61 | Round64 safe | Delta | 评价 |
+|------|---:|---:|---:|:---:|
+| site_mean_nrmse_6_19 | 11.4095% | 11.2806% | **-0.1289pp** | 改善 |
+| city_nrmse_6_19 | 3.9531% | 3.8104% | **-0.1427pp** | 改善 |
+| city_nrmse_10_14 | 6.2359% | 6.1879% | **-0.0480pp** | 改善 |
+| sm_nrmse_10_14 | 15.7862% | 15.7042% | -0.0820pp | 改善 |
+| bias_6_19 | +1.4232% | +1.5477% | +0.1245pp | 略差 |
+| bias_10_14 | +8.3998% | +8.0181% | **-0.3817pp** | 改善 |
+| RMSE (MW) | 0.9321 | 0.9042 | **-0.0279** | 改善 |
+| MAE (MW) | 0.4478 | 0.4359 | **-0.0119** | 改善 |
+| 变差>+1pp 站点数 | 0 | 0 | 0 | 无退化 |
+
+**综合结论**：
+
+- Round64 safe 在 valid 上 5/5 安全检查全部通过，test 上 NRMSE 类指标全面改善（sm -0.13pp, city -0.14pp, city_10_14 -0.05pp），RMSE/MAE 均改善，无站点退化。
+- 10-14 点 bias 从 +8.40% 改善至 +8.02%（改善 0.38pp），说明残差融合对高估问题有正向作用。
+- 6-19h bias 从 +1.42% 变为 +1.55%（略差 0.12pp），但仍在安全范围内。
+- **建议采用 Round64 safe 作为新的最优候选。**
+- 本轮不覆盖正式 `power_pred_final`，候选结果存放于 `output/pv_pipeline/round64/round64_candidates.pkl`。
 
 ---
 
