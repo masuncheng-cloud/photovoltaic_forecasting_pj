@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-06-01T09:30:18",
+  "generated_at": "2026-06-01T09:32:56",
   "pipeline_entry": "scripts/run_full_pipeline.py",
   "config": "configs/pipeline.yaml",
   "split": {
@@ -33,8 +33,8 @@
   "artifact_hashes": {
     "final_full_pkl_sha256": "31add27c0c3fbe23429dc26196cfce11177ef1bd33b89d00922d2d67e24de62a",
     "final_eval_pkl_sha256": "0132131f2b565babc0b43e9ebff5b6e37eb7b7114ec5ab013f4549743e476a8a",
-    "hourly_nrmse_csv_sha256": "5417e9b74e9dca8f741828f657db11a4aa576cda49d96016ad7c778a48517ea7",
-    "site_metrics_csv_sha256": "754b5801132633e4d3f6c798f078792ef130c91c3746fd438c47e0c1b2897fd8",
+    "hourly_nrmse_csv_sha256": "ff06d6400224a86fc17feb7bcb11e30b2ba955dea06405c91c03ff4fffe231ca",
+    "site_metrics_csv_sha256": "a63b433228391704146ca04c159a6b409641f45b659efeb76c81fc80195c04a9",
     "dashboard_index_sha256": "2e76ca8a2b156ea17c2504f91876a014c5e0a0e3da34a4c774381e8747e21deb"
   },
   "geo_overrides": {

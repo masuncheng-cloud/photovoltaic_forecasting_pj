@@ -2,7 +2,7 @@
 exists_metadata.json,PASS,590
 exists_city_series.json,PASS,5847070
 exists_site_metrics.json,PASS,67744
-exists_typical_sites.json,PASS,2324
+exists_typical_sites.json,PASS,2329
 exists_season_best_days_city.json,PASS,1229
 exists_season_best_days_by_site.json,PASS,108978
 exists_dashboard_update_stamp.json,PASS,322
