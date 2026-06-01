@@ -218,16 +218,16 @@ def main():
         "baseline_norm",
         # Round67 model predictions
         "pred_lgb_norm", "pred_hgb_norm", "pred_ridge_norm",
-        # Scene features (already in df as one-hot)
     ]
 
-    # Add scene one-hot columns
+    # Add scene one-hot columns (prefixed only, not originals)
     for c in df.columns:
         if c.startswith("scene_v151_") or c.startswith("scene_"):
             feature_cols.append(c)
 
-    # Remove dups
-    feature_cols = list(dict.fromkeys(feature_cols))
+    # Remove dups while preserving order
+    seen = set()
+    feature_cols = [c for c in feature_cols if not (c in seen or seen.add(c))]
     feature_cols = [c for c in feature_cols if c in df.columns]
 
     print(f"\n[INFO] Total features: {len(feature_cols)}")
@@ -241,13 +241,15 @@ def main():
     ).astype(str)
 
     # ── Save ────────────────────────────────────────────────────────
-    out_cols = (
-        ["site_id", "time", "split", "hour", "time_block", "site_group",
-         "y_norm", "power_mw", "capacity_mw", "power_pred_final",
-         "baseline_norm", "residual_norm"] +
-        feature_cols
-    )
+    base_cols = ["site_id", "time", "split", "hour", "time_block", "site_group",
+                 "y_norm", "power_mw", "capacity_mw", "power_pred_final",
+                 "baseline_norm", "residual_norm"]
+    out_cols = base_cols + [c for c in feature_cols if c not in base_cols]
     out_cols = [c for c in out_cols if c in df.columns]
+    # Remove any remaining dups
+    seen2 = set()
+    out_cols = [c for c in out_cols if not (c in seen2 or seen2.add(c))]
+
     df_out = df[out_cols].copy()
 
     # Save training table
