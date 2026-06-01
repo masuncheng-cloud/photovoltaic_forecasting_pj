@@ -769,6 +769,41 @@ def main():
         print("  docs/Round71_季节适配与保守残差提升报告.md")
         sys.exit(0)
 
+    # Special handling for round72-consistent-base-residual
+    if mode == "round72-consistent-base-residual":
+        print()
+        print("=" * 60)
+        print("Round72 重建全历史一致基线并重新训练残差模型")
+        print("=" * 60)
+        round72_scripts = [
+            ("Step1: 审计预测列", "scripts/audit_prediction_column_consistency.py"),
+            ("Step2: 构建一致基线", "scripts/build_round72_consistent_base_prediction.py"),
+            ("Step3: 校验一致基线", "scripts/validate_round72_consistent_base.py"),
+            ("Step4: 训练残差候选", "scripts/train_round72_residual_on_consistent_base.py"),
+            ("Step5: 多窗口选择", "scripts/select_round72_candidate_multi_window.py"),
+            ("Step6: Test评估", "scripts/evaluate_round72_candidate_on_test.py"),
+        ]
+        for label, script in round72_scripts:
+            print(f"\n>>> [{label}] {script}")
+            ret = subprocess.run(
+                [python, str(cwd / script)],
+                cwd=str(cwd),
+            )
+            if ret.returncode != 0:
+                print(f"\n[WARN] [{label}] 失败 (exit {ret.returncode})，继续执行后续步骤")
+        print()
+        print("=" * 60)
+        print("Round72 实验完成！")
+        print("=" * 60)
+        print("\n主要输出文件：")
+        print("  output/pv_pipeline/round72/round72_prediction_column_audit_summary.json")
+        print("  output/pv_pipeline/round72/round72_consistent_base_predictions.pkl")
+        print("  output/pv_pipeline/round72/round72_consistent_base_validation.json")
+        print("  output/pv_pipeline/round72/round72_candidate_decision.json")
+        print("  output/pv_pipeline/round72/round72_test_overall_compare.csv")
+        print("  docs/Round72_重建全历史一致基线并重新训练残差模型报告.md")
+        sys.exit(0)
+
     try:
         cfg = load_config(args.config)
     except Exception as e:
