@@ -110,15 +110,13 @@ def main():
 
         print(f"\n[INFO] Block '{block}': train={len(block_train)}, valid={len(block_valid)}")
 
-        X_train = block_train[feat_cols].values.astype(float)
-        y_train = block_train["y_norm"].values.astype(float)
-        w_train = block_train["sample_weight"].values.astype(float)
-        X_valid = block_valid[feat_cols].values.astype(float)
-        y_valid = block_valid["y_norm"].values.astype(float)
-
-        # Fill NaN
-        X_train = np.nan_to_num(X_train, nan=0.0)
-        X_valid = np.nan_to_num(X_valid, nan=0.0)
+        # Fill NaN/NaT before conversion
+        X_train_raw = block_train[feat_cols].values.copy()
+        X_train_raw = np.where(np.isnat(X_train_raw), 0, X_train_raw)
+        X_train = np.nan_to_num(X_train_raw.astype(float), nan=0.0)
+        X_valid_raw = block_valid[feat_cols].values.copy()
+        X_valid_raw = np.where(np.isnat(X_valid_raw), 0, X_valid_raw)
+        X_valid = np.nan_to_num(X_valid_raw.astype(float), nan=0.0)
 
         for model_name in ["ridge", "hgb", "lgb"]:
             if not cfg.get("models", {}).get(model_name, {}).get("enabled", False):
