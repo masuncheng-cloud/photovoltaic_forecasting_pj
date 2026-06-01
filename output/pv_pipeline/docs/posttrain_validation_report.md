@@ -1,6 +1,6 @@
 # 训练后逻辑审计报告
 
-**生成时间**: 2026-06-01 17:01:11
+**生成时间**: 2026-06-01 23:09:39
 **最终预测列**: power_pred_final
 **评估口径**: split=test, hour=6-19
 
@@ -27,16 +27,16 @@
 | 9 | ⚠ WARN | C9: 夜间/future 不参与评估 | 夜间 180,660 行（评估时会排除） |
 | 10 | ✓ PASS | C10: hourly_nrmse_consistent.csv 正确 | 14 小时数据, NRMSE范围: 3.94%~16.97% |
 | 11 | ✓ PASS | C11: dashboard 一致性校验 | 68 站, 全部 PASS |
-| 12 | ✓ PASS | C12: dashboard 数据新鲜 | dashboard 晚于 canonical pkl 0.03h |
+| 12 | ✓ PASS | C12: dashboard 数据新鲜 | dashboard 晚于 canonical pkl 0.18h |
 | 13 | ✓ PASS | C13: Git 不追踪 pkl | 0 个 |
-| 14 | ✓ PASS | C13: Git 不追踪 site_series JSON | [NOTE] 69 个（交互式数据，可按需生成，.gitignore 规则正常） |
+| 14 | ✓ PASS | C13: Git 不追踪 site_series JSON | [NOTE] 138 个（交互式数据，可按需生成，.gitignore 规则正常） |
 | 15 | ✓ PASS | C14: 训练集样本量 | 421,771 行（2023-01-01~2025-06-30 白天） |
 | 16 | ✓ PASS | C15: 站点数量合理 | 68 个站点 |
 | 17 | ✓ PASS | C16: manifest.pipeline_entry | scripts/run_full_pipeline.py |
 | 18 | ✓ PASS | C16: manifest.final_prediction_column | power_pred_final |
 | 19 | ✓ PASS | C16: manifest artifacts 全部存在 | 6 个文件 |
-| 20 | ✓ PASS | C16: artifact hash 验证 | 2 个文件 hash 一致，内容完整性 PASS |
-| 21 | ✓ PASS | C16: manifest 生成时间 | 晚于 canonical full pkl 0.06h |
+| 20 | ✓ PASS | C16: artifact hash 验证 | 3 个文件 hash 一致，内容完整性 PASS |
+| 21 | ✓ PASS | C16: manifest 生成时间 | 晚于 canonical full pkl 0.22h |
 | 22 | ✓ PASS | GEO1: 经纬度覆盖 | S115 lat=34.5933, lon=119.2172 |
 | 23 | ✓ PASS | GEO1: 经纬度覆盖 | S116 lat=34.2983, lon=119.2318 |
 | 24 | ✓ PASS | GEO2: 坐标范围 | S115 (34.5933, 119.2172) 在连云港范围内 |
