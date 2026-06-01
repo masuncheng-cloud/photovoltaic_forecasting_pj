@@ -143,6 +143,8 @@ def main():
             })
 
     win_df_out = pd.DataFrame(window_rows)
+    # 保存原始窗口结果（blend 循环会覆盖 win_df_out）
+    window_compare_df = win_df_out.copy()
     win_df_out.to_csv(OUT / "round72_valid_window_compare.csv",
                       index=False, encoding="utf-8-sig")
     print(f"[OK] {OUT / 'round72_valid_window_compare.csv'}")
@@ -218,7 +220,7 @@ def main():
     # ── Step 4: 决策 ─────────────────────────────────────────────────
     print("\n[Step 4] 最终决策...")
 
-    passing_cands = win_df_out[win_df_out["passes_guard"]]["candidate"].unique().tolist()
+    passing_cands = window_compare_df[window_compare_df["passes_guard"]]["candidate"].unique().tolist()
     baseline_nrmse = compute_city_nrmse(w_late, bl_col)
     baseline_site = compute_site_mean_nrmse(w_late, bl_col)
 
