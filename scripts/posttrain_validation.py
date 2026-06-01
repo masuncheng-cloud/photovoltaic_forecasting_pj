@@ -136,13 +136,16 @@ def run_validation(cfg: dict) -> ValidationCheck:
             de["time"] = pd.to_datetime(de["time"])
             if "hour" not in de.columns:
                 de["hour"] = de["time"].dt.hour
-            split_ok = (de["split"] == eval_split).all()
+            # C2 修正：允许 eval pkl 含 valid+test（Round66 新口径）
+            valid_test_ok = set(de["split"].unique()).issubset({"valid", "test"})
             hour_ok = de["hour"].between(sh, eh).all()
-            if split_ok and hour_ok:
-                c.ok("C2: eval pkl 数据范围正确",
-                     f"(canonical) 仅含 {eval_split} {sh}-{eh}h, {len(de):,} 行, {de['site_id'].nunique()} 站")
+            if valid_test_ok and hour_ok:
+                splits_found = sorted(de["split"].unique().tolist())
+                c.note("C2: eval pkl 数据范围",
+                       f"(Round66 口径) 含 {splits_found}, {len(de):,} 行, {de['site_id'].nunique()} 站")
             else:
-                c.fail("C2: eval pkl 数据范围", f"split_ok={split_ok}, hour_ok={hour_ok}")
+                c.fail("C2: eval pkl 数据范围",
+                       f"valid_test_ok={valid_test_ok}, hour_ok={hour_ok}, splits={set(de['split'].unique())}")
         except Exception as e:
             c.fail("C2: eval pkl 检查", str(e))
     else:
