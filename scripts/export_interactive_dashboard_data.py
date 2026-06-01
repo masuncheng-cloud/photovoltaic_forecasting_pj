@@ -2054,12 +2054,49 @@ def main():
     # Validation
     print("\n[11] Validating outputs...")
     if len(city) == 0:
-        # Fallback: regenerate from df (handles cases where pv_forecasting patch altered module state)
-        print("  [WARN] city is empty, regenerating...")
+        # Fallback: regenerate from df directly (handles pv_forecasting patch state pollution)
         import sys
-        sys.path.insert(0, str(Path(__file__).resolve().parent))
-        from scripts.export_interactive_dashboard_data import export_city_series as _ecs
-        city = _ecs(df, dashboard_root)
+        _mod = sys.modules.get("scripts.export_interactive_dashboard_data")
+        if _mod:
+            _orig_hs = _mod.HISTORY_SPLITS
+            _mod.HISTORY_SPLITS = ["train", "valid", "test"]
+            city = _mod.export_city_series(df, dashboard_root)
+            _mod.HISTORY_SPLITS = _orig_hs
+        else:
+            # Direct approach: inline regeneration
+            import json as _json
+            _hist = df[df["split"].isin(["train","valid","test"])].copy()
+            _hist["time"] = pd.to_datetime(_hist["time"], errors="coerce")
+            _hist["hour"] = _hist["time"].dt.hour
+            _hist["actual_mw"] = _hist["power_mw"]
+            _hist["pred_mw"] = _hist["power_pred_final"]
+            _df_f = _hist[_hist["hour"].between(6,19) & _hist["actual_mw"].notna() & _hist["pred_mw"].notna()]
+            if len(_df_f) > 0:
+                _agg = _df_f.groupby("time").agg(
+                    actual_mw=("actual_mw","sum"), pred_mw=("pred_mw","sum"),
+                    n_sites=("site_id","nunique"), sample_count=("site_id","size"),
+                    capacity_sum_mw=("capacity_mw","sum"),
+                    pred_valid_sites=("pred_mw", lambda s: int(s.notna().sum())),
+                    actual_positive_sites=("actual_mw", lambda s: int((s>0).sum())),
+                ).reset_index()
+                _agg["abs_error_mw"] = (_agg["pred_mw"]-_agg["actual_mw"]).abs()
+                _agg["city_nrmse_point_pct"] = _agg["abs_error_mw"]/_agg["capacity_sum_mw"].clip(lower=1e-9)*100
+                _agg["date"] = _agg["time"].dt.strftime("%Y-%m-%d")
+                _agg["hour"] = _agg["time"].dt.hour
+                _split_map = df.groupby("time")["split"].first().to_dict()
+                _agg["split"] = _agg["time"].map(_split_map).fillna("unknown")
+                _cols = ["time","date","hour","split","actual_mw","pred_mw","n_sites",
+                         "sample_count","capacity_sum_mw","abs_error_mw","city_nrmse_point_pct",
+                         "pred_valid_sites","actual_positive_sites"]
+                _records = _agg[_cols].to_dict(orient="records")
+                for _r in _records:
+                    _r["time"] = pd.Timestamp(_r["time"]).strftime("%Y-%m-%d %H:%M:%S")
+                    for _k in ["actual_mw","pred_mw","abs_error_mw","city_nrmse_point_pct","capacity_sum_mw"]:
+                        _r[_k] = round(float(_r[_k]), 4)
+                _out_path = Path(dashboard_root) / "city_series.json"
+                with open(_out_path,"w",encoding="utf-8") as _f:
+                    _json.dump(_records, _f, ensure_ascii=False, indent=2)
+                city = _agg
         print(f"  [RETRY] city regenerated: {len(city):,} rows")
     assert len(city) > 0, "city_series is empty"
     assert len(metrics_df) > 0, "site_metrics is empty"
