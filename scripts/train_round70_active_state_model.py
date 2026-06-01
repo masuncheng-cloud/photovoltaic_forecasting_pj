@@ -305,14 +305,20 @@ def main():
     state_pred_df.to_parquet(OUT / "round70_active_state_predictions.parquet", index=False)
     print("[OK] 状态预测已保存")
 
-    # ── 保存候选 pkl ───────────────────────────────────────────────────────────
-    print("\n[Stage 4] 保存候选 pkl...")
-    full_path = PROJECT_ROOT / cfg["paths"]["input_pred"]
-    full_df = pd.read_pickle(full_path)
-    full_df["time"] = pd.to_datetime(full_df["time"])
-    full_df = full_df[full_df["split"] != "future"]
-    if CANDIDATE_COL not in full_df.columns:
+    # ── 保存候选 pkl（增量更新，不重写全表）────────────────────────────────────
+    print("\n[Stage 4] 保存候选 pkl（增量更新）...")
+    cand_path = OUT / "round70_candidates.pkl"
+    if not cand_path.exists():
+        # 首次创建才从原始文件构建
+        full_path = PROJECT_ROOT / cfg["paths"]["input_pred"]
+        full_df = pd.read_pickle(full_path)
+        full_df["time"] = pd.to_datetime(full_df["time"])
+        full_df = full_df[full_df["split"] != "future"]
         full_df[CANDIDATE_COL] = np.nan
+    else:
+        full_df = pd.read_pickle(cand_path)
+        if CANDIDATE_COL not in full_df.columns:
+            full_df[CANDIDATE_COL] = np.nan
 
     for src_df, split_name in [(valid_df, "valid"), (test_df, "test")]:
         mask = full_df["split"] == split_name
@@ -327,8 +333,8 @@ def main():
         idx = full_df.loc[mask].set_index(["time", "site_id"]).index
         full_df.loc[mask, CANDIDATE_COL] = update_map.reindex(idx).values
 
-    full_df.to_pickle(OUT / "round70_candidates.pkl")
-    print(f"[OK] 候选表已保存: {OUT / 'round70_candidates.pkl'}  ({len(full_df):,} 行)")
+    full_df.to_pickle(cand_path)
+    print(f"[OK] 候选表已更新: {cand_path}  ({len(full_df):,} 行)")
 
     print("\n[OK] train_round70_active_state_model 完成!")
 
