@@ -209,16 +209,23 @@ def main():
         full_df["time"] = pd.to_datetime(full_df["time"])
         full_df = full_df[full_df["split"] != "future"]
 
+    # 确保候选列存在
+    if CANDIDATE_COL not in full_df.columns:
+        full_df[CANDIDATE_COL] = np.nan
+
     for src_df, split_name in [(valid_df, "valid"), (test_df, "test")]:
         mask = full_df["split"] == split_name
         if mask.sum() == 0:
             continue
-        key = src_df.set_index(["time", "site_id"])[CANDIDATE_COL]
-        key = key[~key.index.duplicated(keep="first")]
-        full_df.loc[mask, CANDIDATE_COL] = (
-            full_df.loc[mask].set_index(["time", "site_id"])[CANDIDATE_COL]
-            .reindex(key.index).values
+        # 直接从 src_df 构建映射再赋值，避免索引对齐问题
+        update_map = (
+            src_df[["time", "site_id", CANDIDATE_COL]]
+            .drop_duplicates(["time", "site_id"])
+            .set_index(["time", "site_id"])[CANDIDATE_COL]
         )
+        update_map = update_map[~update_map.index.duplicated(keep="first")]
+        idx = full_df.loc[mask].set_index(["time", "site_id"]).index
+        full_df.loc[mask, CANDIDATE_COL] = update_map.reindex(idx).values
 
     full_df.to_pickle(cand_path)
     print(f"[OK] 候选表已更新: {cand_path}")
