@@ -52,7 +52,7 @@ def compute_city_nrmse(df, pred_col):
     return rmse(agg["a"].values, agg["p"].values) / cap_sum * 100 if cap_sum > 0 else np.nan
 
 
-def apply_residual(split_df, model, features, clip_val, cand_col, noon_only=False):
+def apply_residual(split_df, model, features, clip_val, cand_col, cfg, noon_only=False):
     """对 split_df 应用残差模型。"""
     result_df = split_df.copy()
     focus_hours = cfg.get("focus_hours", [10, 11, 12, 13, 14])
@@ -157,8 +157,8 @@ def main():
 
         # 应用到 valid/test
         nonlocal valid_df, test_df
-        valid_df = apply_residual(valid_df, model, feat, clip_val, cand_col, noon_only)
-        test_df = apply_residual(test_df, model, feat, clip_val, cand_col, noon_only)
+        valid_df = apply_residual(valid_df, model, feat, clip_val, cand_col, cfg, noon_only)
+        test_df = apply_residual(test_df, model, feat, clip_val, cand_col, cfg, noon_only)
 
         # 用 valid 评估
         bl_nrmse = compute_city_nrmse(valid_df, bl_final)
