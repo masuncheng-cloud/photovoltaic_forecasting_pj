@@ -136,7 +136,7 @@ def build_features(df):
             feature_data[feat] = np.zeros(len(df), dtype=float)
 
     X = np.column_stack([feature_data[f] for f in ALL_FEATURES])
-    used_features = [f for f in ALL_FEATURES if f not in missing_features]
+    used_features = ALL_FEATURES.copy()  # All features, missing ones are filled with 0
     return X, used_features, missing_features
 
 
