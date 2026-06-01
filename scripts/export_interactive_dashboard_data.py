@@ -1952,18 +1952,20 @@ def main():
         round_name = args.label or "round64_candidate"
         pred_col = args.prediction_col or "power_pred_round64_safe"
         pred_path = args.prediction_pkl
-        # Patch resolve_prediction_column to return our target column
+        # Patch resolve_prediction_column in pv_forecasting.core.eval_frame
         import types
+        import pv_forecasting.core.eval_frame as _ef
         _target_col = pred_col
-        _orig_resolve = resolve_prediction_column
+        _orig_resolve = _ef.resolve_prediction_column
         def patched_resolve(df):
             if _target_col in df.columns:
                 return _target_col
             return _orig_resolve(df)
-        # Apply patch to both this module and pv_forecasting.core.eval_frame
-        import pv_forecasting.core.eval_frame as _ef
         _ef.resolve_prediction_column = patched_resolve
-        globals()["resolve_prediction_column"] = patched_resolve
+        # Also patch local
+        import __main__
+        if hasattr(__main__, 'resolve_prediction_column'):
+            __main__.resolve_prediction_column = patched_resolve
         # Add required validity columns (may not exist in round63/64 pkl)
         if "_site_status" not in df.columns:
             df["_site_status"] = "正常评价"
