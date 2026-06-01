@@ -51,13 +51,20 @@ def site_mean_nrmse(df, pred_col):
 
 
 def city_nrmse(df, pred_col):
-    """NRMSE of city-aggregated values, normalized by total city capacity."""
-    cap_total = float(df.groupby("site_id")["capacity_mw"].first().sum())
-    if cap_total <= 0:
-        return np.nan
-    a = df["power_mw"].values
-    p = df[pred_col].values
-    return _rmse(a, p) / cap_total * 100
+    """
+    Per-hour city NRMSE averaged.
+    For each hour: RMSE(hour_actual, hour_pred) / hour_active_capacity * 100
+    Then average across hours.
+    This matches the formula used by hourly_nrmse_consistent.csv.
+    """
+    vals = []
+    for h, hdf in df.groupby("hour"):
+        cap_h = float(hdf.groupby("site_id")["capacity_mw"].first().sum())
+        if cap_h <= 0:
+            continue
+        r = _rmse(hdf["power_mw"].values, hdf[pred_col].values) / cap_h * 100
+        vals.append(r)
+    return float(np.nanmean(vals)) if vals else np.nan
 
 
 def site_mean_mae(df, pred_col):
