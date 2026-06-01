@@ -194,7 +194,7 @@ def main():
     for model_name, blocks in model_store.items():
         for block, model_obj in blocks.items():
             block_valid = valid_df[valid_df["time_block"] == block].copy()
-            X_v = np.nan_to_num(block_valid[feat_cols].values.astype(float), nan=0.0)
+            X_v = pd.DataFrame(block_valid[feat_cols]).apply(pd.to_numeric, errors="coerce").fillna(0).values.astype(float)
             if model_name == "ridge":
                 X_v = model_obj["scaler"].transform(X_v)
                 pred = model_obj["model"].predict(X_v)
