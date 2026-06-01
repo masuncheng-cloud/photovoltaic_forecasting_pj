@@ -143,13 +143,13 @@ def main():
         bias_r59 = bias_pct(df_subset, "pred_r59")
 
         summary[label] = {
-            "metric": label,
-            "sm_nrmse_base": round(sm_nrmse_base, 4),
-            "sm_nrmse_r59": round(sm_nrmse_r59, 4),
-            "sm_nrmse_delta": round(sm_nrmse_r59 - sm_nrmse_base, 4),
-            "c_nrmse_base": round(c_nrmse_base, 4),
-            "c_nrmse_r59": round(c_nrmse_r59, 4),
-            "c_nrmse_delta": round(c_nrmse_r59 - c_nrmse_base, 4),
+            "period": label,
+            "site_mean_nrmse_percent_base": round(sm_nrmse_base, 4),
+            "site_mean_nrmse_percent_r59": round(sm_nrmse_r59, 4),
+            "site_mean_nrmse_delta": round(sm_nrmse_r59 - sm_nrmse_base, 4),
+            "city_nrmse_percent_base": round(c_nrmse_base, 4),
+            "city_nrmse_percent_r59": round(c_nrmse_r59, 4),
+            "city_nrmse_delta": round(c_nrmse_r59 - c_nrmse_base, 4),
             "mae_base": round(mae_base, 4),
             "mae_r59": round(mae_r59, 4),
             "mae_delta": round(mae_r59 - mae_base, 4),
