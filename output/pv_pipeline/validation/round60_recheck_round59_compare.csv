@@ -1,0 +1,2 @@
+﻿period,site_mean_nrmse_base,site_mean_nrmse_r59,site_mean_nrmse_delta,city_nrmse_per_hour_avg_base,city_nrmse_per_hour_avg_r59,city_nrmse_per_hour_avg_delta,city_nrmse_overall_base,city_nrmse_overall_r59,city_nrmse_overall_delta,mae_base,mae_r59,mae_delta,bias_base,bias_r59,bias_delta,bias_10_14_base,bias_10_14_r59
+6-19,11.4087,11.4407,0.032,0.232,0.2316,-0.0004,0.2398,0.2384,-0.0014,0.4477,0.4508,0.0031,1.3872,1.2264,-0.1608,8.3951,8.1152
