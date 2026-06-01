@@ -52,14 +52,18 @@ def site_mean_nrmse(df, pred_col):
 
 def city_nrmse(df, pred_col):
     """
-    Per-hour city NRMSE averaged.
-    For each hour: RMSE(hour_actual, hour_pred) / hour_active_capacity * 100
-    Then average across hours.
-    This matches the formula used by hourly_nrmse_consistent.csv.
+    Per-hour RMSE / per-hour mean capacity, averaged across hours.
+    Matches the formula used by hourly_nrmse_consistent.csv (round46 script).
+    - For each hour: RMSE(hour_actual, hour_pred) / mean(hour_timestamp_capacities) * 100
+    - Then average across hours.
     """
     vals = []
     for h, hdf in df.groupby("hour"):
-        cap_h = float(hdf.groupby("site_id")["capacity_mw"].first().sum())
+        if len(hdf) == 0:
+            continue
+        # Per-timestamp capacity_sum, then mean across timestamps for this hour
+        ts_cap = hdf.groupby("time")["capacity_mw"].transform("sum")
+        cap_h = float(ts_cap.mean())
         if cap_h <= 0:
             continue
         r = _rmse(hdf["power_mw"].values, hdf[pred_col].values) / cap_h * 100
