@@ -104,7 +104,6 @@ def main():
     FEATURES = [
         "hour", "month", "dayofyear", "latitude", "longitude",
         "capacity_mw", "g_blend_pred", "clear_sky_ghi", "clear_sky_index",
-        "t2m_c", "solar_elevation",
         "site_zero_ratio_6_19", "site_positive_count_train_valid",
         "pr_median", "quality_score",
         "baseline_norm",
