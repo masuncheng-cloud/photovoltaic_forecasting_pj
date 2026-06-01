@@ -1,6 +1,6 @@
 # 训练后逻辑审计报告
 
-**生成时间**: 2026-06-01 08:42:23
+**生成时间**: 2026-06-01 08:45:27
 **最终预测列**: power_pred_final
 **评估口径**: split=test, hour=6-19
 
@@ -17,7 +17,7 @@
 | # | 状态 | 检查项 | 说明 |
 |---|------|--------|------|
 | 1 | ✓ PASS | C1: 最终预测 pkl 存在且可读 | canonical: distributed_predictions_final_full.pkl, 1,172,180 行, 33 列, 69 站 |
-| 2 | ✗ FAIL | C2: eval pkl 数据范围 | split_ok=True, hour_ok=False |
+| 2 | ✓ PASS | C2: eval pkl 数据范围正确 | (canonical) 仅含 test 6-19h, 116,144 行, 68 站 |
 | 3 | ✓ PASS | C3: 最终预测列存在 | power_pred_final: 1,172,180/1,172,180 (100.0%) |
 | 4 | ✓ PASS | C4: 真实功率列存在 | power_mw: 1,172,180/1,172,180 |
 | 5 | ✓ PASS | C5: split 口径正确 | 值=['future', 'test', 'train', 'valid'], test行数=199,104 |
@@ -27,7 +27,7 @@
 | 9 | ⚠ WARN | C9: 夜间/future 不参与评估 | pkl 中存在夜间和 future 记录（评估时会排除） |
 | 10 | ✓ PASS | C10: hourly_nrmse_consistent.csv 正确 | 14 小时数据, NRMSE范围: 4.08%~16.96% |
 | 11 | ✓ PASS | C11: dashboard 一致性校验 | 68 站, 全部 PASS |
-| 12 | ✓ PASS | C12: dashboard 数据新鲜 | dashboard 晚于 canonical pkl 0.34h |
+| 12 | ✓ PASS | C12: dashboard 数据新鲜 | dashboard 晚于 canonical pkl 0.39h |
 | 13 | ✓ PASS | C13: Git 不追踪 pkl | 0 个 |
 | 14 | ✓ PASS | C13: Git 不追踪 site_series JSON | 0 个 |
 | 15 | ✓ PASS | C14: 训练集样本量 | 421,771 行（2023-01-01~2025-06-30 白天） |
@@ -35,8 +35,8 @@
 | 17 | ✓ PASS | C16: manifest.pipeline_entry | scripts/run_full_pipeline.py |
 | 18 | ✓ PASS | C16: manifest.final_prediction_column | power_pred_final |
 | 19 | ✓ PASS | C16: manifest artifacts 全部存在 | 6 个文件 |
-| 20 | ✓ PASS | C16: artifact hash 验证 | 5/5 个文件 hash 一致，内容完整性 PASS |
-| 21 | ✓ PASS | C16: manifest 生成时间 | 晚于 canonical full pkl 0.34h |
+| 20 | ✗ FAIL | C16: artifact hash 验证 | 有 1 个文件 hash 不一致（内容被篡改或未重新生成）: ['site_metrics_csv: manifest=d96b454e64c9..., actual=754b58011326...'] |
+| 21 | ✓ PASS | C16: manifest 生成时间 | 晚于 canonical full pkl 0.39h |
 | 22 | ✓ PASS | GEO1: 经纬度覆盖 | S115 lat=34.5933, lon=119.2172 |
 | 23 | ✓ PASS | GEO1: 经纬度覆盖 | S116 lat=34.2983, lon=119.2318 |
 | 24 | ✓ PASS | GEO2: 坐标范围 | S115 (34.5933, 119.2172) 在连云港范围内 |

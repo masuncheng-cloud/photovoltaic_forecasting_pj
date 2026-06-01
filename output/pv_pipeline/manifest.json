@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-06-01T08:42:59",
+  "generated_at": "2026-06-01T08:45:38",
   "pipeline_entry": "scripts/run_full_pipeline.py",
   "config": "configs/pipeline.yaml",
   "split": {
@@ -34,7 +34,7 @@
     "final_full_pkl_sha256": "ef17ee59fa0415fee6a14dfe077cc08835b10fa30646e62957caff881f0257d5",
     "final_eval_pkl_sha256": "433f7e9ba99a7bb9db6798bdb1cac1fd42ea6649ad3b598e8c1a5208e3690f92",
     "hourly_nrmse_csv_sha256": "5417e9b74e9dca8f741828f657db11a4aa576cda49d96016ad7c778a48517ea7",
-    "site_metrics_csv_sha256": "d96b454e64c91cf5c25ed5f4b9ed6d45ee608604dfd89cf2e50e49bf2de60a09",
+    "site_metrics_csv_sha256": "754b5801132633e4d3f6c798f078792ef130c91c3746fd438c47e0c1b2897fd8",
     "dashboard_index_sha256": "2e76ca8a2b156ea17c2504f91876a014c5e0a0e3da34a4c774381e8747e21deb"
   },
   "geo_overrides": {
