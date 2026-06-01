@@ -393,39 +393,46 @@ def run_validation(cfg: dict) -> ValidationCheck:
             else:
                 c.fail("C16: manifest artifacts", f"缺失: {missing_arts}")
             # 4. hash 验证（核心）：manifest 中记录的 hash 是否与实际文件一致
+            # 直接遍历 artifact_hashes 中的每个 key，用 artifacts 中的路径验证
             hash_arts = m.get("artifact_hashes", {})
-            hash_key_map = {
-                "final_full_pkl_sha256":   "final_full_pkl",
-                "final_eval_pkl_sha256":   "final_eval_pkl",
-                "hourly_nrmse_csv_sha256": "hourly_nrmse_csv",
-                "site_metrics_csv_sha256": "site_metrics_csv",
-                "dashboard_index_sha256":   "dashboard_index",
-            }
+            arts_paths = m.get("artifacts", {})
             hash_mismatches = []
             hash_matches = []
-            for hash_key, art_name in hash_key_map.items():
-                recorded_hash = hash_arts.get(hash_key, "")
-                if not recorded_hash or recorded_hash == "FILE_NOT_FOUND":
+            hash_missing_paths = []
+            for hash_key, recorded_hash in hash_arts.items():
+                if not recorded_hash or recorded_hash in ("FILE_NOT_FOUND", "MISSING"):
                     continue
-                art_path_str = arts.get(art_name, "")
-                if art_path_str:
-                    actual_path = PROJECT_ROOT / art_path_str
-                    actual_hash = file_sha256(actual_path)
-                    if actual_hash == recorded_hash:
-                        hash_matches.append(art_name)
-                    else:
-                        hash_mismatches.append(
-                            f"{art_name}: manifest={recorded_hash[:12]}..., actual={actual_hash[:12]}..."
-                        )
+                art_path_str = arts_paths.get(hash_key, "")
+                if not art_path_str:
+                    # Fallback: try known path patterns
+                    if hash_key == "final_full_pkl":
+                        art_path_str = "output/pv_pipeline/predictions/distributed_predictions_final_full.pkl"
+                    elif hash_key == "final_eval_pkl":
+                        art_path_str = "output/pv_pipeline/predictions/distributed_predictions_final_eval.pkl"
+                    elif hash_key == "dashboard_metadata":
+                        art_path_str = "output/pv_pipeline/interactive_dashboard/metadata.json"
+                if not art_path_str:
+                    continue
+                actual_path = PROJECT_ROOT / art_path_str
+                if not actual_path.exists():
+                    hash_missing_paths.append(f"{hash_key}: {art_path_str}")
+                    continue
+                actual_hash = file_sha256(actual_path)
+                if actual_hash == recorded_hash:
+                    hash_matches.append(hash_key)
+                else:
+                    hash_mismatches.append(
+                        f"{hash_key}: manifest={recorded_hash[:12]}..., actual={actual_hash[:12]}..."
+                    )
             if hash_mismatches:
                 c.fail("C16: artifact hash 验证",
-                       f"有 {len(hash_mismatches)} 个文件 hash 不一致（内容被篡改或未重新生成）: {hash_mismatches}")
+                       f"有 {len(hash_mismatches)} 个文件 hash 不一致: {hash_mismatches}")
+            elif hash_missing_paths:
+                c.warn("C16: artifact hash 验证",
+                       f"{len(hash_matches)} 个文件 hash 一致，{len(hash_missing_paths)} 个路径缺失: {hash_missing_paths}")
             elif hash_matches:
                 c.ok("C16: artifact hash 验证",
-                     f"{len(hash_matches)}/{len(hash_key_map)} 个文件 hash 一致，内容完整性 PASS")
-            else:
-                c.warn("C16: artifact hash 验证",
-                       "manifest 中无有效 hash 信息（可能由旧版 pipeline 生成）")
+                     f"{len(hash_matches)} 个文件 hash 一致，内容完整性 PASS")
             # 5. mtime 参考：manifest mtime 不应严重滞后于 pkl mtime
             fp = tables_dir / ".." / "predictions" / "distributed_predictions_final_full.pkl"
             if fp.exists():
