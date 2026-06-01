@@ -2104,7 +2104,8 @@ def main():
     print("\n[11d] Writing metadata.json...")
     meta = write_metadata(dashboard_root, round_name, pred_col, pred_path,
                           label=args.label,
-                          official_final=(str(dashboard_root).rstrip("/") == "output/pv_pipeline/interactive_dashboard"))
+                          official_final=(args.prediction_pkl is None or
+                                         "interactive_dashboard_round64" not in dashboard_root))
 
     # [11e] Export typical_sites.json
     print("\n[11e] Exporting typical_sites.json...")
