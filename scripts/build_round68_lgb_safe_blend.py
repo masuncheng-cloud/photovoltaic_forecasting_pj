@@ -131,11 +131,6 @@ def main():
         valid_df["blend_weight"] * (valid_df[cand_col] - valid_df[baseline_col])
     )
 
-    valid_df["blend_weight"] = blend_pred
-    valid_df["pred_blend"] = (
-        valid_df[baseline_col] +
-        valid_df["blend_weight"] * (valid_df[cand_col] - valid_df[baseline_col])
-    )
 
     # ── Compute valid metrics for blend ────────────────────────────────
     actual_v = valid_df["power_mw"].values.astype(float)
