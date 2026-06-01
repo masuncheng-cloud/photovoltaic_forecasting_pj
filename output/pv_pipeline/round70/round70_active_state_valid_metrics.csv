@@ -1,0 +1,2 @@
+﻿split,accuracy,macro_f1,inactive_recall,weak_recall,active_recall,n_train,n_valid
+valid,0.8322,0.6689,0.6831,0.7315,0.8668,421771,59024
