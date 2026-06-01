@@ -306,6 +306,12 @@ MODES = {
         "run_step14": False,
         "run_step15": False,
     },
+    "round71-conservative-residual": {
+        "desc": "Round71 季节适配与保守残差提升，先诊断后训练",
+        "steps": [],
+        "run_step14": False,
+        "run_step15": False,
+    },
 }
 
 
@@ -722,6 +728,39 @@ def main():
         print("  output/pv_pipeline/round70/round70_candidate_decision.json")
         print("  output/pv_pipeline/round70/round70_test_overall_compare.csv")
         print("  docs/Round70_训练样本口径重构与状态专家模型性能提升报告.md")
+        sys.exit(0)
+
+    # Special handling for round71-conservative-residual
+    if mode == "round71-conservative-residual":
+        print()
+        print("=" * 60)
+        print("Round71 季节适配与保守残差提升（先诊断后训练）")
+        print("=" * 60)
+        round71_scripts = [
+            ("Step 1: 诊断", "scripts/diagnose_round71_drift_and_error_sources.py"),
+            ("Step 2: 构建训练表", "scripts/build_round71_residual_training_table.py"),
+            ("Step 3: 训练候选", "scripts/train_round71_conservative_residual_candidates.py"),
+            ("Step 4: 候选差异检查", "scripts/check_candidate_prediction_diff.py"),
+            ("Step 5: 多窗口选择", "scripts/select_round71_candidate_multi_window.py"),
+            ("Step 6: Test评估", "scripts/evaluate_round71_candidate_on_test.py"),
+        ]
+        for label, script in round71_scripts:
+            print(f"\n>>> [{label}] {script}")
+            ret = subprocess.run(
+                [python, str(cwd / script)],
+                cwd=str(cwd),
+            )
+            if ret.returncode != 0:
+                print(f"\n[WARN] [{label}] 失败 (exit {ret.returncode})，继续执行后续步骤")
+        print()
+        print("=" * 60)
+        print("Round71 实验完成！")
+        print("=" * 60)
+        print("\n主要输出文件：")
+        print("  output/pv_pipeline/round71/round71_diagnosis_summary.json")
+        print("  output/pv_pipeline/round71/round71_candidate_decision.json")
+        print("  output/pv_pipeline/round71/round71_test_overall_compare.csv")
+        print("  docs/Round71_季节适配与保守残差提升报告.md")
         sys.exit(0)
 
     try:
