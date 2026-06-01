@@ -1,9 +1,0 @@
-{
-  "total_rows": 596939,
-  "final_null_in_train_pct": 100.0,
-  "key_findings": {
-    "power_pred_final_missing_in_train": true,
-    "train_valid_test_consistent_columns": [],
-    "recommendation": "power_pred_final 在 train 为空，需用 OOF 构造一致基线。"
-  }
-}

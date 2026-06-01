@@ -89,7 +89,7 @@ def main():
         print(f"\n总计: {df['exists'].sum()} 项")
     elif args.apply:
         deleted = 0
-        for _, r in df[df["archived"] == True].iterrows():
+        for _, r in df[df["action"] == "archive_and_delete"].iterrows():
             path = Path(r["path"])
             if path.exists():
                 if path.is_dir():

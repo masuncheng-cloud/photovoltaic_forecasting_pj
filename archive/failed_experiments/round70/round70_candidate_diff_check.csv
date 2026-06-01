@@ -1,3 +1,0 @@
-﻿candidate_col,status,is_identical,n_total,n_changed,changed_ratio,max_abs_diff_mw,mean_abs_diff_mw,median_abs_diff_mw,mean_diff_mw,changed_sites,require_diff_min,pass
-power_pred_round71_noon_conservative,VALID,False,175168,62560,0.357143,0.97467,0.024764,0.0,0.00987,68,1e-06,True
-power_pred_round71_seasonal_residual,VALID,False,175168,174650,0.997043,1.148529,0.073603,0.043308,0.019742,68,1e-06,True

@@ -1,2 +1,0 @@
-﻿future_rows,future_rows_pass,null_total,null_by_split,null_pass,valid_vs_final_max_diff,valid_vs_final_mean_diff,test_vs_final_max_diff,test_vs_final_mean_diff,valid_test_diff_pass,train_oof_nrmse,train_oof_nrmse_pass,train_oof_corr,base_source_distribution,fallback_ratio_pass,all_passed,recommendation
-0,True,0,"{'train': 0, 'valid': 0, 'test': 0}",True,0.0,0.0,0.0,0.0,True,0.0,False,0.9166,"{'oof': 60.91, 'power_pred_final': 29.34, 'fallback': 0.0}",True,True,PASS

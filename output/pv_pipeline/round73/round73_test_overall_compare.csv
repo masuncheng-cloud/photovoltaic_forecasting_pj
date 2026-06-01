@@ -1,5 +1,0 @@
-﻿candidate,city_nrmse_6_19,city_nrmse_10_14,site_mean_nrmse,bias_6_19,bias_10_14
-power_pred_final,4.1317,5.9379,10.5774,0.5208,5.5959
-power_pred_round73_autumn_winter_residual,4.3743,6.2682,10.5996,-3.8104,1.729
-power_pred_round73_noon_bias_guard,4.374,6.3529,10.4889,-2.5689,1.1414
-power_pred_round73_high_error_shrinkage,4.366,6.3434,10.5893,-0.2758,4.704

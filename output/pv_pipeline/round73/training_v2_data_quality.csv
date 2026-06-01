@@ -1,5 +1,0 @@
-﻿window,sample_count,n_sites,positive_rate,inactive_rate,city_nrmse_baseline,abs_bias_baseline,city_bias_baseline,site_mean_nrmse_baseline
-window_A,45491,30,0.6692,0.3308,3.965,6.5276,6.5276,10.2552
-window_B,60371,39,0.6845,0.3155,4.0972,1.6611,1.6611,10.7505
-window_C,115833,68,0.8477,0.1523,4.9512,4.0492,-4.0492,14.1402
-holdout_test,115192,68,0.6777,0.3223,4.1447,0.4781,0.4781,10.5989

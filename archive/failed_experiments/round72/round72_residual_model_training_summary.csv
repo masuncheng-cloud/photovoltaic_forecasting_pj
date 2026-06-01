@@ -1,4 +1,0 @@
-﻿candidate,trained,n_train,clip_norm,valid_city_nrmse_base,valid_city_nrmse_cand,valid_delta,valid_bias_base,valid_bias_cand,valid_bias_delta
-power_pred_round72_season_residual,True,421771,0.1,5.252,5.4882,0.2362,-5.0054,-5.0479,-0.0424
-power_pred_round72_noon_residual,True,421771,0.08,5.252,5.3212,0.0692,-5.0054,-3.8628,1.1427
-power_pred_round72_high_error_residual,True,81089,0.1,5.252,5.2529,0.0009,,,

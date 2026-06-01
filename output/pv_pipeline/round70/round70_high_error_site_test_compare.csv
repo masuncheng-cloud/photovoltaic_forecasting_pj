@@ -1,5 +1,0 @@
-﻿candidate,city_nrmse,site_mean_nrmse,city_bias
-power_pred_final,4.8201,11.5513,-0.5155
-power_pred_round70_active_state_lgb,5.6223,12.938,-10.1192
-power_pred_round70_noon_bias_lgb,5.5152,12.5225,-8.3003
-power_pred_round70_high_error_expert,6.2995,13.1921,-15.6584
