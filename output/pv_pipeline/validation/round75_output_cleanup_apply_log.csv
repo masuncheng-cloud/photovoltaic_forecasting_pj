@@ -30,3 +30,4 @@ file,manifest.json,KEEP,0.007,whitelist,2026-06-01T23:20:45.897007
 file,move_time.py,ARCHIVE_SCRIPT,0.001,→ 20260601_232037/root_scripts/move_time.py,2026-06-01T23:20:45.897007
 file,reorganize_back40.py,ARCHIVE_SCRIPT,0.001,→ 20260601_232037/root_scripts/reorganize_back40.py,2026-06-01T23:20:45.897007
 file,reorganize_cols.py,ARCHIVE_SCRIPT,0.002,→ 20260601_232037/root_scripts/reorganize_cols.py,2026-06-01T23:20:45.897007
+dir,round67,ARCHIVE (手动补执行),~0.024,manifest更新脚本副产物，单独归档,2026-06-01T23:23:00
