@@ -1,0 +1,16 @@
+{
+  "selected_candidate": "round64_final",
+  "decision": "keep_round64_final",
+  "baseline_candidate": "round64_final",
+  "baseline_city_nrmse_valid": 0.2646,
+  "baseline_sm_nrmse_valid": 15.8893,
+  "guards_applied": {
+    "site_mean_nrmse_improve_min_pp": 0.05,
+    "city_nrmse_max_worse_pp": 0.05,
+    "city_10_14_must_not_worse": true,
+    "bad_site_gt_1pp_max": 0,
+    "pred_actual_extreme_max_count_increase": 0
+  },
+  "selection_reasons": [],
+  "timestamp": "2026-06-01T15:47:13.613455"
+}
