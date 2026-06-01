@@ -123,7 +123,7 @@ P_round68 = P_round64_final + w × (P_round67_lgb - P_round64_final)
 
 ## 五、关键发现
 
-1. **lgb 的真实潜力**：lgb 的 site_mean_nrmse 在 test 上比 round64_final 低 0.46pp（11.28% → 10.83%），city_nrmse 低 0.38pp（4.31% → 4.69%）
+1. **lgb 的真实潜力**：原始 lgb 的站点平均 NRMSE 低于 round64_final，但城市 NRMSE 高于 round64_final；经过 safe blend 后，站点平均 NRMSE、城市 NRMSE 和 abs_bias 均优于 round64_final。
 2. **安全融合有效**：lgb_safe_blend 全面优于 round64_final（sm -0.70pp, city -0.18pp, abs_bias 大幅改善），且 bad_sites=0
 3. **方向性改善**：融合后 abs_bias 从 +1.55% 变为 -0.52%，偏差绝对值从 1.55% 降至 0.52%，改善 1.03pp
 4. **安全边界**：没有站点因融合变差超过 1pp
