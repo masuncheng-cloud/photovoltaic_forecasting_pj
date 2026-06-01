@@ -52,9 +52,14 @@ def main():
     cap_col = cfg["capacity_col"]
     target_col = cfg["target_col"]
 
-    # 残差目标
+    # 残差目标：对于 train 用 power_pred（因为 power_pred_final 在 train 上全为空），
+    # 对于 valid/test 用 power_pred_final
     df["y_true_norm"] = (df[target_col] / df[cap_col].clip(lower=1e-6)).clip(lower=0)
-    df["y_base_norm"] = (df[bl_col] / df[cap_col].clip(lower=1e-6)).clip(lower=0)
+
+    # 优先用 power_pred_final，如果为空则回退到 power_pred
+    df["_bl_pred"] = df[bl_col].fillna(df["power_pred"])
+
+    df["y_base_norm"] = (df["_bl_pred"] / df[cap_col].clip(lower=1e-6)).clip(lower=0)
     df["residual_norm"] = df["y_true_norm"] - df["y_base_norm"]
 
     # 保守裁剪

@@ -136,11 +136,24 @@ def main():
         residual_pred = model.predict(X)
         residual_pred = np.clip(residual_pred, -clip_val, clip_val)
         cap = result_df.loc[mask, cap_col].values.astype(float)
-        result_df.loc[mask, candidate_col] = np.clip(
-            result_df.loc[mask, bl_col].values + residual_pred * cap, 0, cap
+        # 优先用 power_pred_final，如果为空则回退到 power_pred
+        bl_vals = np.where(
+            pd.notna(result_df.loc[mask, bl_col].values),
+            result_df.loc[mask, bl_col].values,
+            result_df.loc[mask, "power_pred"].values,
         )
-        # 非 focus 时段保持 baseline
-        result_df.loc[~mask, candidate_col] = result_df.loc[~mask, bl_col].values
+        result_df.loc[mask, candidate_col] = np.clip(
+            bl_vals + residual_pred * cap, 0, cap
+        )
+        # 非 focus 时段保持 baseline（power_pred_final 优先）
+        non_mask = ~mask
+        if non_mask.any():
+            bl_non = np.where(
+                pd.notna(result_df.loc[non_mask, bl_col].values),
+                result_df.loc[non_mask, bl_col].values,
+                result_df.loc[non_mask, "power_pred"].values,
+            )
+            result_df.loc[non_mask, candidate_col] = bl_non
         return result_df
 
     # ═══════════════════════════════════════════════════════════════════════
