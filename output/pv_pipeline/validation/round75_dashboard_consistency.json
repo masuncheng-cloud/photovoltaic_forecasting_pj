@@ -1,0 +1,30 @@
+{
+  "all_pass": false,
+  "checks": [
+    {
+      "check": "actual_mw",
+      "status": "FAIL",
+      "max_diff": 17.88
+    },
+    {
+      "check": "pred_mw",
+      "status": "FAIL",
+      "max_diff": 15.9497508428
+    },
+    {
+      "check": "city_series",
+      "status": "PASS",
+      "max_diff": 0.0
+    },
+    {
+      "check": "future_rows",
+      "status": "PASS",
+      "count": 0
+    },
+    {
+      "check": "metadata_label",
+      "status": "PASS",
+      "label": "Round68 final"
+    }
+  ]
+}
