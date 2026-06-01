@@ -225,7 +225,7 @@ def main():
     cap_col = "capacity_mw"
     actual = valid_df["power_mw"].values
 
-    for model_name in model_name:
+    for model_name in model_store:
         combined_col = f"pred_{model_name}_combined"
         if combined_col not in valid_df.columns:
             continue
