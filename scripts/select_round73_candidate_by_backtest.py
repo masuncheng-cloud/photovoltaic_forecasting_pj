@@ -63,40 +63,41 @@ def main():
     args = parser.parse_args()
     OUT.mkdir(parents=True, exist_ok=True)
 
-    # 读取回测数据集（包含候选预测）
-    ds_path = OUT / "training_v2_backtest_dataset.parquet"
-    backtest_df = pd.read_parquet(ds_path)
-    print(f"[INFO] 回测数据: {len(backtest_df):,}")
-
-    # 读取完整 pkl（包含候选预测）
+    # 读取完整 pkl（包含候选预测），从中筛选各回测窗口
     pkl_path = OUT / "round73_candidates.pkl"
     full_df = pd.read_pickle(pkl_path)
     full_df["time"] = pd.to_datetime(full_df["time"])
     full_df["hour"] = full_df["time"].dt.hour
-    test_df = full_df[full_df["split"] == "test"].copy()
-    test_df = test_df[test_df["hour"].between(6, 19)]
-    print(f"[INFO] test: {len(test_df):,}")
+    full_df["month"] = full_df["time"].dt.month
+    full_df = full_df[full_df["split"] != "future"].copy()
+    full_df = full_df[full_df["hour"].between(6, 19)].copy()
+    full_df = full_df[full_df["capacity_mw"] > 0].copy()
+
+    # 打窗口标签
+    windows = {
+        "window_A": ("2023-09-01", "2023-12-31"),
+        "window_B": ("2024-09-01", "2024-12-31"),
+        "window_C": ("2025-05-01", "2025-08-31"),
+        "holdout_test": ("2025-09-01", "2025-12-31"),
+    }
+    full_df["window"] = "unused"
+    for wname, (start, end) in windows.items():
+        mask = full_df["time"].between(start, end)
+        full_df.loc[mask, "window"] = wname
+
+    # 回测窗口（不含 holdout_test）
+    backtest_windows = {k: full_df[full_df["window"] == k] for k in ["window_A", "window_B", "window_C"]}
+    test_df = full_df[full_df["window"] == "holdout_test"].copy()
+    print(f"[INFO] 回测数据: {len(full_df):,}  test: {len(test_df):,}")
 
     bl_col = "power_pred_final"
     candidate_cols = [c for c in full_df.columns if c.startswith("power_pred_round73_")]
     print(f"[INFO] 候选: {candidate_cols}")
 
-    # 回测窗口评估（只用非 test 窗口）
-    # wA=2023-09~12, wB=2024-09~12, wC=2025-05~08
-    windows = {
-        "window_A": backtest_df[backtest_df["window"] == "window_A"],
-        "window_B": backtest_df[backtest_df["window"] == "window_B"],
-        "window_C": backtest_df[backtest_df["window"] == "window_C"],
-    }
-    # wC 对应 2025-05~08，与 valid 时间范围相同，作为 valid 模拟窗口
-    # wA 和 wB 是历史回测窗口
-
     print("\n[Backtest Evaluation]")
     rows = []
     for cand in candidate_cols:
-        if cand not in backtest_df.columns:
-            continue
-        for wname, wdf in windows.items():
+        for wname, wdf in backtest_windows.items():
             if len(wdf) == 0:
                 continue
             bn = _city_nrmse(wdf, bl_col)
