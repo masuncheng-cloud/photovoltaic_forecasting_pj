@@ -73,7 +73,13 @@ def main():
     full_df = full_df[full_df["hour"].between(6, 19)].copy()
     full_df = full_df[full_df["capacity_mw"] > 0].copy()
 
-    # 打窗口标签
+    # 读取 parquet 获取 _base_pred（parquet 中有完整列）
+    ds_path = OUT / "training_v2_backtest_dataset.parquet"
+    ds_df = pd.read_parquet(ds_path)
+    ds_df["time"] = pd.to_datetime(ds_df["time"])
+    ds_df["hour"] = ds_df["time"].dt.hour
+
+    # 打窗口标签（与 pkl 对齐）
     windows = {
         "window_A": ("2023-09-01", "2023-12-31"),
         "window_B": ("2024-09-01", "2024-12-31"),
@@ -85,8 +91,16 @@ def main():
         mask = full_df["time"].between(start, end)
         full_df.loc[mask, "window"] = wname
 
-    # 构建统一基线列（覆盖 train 行的 NaN 问题）
-    # train 窗口用 _base_pred（parquet 中有），test/valid 用 power_pred_final
+    # 构建统一基线：train 窗口用 _base_pred，valid/test 用 power_pred_final
+    full_df["_base_pred"] = np.nan  # 从 parquet 获取
+    for wname in ["window_A", "window_B"]:
+        wdf_ds = ds_df[ds_df["window"] == wname][["time", "site_id", "_base_pred"]].copy()
+        wdf_ds = wdf_ds.drop_duplicates(["time", "site_id"])
+        wdf_ds = wdf_ds.set_index(["time", "site_id"])["_base_pred"]
+        mask = full_df["window"] == wname
+        idx = full_df.loc[mask].set_index(["time", "site_id"]).index
+        full_df.loc[mask, "_base_pred"] = wdf_ds.reindex(idx).values
+
     full_df["_bl_pred"] = full_df["power_pred_final"].copy()
     train_mask = full_df["window"].isin(["window_A", "window_B"])
     full_df.loc[train_mask, "_bl_pred"] = full_df.loc[train_mask, "_base_pred"].values
