@@ -1,6 +1,6 @@
 # 训练后逻辑审计报告
 
-**生成时间**: 2026-06-01 10:55:51
+**生成时间**: 2026-06-01 10:58:11
 **最终预测列**: power_pred_final
 **评估口径**: split=test, hour=6-19
 
@@ -27,7 +27,7 @@
 | 9 | ⚠ WARN | C9: 夜间/future 不参与评估 | pkl 中存在夜间和 future 记录（评估时会排除） |
 | 10 | ✓ PASS | C10: hourly_nrmse_consistent.csv 正确 | 14 小时数据, NRMSE范围: 3.94%~16.97% |
 | 11 | ✓ PASS | C11: dashboard 一致性校验 | 68 站, 全部 PASS |
-| 12 | ✓ PASS | C12: dashboard 数据新鲜 | dashboard 晚于 canonical pkl 0.07h |
+| 12 | ✓ PASS | C12: dashboard 数据新鲜 | dashboard 晚于 canonical pkl 0.11h |
 | 13 | ✓ PASS | C13: Git 不追踪 pkl | 0 个 |
 | 14 | ✓ PASS | C13: Git 不追踪 site_series JSON | 0 个 |
 | 15 | ✓ PASS | C14: 训练集样本量 | 421,771 行（2023-01-01~2025-06-30 白天） |
