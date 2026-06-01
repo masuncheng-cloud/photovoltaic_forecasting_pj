@@ -109,19 +109,22 @@ def main():
         json.dump(result, f, ensure_ascii=False, indent=2)
     print(f"[OK] JSON: {json_path}")
 
-    # Write back to manifest — update artifact_hashes field, preserve artifacts field
+    # Build full artifact_hashes dict (all files we can hash)
+    full_hashes = dict(artifact_hashes)  # from all found files
+    # Write back to manifest — ONLY update artifact_hashes, NEVER touch artifacts
     if apply:
-        manifest["artifact_hashes"] = artifact_hashes
+        manifest["artifact_hashes"] = full_hashes
         manifest["final_round"] = manifest.get("final_round", "Round64")
         manifest["prediction_column"] = manifest.get("prediction_column", "power_pred_final")
         manifest["exclude_future"] = manifest.get("exclude_future", True)
         manifest["hashes_updated_at"] = pd.Timestamp.now().isoformat()
+        # Ensure artifacts field (file paths) is preserved
+        if "artifacts" not in manifest or not isinstance(manifest.get("artifacts"), dict):
+            manifest["artifacts"] = {}
         manifest_path.write_text(json.dumps(manifest, ensure_ascii=False, indent=2), encoding="utf-8")
-        print(f"\n[UPDATE] {manifest_path} — artifact_hashes updated, artifacts field preserved")
+        print(f"\n[UPDATE] {manifest_path} — artifact_hashes updated ({len(full_hashes)} files)")
     else:
-        print(f"\n[DRY-RUN] Would update manifest artifact_hashes:")
-        for k, v in artifact_hashes.items():
-            print(f"  {k}: {v}")
+        print(f"\n[DRY-RUN] Would update artifact_hashes ({len(full_hashes)} files)")
 
     print(f"\n{'='*60}")
     if not all_ok:
