@@ -804,6 +804,36 @@ def main():
         print("  docs/Round72_重建全历史一致基线并重新训练残差模型报告.md")
         sys.exit(0)
 
+    # Special handling for round73-training-framework-reset
+    if mode == "round73-training-framework-reset":
+        print()
+        print("=" * 60)
+        print("Round73 回退最优版本并重构训练框架")
+        print("=" * 60)
+        round73_scripts = [
+            ("Step1: 校验基线", "scripts/verify_current_best_round68.py"),
+            ("Step2: 归档失败实验", "scripts/archive_failed_round_experiments.py"),
+            ("Step3: 构建回测数据集", "scripts/build_training_v2_backtest_dataset.py"),
+            ("Step4: 训练候选", "scripts/train_round73_backtest_candidates.py"),
+            ("Step5: 回测选择", "scripts/select_round73_candidate_by_backtest.py"),
+            ("Step6: Test评估", "scripts/evaluate_round73_candidate_on_test.py"),
+        ]
+        for label, script in round73_scripts:
+            print(f"\n>>> [{label}] {script}")
+            ret = subprocess.run([python, str(cwd / script)], cwd=str(cwd))
+            if ret.returncode != 0:
+                print(f"\n[WARN] [{label}] 失败 (exit {ret.returncode})，继续")
+        print()
+        print("=" * 60)
+        print("Round73 完成！")
+        print("=" * 60)
+        print("\n主要输出文件：")
+        print("  output/pv_pipeline/round73/round73_current_best_verify.json")
+        print("  output/pv_pipeline/round73/round73_candidate_decision.json")
+        print("  output/pv_pipeline/round73/round73_test_overall_compare.csv")
+        print("  docs/Round73_回退最优版本并重构训练框架提升报告.md")
+        sys.exit(0)
+
     try:
         cfg = load_config(args.config)
     except Exception as e:
