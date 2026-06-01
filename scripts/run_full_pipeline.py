@@ -300,6 +300,12 @@ MODES = {
         "run_step14": False,
         "run_step15": False,
     },
+    "round70-performance-upgrade": {
+        "desc": "Round70 训练样本口径重构与状态专家模型性能提升",
+        "steps": [],
+        "run_step14": False,
+        "run_step15": False,
+    },
 }
 
 
@@ -679,6 +685,43 @@ def main():
         print("=" * 60)
         print("Round64 实验完成！")
         print("=" * 60)
+        sys.exit(0)
+
+    # Special handling for round70-performance-upgrade
+    if mode == "round70-performance-upgrade":
+        print()
+        print("=" * 60)
+        print("Round70 训练样本口径重构与状态专家模型性能提升")
+        print("=" * 60)
+        round70_scripts = [
+            ("Step 1: 构建训练表", "scripts/build_round70_training_table.py"),
+            ("Step 2: 发电状态分类模型", "scripts/train_round70_active_state_model.py"),
+            ("Step 3: 10-14点bias约束模型", "scripts/train_round70_noon_bias_constrained_model.py"),
+            ("Step 4: 高误差站点专家模型", "scripts/train_round70_high_error_site_expert.py"),
+            ("Step 5: 候选有效性检查", "scripts/check_candidate_prediction_diff.py"),
+            ("Step 6: 最终候选选择与safe blend", "scripts/select_round70_final_candidate.py"),
+            ("Step 7: Test集评估", "scripts/evaluate_round70_candidate_on_test.py"),
+        ]
+        for label, script in round70_scripts:
+            print(f"\n>>> [{label}] {script}")
+            ret = subprocess.run(
+                [python, str(cwd / script)],
+                cwd=str(cwd),
+            )
+            if ret.returncode != 0:
+                print(f"\n[WARN] [{label}] 失败 (exit {ret.returncode})，继续执行后续步骤")
+        print()
+        print("=" * 60)
+        print("Round70 性能提升实验完成！")
+        print("=" * 60)
+        print("\n主要输出文件：")
+        print("  output/pv_pipeline/round70/round70_training_distribution_by_split.csv")
+        print("  output/pv_pipeline/round70/round70_candidate_diff_check.csv")
+        print("  output/pv_pipeline/round70/round70_active_state_valid_metrics.csv")
+        print("  output/pv_pipeline/round70/round70_valid_candidate_compare.csv")
+        print("  output/pv_pipeline/round70/round70_candidate_decision.json")
+        print("  output/pv_pipeline/round70/round70_test_overall_compare.csv")
+        print("  docs/Round70_训练样本口径重构与状态专家模型性能提升报告.md")
         sys.exit(0)
 
     try:
