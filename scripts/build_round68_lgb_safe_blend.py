@@ -89,46 +89,46 @@ def main():
     # ── Per (site_id, time_block) weight selection ──────────────────────
     print("\n[INFO] Per (site, block) weight selection on valid...")
 
-    weight_choice_col = np.full(len(valid_df), 0.0)
+    blend_pred = np.full(len(valid_df), np.nan)
     total_delta_sm = 0.0
     site_block_details = []
 
-    for sid, sdf in valid_df.groupby("site_id"):
+    for i, (sid, sdf) in enumerate(valid_df.groupby("site_id")):
         for blk in sdf["time_block"].unique():
-            mask = (valid_df["site_id"] == sid) & (valid_df["time_block"] == blk)
-            idx = valid_df.index[mask]
-            delta_vals = diff.loc[idx].values
+            mask = (sdf["time_block"] == blk)
+            pos_idx = sdf.index[mask]  # positional indices in valid_df
+            delta_vals = diff.loc[pos_idx].values
+            actual_arr = sdf.loc[mask, "power_mw"].values
+            base_arr = sdf.loc[mask, baseline_col].values
 
             best_w = 0.0
-            best_score = float("inf")
+            best_r = float("inf")
+            cap = float(sdf.loc[mask, "capacity_mw"].iloc[0])
+            if cap <= 0:
+                continue
             for w in weights:
-                blended = valid_df.loc[idx, baseline_col] + w * delta_vals
-                actual = valid_df.loc[idx, "power_mw"].values
-                cap = float(valid_df.loc[idx, "capacity_mw"].iloc[0])
-                if cap <= 0:
-                    continue
-                score = rmse(actual, blended.values) / cap * 100
-                if score < best_score:
-                    best_score = score
+                blended = base_arr + w * delta_vals
+                score = rmse(actual_arr, blended) / cap * 100
+                if score < best_r:
+                    best_r = score
                     best_w = w
 
-            weight_choice_col[idx] = best_w
-            base_r = rmse(actual, valid_df.loc[idx, baseline_col].values) / cap * 100
-            blend_r = rmse(actual, blended.values) / cap * 100
-            delta = blend_r - base_r
+            blend_pred[pos_idx] = best_w
+
+            base_r = rmse(actual_arr, base_arr) / cap * 100
+            blended_best = base_arr + best_w * delta_vals
+            final_r = rmse(actual_arr, blended_best) / cap * 100
             site_block_details.append({
                 "site_id": str(sid),
                 "time_block": blk,
                 "best_weight": best_w,
                 "base_nrmse": round(base_r, 4),
-                "blend_nrmse": round(best_r if (best_r := best_score) else 0, 4),
-                "delta": round(delta, 4),
-                "n_samples": len(idx),
+                "blend_nrmse": round(final_r, 4),
+                "delta": round(final_r - base_r, 4),
+                "n_samples": int(mask.sum()),
             })
 
-    valid_df["blend_weight"] = weight_choice_col
-
-    # Apply blend
+    valid_df["blend_weight"] = blend_pred
     valid_df["pred_blend"] = (
         valid_df[baseline_col] +
         valid_df["blend_weight"] * (valid_df[cand_col] - valid_df[baseline_col])
