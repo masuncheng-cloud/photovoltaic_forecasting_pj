@@ -127,37 +127,26 @@ def main():
     ]
     final_null_ratio = float(final_in_train["null_ratio"].iloc[0]) if len(final_in_train) > 0 else 100.0
 
-    # 一致可用列（train/valid/test 均有数据）
-    consistent_cols = set()
-    for col in target_cols:
-        slices = audit_df[audit_df["column"] == col]
-        if all(slices["null_ratio"] < 100 for _, s in slices.iterrows() if len(s) > 0):
-            consistent_cols.add(col)
+    # 一致可用列（train/valid/test 均有非空数据）
+    pivot_full = audit_df.pivot_table(index="column", columns="split", values="non_null")
+    consistent_cols = []
+    for col in pivot_full.index:
+        row = pivot_full.loc[col]
+        if all(row.get(s, 0) > 0 for s in ["train", "valid", "test"]):
+            consistent_cols.append(col)
 
     summary = {
         "total_rows": int(len(df)),
         "final_null_in_train_pct": final_null_ratio,
         "key_findings": {
             "power_pred_final_missing_in_train": final_null_ratio == 100.0,
-            "train_valid_test_consistent_columns": sorted(list(consistent_cols)),
+            "train_valid_test_consistent_columns": sorted(consistent_cols),
             "recommendation": (
                 "power_pred_final 在 train 为空，需用 OOF 构造一致基线。"
                 if final_null_ratio == 100.0 else
                 "power_pred_final 在 train 有数据，可直接使用。"
             ),
         },
-        "train_only_available": sorted([
-            c for c in target_cols
-            if (audit_df[(audit_df["column"] == c) & (audit_df["split"] == "train")]["null_ratio"] < 100).any()
-            and not (audit_df[(audit_df["column"] == c) & (audit_df["split"] == "valid")]["null_ratio"] < 100).any()
-            and not (audit_df[(audit_df["column"] == c) & (audit_df["split"] == "test")]["null_ratio"] < 100).any()
-        ]),
-        "valid_test_only": sorted([
-            c for c in target_cols
-            if (audit_df[(audit_df["column"] == c) & (audit_df["split"] == "valid")]["null_ratio"] < 100).any()
-            and (audit_df[(audit_df["column"] == c) & (audit_df["split"] == "test")]["null_ratio"] < 100).any()
-            and not (audit_df[(audit_df["column"] == c) & (audit_df["split"] == "train")]["null_ratio"] < 100).any()
-        ]),
     }
 
     with open(OUT / "round72_prediction_column_audit_summary.json", "w", encoding="utf-8") as f:
