@@ -312,6 +312,12 @@ MODES = {
         "run_step14": False,
         "run_step15": False,
     },
+    "round72-consistent-base-residual": {
+        "desc": "Round72 重建全历史一致基线并重新训练残差模型",
+        "steps": [],
+        "run_step14": False,
+        "run_step15": False,
+    },
 }
 
 
