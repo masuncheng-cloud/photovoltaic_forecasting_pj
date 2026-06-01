@@ -1952,6 +1952,13 @@ def main():
         round_name = args.label or "round64_candidate"
         pred_col = args.prediction_col or "power_pred_round64_safe"
         pred_path = args.prediction_pkl
+        # Add required validity columns (may not exist in round63/64 pkl)
+        if "_site_status" not in df.columns:
+            df["_site_status"] = "正常评价"
+        if "_exclude_from_ranking" not in df.columns:
+            df["_exclude_from_ranking"] = "否"
+        if "_exclude_reason" not in df.columns:
+            df["_exclude_reason"] = ""
         print(f"  Shape: {df.shape}, sites: {df['site_id'].nunique()}")
         print(f"  Splits: {sorted(df['split'].unique().tolist())}")
     else:
