@@ -115,18 +115,30 @@ def main():
         if col in df.columns:
             feat_cols.append(col)
 
-    # Clip and clean features
+    # Clip and clean features — deduplicate columns (keep first occurrence)
     avail_feats = [c for c in feat_cols if c in df.columns]
-    df_model = df[["site_id", "time", "split", "hour", "time_block",
-                   "site_group", "y_norm", "power_mw", "capacity_mw",
-                   cfg["baseline_col"], "baseline_norm"] + avail_feats].copy()
+    base_cols = ["site_id", "time", "split", "hour", "time_block",
+                 "site_group", "y_norm", "power_mw", "capacity_mw",
+                 cfg["baseline_col"], "baseline_norm"] + avail_feats
+    # Deduplicate while preserving order
+    seen = set()
+    unique_base = []
+    for c in base_cols:
+        if c not in seen:
+            seen.add(c)
+            unique_base.append(c)
+    df_model = df[unique_base].copy()
+    df_model = df_model.loc[:, ~df_model.columns.duplicated()]
 
     # Ensure numeric
     for c in avail_feats:
         try:
             df_model[c] = pd.to_numeric(df_model[c], errors="coerce")
-        except (TypeError, ValueError):
-            df_model[c] = pd.to_numeric(df_model[c].astype(str), errors="coerce")
+        except Exception:
+            try:
+                df_model[c] = pd.to_numeric(df_model[c].astype(str), errors="coerce")
+            except Exception:
+                pass
 
     # Feature inventory
     inv_rows = []
