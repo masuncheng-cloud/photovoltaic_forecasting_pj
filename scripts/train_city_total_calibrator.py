@@ -37,8 +37,8 @@ SHRINK_K = 3000
 
 
 def rmse_vec(a, p):
-    """Vectorized RMSE."""
-    return float(np.sqrt(np.mean((np.asarray(a, dtype=float) - np.asarray(p, dtype=float)) ** 2))
+    diff = np.asarray(a, dtype=float) - np.asarray(p, dtype=float)
+    return float(np.sqrt(np.mean(diff ** 2)))
 
 
 def main():
