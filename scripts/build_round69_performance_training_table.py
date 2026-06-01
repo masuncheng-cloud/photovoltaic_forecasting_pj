@@ -67,15 +67,12 @@ def main():
     # ── Reconstruct round67 lgb predictions for residual features ──────
     print("\n[INFO] Reconstructing round67 model predictions...")
 
-    # Build features for prediction reconstruction
-    exclude_pred = {"site_id", "time", "split", "hour", "time_block", "site_group",
-                   "y_norm", "power_mw", "capacity_mw", "power_pred_final",
-                   "baseline_norm", "capacity_bucket", "zero_group"}
-    feat_cols = [c for c in df.columns if c not in exclude_pred]
+    # Reconstruct round67 lgb predictions for residual features
+    print("\n[INFO] Reconstructing round67 model predictions...")
 
-    with open(MODEL_STORE, "rb") as f:
-        store = pickle.load(f)
-    models = store["models"]
+    # Use stored feature columns exactly as training
+    feat_cols = store["feat_cols"]
+    print(f"  Using stored feat_cols ({len(feat_cols)}): {feat_cols}")
 
     for model_name in ["lgb", "hgb", "ridge"]:
         if model_name not in models:
