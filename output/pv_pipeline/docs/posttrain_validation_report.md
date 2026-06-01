@@ -1,6 +1,6 @@
 # 训练后逻辑审计报告
 
-**生成时间**: 2026-06-01 15:34:20
+**生成时间**: 2026-06-01 17:00:31
 **最终预测列**: power_pred_final
 **评估口径**: split=test, hour=6-19
 
@@ -8,15 +8,15 @@
 
 | 状态 | 数量 |
 |------|------|
-| PASS | 34 |
-| FAIL | 0 |
+| PASS | 33 |
+| FAIL | 1 |
 | WARN | 2 |
 
 ## 逐项结果
 
 | # | 状态 | 检查项 | 说明 |
 |---|------|--------|------|
-| 1 | ✓ PASS | C1: 最终预测 pkl 存在且可读 | canonical: distributed_predictions_final_full.pkl, 898,175 行, 53 列, 68 站 |
+| 1 | ✓ PASS | C1: 最终预测 pkl 存在且可读 | canonical: distributed_predictions_final_full.pkl, 898,175 行, 61 列, 68 站 |
 | 2 | ✓ PASS | C2: eval pkl 数据范围 | [NOTE] (Round66 口径) 含 ['test', 'valid'], 175,168 行, 68 站 |
 | 3 | ✓ PASS | C3: 最终预测列存在 | power_pred_final: 175,168/898,175 (19.5%) |
 | 4 | ✓ PASS | C4: 真实功率列存在 | power_mw: 898,175/898,175 |
@@ -27,16 +27,16 @@
 | 9 | ⚠ WARN | C9: 夜间/future 不参与评估 | 夜间 180,660 行（评估时会排除） |
 | 10 | ✓ PASS | C10: hourly_nrmse_consistent.csv 正确 | 14 小时数据, NRMSE范围: 3.94%~16.97% |
 | 11 | ✓ PASS | C11: dashboard 一致性校验 | 68 站, 全部 PASS |
-| 12 | ✓ PASS | C12: dashboard 数据新鲜 | dashboard 晚于 canonical pkl 0.05h |
+| 12 | ✓ PASS | C12: dashboard 数据新鲜 | dashboard 晚于 canonical pkl 0.03h |
 | 13 | ✓ PASS | C13: Git 不追踪 pkl | 0 个 |
 | 14 | ✓ PASS | C13: Git 不追踪 site_series JSON | [NOTE] 69 个（交互式数据，可按需生成，.gitignore 规则正常） |
 | 15 | ✓ PASS | C14: 训练集样本量 | 421,771 行（2023-01-01~2025-06-30 白天） |
 | 16 | ✓ PASS | C15: 站点数量合理 | 68 个站点 |
 | 17 | ✓ PASS | C16: manifest.pipeline_entry | scripts/run_full_pipeline.py |
 | 18 | ✓ PASS | C16: manifest.final_prediction_column | power_pred_final |
-| 19 | ✓ PASS | C16: manifest artifacts 全部存在 | 6 个文件 |
-| 20 | ✓ PASS | C16: artifact hash 验证 | 3 个文件 hash 一致，内容完整性 PASS |
-| 21 | ✓ PASS | C16: manifest 生成时间 | 晚于 canonical full pkl 0.43h |
+| 19 | ✗ FAIL | C16: manifest artifacts | 缺失: ['dashboard_metadata: output/pv_pipeline/interactive_dashboard/metadata.json'] |
+| 20 | ✓ PASS | C16: artifact hash 验证 | 2 个文件 hash 一致，内容完整性 PASS |
+| 21 | ✓ PASS | C16: manifest 生成时间 | 晚于 canonical full pkl 0.06h |
 | 22 | ✓ PASS | GEO1: 经纬度覆盖 | S115 lat=34.5933, lon=119.2172 |
 | 23 | ✓ PASS | GEO1: 经纬度覆盖 | S116 lat=34.2983, lon=119.2318 |
 | 24 | ✓ PASS | GEO2: 坐标范围 | S115 (34.5933, 119.2172) 在连云港范围内 |
@@ -44,10 +44,10 @@
 | 26 | ✓ PASS | GEO3: 置信度 | S115 confidence=medium |
 | 27 | ✓ PASS | GEO3: 置信度 | S116 confidence=low |
 | 28 | ⚠ WARN | GEO4: 低置信度警告 | S116 confidence=low，精确光伏场区中心有待甲方/运维台账确认 |
-| 29 | ✓ PASS | GEO5: S115 scene_v151 test 10-14 | scene 正常 {'mid': 378, 'clear_peak': 183, 'low': 49}，非 all-night |
+| 29 | ✓ PASS | GEO5: S115 scene_v151 test 10-14 | scene 正常 {'<NA>': 610}，非 all-night |
 | 30 | ✓ PASS | GEO5: S115 g_blend_pred test 10-14 | max=828.0，正常 |
 | 31 | ✓ PASS | GEO5: S115 power_pred_final test 10-14 | 610/610 行非0，正常 |
-| 32 | ✓ PASS | GEO5: S116 scene_v151 test 10-14 | scene 正常 {'mid': 370, 'clear_peak': 186, 'low': 54}，非 all-night |
+| 32 | ✓ PASS | GEO5: S116 scene_v151 test 10-14 | scene 正常 {'<NA>': 610}，非 all-night |
 | 33 | ✓ PASS | GEO5: S116 g_blend_pred test 10-14 | max=835.7，正常 |
 | 34 | ✓ PASS | GEO5: S116 power_pred_final test 10-14 | 610/610 行非0，正常 |
 | 35 | ✓ PASS | C17: 站点数量一致性 | full=68, eval=68，数量相同 |
@@ -66,4 +66,4 @@
 
 ## 结论
 
-**34 项 PASS，2 项 WARN，全部检查通过（或仅警告）。**
+**1 项 FAIL，不合格。请修复后重新运行训练流程。**
