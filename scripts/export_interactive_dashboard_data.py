@@ -1928,12 +1928,29 @@ def main():
                 p.unlink()
     dash_dir.mkdir(parents=True, exist_ok=True)
 
-    # Load data (auto-detects latest round)
+    # Load data (auto-detects latest round, unless custom pkl is provided)
     print("\n[1] Loading prediction data...")
-    df, round_name, pred_col = load_predictions(output_root)
-    pred_path, _ = find_latest_prediction_file(output_root)
-    print(f"  Shape: {df.shape}, sites: {df['site_id'].nunique()}")
-    print(f"  Splits: {sorted(df['split'].unique().tolist())}")
+    if args.prediction_pkl:
+        print(f"  [CUSTOM] Loading: {args.prediction_pkl}")
+        df = pd.read_pickle(args.prediction_pkl)
+        df["time"] = pd.to_datetime(df["time"], errors="coerce")
+        if "hour" not in df.columns:
+            df["hour"] = df["time"].dt.hour
+        if "date" not in df.columns:
+            df["date"] = df["time"].dt.strftime("%Y-%m-%d")
+        if args.exclude_future:
+            before = len(df)
+            df = df[df["split"] != "future"].copy()
+            print(f"  Excluded future: {before} -> {len(df)} rows")
+        round_name = "custom"
+        pred_col = args.prediction_col or "power_pred_round64_safe"
+        print(f"  Shape: {df.shape}, sites: {df['site_id'].nunique()}")
+        print(f"  Splits: {sorted(df['split'].unique().tolist())}")
+    else:
+        df, round_name, pred_col = load_predictions(output_root)
+        pred_path, _ = find_latest_prediction_file(output_root)
+        print(f"  Shape: {df.shape}, sites: {df['site_id'].nunique()}")
+        print(f"  Splits: {sorted(df['split'].unique().tolist())}")
 
     # Load site master for names
     print("\n[2] Loading site master...")
@@ -1947,7 +1964,7 @@ def main():
 
     # Export all data files
     print("\n[3] Exporting index.json...")
-    export_index(df, site_names, dashboard_root, round_name, pred_col)
+    export_index(df, site_names, dashboard_root, round_name, pred_col, label=args.label)
 
     print("\n[4] Exporting city_series.json...")
     city = export_city_series(df, dashboard_root)
