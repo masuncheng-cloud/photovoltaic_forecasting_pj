@@ -1,6 +1,6 @@
 # 训练后逻辑审计报告
 
-**生成时间**: 2026-06-01 10:53:07
+**生成时间**: 2026-06-01 10:55:51
 **最终预测列**: power_pred_final
 **评估口径**: split=test, hour=6-19
 
@@ -8,9 +8,9 @@
 
 | 状态 | 数量 |
 |------|------|
-| PASS | 32 |
-| FAIL | 1 |
-| WARN | 3 |
+| PASS | 34 |
+| FAIL | 0 |
+| WARN | 2 |
 
 ## 逐项结果
 
@@ -27,7 +27,7 @@
 | 9 | ⚠ WARN | C9: 夜间/future 不参与评估 | pkl 中存在夜间和 future 记录（评估时会排除） |
 | 10 | ✓ PASS | C10: hourly_nrmse_consistent.csv 正确 | 14 小时数据, NRMSE范围: 3.94%~16.97% |
 | 11 | ✓ PASS | C11: dashboard 一致性校验 | 68 站, 全部 PASS |
-| 12 | ✓ PASS | C12: dashboard 数据新鲜 | dashboard 晚于 canonical pkl 0.02h |
+| 12 | ✓ PASS | C12: dashboard 数据新鲜 | dashboard 晚于 canonical pkl 0.07h |
 | 13 | ✓ PASS | C13: Git 不追踪 pkl | 0 个 |
 | 14 | ✓ PASS | C13: Git 不追踪 site_series JSON | 0 个 |
 | 15 | ✓ PASS | C14: 训练集样本量 | 421,771 行（2023-01-01~2025-06-30 白天） |
@@ -35,8 +35,8 @@
 | 17 | ✓ PASS | C16: manifest.pipeline_entry | scripts/run_full_pipeline.py |
 | 18 | ✓ PASS | C16: manifest.final_prediction_column | power_pred_final |
 | 19 | ✓ PASS | C16: manifest artifacts 全部存在 | 6 个文件 |
-| 20 | ✗ FAIL | C16: artifact hash 验证 | 有 4 个文件 hash 不一致（内容被篡改或未重新生成）: ['final_full_pkl: manifest=31add27c0c3f..., actual=1dfbd54db950...', 'final_eval_pkl: manifest=0132131f2b56..., actual=2c12ef4523cb...', 'hourly_nrmse_csv: manifest=ff06d6400224..., actual=e2ef1130f18d...', 'site_metrics_csv: manifest=a63b43322839..., actual=4fa0aee2d7a8...'] |
-| 21 | ⚠ WARN | C16: manifest 生成时间 | manifest 早于 pkl 1.28h（可能因 auto-sync 或并发写入）；内容一致性以 hash 为准 |
+| 20 | ✓ PASS | C16: artifact hash 验证 | 5/5 个文件 hash 一致，内容完整性 PASS |
+| 21 | ✓ PASS | C16: manifest 生成时间 | 晚于 canonical full pkl 0.06h |
 | 22 | ✓ PASS | GEO1: 经纬度覆盖 | S115 lat=34.5933, lon=119.2172 |
 | 23 | ✓ PASS | GEO1: 经纬度覆盖 | S116 lat=34.2983, lon=119.2318 |
 | 24 | ✓ PASS | GEO2: 坐标范围 | S115 (34.5933, 119.2172) 在连云港范围内 |
@@ -66,4 +66,4 @@
 
 ## 结论
 
-**1 项 FAIL，不合格。请修复后重新运行训练流程。**
+**34 项 PASS，2 项 WARN，全部检查通过（或仅警告）。**
