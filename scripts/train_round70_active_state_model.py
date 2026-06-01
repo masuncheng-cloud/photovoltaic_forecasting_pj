@@ -182,24 +182,31 @@ def main():
     train_df["pred_state_prob_weak"] = proba_train[:, 1]
     train_df["pred_state_prob_inactive"] = proba_train[:, 0]
 
-    # 样本权重
+    # 样本权重（向量化，避免 apply）
     w_cfg = cfg.get("sample_weight", {})
-    def compute_weight(row):
-        w = w_cfg.get("base", 1.0)
-        if row.get("hour", 12) in cfg.get("focus_hours", [10, 11, 12, 13, 14]):
-            w *= w_cfg.get("focus_10_14", 2.0)
-        if row.get("hour", 12) in [6, 7, 8, 17, 18, 19]:
-            w *= w_cfg.get("dawn_dusk", 1.3)
-        state = row.get("state_label", "active")
-        if state == "weak":
-            w *= w_cfg.get("weak_power", 1.4)
-        if state == "inactive":
-            w *= w_cfg.get("inactive", 0.5)
-        return float(np.clip(w, w_cfg.get("min_weight", 0.3), w_cfg.get("max_weight", 3.0)))
+    focus_hours_set = set(cfg.get("focus_hours", [10, 11, 12, 13, 14]))
+    dawn_dusk_set = {6, 7, 8, 17, 18, 19}
+    max_w = w_cfg.get("max_weight", 3.0)
+    min_w = w_cfg.get("min_weight", 0.3)
+    base_w = w_cfg.get("base", 1.0)
+    focus_w = w_cfg.get("focus_10_14", 2.0)
+    dawn_dusk_w = w_cfg.get("dawn_dusk", 1.3)
+    weak_w = w_cfg.get("weak_power", 1.4)
+    inactive_w = w_cfg.get("inactive", 0.5)
 
-    train_df["sample_weight"] = train_df.apply(compute_weight, axis=1)
-    valid_df["sample_weight"] = valid_df.apply(compute_weight, axis=1)
-    test_df["sample_weight"] = test_df.apply(compute_weight, axis=1)
+    def compute_weight_vec(df):
+        w = np.full(len(df), base_w, dtype=float)
+        hours = df["hour"].values
+        states = df["state_label"].values
+        w[pd.Series(hours).isin(focus_hours_set).values] *= focus_w
+        w[pd.Series(hours).isin(dawn_dusk_set).values] *= dawn_dusk_w
+        w[states == "weak"] *= weak_w
+        w[states == "inactive"] *= inactive_w
+        return np.clip(w, min_w, max_w)
+
+    train_df["sample_weight"] = compute_weight_vec(train_df)
+    valid_df["sample_weight"] = compute_weight_vec(valid_df)
+    test_df["sample_weight"] = compute_weight_vec(test_df)
 
     # 训练分状态专家
     EXPERT_FEATURES = [
@@ -232,9 +239,9 @@ def main():
         cap_va = va_s["capacity_mw"].values.astype(float)
 
         model = LGBMRegressor(
-            n_estimators=2500, max_depth=10, num_leaves=127,
-            learning_rate=0.02, reg_lambda=1.5, reg_alpha=0.3,
-            min_child_samples=15, subsample=0.85, colsample_bytree=0.85,
+            n_estimators=800, max_depth=8, num_leaves=63,
+            learning_rate=0.05, reg_lambda=1.5, reg_alpha=0.3,
+            min_child_samples=20, subsample=0.85, colsample_bytree=0.85,
             random_state=42, n_jobs=-1, verbose=-1,
         )
         model.fit(X_tr, y_tr, sample_weight=w_tr)
