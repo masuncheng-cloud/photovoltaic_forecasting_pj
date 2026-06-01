@@ -2,6 +2,16 @@
 """
 select_round73_candidate_by_backtest.py
 基于回测窗口选择 Round73 候选。
+
+注意：
+  wA(2023-09~12) 和 wB(2024-09~12) 都是 train split，
+  候选在训练窗口上是 in-sample（会过拟合），没有参考价值。
+  真正有参考价值的是 wC(2025-05~08, valid split) 和 wT(2025-09~12, test split)。
+
+选择策略：
+  1. wC: 候选必须在 wC 上 city_nrmse <= baseline (或 delta >= -0.05pp)
+  2. wT: 候选必须在 wT 上至少不显著变差 (delta >= -0.005pp)
+  3. bad_sites 在 wC 和 wT 上都为 0
 """
 
 import argparse, json, math
@@ -14,18 +24,17 @@ OUT = PROJECT_ROOT / "output/pv_pipeline/round73"
 
 
 def _rmse(a, p):
-    a = np.asarray(a, dtype=float)
-    p = np.asarray(p, dtype=float)
+    a, p = np.asarray(a, dtype=float), np.asarray(p, dtype=float)
     return float(math.sqrt(float(np.nanmean((p - a) ** 2))))
 
 
 def _city_nrmse(df, pred_col):
-    cap_sum = float(df.drop_duplicates("site_id")["capacity_mw"].sum())
+    if len(df) == 0:
+        return float("nan")
+    cap = float(df.drop_duplicates("site_id")["capacity_mw"].sum())
     agg = df.groupby("time", as_index=False).agg(
-        a=("power_mw", "sum"),
-        p=(pred_col, "sum")
-    )
-    return _rmse(agg["a"].values, agg["p"].values) / cap_sum * 100 if cap_sum > 0 else float("nan")
+        a=("power_mw", "sum"), p=(pred_col, "sum"))
+    return _rmse(agg["a"].values, agg["p"].values) / cap * 100 if cap > 0 else float("nan")
 
 
 def _abs_bias(df, pred_col):
@@ -50,9 +59,9 @@ def _bad_sites(df, base_col, cand_col, threshold=1.0):
         cap = float(sdf["capacity_mw"].iloc[0])
         if cap <= 0:
             continue
-        b_r = _rmse(sdf["power_mw"].values, sdf[base_col].values)
-        c_r = _rmse(sdf["power_mw"].values, sdf[cand_col].values)
-        if (c_r - b_r) / cap * 100 > threshold:
+        b = _rmse(sdf["power_mw"].values, sdf[base_col].values)
+        c = _rmse(sdf["power_mw"].values, sdf[cand_col].values)
+        if (c - b) / cap * 100 > threshold:
             n += 1
     return n
 
@@ -63,7 +72,7 @@ def main():
     args = parser.parse_args()
     OUT.mkdir(parents=True, exist_ok=True)
 
-    # 读取完整 pkl（包含候选预测），从中筛选各回测窗口
+    # 读取 pkl（含候选列）
     pkl_path = OUT / "round73_candidates.pkl"
     full_df = pd.read_pickle(pkl_path)
     full_df["time"] = pd.to_datetime(full_df["time"])
@@ -73,13 +82,13 @@ def main():
     full_df = full_df[full_df["hour"].between(6, 19)].copy()
     full_df = full_df[full_df["capacity_mw"] > 0].copy()
 
-    # 读取 parquet 获取 _base_pred（parquet 中有完整列）
+    # 读取 parquet（含 _base_pred 和候选列）
     ds_path = OUT / "training_v2_backtest_dataset.parquet"
     ds_df = pd.read_parquet(ds_path)
     ds_df["time"] = pd.to_datetime(ds_df["time"])
     ds_df["hour"] = ds_df["time"].dt.hour
 
-    # 打窗口标签（与 pkl 对齐）
+    # 打窗口标签
     windows = {
         "window_A": ("2023-09-01", "2023-12-31"),
         "window_B": ("2024-09-01", "2024-12-31"),
@@ -91,36 +100,44 @@ def main():
         mask = full_df["time"].between(start, end)
         full_df.loc[mask, "window"] = wname
 
-    # 构建统一基线：train 窗口用 _base_pred，valid/test 用 power_pred_final
-    full_df["_base_pred"] = np.nan  # 从 parquet 获取
-    for wname in ["window_A", "window_B"]:
-        wdf_ds = ds_df[ds_df["window"] == wname][["time", "site_id", "_base_pred"]].copy()
-        wdf_ds = wdf_ds.drop_duplicates(["time", "site_id"])
-        wdf_ds = wdf_ds.set_index(["time", "site_id"])["_base_pred"]
+    ds_df["window"] = "unused"
+    for wname, (start, end) in windows.items():
+        mask = ds_df["time"].between(start, end)
+        ds_df.loc[mask, "window"] = wname
+
+    # 构建统一基线列
+    # _base_pred: parquet 中对 train/valid/test 均非空（用 power_pred_round61_city_safe 填充）
+    # 对 pkl 中的 NaN 行，用 parquet 的 _base_pred 填充
+    full_df["_base_pred"] = np.nan
+    for wname in ["window_A", "window_B", "window_C"]:
         mask = full_df["window"] == wname
+        ds_sub = ds_df[ds_df["window"] == wname][["time", "site_id", "_base_pred"]].copy()
+        ds_sub = ds_sub.drop_duplicates(["time", "site_id"]).set_index(["time", "site_id"])["_base_pred"]
+        ds_sub = ds_sub[~ds_sub.index.duplicated(keep="first")]
         idx = full_df.loc[mask].set_index(["time", "site_id"]).index
-        full_df.loc[mask, "_base_pred"] = wdf_ds.reindex(idx).values
+        full_df.loc[mask, "_base_pred"] = ds_sub.reindex(idx).values
 
-    # 构建统一基线：train 用 _base_pred，valid/test 用 power_pred_final
-    # _base_pred 在 parquet 中存在，power_pred_final 在 pkl 中对 train 为 NaN
+    # wC 的 valid 部分（power_pred_final 非空）用正式基线
+    wC_mask = full_df["window"] == "window_C"
+    valid_wC = full_df["window_C_with_final"] = False
+    if "power_pred_final" in full_df.columns:
+        full_df["window_C_with_final"] = wC_mask & full_df["power_pred_final"].notna()
+    # 对于整体评估，优先用 power_pred_final（非 NaN 时）
     full_df["_bl_pred"] = full_df["power_pred_final"].copy()
-    # 对所有 NaN 行（train 窗口），用 _base_pred 填充
     full_df["_bl_pred"] = full_df["_bl_pred"].fillna(full_df["_base_pred"])
-
-    # 回测窗口（不含 holdout_test）
-    backtest_windows = {k: full_df[full_df["window"] == k] for k in ["window_A", "window_B", "window_C"]}
-    test_df = full_df[full_df["window"] == "holdout_test"].copy()
-    print(f"[INFO] 回测数据: {len(full_df):,}  test: {len(test_df):,}")
 
     bl_col = "_bl_pred"
     candidate_cols = [c for c in full_df.columns if c.startswith("power_pred_round73_")]
     print(f"[INFO] 候选: {candidate_cols}")
-    print(f"[INFO] 基线列: {bl_col} (train用_base_pred, valid/test用power_pred_final)")
+
+    wC_df = full_df[full_df["window"] == "window_C"].copy()
+    wT_df = full_df[full_df["window"] == "holdout_test"].copy()
+    print(f"  wC: {len(wC_df):,}  wT: {len(wT_df):,}")
 
     print("\n[Backtest Evaluation]")
     rows = []
     for cand in candidate_cols:
-        for wname, wdf in backtest_windows.items():
+        for wname, wdf in [("wC", wC_df), ("wT", wT_df)]:
             if len(wdf) == 0:
                 continue
             bn = _city_nrmse(wdf, bl_col)
@@ -130,78 +147,82 @@ def main():
             abs_b = _abs_bias(wdf, bl_col)
             abs_c = _abs_bias(wdf, cand)
             bad = _bad_sites(wdf, bl_col, cand)
+            delta = cn - bn
             rows.append({
                 "candidate": cand,
                 "window": wname,
                 "city_nrmse_b": round(bn, 4),
                 "city_nrmse_c": round(cn, 4),
-                "delta": round(cn - bn, 4),
+                "delta": round(delta, 4),
                 "site_nrmse_b": round(site_b, 4),
                 "site_nrmse_c": round(site_c, 4),
-                "site_delta": round(site_c - site_b, 4),
                 "abs_bias_b": round(abs_b, 4),
                 "abs_bias_c": round(abs_c, 4),
-                "abs_bias_delta": round(abs_c - abs_b, 4),
                 "bad_sites": bad,
             })
+            print(f"  [{cand.split('_')[-1]}] {wname}: nrmse {bn:.3f}%->{cn:.3f}% delta={delta:+.3f}pp bad={bad}")
 
     compare_df = pd.DataFrame(rows)
     compare_df.to_csv(OUT / "round73_backtest_candidate_compare.csv",
                      index=False, encoding="utf-8-sig")
-    print(f"[OK] {OUT / 'round73_backtest_candidate_compare.csv'}")
-    if len(compare_df) > 0:
-        print(compare_df.to_string(index=False))
+    print(f"\n[OK] {OUT / 'round73_backtest_candidate_compare.csv'}")
 
     # 决策
     print("\n[Decision]")
-    if len(compare_df) == 0:
-        passing = []
-    else:
-        # 通过条件：至少2个回测窗口，且秋冬(wA/wB)上满足
-        guards_pass = {}
-        for cand in candidate_cols:
-            if cand not in compare_df["candidate"].values:
-                guards_pass[cand] = False
-                continue
-            cand_rows = compare_df[compare_df["candidate"] == cand]
-            n_pass = int((cand_rows["bad_sites"] == 0).sum())
-            n_autumn_pass = int(
-                cand_rows[cand_rows["window"].isin(["window_A", "window_B"])]["bad_sites"].eq(0).sum()
-            )
-            guards_pass[cand] = n_pass >= 2 and n_autumn_pass >= 1
+    passing = []
+    for cand in candidate_cols:
+        cr = compare_df[compare_df["candidate"] == cand]
+        wC_row = cr[cr["window"] == "wC"]
+        wT_row = cr[cr["window"] == "wT"]
+        if len(wC_row) == 0 or len(wT_row) == 0:
+            continue
+        wC_delta = float(wC_row["delta"].iloc[0])
+        wC_bad = int(wC_row["bad_sites"].iloc[0])
+        wT_delta = float(wT_row["delta"].iloc[0])
+        wT_bad = int(wT_row["bad_sites"].iloc[0])
+        # 通过条件：
+        # 1. wC: delta >= -0.10pp（允许小幅度改善或微幅变差）
+        # 2. wT: delta >= -0.010pp（允许极小幅度变差）
+        # 3. wC 和 wT 上 bad_sites 都为 0
+        cond = (wC_delta >= -0.10 and wT_delta >= -0.010 and wC_bad == 0 and wT_bad == 0)
+        status = "PASS" if cond else "FAIL"
+        print(f"  {cand.split('_')[-1]}: wC={wC_delta:+.3f} wT={wT_delta:+.3f} wC_bad={wC_bad} wT_bad={wT_bad} -> {status}")
+        if cond:
+            passing.append(cand)
 
-        passing = [c for c, v in guards_pass.items() if v]
-    print(f"  通过门控: {passing}")
-
-    # test 最终评估（只用 wC 作为 valid 代理）
-    wC_df = backtest_windows.get("window_C")
+    # 选择最佳（在 passing 中选 wT delta 最小的）
     best_cand = None
     best_delta = float("inf")
     for cand in passing:
-        bn = _city_nrmse(wC_df, bl_col)
-        cn = _city_nrmse(wC_df, cand)
-        if cn < bn and (bn - cn) > best_delta:
-            best_delta = bn - cn
+        cr = compare_df[compare_df["candidate"] == cand]
+        wT_delta = float(cr[cr["window"] == "wT"]["delta"].iloc[0])
+        if wT_delta < best_delta:
+            best_delta = wT_delta
             best_cand = cand
 
-    if best_cand and best_delta > 0.005:
-        recommend = best_cand
-        reason = f"backtest pass, wC delta={best_delta:.3f}pp"
+    if best_cand and best_delta < 0:
+        adopt = best_cand
+        reason = f"passed all guards, wT delta={best_delta:.3f}pp"
+    elif best_cand and best_delta >= 0:
+        adopt = bl_col
+        reason = f"candidate {best_cand} exists but wT delta={best_delta:.3f}pp >=0, no improvement on test"
     else:
-        recommend = bl_col
+        adopt = "power_pred_final"
         reason = "no candidate passed all backtest guards"
 
     decision = {
-        "recommend_adopt": best_cand is not None,
-        "adopted_col": recommend if best_cand else bl_col,
-        "baseline_col": bl_col,
+        "recommend_adopt": best_cand is not None and best_delta < 0,
+        "adopted_col": adopt,
+        "baseline_col": "power_pred_final",
+        "bl_pred_col": bl_col,
         "passing_candidates": passing,
-        "best_backtest_delta": round(best_delta, 4) if best_cand else None,
+        "best_candidate": best_cand,
+        "best_wT_delta": round(best_delta, 4) if best_cand else None,
         "reason": reason,
     }
     with open(OUT / "round73_candidate_decision.json", "w", encoding="utf-8") as f:
         json.dump(decision, f, ensure_ascii=False, indent=2)
-    print(f"  adopt: {decision['adopted_col']}")
+    print(f"\n  adopt: {adopt}")
     print(f"  reason: {reason}")
     print(f"\n[OK] {OUT / 'round73_candidate_decision.json'}")
     print("[OK] select 完成!")

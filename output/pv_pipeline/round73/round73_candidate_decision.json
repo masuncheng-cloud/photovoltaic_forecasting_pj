@@ -1,12 +1,10 @@
 {
   "recommend_adopt": false,
-  "adopted_col": "_bl_pred",
-  "baseline_col": "_bl_pred",
-  "passing_candidates": [
-    "power_pred_round73_autumn_winter_residual",
-    "power_pred_round73_noon_bias_guard",
-    "power_pred_round73_high_error_shrinkage"
-  ],
-  "best_backtest_delta": null,
+  "adopted_col": "power_pred_final",
+  "baseline_col": "power_pred_final",
+  "bl_pred_col": "_bl_pred",
+  "passing_candidates": [],
+  "best_candidate": null,
+  "best_wT_delta": null,
   "reason": "no candidate passed all backtest guards"
 }
