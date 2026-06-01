@@ -55,8 +55,8 @@ def main():
     bl_col = "power_pred_final"
     bl_fallback = "power_pred_round61_city_safe"
 
-    # 统一基线
-    df["_bl_pred"] = df[bl_col].fillna(df.get(bl_fallback, df["power_pred"]))
+    # 统一基线（parquet 中已有 _base_pred）
+    df["_bl_pred"] = df["_base_pred"]
     df["y_true_norm"] = (df[target_col] / df[cap_col].clip(lower=1e-6)).clip(0, 1)
     df["y_base_norm"] = (df["_bl_pred"] / df[cap_col].clip(lower=1e-6)).clip(0, 1)
     df["residual_norm"] = df["y_true_norm"] - df["y_base_norm"]
@@ -195,12 +195,35 @@ def main():
         print(f"[C] 样本不足")
         summary_rows.append({"candidate": CAND_C, "trained": False})
 
-    # ── 保存摘要 ────────────────────────────────────────────────
+    # ── 保存摘要 & 写回 parquet ───────────────────────────────────
     pd.DataFrame(summary_rows).to_csv(
         OUT / "round73_candidate_training_summary.csv", index=False, encoding="utf-8-sig")
-    print(f"\n[OK] {OUT / 'round73_candidate_training_summary.csv'}")
+    print(f"\n[OK] 摘要: {OUT / 'round73_candidate_training_summary.csv'}")
 
-    # ── 保存 pkl ────────────────────────────────────────────────
+    ds_path = OUT / "training_v2_backtest_dataset.parquet"
+    full_ds = pd.read_parquet(ds_path)
+    for cand in trained:
+        if cand not in cand_results:
+            continue
+        for wname, wdf_result in cand_results[cand].items():
+            wname_map = {"wA": "window_A", "wB": "window_B",
+                         "wC": "window_C", "wT": "holdout_test"}
+            win_label = wname_map.get(wname, wname)
+            win_key = full_ds["window"] == win_label
+            if not win_key.any():
+                continue
+            update = wdf_result[["time", "site_id", cand]].copy()
+            update = update.drop_duplicates(["time", "site_id"])
+            update = update.set_index(["time", "site_id"])[cand]
+            update = update[~update.index.duplicated(keep="first")]
+            idx = full_ds.loc[win_key].set_index(["time", "site_id"]).index
+            if cand not in full_ds.columns:
+                full_ds[cand] = np.nan
+            full_ds.loc[win_key, cand] = update.reindex(idx).values
+    full_ds.to_parquet(ds_path, index=False)
+    print(f"[OK] 候选已写回: {ds_path}")
+
+    # ── 保存 pkl（valid/test 候选预测）───────────────────────────
     input_pkl = PROJECT_ROOT / "output/pv_pipeline/predictions/distributed_predictions_final_full.pkl"
     full_df = pd.read_pickle(input_pkl)
     full_df["time"] = pd.to_datetime(full_df["time"])
@@ -226,7 +249,7 @@ def main():
             full_df.loc[mask, cand] = update_map.reindex(idx).values
 
     full_df.to_pickle(OUT / "round73_candidates.pkl")
-    print(f"[OK] {OUT / 'round73_candidates.pkl'} ({len(full_df):,}行)")
+    print(f"[OK] 候选表: {OUT / 'round73_candidates.pkl'} ({len(full_df):,}行)")
     print(f"  候选: {trained}")
     print("\n[OK] train_round73 完成!")
 
