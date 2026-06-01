@@ -1,0 +1,45 @@
+{
+  "used_features": [
+    "hour",
+    "month",
+    "dayofyear",
+    "capacity_mw",
+    "pred_norm",
+    "g_blend_pred",
+    "clear_sky_ghi",
+    "clear_sky_index",
+    "scene_is_clear_peak",
+    "scene_is_mid",
+    "scene_is_low",
+    "scene_is_night",
+    "calibrated_ratio"
+  ],
+  "missing_features": [
+    "latitude",
+    "longitude"
+  ],
+  "scenes": {
+    "dawn": [
+      6,
+      7,
+      8
+    ],
+    "day": [
+      9,
+      10,
+      11,
+      12,
+      13,
+      14,
+      15,
+      16
+    ],
+    "dusk": [
+      17,
+      18,
+      19
+    ]
+  },
+  "target": "residual_norm (capacity_normalized)",
+  "base_prediction": "power_pred_final"
+}
