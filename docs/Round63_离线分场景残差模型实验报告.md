@@ -67,8 +67,8 @@ Round61 基线复核结果：**PASS**（21/21 检查通过）。
 | city_nrmse_10_14 | 6.2359% | 6.0225% | 5.9827% | lgb_residual |
 | bias_6_19 | 1.4232% | 0.3667% | -0.8697% | — |
 | bias_10_14 | 8.3998% | 6.7782% | 6.1353% | — |
-| RMSE (MW) | 0.9321% | 0.9617% | 0.8999% | — |
-| MAE (MW) | 0.4478% | 0.4627% | 0.4219% | — |
+| RMSE (MW) | 0.9321 | 0.9617 | 0.8999 | — |
+| MAE (MW) | 0.4478 | 0.4627 | 0.4219 | — |
 | 变差>+1pp 站点数 | 0 | 12 | 0 | Round61 最稳定 |
 
 ### 3.2 Delta vs Round61 (test 6-19h)
@@ -94,7 +94,7 @@ Round61 基线复核结果：**PASS**（21/21 检查通过）。
 
 ### Test 集观察（非正式结论）：
 - `lgb_residual` 在 city_nrmse 和 site_mean_nrmse 上有改善，但 valid 上有 2 站点退化，不满足安全门控
-- `ridge_residual` city_nrmse 有改善但 site_mean_nrmse 恶化了 +0.26pp，且 6 站点退化
+- `ridge_residual` city_nrmse 有改善但 site_mean_nrmse 恶化了 +0.26pp，且 12 站点退化
 
 ### 关键发现：
 1. **Valid 集门控正确拦截**：两个候选均因站点退化被正确拒绝
