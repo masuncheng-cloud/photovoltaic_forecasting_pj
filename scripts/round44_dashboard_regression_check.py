@@ -20,9 +20,10 @@ import json
 
 import pandas as pd
 
-ROOT = Path("output/pv_pipeline")
-DASH = ROOT / "interactive_dashboard"
-METRIC = ROOT / "metrics"
+ROOT = Path(__file__).resolve().parents[1]
+OUT = ROOT / "output" / "pv_pipeline"
+DASH = OUT / "interactive_dashboard"
+METRIC = OUT / "metrics"
 METRIC.mkdir(parents=True, exist_ok=True)
 
 
