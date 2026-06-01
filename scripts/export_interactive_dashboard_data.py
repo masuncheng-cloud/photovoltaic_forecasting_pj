@@ -2053,6 +2053,14 @@ def main():
 
     # Validation
     print("\n[11] Validating outputs...")
+    if len(city) == 0:
+        # Fallback: regenerate from df (handles cases where pv_forecasting patch altered module state)
+        print("  [WARN] city is empty, regenerating...")
+        import sys
+        sys.path.insert(0, str(Path(__file__).resolve().parent))
+        from scripts.export_interactive_dashboard_data import export_city_series as _ecs
+        city = _ecs(df, dashboard_root)
+        print(f"  [RETRY] city regenerated: {len(city):,} rows")
     assert len(city) > 0, "city_series is empty"
     assert len(metrics_df) > 0, "site_metrics is empty"
     assert len(scatter_data) > 0, "scatter is empty"
