@@ -1,7 +1,7 @@
 ﻿split,metric,baseline,candidate,delta_pp
-test,city_nrmse_6_19,4.1317,4.6247,0.493
+test,city_nrmse_6_19,4.1317,4.6248,0.493
 test,city_nrmse_10_14,5.9379,6.6954,0.7575
 test,site_mean_nrmse_6_19,10.5774,11.3354,0.758
 test,site_mean_nrmse_10_14,14.6461,15.8555,1.2094
-test,city_bias_6_19,0.5208,-9.0112,-9.5319
+test,city_bias_6_19,0.5208,-9.0118,-9.5326
 test,city_bias_10_14,5.5959,-5.4699,-11.0658
