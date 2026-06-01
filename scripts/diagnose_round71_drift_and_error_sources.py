@@ -123,12 +123,6 @@ def main():
         m = compute_metrics_for_df(g, bl_col, actual_col)
         cap = float(g["capacity_mw"].iloc[0])
         if cap > 0:
-            site_rmses = []
-            for _, sg in g.groupby("time"):
-                a = sg[actual_col].sum()
-                p = sg[bl_col].sum()
-                if len(a) > 0:
-                    site_rmses.append((float(a) - float(p)) ** 2)
             site_bias = float((g[actual_col] - g[bl_col]).mean())
             site_month_rows.append({
                 "month": month, "site_id": site_id,
