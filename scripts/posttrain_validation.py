@@ -56,6 +56,11 @@ class ValidationCheck:
         self.results.append(("PASS", name, msg))
         print(f"  [PASS] {name}" + (f" — {msg}" if msg else ""))
 
+    def note(self, name: str, msg: str = ""):
+        """PASS_WITH_NOTE: passes but with important context."""
+        self.results.append(("PASS", name, f"[NOTE] {msg}"))
+        print(f"  [PASS] {name} — [NOTE] {msg}")
+
     def warn(self, name: str, msg: str = ""):
         self.results.append(("WARN", name, msg))
         print(f"  [WARN] {name}" + (f" — {msg}" if msg else ""))
