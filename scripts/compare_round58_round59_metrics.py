@@ -69,7 +69,7 @@ def city_nrmse(df, pred_col):
         )
         # RMSE of aggregated errors
         err = agg["pred"].values - agg["actual"].values
-        r = rmse(err)
+        r = np.sqrt(np.mean(err ** 2))
         # capacity_sum is constant per timestamp (all sites have same cap), mean is total_cap
         cap_h = float(agg["cap_sum"].mean())
         if cap_h <= 0:
