@@ -1,0 +1,6 @@
+﻿check,max_diff,pass
+actual_mismatch,19.86,False
+pred_mismatch,17.207720767098145,False
+city_aggregation,10.904500000000002,False
+future_excluded,0.0,True
+metadata,0.0,True
