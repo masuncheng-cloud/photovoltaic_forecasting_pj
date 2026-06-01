@@ -1,0 +1,4 @@
+﻿pred_col,label,sm_nrmse_6_19,city_nrmse_6_19,city_nrmse_10_14,bias_6_19,bias_10_14,abs_bias_6_19,abs_bias_10_14,bad_site_count
+power_pred_final,Round61 baseline,16.0311,4.863,6.8864,-3.262,-0.266,3.262,0.266,0
+power_pred_ridge_residual,ridge_residual,16.6625,4.6204,6.6231,-3.0617,-1.1864,3.0617,1.1864,18
+power_pred_lgb_residual,lgb_residual,15.9992,4.7086,6.8767,-4.2225,-1.9889,4.2225,1.9889,2
