@@ -318,6 +318,12 @@ MODES = {
         "run_step14": False,
         "run_step15": False,
     },
+    "round73-training-framework-reset": {
+        "desc": "Round73 回退最优版本并重构训练框架",
+        "steps": [],
+        "run_step14": False,
+        "run_step15": False,
+    },
 }
 
 
