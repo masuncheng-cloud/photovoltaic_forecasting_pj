@@ -157,6 +157,7 @@ def main():
     print(f"  power_pred_final 在 train 为空: {summary['key_findings']['power_pred_final_missing_in_train']}")
     print(f"  全 split 一致可用列: {summary['key_findings']['train_valid_test_consistent_columns']}")
     print(f"  建议: {summary['key_findings']['recommendation']}")
+    print(f"  train/valid/test 全一致列: {consistent_cols}")
 
     print("\n[OK] audit 完成!")
 
