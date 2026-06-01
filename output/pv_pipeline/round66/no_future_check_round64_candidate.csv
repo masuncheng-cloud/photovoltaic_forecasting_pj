@@ -1,0 +1,2 @@
+﻿name,type,file,total_rows,future_rows,split_distribution,status,fail_on_future
+round64_candidate,pkl,output/pv_pipeline/round64/round64_candidates.pkl,175168,0,"{'test': 116144, 'valid': 59024}",PASS,True
