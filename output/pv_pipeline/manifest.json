@@ -53,5 +53,22 @@
     "all NRMSE values are in percent (%)",
     "final prediction column: power_pred_final (no fallback allowed)",
     "Round56 修正说明：S115/S116 scene_v151=all-night in full scope（含夜间）为正常；test 10-14 评估窗口以 GEO5 检查为准，链路正常。"
-  ]
+  ],
+  "source_round": "Round64",
+  "source_column": "power_pred_round64_safe",
+  "promoted_at": "2026-06-01T15:07:29.510965",
+  "exclude_future": true,
+  "full_sha256": "044eb723094251aa8bd6efabd3a79c174d950b423361b61b38bd63f6c7e75884",
+  "eval_sha256": "60614f81497c7119ba6fcc2620de7058220d95c4e6febe76b6b8a0fb29b6e826",
+  "full_rows": 898175,
+  "eval_rows": 175168,
+  "full_splits": {
+    "train": 723007,
+    "test": 116144,
+    "valid": 59024
+  },
+  "eval_splits": {
+    "test": 116144,
+    "valid": 59024
+  }
 }
