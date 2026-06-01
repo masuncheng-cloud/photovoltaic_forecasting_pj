@@ -161,7 +161,7 @@ def main():
     inv_df.to_csv(inv_path, index=False, encoding="utf-8-sig")
     print(f"[OK] Feature inventory: {inv_path} ({len(inv_df)} features)")
 
-    # Save parquet
+    # Save parquet (keep all columns including baseline for evaluation)
     df_out = df_model.copy()
     para_path = out_dir / "round67_training_table.parquet"
     df_out.to_parquet(para_path, index=False, compression="snappy")
