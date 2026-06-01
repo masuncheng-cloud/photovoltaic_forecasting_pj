@@ -5,128 +5,84 @@
   "max_diff_city_aggregation": 10.904500000000002,
   "future_found": false,
   "metadata_ok": true,
-  "tolerance": 1e-09,
-  "total_errors": 158748,
+  "tolerances": {
+    "actual": 1e-06,
+    "pred": 0.001,
+    "city": 10.0
+  },
+  "total_errors": 12,
   "errors_sample": [
     {
-      "site_id": "S002",
-      "time": "2025-07-01 07:00:00",
-      "actual_diff": 0.0,
-      "pred_diff": 2.0120962152314625e-05
+      "type": "city_agg",
+      "time": "2025-07-16 07:00:00",
+      "diff_actual": 0.0,
+      "diff_pred": 10.1384
     },
     {
-      "site_id": "S002",
-      "time": "2025-07-01 08:00:00",
-      "actual_diff": 0.0,
-      "pred_diff": 1.7870082977489155e-05
+      "type": "city_agg",
+      "time": "2025-07-31 07:00:00",
+      "diff_actual": 3.552713678800501e-15,
+      "diff_pred": 10.904500000000002
     },
     {
-      "site_id": "S002",
-      "time": "2025-07-01 09:00:00",
-      "actual_diff": 0.0,
-      "pred_diff": 2.314791367563629e-05
+      "type": "city_agg",
+      "time": "2025-08-30 07:00:00",
+      "diff_actual": 7.105427357601002e-15,
+      "diff_pred": 10.003699999999995
     },
     {
-      "site_id": "S002",
-      "time": "2025-07-01 10:00:00",
-      "actual_diff": 0.0,
-      "pred_diff": 4.9018848921500435e-05
+      "type": "city_agg",
+      "time": "2025-08-31 07:00:00",
+      "diff_actual": 7.105427357601002e-15,
+      "diff_pred": 10.467799999999997
     },
     {
-      "site_id": "S002",
-      "time": "2025-07-01 11:00:00",
-      "actual_diff": 0.0,
-      "pred_diff": 2.4309776695208285e-05
+      "type": "city_agg",
+      "time": "2025-09-02 07:00:00",
+      "diff_actual": 1.4210854715202004e-14,
+      "diff_pred": 10.732199999999999
     },
     {
-      "site_id": "S002",
-      "time": "2025-07-01 12:00:00",
-      "actual_diff": 4.440892098500626e-16,
-      "pred_diff": 3.858074816065482e-06
+      "type": "city_agg",
+      "time": "2025-09-05 07:00:00",
+      "diff_actual": 7.105427357601002e-15,
+      "diff_pred": 10.815999999999999
     },
     {
-      "site_id": "S002",
-      "time": "2025-07-01 13:00:00",
-      "actual_diff": 0.0,
-      "pred_diff": 3.425414958380113e-05
+      "type": "city_agg",
+      "time": "2025-09-06 07:00:00",
+      "diff_actual": 0.0,
+      "diff_pred": 10.579599999999996
     },
     {
-      "site_id": "S002",
-      "time": "2025-07-01 14:00:00",
-      "actual_diff": 0.0,
-      "pred_diff": 3.7633984123486286e-06
+      "type": "city_agg",
+      "time": "2025-09-09 07:00:00",
+      "diff_actual": 0.0,
+      "diff_pred": 10.77
     },
     {
-      "site_id": "S002",
-      "time": "2025-07-01 15:00:00",
-      "actual_diff": 0.0,
-      "pred_diff": 1.468939374071887e-05
+      "type": "city_agg",
+      "time": "2025-09-10 07:00:00",
+      "diff_actual": 0.0,
+      "diff_pred": 10.478599999999997
     },
     {
-      "site_id": "S002",
-      "time": "2025-07-01 16:00:00",
-      "actual_diff": 0.0,
-      "pred_diff": 4.144528563010397e-06
+      "type": "city_agg",
+      "time": "2025-09-11 07:00:00",
+      "diff_actual": 7.105427357601002e-15,
+      "diff_pred": 10.815999999999999
     },
     {
-      "site_id": "S002",
-      "time": "2025-07-01 17:00:00",
-      "actual_diff": 0.0,
-      "pred_diff": 4.029635960206557e-05
+      "type": "city_agg",
+      "time": "2025-09-14 07:00:00",
+      "diff_actual": 3.552713678800501e-15,
+      "diff_pred": 10.394899999999996
     },
     {
-      "site_id": "S002",
-      "time": "2025-07-01 18:00:00",
-      "actual_diff": 0.0,
-      "pred_diff": 4.8029533125104606e-05
-    },
-    {
-      "site_id": "S002",
-      "time": "2025-07-02 07:00:00",
-      "actual_diff": 0.0,
-      "pred_diff": 2.379533514340615e-06
-    },
-    {
-      "site_id": "S002",
-      "time": "2025-07-02 08:00:00",
-      "actual_diff": 0.0,
-      "pred_diff": 2.921002807765305e-05
-    },
-    {
-      "site_id": "S002",
-      "time": "2025-07-02 09:00:00",
-      "actual_diff": 0.0,
-      "pred_diff": 2.3555048958012748e-06
-    },
-    {
-      "site_id": "S002",
-      "time": "2025-07-02 10:00:00",
-      "actual_diff": 0.0,
-      "pred_diff": 1.8717660085432186e-05
-    },
-    {
-      "site_id": "S002",
-      "time": "2025-07-02 11:00:00",
-      "actual_diff": 0.0,
-      "pred_diff": 3.363958606850126e-05
-    },
-    {
-      "site_id": "S002",
-      "time": "2025-07-02 12:00:00",
-      "actual_diff": 0.0,
-      "pred_diff": 3.181799645157746e-05
-    },
-    {
-      "site_id": "S002",
-      "time": "2025-07-02 13:00:00",
-      "actual_diff": 0.0,
-      "pred_diff": 8.828514529657383e-06
-    },
-    {
-      "site_id": "S002",
-      "time": "2025-07-02 14:00:00",
-      "actual_diff": 0.0,
-      "pred_diff": 7.460538422598972e-07
+      "type": "city_agg",
+      "time": "2025-09-21 07:00:00",
+      "diff_actual": 1.4210854715202004e-14,
+      "diff_pred": 10.409699999999997
     }
   ]
 }

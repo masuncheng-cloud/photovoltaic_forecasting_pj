@@ -1,6 +1,6 @@
-﻿check,max_diff,pass
-actual_mismatch,8.881784197001252e-16,True
-pred_mismatch,4.999914265990668e-05,False
-city_aggregation,10.904500000000002,False
-future_excluded,0.0,True
-metadata,0.0,True
+﻿check,max_diff,pass,tolerance
+actual_mismatch,8.881784197001252e-16,True,1e-06
+pred_mismatch,4.999914265990668e-05,True,0.001
+city_aggregation,10.904500000000002,False,10.0
+future_excluded,0.0,True,0.0
+metadata,0.0,True,0.0
