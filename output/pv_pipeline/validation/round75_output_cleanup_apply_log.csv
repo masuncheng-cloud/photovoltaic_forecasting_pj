@@ -1,0 +1,32 @@
+﻿type,name,action,size_mb,note,applied_at
+dir,archive_before_round36,ARCHIVE,0.0,→ 20260601_232037/archive_before_round36,2026-06-01T23:20:45.897007
+dir,backups,KEEP,,whitelist,2026-06-01T23:20:45.897007
+dir,baselines,KEEP,,whitelist,2026-06-01T23:20:45.897007
+dir,cache,ARCHIVE,0.0,→ 20260601_232037/cache,2026-06-01T23:20:45.897007
+dir,calibration,ARCHIVE,104.8,→ 20260601_232037/calibration,2026-06-01T23:20:45.897007
+dir,diagnostics,ARCHIVE,0.1,→ 20260601_232037/diagnostics,2026-06-01T23:20:45.897007
+dir,docs,KEEP,,whitelist,2026-06-01T23:20:45.897007
+dir,figures,KEEP,,whitelist,2026-06-01T23:20:45.897007
+dir,figures_dashboard,KEEP,,whitelist,2026-06-01T23:20:45.897007
+dir,interactive_dashboard,KEEP,,whitelist,2026-06-01T23:20:45.897007
+dir,interactive_dashboard_round64_candidate,ARCHIVE,78.8,→ 20260601_232037/interactive_dashboard_round64_candidate,2026-06-01T23:20:45.897007
+dir,logs,KEEP,,whitelist,2026-06-01T23:20:45.897007
+dir,metrics,KEEP,,whitelist,2026-06-01T23:20:45.897007
+dir,models,ARCHIVE,126.5,→ 20260601_232037/models,2026-06-01T23:20:45.897007
+dir,predictions,KEEP,,whitelist,2026-06-01T23:20:45.897007
+dir,round63,ARCHIVE,65.8,→ 20260601_232037/round63,2026-06-01T23:20:45.897007
+dir,round64,ARCHIVE,64.5,→ 20260601_232037/round64,2026-06-01T23:20:45.897007
+dir,round66,ARCHIVE,0.0,→ 20260601_232037/round66,2026-06-01T23:20:45.897007
+dir,round67,ARCHIVE,21.4,→ 20260601_232037/round67,2026-06-01T23:20:45.897007
+dir,round68,ARCHIVE,0.0,→ 20260601_232037/round68,2026-06-01T23:20:45.897007
+dir,round69,ARCHIVE,112.9,→ 20260601_232037/round69,2026-06-01T23:20:45.897007
+dir,round73,ARCHIVE,0.0,→ 20260601_232037/round73,2026-06-01T23:20:45.897007
+dir,round74,ARCHIVE,0.0,→ 20260601_232037/round74,2026-06-01T23:20:45.897007
+dir,tables,KEEP,,whitelist,2026-06-01T23:20:45.897007
+dir,validation,KEEP,,whitelist,2026-06-01T23:20:45.897007
+file,analyze_and_annotate.py,ARCHIVE_SCRIPT,0.005,→ 20260601_232037/root_scripts/analyze_and_annotate.py,2026-06-01T23:20:45.897007
+file,analyze_predictions.py,ARCHIVE_SCRIPT,0.012,→ 20260601_232037/root_scripts/analyze_predictions.py,2026-06-01T23:20:45.897007
+file,manifest.json,KEEP,0.007,whitelist,2026-06-01T23:20:45.897007
+file,move_time.py,ARCHIVE_SCRIPT,0.001,→ 20260601_232037/root_scripts/move_time.py,2026-06-01T23:20:45.897007
+file,reorganize_back40.py,ARCHIVE_SCRIPT,0.001,→ 20260601_232037/root_scripts/reorganize_back40.py,2026-06-01T23:20:45.897007
+file,reorganize_cols.py,ARCHIVE_SCRIPT,0.002,→ 20260601_232037/root_scripts/reorganize_cols.py,2026-06-01T23:20:45.897007

@@ -1,32 +1,32 @@
 ﻿type,name,action,size_mb,note
-dir,archive_before_round36,ARCHIVE,0.0,→ 20260601_232021/archive_before_round36
+dir,archive_before_round36,ARCHIVE,0.0,→ 20260601_232037/archive_before_round36
 dir,backups,KEEP,,whitelist
 dir,baselines,KEEP,,whitelist
-dir,cache,ARCHIVE,0.0,→ 20260601_232021/cache
-dir,calibration,ARCHIVE,104.8,→ 20260601_232021/calibration
-dir,diagnostics,ARCHIVE,0.1,→ 20260601_232021/diagnostics
+dir,cache,ARCHIVE,0.0,→ 20260601_232037/cache
+dir,calibration,ARCHIVE,104.8,→ 20260601_232037/calibration
+dir,diagnostics,ARCHIVE,0.1,→ 20260601_232037/diagnostics
 dir,docs,KEEP,,whitelist
 dir,figures,KEEP,,whitelist
 dir,figures_dashboard,KEEP,,whitelist
 dir,interactive_dashboard,KEEP,,whitelist
-dir,interactive_dashboard_round64_candidate,ARCHIVE,78.8,→ 20260601_232021/interactive_dashboard_round64_candidate
+dir,interactive_dashboard_round64_candidate,ARCHIVE,78.8,→ 20260601_232037/interactive_dashboard_round64_candidate
 dir,logs,KEEP,,whitelist
 dir,metrics,KEEP,,whitelist
-dir,models,ARCHIVE,126.5,→ 20260601_232021/models
+dir,models,ARCHIVE,126.5,→ 20260601_232037/models
 dir,predictions,KEEP,,whitelist
-dir,round63,ARCHIVE,65.8,→ 20260601_232021/round63
-dir,round64,ARCHIVE,64.5,→ 20260601_232021/round64
-dir,round66,ARCHIVE,0.0,→ 20260601_232021/round66
-dir,round67,ARCHIVE,21.4,→ 20260601_232021/round67
-dir,round68,ARCHIVE,0.0,→ 20260601_232021/round68
-dir,round69,ARCHIVE,112.9,→ 20260601_232021/round69
-dir,round73,ARCHIVE,0.0,→ 20260601_232021/round73
-dir,round74,ARCHIVE,0.0,→ 20260601_232021/round74
+dir,round63,ARCHIVE,65.8,→ 20260601_232037/round63
+dir,round64,ARCHIVE,64.5,→ 20260601_232037/round64
+dir,round66,ARCHIVE,0.0,→ 20260601_232037/round66
+dir,round67,ARCHIVE,21.4,→ 20260601_232037/round67
+dir,round68,ARCHIVE,0.0,→ 20260601_232037/round68
+dir,round69,ARCHIVE,112.9,→ 20260601_232037/round69
+dir,round73,ARCHIVE,0.0,→ 20260601_232037/round73
+dir,round74,ARCHIVE,0.0,→ 20260601_232037/round74
 dir,tables,KEEP,,whitelist
 dir,validation,KEEP,,whitelist
-file,analyze_and_annotate.py,ARCHIVE_SCRIPT,0.005,→ 20260601_232021/root_scripts/analyze_and_annotate.py
-file,analyze_predictions.py,ARCHIVE_SCRIPT,0.012,→ 20260601_232021/root_scripts/analyze_predictions.py
+file,analyze_and_annotate.py,ARCHIVE_SCRIPT,0.005,→ 20260601_232037/root_scripts/analyze_and_annotate.py
+file,analyze_predictions.py,ARCHIVE_SCRIPT,0.012,→ 20260601_232037/root_scripts/analyze_predictions.py
 file,manifest.json,KEEP,0.007,whitelist
-file,move_time.py,ARCHIVE_SCRIPT,0.001,→ 20260601_232021/root_scripts/move_time.py
-file,reorganize_back40.py,ARCHIVE_SCRIPT,0.001,→ 20260601_232021/root_scripts/reorganize_back40.py
-file,reorganize_cols.py,ARCHIVE_SCRIPT,0.002,→ 20260601_232021/root_scripts/reorganize_cols.py
+file,move_time.py,ARCHIVE_SCRIPT,0.001,→ 20260601_232037/root_scripts/move_time.py
+file,reorganize_back40.py,ARCHIVE_SCRIPT,0.001,→ 20260601_232037/root_scripts/reorganize_back40.py
+file,reorganize_cols.py,ARCHIVE_SCRIPT,0.002,→ 20260601_232037/root_scripts/reorganize_cols.py
