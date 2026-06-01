@@ -267,8 +267,8 @@ def load_site_master(output_root):
     return None
 
 
-def export_index(df, site_names, dashboard_root, round_name="unknown", pred_col="power_pred"):
-    """Export index.json with overview metadata."""
+def export_index(df, site_names, dashboard_root, round_name="unknown", pred_col="power_pred", label=None):
+    """Export index.json with overview metadata. If label is provided, use it in description."""
     history_df = build_history_frame(df)
     dates = pd.to_datetime(history_df["date"]).dropna().unique()
     min_date = pd.to_datetime(dates).min().strftime("%Y-%m-%d")
@@ -297,9 +297,9 @@ def export_index(df, site_names, dashboard_root, round_name="unknown", pred_col=
 
     index_data = {
         "title": "光伏功率预测交互式结果展示",
-        "description": f"展示连云港光伏电站真实功率与预测功率对比（{round_name} 版本）",
+        "description": f"展示连云港光伏电站真实功率与预测功率对比（{label or round_name} 版本）",
         "data_source": (
-            f"output/pv_pipeline/tables/（{round_name}，预测列：{pred_col}）"
+            f"output/pv_pipeline/tables/（{label or round_name}，预测列：{pred_col}）"
         ),
         "prediction_column": pred_col,
         "round": round_name,
