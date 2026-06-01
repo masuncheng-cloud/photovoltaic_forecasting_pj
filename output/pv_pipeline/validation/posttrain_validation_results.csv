@@ -17,7 +17,7 @@
 15,PASS,C15: 站点数量合理,68 个站点
 16,PASS,C16: manifest.pipeline_entry,scripts/run_full_pipeline.py
 17,PASS,C16: manifest.final_prediction_column,power_pred_final
-18,FAIL,C16: manifest artifacts,缺失: ['dashboard_metadata: output/pv_pipeline/interactive_dashboard/metadata.json']
+18,PASS,C16: manifest artifacts 全部存在,6 个文件
 19,PASS,C16: artifact hash 验证,2 个文件 hash 一致，内容完整性 PASS
 20,PASS,C16: manifest 生成时间,晚于 canonical full pkl 0.06h
 21,PASS,GEO1: 经纬度覆盖,"S115 lat=34.5933, lon=119.2172"

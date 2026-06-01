@@ -1,6 +1,6 @@
 # 训练后逻辑审计报告
 
-**生成时间**: 2026-06-01 17:00:31
+**生成时间**: 2026-06-01 17:01:11
 **最终预测列**: power_pred_final
 **评估口径**: split=test, hour=6-19
 
@@ -8,8 +8,8 @@
 
 | 状态 | 数量 |
 |------|------|
-| PASS | 33 |
-| FAIL | 1 |
+| PASS | 34 |
+| FAIL | 0 |
 | WARN | 2 |
 
 ## 逐项结果
@@ -34,7 +34,7 @@
 | 16 | ✓ PASS | C15: 站点数量合理 | 68 个站点 |
 | 17 | ✓ PASS | C16: manifest.pipeline_entry | scripts/run_full_pipeline.py |
 | 18 | ✓ PASS | C16: manifest.final_prediction_column | power_pred_final |
-| 19 | ✗ FAIL | C16: manifest artifacts | 缺失: ['dashboard_metadata: output/pv_pipeline/interactive_dashboard/metadata.json'] |
+| 19 | ✓ PASS | C16: manifest artifacts 全部存在 | 6 个文件 |
 | 20 | ✓ PASS | C16: artifact hash 验证 | 2 个文件 hash 一致，内容完整性 PASS |
 | 21 | ✓ PASS | C16: manifest 生成时间 | 晚于 canonical full pkl 0.06h |
 | 22 | ✓ PASS | GEO1: 经纬度覆盖 | S115 lat=34.5933, lon=119.2172 |
@@ -66,4 +66,4 @@
 
 ## 结论
 
-**1 项 FAIL，不合格。请修复后重新运行训练流程。**
+**34 项 PASS，2 项 WARN，全部检查通过（或仅警告）。**
