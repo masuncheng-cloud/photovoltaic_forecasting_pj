@@ -329,8 +329,12 @@ def export_index(df, site_names, dashboard_root, round_name="unknown", pred_col=
     print(f"  [OK] index.json ({index_data['total_sites']} sites, {min_date}~{max_date})")
 
 
-def write_metadata(dashboard_root, round_name, pred_col, source_path):
-    """Write metadata.json for the dashboard page to display version info."""
+def write_metadata(dashboard_root, round_name, pred_col, source_path, label=None, official_final=True):
+    """Write metadata.json for the dashboard page to display version info.
+    
+    If label is provided, it overrides round_name in the metadata.
+    official_final=False marks the dashboard as a candidate (not the official version).
+    """
     history_dir = Path(dashboard_root) / "site_series"
     n_sites = len(list(history_dir.glob("*.json"))) if history_dir.exists() else 0
 
@@ -353,7 +357,7 @@ def write_metadata(dashboard_root, round_name, pred_col, source_path):
     worst = typical_df[typical_df["类型"] == "预测最差"]["site_id"].tolist()
 
     meta = {
-        "round": round_name,
+        "round": label or round_name,
         "prediction_column": pred_col,
         "actual_column": "power_mw",
         "source_file": str(source_path),
@@ -361,7 +365,10 @@ def write_metadata(dashboard_root, round_name, pred_col, source_path):
         "test_period": "2025-09-01~2025-12-31",
         "hours": "6-19",
         "exclude_future": True,
-        "data_root": "output/pv_pipeline/interactive_dashboard",
+        "data_root": str(dashboard_root),
+        "official_final": official_final,
+        "label": label or round_name,
+        "source_round": "Round64",
         "total_site_files": n_sites,
         "typical_best_site_ids": best,
         "typical_worst_site_ids": worst,
