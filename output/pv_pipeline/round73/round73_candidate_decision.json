@@ -1,7 +1,7 @@
 {
   "recommend_adopt": false,
-  "adopted_col": "power_pred_final",
-  "baseline_col": "power_pred_final",
+  "adopted_col": "_bl_pred",
+  "baseline_col": "_bl_pred",
   "passing_candidates": [
     "power_pred_round73_autumn_winter_residual",
     "power_pred_round73_noon_bias_guard",
