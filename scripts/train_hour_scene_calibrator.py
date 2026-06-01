@@ -138,7 +138,7 @@ def main():
         final_factor = weight * raw_factor + (1 - weight) * gf
 
         # Clip
-        clipped = float(np.clip(final_factor, FACTOR_MIN, FACTOR_MAX))
+        clipped = min(max(float(final_factor), FACTOR_MIN), FACTOR_MAX)
 
         rows.append({
             "hour": int(hour),
@@ -163,14 +163,14 @@ def main():
     cap_total = float(df_valid.groupby("site_id")["capacity_mw"].first().sum())
 
     # Apply calibrator
-    cal_map = {
-        (int(r["hour"]), str(r["scene_v151"]): r["factor_clipped"]
-        for _, r in calibrator.iterrows()
-    }
+    cal_map = {}
+    for _, r in calibrator.iterrows():
+        k = (int(r["hour"]), str(r["scene_v151"]))
+        cal_map[k] = r["factor_clipped"]
 
-    df_valid["hs_factor"] = df_valid.apply(
-        lambda r: cal_map.get((int(r["hour"]), str(r[scene_col])), 1.0), axis=1
-    )
+    def _get_factor(row):
+        return cal_map.get((int(row["hour"]), str(row[scene_col])), 1.0)
+    df_valid["hs_factor"] = df_valid.apply(_get_factor, axis=1)
     df_valid["pred_hs"] = df_valid[pred_col] * df_valid["hs_factor"]
     df_valid["pred_hs"] = df_valid["pred_hs"].clip(lower=0)
 
