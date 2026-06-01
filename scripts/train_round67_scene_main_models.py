@@ -110,13 +110,9 @@ def main():
 
         print(f"\n[INFO] Block '{block}': train={len(block_train)}, valid={len(block_valid)}")
 
-        # Fill NaN/NaT before conversion
-        X_train_raw = block_train[feat_cols].values.copy()
-        X_train_raw = np.where(np.isnat(X_train_raw), 0, X_train_raw)
-        X_train = np.nan_to_num(X_train_raw.astype(float), nan=0.0)
-        X_valid_raw = block_valid[feat_cols].values.copy()
-        X_valid_raw = np.where(np.isnat(X_valid_raw), 0, X_valid_raw)
-        X_valid = np.nan_to_num(X_valid_raw.astype(float), nan=0.0)
+        # Convert features to numeric using pandas (handles NaT gracefully)
+        X_train = pd.DataFrame(block_train[feat_cols]).apply(pd.to_numeric, errors="coerce").fillna(0).values.astype(float)
+        X_valid = pd.DataFrame(block_valid[feat_cols]).apply(pd.to_numeric, errors="coerce").fillna(0).values.astype(float)
 
         y_train = np.asarray(block_train["y_norm"].values, dtype=float)
         w_train = np.asarray(block_train["sample_weight"].values, dtype=float)
