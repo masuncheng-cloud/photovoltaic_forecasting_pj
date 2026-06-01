@@ -58,7 +58,8 @@ def nrmse_fn(a, p, den):
     if den <= 0:
         return np.nan
     a, p = np.asarray(a, dtype=float), np.asarray(p, dtype=float)
-    return float(np.sqrt(np.mean((p - a) ** 2))) / den * 100
+    r = float(np.sqrt(np.mean((p - a) ** 2)))
+    return r / den * 100
 
 
 def main():
@@ -84,7 +85,7 @@ def main():
 
     # Compute group factors first
     site_caps = df.groupby("site_id")["capacity_mw"].first()
-    df["cap_bucket"] = df["site_id"].map(lambda sid: capacity_bucket(float(site_caps.get(sid, 5.0))))
+    df["cap_bucket"] = df["site_id"].apply(lambda sid: capacity_bucket(float(site_caps.get(sid, 5.0))))
     group_stats = {}
     for bucket in ["small", "medium", "large"]:
         bdf = df[df["cap_bucket"] == bucket]
@@ -93,7 +94,8 @@ def main():
             continue
         a_sum = float(bdf["power_mw"].sum())
         p_sum = float(bdf[pred_col].sum())
-        group_stats[bucket] = a_sum / max(p_sum, 1e-9)
+        _gf = a_sum / max(p_sum, 1e-9)
+        group_stats[bucket] = _gf
     print(f"[INFO] Group factors: {group_stats}")
 
     # Per-site computation
@@ -169,15 +171,17 @@ def main():
         hs_cal = pd.read_csv(hs_path)
         hs_map = {}
         for _, r in hs_cal.iterrows():
-            k = (int(r["hour"]), str(r["scene_v151"]))
-            hs_map[k] = float(r["factor_clipped"])
+            _h = int(r["hour"])
+            _s = str(r["scene_v151"])
+            hs_map[(_h, _s)] = float(r["factor_clipped"])
     else:
         hs_map = {}
 
     scene_col = "scene_v151"
 
     def get_hs_factor(row):
-        return hs_map.get((int(row["hour"]), str(row[scene_col])), 1.0)
+        _k = (int(row["hour"]), str(row[scene_col]))
+        return hs_map.get(_k, 1.0)
 
     # Apply calibrators
     df_valid["site_factor"] = df_valid["site_id"].map(site_factor_map).fillna(1.0)
