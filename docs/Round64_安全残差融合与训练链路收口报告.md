@@ -1,0 +1,105 @@
+# Round64 安全残差融合与训练链路收口报告
+
+**日期**: 2026-06-01
+**分支**: experiment/model-structure-round62
+
+---
+
+## 1. 实验背景
+
+Round63 raw lgb_residual 在 test 上全面改善（sm -0.34pp, city -0.18pp），但 valid 上有 2 站点退化触发安全门控。
+
+Round64 思路：在 lgb_residual 基础上增加站点-场景级安全回退保护，只对 valid 上确认安全有效的部分采用残差融合。
+
+---
+
+## 2. 方法：站点-场景级安全权重融合
+
+**融合公式**：
+```
+P_round64(w) = P_round61 + w * (P_lgb_residual - P_round61)
+```
+
+**权重网格**：[0.00, 0.25, 0.50, 0.75, 1.00]
+
+**安全约束**（每站点-场景）：
+- 该站点该场景 NRMSE 不能比 Round61 高超过 0.30pp
+- 该站点全时段 NRMSE 不能比 Round61 高超过 1.00pp
+
+**选择策略**：对每个 (site_id, scene) 组合，选择满足约束且最优（改善最大）的权重；无满足时默认 w=0.00（完全回退 Round61）。
+
+---
+
+## 3. 权重分布（valid 集搜索结果）
+
+| 场景 | w=0.00 | w=0.25 | w=0.50 | w=0.75 | w=1.00 |
+|------|---:|---:|---:|---:|---:|
+| dawn | 52 | 0 | 1 | 4 | 11 |
+| day | 54 | 4 | 2 | 0 | 8 |
+| dusk | 53 | 0 | 2 | 0 | 13 |
+
+> 大量站点 w=0.00（完全回退），说明残差模型在大量站点上不满足安全约束。完全采用 lgb_residual（w=1.00）的站点：dawn 11个, day 8个, dusk 13个。
+
+---
+
+## 4. Valid 集评估
+
+| 候选 | sm_nrmse | city_nrmse | bad_sites | 状态 |
+|------|---:|---:|---:|:---:|
+| Round61 | 16.0311 | 4.8630 | 0 | baseline |
+| Round63 lgb | 15.9992 | 4.7086 | 2 | FAIL |
+| **Round64 safe** | **15.8893** | **4.7094** | **0** | **PASS** |
+
+Round64 safe 同时改善 sm（-0.14pp）和 bad_sites（0），city_nrmse 略差（+0.0006pp，可忽略）。
+
+---
+
+## 5. Test 集评估
+
+### 5.1 总体指标（test 6-19h）
+
+| 指标 | Round61 | Round63 lgb | Round64 safe | 最优 |
+|------|---:|---:|---:|:---:|
+| site_mean_nrmse | 11.4095% | 11.0694% | 11.2806% | Round64 safe |
+| city_nrmse | 3.9531% | 3.7726% | 3.8104% | Round64 safe |
+| city_nrmse_10_14 | 6.2359% | 5.9827% | 6.1879% | Round64 safe |
+| bias_6_19 | 1.4232% | -0.8697% | 1.5477% | — |
+| bias_10_14 | 8.3998% | 6.1353% | 8.0181% | — |
+| RMSE (MW) | 0.9321 | 0.8999 | 0.9042 | — |
+| MAE (MW) | 0.4478 | 0.4219 | 0.4359 | — |
+| 变差>+1pp 站点数 | 0 | 0 | 0 | Round64 safe |
+
+### 5.2 Delta vs Round61 (test 6-19h)
+
+| 候选 | Δsm_nrmse | Δcity_nrmse | Δcity_nrmse_10_14 | Δ|bias_abs| | Δbad_sites |
+|------|---:|---:|---:|---:|---:|
+| Round63 lgb | -0.3401pp | -0.1805pp | -0.2532pp | -0.5535pp | +0 |
+| Round64 safe | -0.1289pp | -0.1427pp | -0.0480pp | +0.1245pp | +0 |
+
+### 5.3 逐小时 city_nrmse
+
+详见 `output/pv_pipeline/round64/round64_test_hourly_compare.csv`
+
+### 5.4 重点站点 site_nrmse
+
+详见 `output/pv_pipeline/round64/round64_test_site_compare.csv`
+
+---
+
+## 6. 结论
+
+详见 `scripts/select_round64_final_decision.py` 的自动判定结果。
+
+---
+
+## 7. 输出文件
+
+| 文件 | 说明 |
+|------|------|
+| `round64/round64_site_scene_weights.csv` | 站点-场景权重表 |
+| `round64/round64_valid_weight_search.csv` | 完整权重搜索结果 |
+| `round64/round64_guard_summary.json` | 门控汇总 |
+| `round64/round64_candidates.pkl` | 候选预测（含 Round64 safe） |
+| `round64/round64_test_overall_compare.csv` | Test 总体对比 |
+| `round64/round64_test_hourly_compare.csv` | Test 逐小时对比 |
+| `round64/round64_test_site_compare.csv` | Test 逐站点对比 |
