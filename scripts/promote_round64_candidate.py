@@ -121,9 +121,9 @@ def promote(apply: bool, exclude_future: bool):
     # from round64 candidates
 
     if df_full_old is not None:
-        # Remove old valid/test rows that will be replaced
-        df_full_new = df_full_old[df_full_old["split"].isin(["train", "future", "unknown"])].copy()
-        # Append round64 valid+test
+        # Keep only train from old full — discard future/valid/test (will be replaced)
+        df_full_new = df_full_old[df_full_old["split"].isin(["train", "unknown"])].copy()
+        # Append round64 valid+test (which already have power_pred_round64_safe)
         df_full_new = pd.concat([df_full_new, df_cands[df_cands["split"].isin(["valid", "test"])]], ignore_index=True)
     else:
         # No old full — use round64 candidates as-is (shouldn't happen normally)
