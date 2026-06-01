@@ -220,9 +220,9 @@ def main():
         "pred_lgb_norm", "pred_hgb_norm", "pred_ridge_norm",
     ]
 
-    # Add scene one-hot columns (prefixed only, not originals)
+    # Add scene one-hot columns (but NOT the raw categorical originals)
     for c in df.columns:
-        if c.startswith("scene_v151_") or c.startswith("scene_"):
+        if (c.startswith("scene_v151_") or c.startswith("scene_")) and c not in feature_cols:
             feature_cols.append(c)
 
     # Remove dups while preserving order
@@ -244,13 +244,16 @@ def main():
     base_cols = ["site_id", "time", "split", "hour", "time_block", "site_group",
                  "y_norm", "power_mw", "capacity_mw", "power_pred_final",
                  "baseline_norm", "residual_norm"]
-    out_cols = base_cols + [c for c in feature_cols if c not in base_cols]
-    out_cols = [c for c in out_cols if c in df.columns]
-    # Remove any remaining dups
-    seen2 = set()
-    out_cols = [c for c in out_cols if not (c in seen2 or seen2.add(c))]
+    # Build output cols: base + feat (feat deduped against base too)
+    out_cols = base_cols[:]
+    seen_out = set(base_cols)
+    for c in feature_cols:
+        if c not in seen_out:
+            out_cols.append(c)
+            seen_out.add(c)
 
     df_out = df[out_cols].copy()
+    print(f"[INFO] Output columns ({len(out_cols)}): {out_cols[:10]}...")
 
     # Save training table
     out_path = ROUND69 / "round69_training_table.parquet"
