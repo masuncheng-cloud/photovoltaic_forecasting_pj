@@ -40,7 +40,7 @@ BLOCK_HOURS = {
 # Round67 original 13 features (for block model)
 FEAT_13 = ["month", "dayofyear", "pr_median", "bias", "zero_ratio",
            "clear_sky_ghi", "clear_sky_index", "g_blend_pred",
-           "latitude", "longitude", "quality_score", "scene_v151", "scene"]
+           "latitude", "longitude", "quality_score", "scene_v151"]
 
 # Extended features (for noon model)
 FEAT_EXT = ["month", "dayofyear", "latitude", "longitude",
