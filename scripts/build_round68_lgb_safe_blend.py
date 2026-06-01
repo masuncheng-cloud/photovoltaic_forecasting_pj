@@ -86,43 +86,35 @@ def main():
 
     print(f"\n[INFO] Valid: {len(valid_df)} rows | Test: {len(test_df)} rows")
 
-    # ── Per (site_id, time_block) weight selection ──────────────────────
+    # ── Per (site_id, time_block) weight selection on valid ───────────────
     print("\n[INFO] Per (site, block) weight selection on valid...")
 
-    # Build blend predictions using (site_id, time_block) groups directly
-    blend_pred_col = valid_df[baseline_col].copy()  # default: use baseline
-    site_block_details = []
-
-    # Reset index to ensure 0..N-1 positional indexing
+    # Reset index
     valid_df = valid_df.reset_index(drop=True)
+
+    weight_lookup = {}   # (site_id, time_block) -> best_weight
+    site_block_details = []
 
     for (sid, blk), grp in valid_df.groupby(["site_id", "time_block"]):
         idx = grp.index.tolist()
-        delta_vals = diff.loc[grp.index].values
-        actual_arr = grp["power_mw"].values.astype(float)
+        delta_arr = (grp[cand_col] - grp[baseline_col]).values.astype(float)
         base_arr = grp[baseline_col].values.astype(float)
+        actual_arr = grp["power_mw"].values.astype(float)
         cap = float(grp["capacity_mw"].iloc[0])
         if cap <= 0:
             continue
 
-        best_w = 0.0
-        best_r = float("inf")
+        best_w, best_r = 0.0, float("inf")
         for w in weights:
-            blended = base_arr + w * delta_vals
+            blended = base_arr + w * delta_arr
             score = rmse(actual_arr, blended) / cap * 100
             if score < best_r:
-                best_r = score
-                best_w = w
+                best_r, best_w = score, w
 
-        for i in idx:
-            blend_pred_col.iloc[i] = float(base_arr[0]) + best_w * (float(cand_val := diff.loc[grp.index[0]]) if len(grp) > 0 else 0.0)
-        # Simpler: update blend_pred for these indices
-        blended_best = base_arr + best_w * delta_vals
-
+        weight_lookup[(str(sid), blk)] = best_w
         base_r = rmse(actual_arr, base_arr) / cap * 100
         site_block_details.append({
-            "site_id": str(sid),
-            "time_block": blk,
+            "site_id": str(sid), "time_block": blk,
             "best_weight": best_w,
             "base_nrmse": round(base_r, 4),
             "blend_nrmse": round(best_r, 4),
@@ -130,9 +122,14 @@ def main():
             "n_samples": len(grp),
         })
 
-    # Apply blend: P_blend = baseline + weight * (lgb - baseline)
-    blended_vals = (valid_df[baseline_col] + blend_pred_col * (valid_df[cand_col] - valid_df[baseline_col])).values
-    valid_df["pred_blend"] = blended_vals
+    # Apply blend weights to valid_df
+    valid_df["blend_weight"] = valid_df.apply(
+        lambda r: weight_lookup.get((str(r["site_id"]), r["time_block"]), 0.0), axis=1
+    )
+    valid_df["pred_blend"] = (
+        valid_df[baseline_col] +
+        valid_df["blend_weight"] * (valid_df[cand_col] - valid_df[baseline_col])
+    )
 
     valid_df["blend_weight"] = blend_pred
     valid_df["pred_blend"] = (
