@@ -178,8 +178,6 @@ def main():
         r_blend = rmse(sdf["power_mw"].values, sdf["pred_blend"].values) / cap * 100
         if r_blend - r_base > 1.0:
             bad_blend += 1
-        if r_base - r_base > 1.0:
-            bad_base += 1
 
     print(f"\n[Valid Metrics]")
     print(f"  round64_final: sm={sm_base_v:.4f}%, city={city_base_v:.4f}%, abs_bias={abs(bias_pct(valid_df['power_mw'].values, valid_df[baseline_col].values)):.4f}%")
@@ -243,14 +241,15 @@ def main():
     print(f"\n[OK] Weights: {ROUND68 / 'round68_lgb_safe_blend_weights.csv'}")
 
     # Valid compare
+    bias_base_v = bias_pct(valid_df["power_mw"].values, valid_df[baseline_col].values)
     compare_valid = pd.DataFrame([{
         "candidate": "round64_final",
         "split": "valid",
         "sm_nrmse_pct": round(sm_base_v, 4),
         "city_nrmse_pct": round(city_base_v, 4),
-        "bias_pct": round(bias_pct(valid_df["power_mw"].values, valid_df[baseline_col].values), 4),
-        "abs_bias_pct": round(abs(bias_pct(valid_df["power_mw"].values, valid_df[baseline_col].values)), 4),
-        "bad_1pp": bad_base,
+        "bias_pct": round(bias_base_v, 4),
+        "abs_bias_pct": round(abs(bias_base_v), 4),
+        "bad_1pp": 0,
     }, {
         "candidate": "lgb_safe_blend",
         "split": "valid",
