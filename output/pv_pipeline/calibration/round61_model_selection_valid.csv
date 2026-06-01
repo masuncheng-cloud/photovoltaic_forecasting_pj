@@ -1,0 +1,4 @@
+﻿pred_col,sm_nrmse_6_19,c_nrmse_6_19,sm_nrmse_10_14,c_nrmse_10_14,bias_6_19,abs_bias_6_19,bias_10_14,abs_bias_10_14,label,score,final_adopted
+power_pred_final,16.0324,4.8669,21.6008,6.8872,-3.3146,3.3146,-0.2705,0.2705,Round60 baseline,8.032165,False
+power_pred_round61_city,16.0315,4.8629,21.6005,6.8863,-3.2599,3.2599,-0.2658,0.2658,Round61 city,8.029765,False
+power_pred_round61_city_safe,16.0311,4.863,21.6005,6.8864,-3.262,3.262,-0.266,0.266,Round61 city_safe,8.02973,True
