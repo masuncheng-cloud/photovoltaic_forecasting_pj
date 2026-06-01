@@ -315,10 +315,13 @@ def main():
             f"sites={r['bad_site_count']:>2} "
             f"score={score:.4f}"
         )
+        cn14_delta = (r['city_nrmse_10_14'] - bl['city_nrmse_10_14']
+                      if not (np.isnan(r['city_nrmse_10_14']) or np.isnan(bl['city_nrmse_10_14']))
+                      else 0.0)
         print(
             f"  deltas: sm={r['sm_nrmse_6_19']-bl['sm_nrmse_6_19']:+.4f} "
             f"cn={r['city_nrmse_6_19']-bl['city_nrmse_6_19']:+.4f} "
-            f"cn14={r['city_nrmse_10_14']-bl['city_nrmse_10_14'] if not (np.isnan(r['city_nrmse_10_14']) or np.isnan(bl['city_nrmse_10_14'])) else 0:+.4f} "
+            f"cn14={cn14_delta:+.4f} "
             f"bad={r['bad_site_count']}"
         )
 
@@ -348,7 +351,7 @@ def main():
         "selected_candidate": final_cand,
         "adopted": adopted,
         "valid_metrics": selected_row if selected_row else {},
-        "baseline_metrics": bl.to_dict() if isinstance(bl, pd.Series) else dict(bl),
+        "baseline_metrics": dict(bl),
         "all_candidates": results,
     }
     with open(OUT / "round63_selected_candidate.json", "w", encoding="utf-8") as f:
