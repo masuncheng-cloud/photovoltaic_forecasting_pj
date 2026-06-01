@@ -18,7 +18,7 @@
 | ✅ | 重新导出正式可视化 | 68 站点全部导出 |
 | ✅ | 正式可视化一致性校验 | 5/5 PASS |
 | ✅ | 后置验证 posttrain_validation | 31 PASS / 3 FAIL / 2 WARN |
-| ⚠️ | SHA256 manifest 更新 | 未执行（不影响功能） |
+| ⚠️ | SHA256 manifest 更新 | 基础字段已更新，SHA256 完整性字段待本轮 Round67 重算 |
 
 ---
 
@@ -116,10 +116,10 @@ round64_candidates.pkl: total=175168, future=0, splits={'test': 116144, 'valid':
 | FAIL | 3 |
 | WARN | 2 |
 
-**3 个 FAIL 分析**（均非阻塞性）：
-- **C2**：`eval pkl` 只有 valid+test（不含 train 段），与旧 pipeline split 分布不同 —— 升级策略正常行为。
-- **C13**：site_series JSON 不进 Git —— 符合本项目 .gitignore 规则。
-- **C16**：manifest SHA256 hash 未更新 —— 因 manifest hash 在正式升级后需要重算，不影响实际功能。
+**3 个 FAIL 分析**：
+- **C2（需修复）**：eval pkl 包含 valid+test，不仅仅是 test，与旧 pipeline 口径不同 —— 本轮将改为 PASS_WITH_NOTE。
+- **C13（需修复）**：site_series JSON 不进 Git —— 将修正 .gitignore 或改为 PASS_WITH_NOTE。
+- **C16（需修复）**：manifest SHA256 hash 未更新 —— 本轮 Round67 将执行 manifest hash 重算脚本，修复此 FAIL。
 
 **2 个 WARN**（均为低置信度地理坐标警告）：
 - **GEO4**：S116 地理坐标 confidence=low —— 已有运维台账标注，待甲方确认。
