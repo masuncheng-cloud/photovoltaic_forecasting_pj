@@ -131,14 +131,9 @@ def main():
             if col == prefix or col.startswith(prefix):
                 exclude_cols.add(col)
 
-    # 只识别 Round70 候选列
+    # 只识别 Round70/71 候选列
     candidate_cols = [c for c in df.columns
-                     if c.startswith("power_pred_round70_")]
-    # 也加入已生成的 Round70 状态专家回归候选
-    for c in df.columns:
-        if "round70" in c.lower() and c.startswith("power_pred_"):
-            if c not in candidate_cols:
-                candidate_cols.append(c)
+                     if c.startswith("power_pred_round7") and not c.startswith("power_pred_round70_safe")]
     candidate_cols = sorted(set(candidate_cols))
 
     print(f"\n[INFO] 发现候选列: {candidate_cols}")
