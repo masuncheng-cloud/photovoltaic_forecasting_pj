@@ -654,6 +654,33 @@ def main():
     if not check_upstream_dependencies(mode, cwd):
         sys.exit(1)
 
+    # Special handling for round64-experiment: runs outside the normal pipeline steps
+    if mode == "round64-experiment":
+        print()
+        print("=" * 60)
+        print("Round64 实验模式（独立脚本调用）")
+        print("=" * 60)
+        round64_scripts = [
+            ("基线复核", "scripts/verify_round61_baseline.py"),
+            ("安全残差融合构建", "scripts/build_round64_safe_residual_blend.py"),
+            ("Test 集评估", "scripts/evaluate_round64_safe_blend.py"),
+            ("最终决策", "scripts/select_round64_final_decision.py"),
+        ]
+        for label, script in round64_scripts:
+            print(f"\n>>> [{label}] {script}")
+            ret = subprocess.run(
+                [python, str(cwd / script)],
+                cwd=str(cwd),
+            )
+            if ret.returncode != 0:
+                print(f"\n[FAIL] {label} 失败，退出")
+                sys.exit(1)
+        print()
+        print("=" * 60)
+        print("Round64 实验完成！")
+        print("=" * 60)
+        sys.exit(0)
+
     try:
         cfg = load_config(args.config)
     except Exception as e:
