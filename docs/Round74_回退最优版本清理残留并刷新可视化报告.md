@@ -40,6 +40,8 @@
 | archive/failed_experiments/ 中 Round70-72 副本 | 3 |
 | **合计** | **12** |
 
+> 额外手动清理了 `archive/failed_experiments/` 根目录中的残留文件（6个）
+
 ### 3.2 异常文件清理
 
 | 类型 | 数量 | 状态 |
