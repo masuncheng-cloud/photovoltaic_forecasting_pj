@@ -263,7 +263,9 @@ def main():
                 "允许训练": recent_closer,
             }
             print(f"  条件B(近期样本): {'成立 ✓' if conditions['B_recency']['成立'] else '不成立 ✗'}")
-            print(f"    早期正样本率: {early_pr:.3f}  近期: {recent_pr:.3f}  valid: {valid_pr:.3f if not np.isnan(valid_pr) else 0:.3f}  test: {test_pr:.3f if not np.isnan(test_pr) else 0:.3f}")
+            vpr = valid_pr if not np.isnan(valid_pr) else 0.0
+            tpr = test_pr if not np.isnan(test_pr) else 0.0
+            print(f"    早期正样本率: {early_pr:.3f}  近期: {recent_pr:.3f}  valid: {vpr:.3f}  test: {tpr:.3f}")
         else:
             conditions["B_recency"] = {"成立": False, "允许训练": False}
     else:
