@@ -1,0 +1,5 @@
+﻿candidate,window,city_nrmse_b,city_nrmse_c,city_nrmse_delta,site_nrmse_b,site_nrmse_c,site_nrmse_delta,bias_b,bias_c,bias_delta,city_nrmse_10_14_b,city_nrmse_10_14_c,bias_10_14_b,bias_10_14_c,bad_sites,passes_guard
+power_pred_round71_seasonal_residual,window_early,17.072,17.072,0.0,,,,-100.0,-100.0,0.0,31.281,31.281,-100.0,-100.0,0,True
+power_pred_round71_seasonal_residual,window_late,5.252,5.1426,-0.1095,14.1965,13.9269,-0.2696,-5.0054,-3.3863,1.6191,6.8536,6.801,-3.8863,-2.7574,25,False
+power_pred_round71_noon_conservative,window_early,17.072,17.072,0.0,,,,-100.0,-100.0,0.0,31.281,31.281,-100.0,-100.0,0,True
+power_pred_round71_noon_conservative,window_late,5.252,5.2069,-0.0452,14.1965,14.0894,-0.1071,-5.0054,-4.0589,0.9465,6.8536,6.7566,-3.8863,-2.2556,31,False
