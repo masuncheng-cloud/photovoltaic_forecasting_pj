@@ -82,7 +82,7 @@ def check_candidate_diff(df: pd.DataFrame, baseline_col: str,
         "mean_abs_diff_mw": round(mean_abs_diff, 6),
         "median_abs_diff_mw": round(median_abs_diff, 6),
         "mean_diff_mw": round(mean_diff, 6),
-        "changed_sites": changed_sites,
+        "changed_sites": site_ids_changed,
         "require_diff_min": 1e-6,
         "pass": not is_invalid,
     }
@@ -131,17 +131,15 @@ def main():
             if col == prefix or col.startswith(prefix):
                 exclude_cols.add(col)
 
-    candidate_cols = [c for c in df.columns if c not in exclude_cols
-                       and not c.startswith("round6")
-                       and c != args.baseline_col
-                       and df[c].dtype in [np.float64, np.float32, np.int64, np.int32]
-                       and df[c].notna().any()]
-
-    # 也识别 power_pred_ 开头的列
-    for col in df.columns:
-        if col.startswith("power_pred_") and col != args.baseline_col:
-            if col not in candidate_cols:
-                candidate_cols.append(col)
+    # 只识别 Round70 候选列
+    candidate_cols = [c for c in df.columns
+                     if c.startswith("power_pred_round70_")]
+    # 也加入已生成的 Round70 状态专家回归候选
+    for c in df.columns:
+        if "round70" in c.lower() and c.startswith("power_pred_"):
+            if c not in candidate_cols:
+                candidate_cols.append(c)
+    candidate_cols = sorted(set(candidate_cols))
 
     print(f"\n[INFO] 发现候选列: {candidate_cols}")
 
