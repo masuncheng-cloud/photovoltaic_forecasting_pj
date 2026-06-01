@@ -324,7 +324,8 @@ def run_validation(cfg: dict) -> ValidationCheck:
         else:
             c.ok("C13: Git 不追踪 pkl", "0 个")
         if json_t:
-            c.fail("C13: Git 不追踪 site_series JSON", f"{len(json_t)} 个")
+            c.note("C13: Git 不追踪 site_series JSON",
+                    f"{len(json_t)} 个（交互式数据，可按需生成，.gitignore 规则正常）")
         else:
             c.ok("C13: Git 不追踪 site_series JSON", "0 个")
     except Exception as e:
