@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-05-31T23:16:09",
+  "generated_at": "2026-06-01T08:40:01",
   "pipeline_entry": "scripts/run_full_pipeline.py",
   "config": "configs/pipeline.yaml",
   "split": {
@@ -31,10 +31,10 @@
     "dashboard_index": "output/pv_pipeline/interactive_dashboard/index.json"
   },
   "artifact_hashes": {
-    "final_full_pkl_sha256": "bc358ebb91e67acef810e8576df780956d9a934d95dce1eb09a4fbbf70f2a742",
-    "final_eval_pkl_sha256": "07917888fa755e74ee75533f57e1afd8f167f5f35f8570c3b186e5be01314b72",
-    "hourly_nrmse_csv_sha256": "7fdab09d2840b3bb02827df8c0504138ab8750f6819ea340e6b14d43dba5d559",
-    "site_metrics_csv_sha256": "dd594143e0db1fc8d1276b35c9e2cad9f02263ac5c476490bd34203a511672af",
+    "final_full_pkl_sha256": "ef17ee59fa0415fee6a14dfe077cc08835b10fa30646e62957caff881f0257d5",
+    "final_eval_pkl_sha256": "b65d0610ff5041fdae0462957369bb1e8aba916f2ef84516bdfc119f6b683841",
+    "hourly_nrmse_csv_sha256": "5417e9b74e9dca8f741828f657db11a4aa576cda49d96016ad7c778a48517ea7",
+    "site_metrics_csv_sha256": "d96b454e64c91cf5c25ed5f4b9ed6d45ee608604dfd89cf2e50e49bf2de60a09",
     "dashboard_index_sha256": "2e76ca8a2b156ea17c2504f91876a014c5e0a0e3da34a4c774381e8747e21deb"
   },
   "geo_overrides": {
