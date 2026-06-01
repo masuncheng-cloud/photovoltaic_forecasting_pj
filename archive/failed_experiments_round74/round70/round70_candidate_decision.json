@@ -1,0 +1,16 @@
+{
+  "recommend_adopt": false,
+  "adopted_col": "power_pred_final",
+  "baseline_city_nrmse_valid": 5.252,
+  "baseline_site_nrmse_valid": 14.1965,
+  "best_candidate": null,
+  "best_city_nrmse_valid": 5.252,
+  "best_site_nrmse_valid": 14.1965,
+  "best_blend_weights": {
+    "power_pred_round70_active_state_lgb": 0.0,
+    "power_pred_round70_noon_bias_lgb": 0.0,
+    "power_pred_round70_high_error_expert": 0.0
+  },
+  "passing_candidates": [],
+  "reason": "no candidate passed all guards"
+}

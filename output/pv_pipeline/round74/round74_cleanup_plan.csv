@@ -1,0 +1,13 @@
+﻿kind,path,exists,action,destination
+round_dir,/home/ac/data16t/msc/photovoltaic_forecasting_pj/output/pv_pipeline/round70,True,archive_and_delete,/home/ac/data16t/msc/photovoltaic_forecasting_pj/archive/failed_experiments_round74/round70
+round_dir,/home/ac/data16t/msc/photovoltaic_forecasting_pj/output/pv_pipeline/round71,True,archive_and_delete,/home/ac/data16t/msc/photovoltaic_forecasting_pj/archive/failed_experiments_round74/round71
+round_dir,/home/ac/data16t/msc/photovoltaic_forecasting_pj/output/pv_pipeline/round72,True,archive_and_delete,/home/ac/data16t/msc/photovoltaic_forecasting_pj/archive/failed_experiments_round74/round72
+round_dir,/home/ac/data16t/msc/photovoltaic_forecasting_pj/output/pv_pipeline/round73,True,archive_and_delete,/home/ac/data16t/msc/photovoltaic_forecasting_pj/archive/failed_experiments_round74/round73
+doc,/home/ac/data16t/msc/photovoltaic_forecasting_pj/docs/Round70_训练样本口径重构与状态专家模型性能提升报告.md,True,archive_and_delete,/home/ac/data16t/msc/photovoltaic_forecasting_pj/archive/failed_experiments_round74/Round70_训练样本口径重构与状态专家模型性能提升报告.md
+doc,/home/ac/data16t/msc/photovoltaic_forecasting_pj/docs/Round71_季节适配与保守残差提升报告.md,True,archive_and_delete,/home/ac/data16t/msc/photovoltaic_forecasting_pj/archive/failed_experiments_round74/Round71_季节适配与保守残差提升报告.md
+doc,/home/ac/data16t/msc/photovoltaic_forecasting_pj/docs/Round72_重建全历史一致基线并重新训练残差模型报告.md,True,archive_and_delete,/home/ac/data16t/msc/photovoltaic_forecasting_pj/archive/failed_experiments_round74/Round72_重建全历史一致基线并重新训练残差模型报告.md
+doc,/home/ac/data16t/msc/photovoltaic_forecasting_pj/docs/Round73_回退最优版本并重构训练框架提升报告.md,True,archive_and_delete,/home/ac/data16t/msc/photovoltaic_forecasting_pj/archive/failed_experiments_round74/Round73_回退最优版本并重构训练框架提升报告.md
+cand_pkl,/home/ac/data16t/msc/photovoltaic_forecasting_pj/output/pv_pipeline/round73/round73_candidates.pkl,True,archive_and_delete,/home/ac/data16t/msc/photovoltaic_forecasting_pj/archive/failed_experiments_round74/round73_candidates.pkl
+prev_archive,/home/ac/data16t/msc/photovoltaic_forecasting_pj/archive/failed_experiments/round70,True,archive_and_delete,/home/ac/data16t/msc/photovoltaic_forecasting_pj/archive/failed_experiments_round74/round70
+prev_archive,/home/ac/data16t/msc/photovoltaic_forecasting_pj/archive/failed_experiments/round71,True,archive_and_delete,/home/ac/data16t/msc/photovoltaic_forecasting_pj/archive/failed_experiments_round74/round71
+prev_archive,/home/ac/data16t/msc/photovoltaic_forecasting_pj/archive/failed_experiments/round72,True,archive_and_delete,/home/ac/data16t/msc/photovoltaic_forecasting_pj/archive/failed_experiments_round74/round72

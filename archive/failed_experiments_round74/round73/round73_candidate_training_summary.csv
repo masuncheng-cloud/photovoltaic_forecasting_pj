@@ -1,0 +1,4 @@
+﻿candidate,condition,trained,n_train,n_sites,alpha
+power_pred_round73_autumn_winter_residual,autumn_winter,True,105862,,
+power_pred_round73_noon_bias_guard,noon_bias_guard,True,79179,,
+power_pred_round73_high_error_shrinkage,high_error_shrinkage,True,52340,20.0,0.3

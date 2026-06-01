@@ -1,0 +1,5 @@
+﻿split,_base_source,n_rows,pct
+test,power_pred_final,116144,100.0
+train,fallback_round61,58156,13.788525052694473
+train,oof,363615,86.21147494730553
+valid,power_pred_final,59024,100.0

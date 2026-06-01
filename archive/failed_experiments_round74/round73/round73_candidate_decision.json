@@ -1,0 +1,10 @@
+{
+  "recommend_adopt": false,
+  "adopted_col": "power_pred_final",
+  "baseline_col": "power_pred_final",
+  "bl_pred_col": "_bl_pred",
+  "passing_candidates": [],
+  "best_candidate": null,
+  "best_wT_delta": null,
+  "reason": "no candidate passed all backtest guards"
+}

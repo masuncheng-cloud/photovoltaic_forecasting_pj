@@ -1,0 +1,5 @@
+﻿candidate,city_nrmse_6_19,city_nrmse_10_14,site_mean_nrmse_6_19,site_mean_nrmse_10_14,city_bias_6_19,city_bias_10_14,rmse_city
+power_pred_final,4.1317,5.9379,10.5774,14.6461,0.5208,5.5959,16.0599
+power_pred_round70_active_state_lgb,4.7689,6.4884,11.7832,16.4547,-11.9812,-4.5397,18.5366
+power_pred_round70_noon_bias_lgb,4.6248,6.6954,11.3354,15.8555,-9.0118,-5.4699,17.9763
+power_pred_round70_high_error_expert,4.4924,6.4534,11.6633,16.4342,-9.668,-5.6694,17.4618
