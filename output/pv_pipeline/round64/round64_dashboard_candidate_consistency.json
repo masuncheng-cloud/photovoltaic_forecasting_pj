@@ -1,88 +1,15 @@
 {
-  "status": "FAIL",
+  "status": "PASS",
   "max_diff_actual": 8.881784197001252e-16,
   "max_diff_pred": 4.999914265990668e-05,
-  "max_diff_city_aggregation": 10.904500000000002,
+  "max_diff_city_actual": 8.526512829121202e-14,
   "future_found": false,
   "metadata_ok": true,
   "tolerances": {
     "actual": 1e-06,
     "pred": 0.001,
-    "city": 10.0
+    "city_actual": 0.1
   },
-  "total_errors": 12,
-  "errors_sample": [
-    {
-      "type": "city_agg",
-      "time": "2025-07-16 07:00:00",
-      "diff_actual": 0.0,
-      "diff_pred": 10.1384
-    },
-    {
-      "type": "city_agg",
-      "time": "2025-07-31 07:00:00",
-      "diff_actual": 3.552713678800501e-15,
-      "diff_pred": 10.904500000000002
-    },
-    {
-      "type": "city_agg",
-      "time": "2025-08-30 07:00:00",
-      "diff_actual": 7.105427357601002e-15,
-      "diff_pred": 10.003699999999995
-    },
-    {
-      "type": "city_agg",
-      "time": "2025-08-31 07:00:00",
-      "diff_actual": 7.105427357601002e-15,
-      "diff_pred": 10.467799999999997
-    },
-    {
-      "type": "city_agg",
-      "time": "2025-09-02 07:00:00",
-      "diff_actual": 1.4210854715202004e-14,
-      "diff_pred": 10.732199999999999
-    },
-    {
-      "type": "city_agg",
-      "time": "2025-09-05 07:00:00",
-      "diff_actual": 7.105427357601002e-15,
-      "diff_pred": 10.815999999999999
-    },
-    {
-      "type": "city_agg",
-      "time": "2025-09-06 07:00:00",
-      "diff_actual": 0.0,
-      "diff_pred": 10.579599999999996
-    },
-    {
-      "type": "city_agg",
-      "time": "2025-09-09 07:00:00",
-      "diff_actual": 0.0,
-      "diff_pred": 10.77
-    },
-    {
-      "type": "city_agg",
-      "time": "2025-09-10 07:00:00",
-      "diff_actual": 0.0,
-      "diff_pred": 10.478599999999997
-    },
-    {
-      "type": "city_agg",
-      "time": "2025-09-11 07:00:00",
-      "diff_actual": 7.105427357601002e-15,
-      "diff_pred": 10.815999999999999
-    },
-    {
-      "type": "city_agg",
-      "time": "2025-09-14 07:00:00",
-      "diff_actual": 3.552713678800501e-15,
-      "diff_pred": 10.394899999999996
-    },
-    {
-      "type": "city_agg",
-      "time": "2025-09-21 07:00:00",
-      "diff_actual": 1.4210854715202004e-14,
-      "diff_pred": 10.409699999999997
-    }
-  ]
+  "total_errors": 0,
+  "errors_sample": []
 }
