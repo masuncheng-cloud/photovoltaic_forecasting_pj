@@ -1,0 +1,15 @@
+[
+  {
+    "name": "final_eval_after_round68",
+    "type": "pkl",
+    "file": "output/pv_pipeline/predictions/distributed_predictions_final_eval.pkl",
+    "total_rows": 175168,
+    "future_rows": 0,
+    "split_distribution": {
+      "test": 116144,
+      "valid": 59024
+    },
+    "status": "PASS",
+    "fail_on_future": true
+  }
+]
