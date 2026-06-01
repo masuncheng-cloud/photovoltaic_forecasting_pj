@@ -263,17 +263,21 @@ def main():
         full_df = pd.read_pickle(PROJECT_ROOT / cfg["paths"]["input_pred"])
         full_df["time"] = pd.to_datetime(full_df["time"])
         full_df = full_df[full_df["split"] != "future"]
+    if CANDIDATE_COL not in full_df.columns:
+        full_df[CANDIDATE_COL] = np.nan
 
     for src_df, split_name in [(valid_df, "valid"), (test_df, "test")]:
         mask = full_df["split"] == split_name
         if mask.sum() == 0:
             continue
-        key = src_df.set_index(["time", "site_id"])[CANDIDATE_COL]
-        key = key[~key.index.duplicated(keep="first")]
-        full_df.loc[mask, CANDIDATE_COL] = (
-            full_df.loc[mask].set_index(["time", "site_id"])[CANDIDATE_COL]
-            .reindex(key.index).values
+        update_map = (
+            src_df[["time", "site_id", CANDIDATE_COL]]
+            .drop_duplicates(["time", "site_id"])
+            .set_index(["time", "site_id"])[CANDIDATE_COL]
         )
+        update_map = update_map[~update_map.index.duplicated(keep="first")]
+        idx = full_df.loc[mask].set_index(["time", "site_id"]).index
+        full_df.loc[mask, CANDIDATE_COL] = update_map.reindex(idx).values
 
     full_df.to_pickle(cand_path)
     print(f"[OK] 候选表已更新: {cand_path}")
