@@ -1,0 +1,9 @@
+﻿candidate,pred_col,site_mean_nrmse_6_19_pct,site_mean_nrmse_10_14_pct,city_nrmse_6_19_pct,city_nrmse_10_14_pct,bias_6_19_pct,abs_bias_6_19_pct,bias_10_14_pct,abs_bias_10_14_pct,rmse_mw,mae_mw,split,bad_site_gt_1pp_count,bad_site_gt_0_5pp_count,pred_actual_extreme_count
+round64_final,pred_round64_final,15.8893,21.5505,5.2283,6.8857,-3.0632,3.0632,-0.6516,0.6516,1.0286,0.5975,valid,0,0,10674
+ridge,pred_ridge_combined,16.1007,21.6999,5.6861,7.2006,-3.2559,3.2559,-1.9956,1.9956,1.0819,0.6376,valid,18,30,9549
+hgb,pred_hgb_combined,15.697,21.2185,6.5132,8.4484,-10.8454,10.8454,-9.8894,9.8894,1.061,0.6006,valid,21,35,9606
+lgb,pred_lgb_combined,15.3879,20.8111,6.4431,8.2878,-10.1345,10.1345,-8.9022,8.9022,1.0191,0.5996,valid,19,30,9282
+round64_final,pred_round64_final,11.2806,15.7042,4.3058,6.1937,1.5477,1.5477,8.0181,8.0181,0.9042,0.4359,test,0,0,41303
+ridge,pred_ridge_combined,12.0192,16.5995,5.0924,7.4897,2.457,2.457,6.644,6.644,0.996,0.4972,test,32,37,40666
+hgb,pred_hgb_combined,11.2368,15.7073,4.8851,7.014,-12.2376,12.2376,-7.228,7.228,0.8857,0.4226,test,15,20,39647
+lgb,pred_lgb_combined,10.825,15.0482,4.686,6.8114,-2.6985,2.6985,1.9317,1.9317,0.8667,0.4258,test,14,18,37830
