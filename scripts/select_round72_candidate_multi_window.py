@@ -231,20 +231,21 @@ def main():
         "baseline_site_nrmse": round(baseline_site, 4),
         "passing_candidates": passing_cands,
         "best_blend_weights": best_weights,
-        "best_blend_delta": round(best_blend_nrmse - bl_nrmse_late, 4) if best_blend else None,
+        "best_blend_delta": round(best_blend_nrmse - baseline_nrmse, 4) if best_blend else None,
         "reason": "no candidate passed all guards in both windows",
     }
 
     # 如果有最优 blend 且有改善，采用
-    if best_blend and best_blend_nrmse < bl_nrmse_late - 0.01:
+    if best_blend and best_blend_nrmse < baseline_nrmse - 0.01:
         decision.update({
             "recommend_adopt": True,
             "adopted_col": BLEND_COL,
-            "reason": f"safe_blend improves city_nrmse by {bl_nrmse_late-best_blend_nrmse:.3f}pp "
+            "reason": f"safe_blend improves city_nrmse by {baseline_nrmse-best_blend_nrmse:.3f}pp "
                       f"(w_season={best_weights['w_season']}, w_noon={best_weights['w_noon']})",
         })
     elif best_blend:
-        decision["reason"] = f"best blend Δ={best_blend_nrmse-bl_nrmse_late:.3f}pp (no significant improvement)"
+        decision["reason"] = (f"best blend Δ={best_blend_nrmse-baseline_nrmse:.3f}pp "
+                              f"(no significant improvement)")
 
     with open(OUT / "round72_candidate_decision.json", "w", encoding="utf-8") as f:
         json.dump(decision, f, ensure_ascii=False, indent=2)
