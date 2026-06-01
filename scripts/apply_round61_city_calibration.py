@@ -50,13 +50,13 @@ def site_mean_nrmse(df, pred_col, cap_col="capacity_mw"):
     return float(np.mean(vals)) if vals else np.nan
 
 
-def city_nrmse_per_hour_avg(df, pred_col):
+def city_nrmse_per_hour_avg(df, pred_col, cap_col="capacity_mw"):
     vals = []
     for h, hdf in df.groupby("hour"):
         agg = hdf.groupby("time", as_index=False).agg(
             actual=("power_mw", "sum"),
             pred=(pred_col, "sum"),
-            cap_sum=(cap_col, "sum") if cap_col in hdf.columns else ("capacity_mw", "sum"),
+            cap_sum=(cap_col, "sum"),
         )
         r = rmse_vec(agg["pred"].values, agg["actual"].values)
         cap_h = float(agg["cap_sum"].mean())
