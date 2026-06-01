@@ -1,6 +1,6 @@
 ﻿check,status,max_diff,count,label
-actual_mw,FAIL,17.88,,
-pred_mw,FAIL,15.9497508428,,
-city_series,PASS,0.0,,
+actual_mw,PASS,0.0,,
+pred_mw,PASS,4.9999678845003004e-05,,
 future_rows,PASS,,0.0,
 metadata_label,PASS,,,Round68 final
+metadata_exclude_future,PASS,,,
