@@ -1,0 +1,3 @@
+﻿candidate_col,status,is_identical,n_total,n_changed,changed_ratio,max_abs_diff_mw,mean_abs_diff_mw,median_abs_diff_mw,mean_diff_mw,changed_sites,require_diff_min,pass
+power_pred_round70_high_error_expert,VALID,False,175168,115461,0.659144,4.714008,0.154643,0.034111,-0.07214,45,1e-06,True
+power_pred_round70_noon_bias_lgb,VALID,False,175168,174155,0.994217,7.996184,0.222951,0.094267,-0.086483,68,1e-06,True
