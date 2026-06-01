@@ -123,7 +123,10 @@ def main():
 
     # Ensure numeric
     for c in avail_feats:
-        df_model[c] = pd.to_numeric(df_model[c], errors="coerce")
+        try:
+            df_model[c] = pd.to_numeric(df_model[c], errors="coerce")
+        except (TypeError, ValueError):
+            df_model[c] = pd.to_numeric(df_model[c].astype(str), errors="coerce")
 
     # Feature inventory
     inv_rows = []
