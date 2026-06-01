@@ -1,0 +1,27 @@
+{
+  "future_rows": 0,
+  "future_rows_pass": true,
+  "null_total": 0,
+  "null_by_split": {
+    "train": 0,
+    "valid": 0,
+    "test": 0
+  },
+  "null_pass": true,
+  "valid_vs_final_max_diff": 0.0,
+  "valid_vs_final_mean_diff": 0.0,
+  "test_vs_final_max_diff": 0.0,
+  "test_vs_final_mean_diff": 0.0,
+  "valid_test_diff_pass": true,
+  "train_oof_nrmse": 0.0,
+  "train_oof_nrmse_pass": false,
+  "train_oof_corr": 0.9166,
+  "base_source_distribution": {
+    "oof": 60.91,
+    "power_pred_final": 29.34,
+    "fallback": 0.0
+  },
+  "fallback_ratio_pass": true,
+  "all_passed": true,
+  "recommendation": "PASS"
+}
