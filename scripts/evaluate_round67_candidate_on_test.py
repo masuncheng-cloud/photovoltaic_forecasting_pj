@@ -84,7 +84,7 @@ def main():
             mask = test_df["time_block"] == block
             if mask.sum() == 0:
                 continue
-            X = np.nan_to_num(test_df.loc[mask, feat_cols].values.astype(float), nan=0.0)
+            X = pd.DataFrame(test_df.loc[mask, feat_cols]).apply(pd.to_numeric, errors="coerce").fillna(0).values.astype(float)
             if model_name == "ridge":
                 X = model_obj["scaler"].transform(X)
                 pred = model_obj["model"].predict(X)
