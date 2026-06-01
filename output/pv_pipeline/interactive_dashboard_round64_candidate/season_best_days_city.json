@@ -1,0 +1,42 @@
+{
+  "spring": null,
+  "summer": {
+    "date": "2025-07-05",
+    "season": "summer",
+    "scope": "city",
+    "nrmse_pct": 1.620369,
+    "rmse_mw": 6.298334,
+    "mae_mw": 4.854079,
+    "sample_count": 14,
+    "site_count_median": 68.0,
+    "capacity_sum_mw": 388.69748,
+    "actual_mwh": 2045.19,
+    "pred_mwh": 2032.896668
+  },
+  "autumn": {
+    "date": "2025-10-02",
+    "season": "autumn",
+    "scope": "city",
+    "nrmse_pct": 1.526637,
+    "rmse_mw": 5.934001,
+    "mae_mw": 4.643941,
+    "sample_count": 14,
+    "site_count_median": 68.0,
+    "capacity_sum_mw": 388.69748,
+    "actual_mwh": 230.28,
+    "pred_mwh": 186.074857
+  },
+  "winter": {
+    "date": "2025-12-17",
+    "season": "winter",
+    "scope": "city",
+    "nrmse_pct": 1.363362,
+    "rmse_mw": 5.299354,
+    "mae_mw": 3.445078,
+    "sample_count": 14,
+    "site_count_median": 68.0,
+    "capacity_sum_mw": 388.69748,
+    "actual_mwh": 925.27,
+    "pred_mwh": 910.221615
+  }
+}

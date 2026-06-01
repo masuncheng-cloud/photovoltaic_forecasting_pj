@@ -1,0 +1,86 @@
+[
+  {
+    "hour": 6,
+    "rows": 12512,
+    "site_avg_nrmse_pct": 4.195,
+    "city_nrmse_pct": 1.034
+  },
+  {
+    "hour": 7,
+    "rows": 12512,
+    "site_avg_nrmse_pct": 5.621,
+    "city_nrmse_pct": 4.032
+  },
+  {
+    "hour": 8,
+    "rows": 12512,
+    "site_avg_nrmse_pct": 7.839,
+    "city_nrmse_pct": 4.076
+  },
+  {
+    "hour": 9,
+    "rows": 12512,
+    "site_avg_nrmse_pct": 11.346,
+    "city_nrmse_pct": 4.666
+  },
+  {
+    "hour": 10,
+    "rows": 12512,
+    "site_avg_nrmse_pct": 14.523,
+    "city_nrmse_pct": 5.907
+  },
+  {
+    "hour": 11,
+    "rows": 12512,
+    "site_avg_nrmse_pct": 16.304,
+    "city_nrmse_pct": 6.421
+  },
+  {
+    "hour": 12,
+    "rows": 12512,
+    "site_avg_nrmse_pct": 16.975,
+    "city_nrmse_pct": 6.425
+  },
+  {
+    "hour": 13,
+    "rows": 12512,
+    "site_avg_nrmse_pct": 16.575,
+    "city_nrmse_pct": 6.54
+  },
+  {
+    "hour": 14,
+    "rows": 12512,
+    "site_avg_nrmse_pct": 14.238,
+    "city_nrmse_pct": 5.887
+  },
+  {
+    "hour": 15,
+    "rows": 12512,
+    "site_avg_nrmse_pct": 10.094,
+    "city_nrmse_pct": 3.58
+  },
+  {
+    "hour": 16,
+    "rows": 12512,
+    "site_avg_nrmse_pct": 6.682,
+    "city_nrmse_pct": 2.111
+  },
+  {
+    "hour": 17,
+    "rows": 12512,
+    "site_avg_nrmse_pct": 4.285,
+    "city_nrmse_pct": 2.104
+  },
+  {
+    "hour": 18,
+    "rows": 12512,
+    "site_avg_nrmse_pct": 4.196,
+    "city_nrmse_pct": 1.315
+  },
+  {
+    "hour": 19,
+    "rows": 12512,
+    "site_avg_nrmse_pct": 3.938,
+    "city_nrmse_pct": 1.246
+  }
+]
