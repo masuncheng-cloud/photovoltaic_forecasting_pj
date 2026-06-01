@@ -101,9 +101,11 @@ def main():
         idx = full_df.loc[mask].set_index(["time", "site_id"]).index
         full_df.loc[mask, "_base_pred"] = wdf_ds.reindex(idx).values
 
+    # 构建统一基线：train 用 _base_pred，valid/test 用 power_pred_final
+    # _base_pred 在 parquet 中存在，power_pred_final 在 pkl 中对 train 为 NaN
     full_df["_bl_pred"] = full_df["power_pred_final"].copy()
-    train_mask = full_df["window"].isin(["window_A", "window_B"])
-    full_df.loc[train_mask, "_bl_pred"] = full_df.loc[train_mask, "_base_pred"].values
+    # 对所有 NaN 行（train 窗口），用 _base_pred 填充
+    full_df["_bl_pred"] = full_df["_bl_pred"].fillna(full_df["_base_pred"])
 
     # 回测窗口（不含 holdout_test）
     backtest_windows = {k: full_df[full_df["window"] == k] for k in ["window_A", "window_B", "window_C"]}
