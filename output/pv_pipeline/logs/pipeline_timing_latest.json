@@ -1,16 +1,16 @@
 {
   "mode": "eval-only",
-  "generated_at": "2026-06-01T09:37:42",
-  "total_seconds": 140.342,
-  "total_minutes": 2.339,
+  "generated_at": "2026-06-01T09:40:12",
+  "total_seconds": 136.831,
+  "total_minutes": 2.281,
   "steps": [
     {
       "step": "[10] 指标重算",
       "status": "PASS",
-      "seconds": 1.576,
-      "minutes": 0.026,
-      "started_at": "2026-06-01T09:35:22",
-      "finished_at": "2026-06-01T09:35:23",
+      "seconds": 1.507,
+      "minutes": 0.025,
+      "started_at": "2026-06-01T09:37:55",
+      "finished_at": "2026-06-01T09:37:57",
       "error": "",
       "outputs": [
         "/home/ac/data16t/msc/photovoltaic_forecasting_pj/scripts/compute_round36_metrics.py"
@@ -19,10 +19,10 @@
     {
       "step": "[11a] recompute_hourly_nrmse_consistent (重算逐小时 NRMSE 指标)",
       "status": "PASS",
-      "seconds": 2.097,
-      "minutes": 0.035,
-      "started_at": "2026-06-01T09:35:23",
-      "finished_at": "2026-06-01T09:35:25",
+      "seconds": 2.199,
+      "minutes": 0.037,
+      "started_at": "2026-06-01T09:37:57",
+      "finished_at": "2026-06-01T09:37:59",
       "error": "",
       "outputs": [
         "/home/ac/data16t/msc/photovoltaic_forecasting_pj/scripts/compute_hourly_nrmse_consistent.py"
@@ -31,10 +31,10 @@
     {
       "step": "[11b] export_interactive_dashboard_data (导出可视化看板数据)",
       "status": "PASS",
-      "seconds": 118.547,
-      "minutes": 1.976,
-      "started_at": "2026-06-01T09:35:25",
-      "finished_at": "2026-06-01T09:37:24",
+      "seconds": 115.416,
+      "minutes": 1.924,
+      "started_at": "2026-06-01T09:37:59",
+      "finished_at": "2026-06-01T09:39:55",
       "error": "",
       "outputs": [
         "/home/ac/data16t/msc/photovoltaic_forecasting_pj/scripts/export_interactive_dashboard_data.py"
@@ -43,10 +43,10 @@
     {
       "step": "[11d] dashboard_regression_check (看板回归检查)",
       "status": "PASS",
-      "seconds": 0.901,
+      "seconds": 0.887,
       "minutes": 0.015,
-      "started_at": "2026-06-01T09:37:24",
-      "finished_at": "2026-06-01T09:37:25",
+      "started_at": "2026-06-01T09:39:55",
+      "finished_at": "2026-06-01T09:39:55",
       "error": "",
       "outputs": [
         "/home/ac/data16t/msc/photovoltaic_forecasting_pj/scripts/round44_dashboard_regression_check.py"
@@ -55,10 +55,10 @@
     {
       "step": "[12] 训练后逻辑审计",
       "status": "PASS",
-      "seconds": 8.009,
-      "minutes": 0.133,
-      "started_at": "2026-06-01T09:37:25",
-      "finished_at": "2026-06-01T09:37:33",
+      "seconds": 7.77,
+      "minutes": 0.13,
+      "started_at": "2026-06-01T09:39:55",
+      "finished_at": "2026-06-01T09:40:03",
       "error": "",
       "outputs": [
         "/home/ac/data16t/msc/photovoltaic_forecasting_pj/scripts/posttrain_validation.py"
@@ -67,10 +67,10 @@
     {
       "step": "[13] Dashboard 预测值校验",
       "status": "PASS",
-      "seconds": 9.212,
-      "minutes": 0.154,
-      "started_at": "2026-06-01T09:37:33",
-      "finished_at": "2026-06-01T09:37:42",
+      "seconds": 9.052,
+      "minutes": 0.151,
+      "started_at": "2026-06-01T09:40:03",
+      "finished_at": "2026-06-01T09:40:12",
       "error": "",
       "outputs": [
         "/home/ac/data16t/msc/photovoltaic_forecasting_pj/scripts/check_dashboard_prediction_values.py"
@@ -81,10 +81,10 @@
     {
       "step": "[11b] export_interactive_dashboard_data (导出可视化看板数据)",
       "status": "PASS",
-      "seconds": 118.547,
-      "minutes": 1.976,
-      "started_at": "2026-06-01T09:35:25",
-      "finished_at": "2026-06-01T09:37:24",
+      "seconds": 115.416,
+      "minutes": 1.924,
+      "started_at": "2026-06-01T09:37:59",
+      "finished_at": "2026-06-01T09:39:55",
       "error": "",
       "outputs": [
         "/home/ac/data16t/msc/photovoltaic_forecasting_pj/scripts/export_interactive_dashboard_data.py"
@@ -93,10 +93,10 @@
     {
       "step": "[13] Dashboard 预测值校验",
       "status": "PASS",
-      "seconds": 9.212,
-      "minutes": 0.154,
-      "started_at": "2026-06-01T09:37:33",
-      "finished_at": "2026-06-01T09:37:42",
+      "seconds": 9.052,
+      "minutes": 0.151,
+      "started_at": "2026-06-01T09:40:03",
+      "finished_at": "2026-06-01T09:40:12",
       "error": "",
       "outputs": [
         "/home/ac/data16t/msc/photovoltaic_forecasting_pj/scripts/check_dashboard_prediction_values.py"
@@ -105,10 +105,10 @@
     {
       "step": "[12] 训练后逻辑审计",
       "status": "PASS",
-      "seconds": 8.009,
-      "minutes": 0.133,
-      "started_at": "2026-06-01T09:37:25",
-      "finished_at": "2026-06-01T09:37:33",
+      "seconds": 7.77,
+      "minutes": 0.13,
+      "started_at": "2026-06-01T09:39:55",
+      "finished_at": "2026-06-01T09:40:03",
       "error": "",
       "outputs": [
         "/home/ac/data16t/msc/photovoltaic_forecasting_pj/scripts/posttrain_validation.py"
@@ -117,10 +117,10 @@
     {
       "step": "[11a] recompute_hourly_nrmse_consistent (重算逐小时 NRMSE 指标)",
       "status": "PASS",
-      "seconds": 2.097,
-      "minutes": 0.035,
-      "started_at": "2026-06-01T09:35:23",
-      "finished_at": "2026-06-01T09:35:25",
+      "seconds": 2.199,
+      "minutes": 0.037,
+      "started_at": "2026-06-01T09:37:57",
+      "finished_at": "2026-06-01T09:37:59",
       "error": "",
       "outputs": [
         "/home/ac/data16t/msc/photovoltaic_forecasting_pj/scripts/compute_hourly_nrmse_consistent.py"
@@ -129,10 +129,10 @@
     {
       "step": "[10] 指标重算",
       "status": "PASS",
-      "seconds": 1.576,
-      "minutes": 0.026,
-      "started_at": "2026-06-01T09:35:22",
-      "finished_at": "2026-06-01T09:35:23",
+      "seconds": 1.507,
+      "minutes": 0.025,
+      "started_at": "2026-06-01T09:37:55",
+      "finished_at": "2026-06-01T09:37:57",
       "error": "",
       "outputs": [
         "/home/ac/data16t/msc/photovoltaic_forecasting_pj/scripts/compute_round36_metrics.py"

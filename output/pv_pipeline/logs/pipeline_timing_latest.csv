@@ -1,7 +1,7 @@
 step,status,seconds,minutes,started_at,finished_at,error,outputs
-[10] 指标重算,PASS,1.576,0.026,2026-06-01T09:35:22,2026-06-01T09:35:23,,['/home/ac/data16t/msc/photovoltaic_forecasting_pj/scripts/compute_round36_metrics.py']
-[11a] recompute_hourly_nrmse_consistent (重算逐小时 NRMSE 指标),PASS,2.097,0.035,2026-06-01T09:35:23,2026-06-01T09:35:25,,['/home/ac/data16t/msc/photovoltaic_forecasting_pj/scripts/compute_hourly_nrmse_consistent.py']
-[11b] export_interactive_dashboard_data (导出可视化看板数据),PASS,118.547,1.976,2026-06-01T09:35:25,2026-06-01T09:37:24,,['/home/ac/data16t/msc/photovoltaic_forecasting_pj/scripts/export_interactive_dashboard_data.py']
-[11d] dashboard_regression_check (看板回归检查),PASS,0.901,0.015,2026-06-01T09:37:24,2026-06-01T09:37:25,,['/home/ac/data16t/msc/photovoltaic_forecasting_pj/scripts/round44_dashboard_regression_check.py']
-[12] 训练后逻辑审计,PASS,8.009,0.133,2026-06-01T09:37:25,2026-06-01T09:37:33,,['/home/ac/data16t/msc/photovoltaic_forecasting_pj/scripts/posttrain_validation.py']
-[13] Dashboard 预测值校验,PASS,9.212,0.154,2026-06-01T09:37:33,2026-06-01T09:37:42,,['/home/ac/data16t/msc/photovoltaic_forecasting_pj/scripts/check_dashboard_prediction_values.py']
+[10] 指标重算,PASS,1.507,0.025,2026-06-01T09:37:55,2026-06-01T09:37:57,,['/home/ac/data16t/msc/photovoltaic_forecasting_pj/scripts/compute_round36_metrics.py']
+[11a] recompute_hourly_nrmse_consistent (重算逐小时 NRMSE 指标),PASS,2.199,0.037,2026-06-01T09:37:57,2026-06-01T09:37:59,,['/home/ac/data16t/msc/photovoltaic_forecasting_pj/scripts/compute_hourly_nrmse_consistent.py']
+[11b] export_interactive_dashboard_data (导出可视化看板数据),PASS,115.416,1.924,2026-06-01T09:37:59,2026-06-01T09:39:55,,['/home/ac/data16t/msc/photovoltaic_forecasting_pj/scripts/export_interactive_dashboard_data.py']
+[11d] dashboard_regression_check (看板回归检查),PASS,0.887,0.015,2026-06-01T09:39:55,2026-06-01T09:39:55,,['/home/ac/data16t/msc/photovoltaic_forecasting_pj/scripts/round44_dashboard_regression_check.py']
+[12] 训练后逻辑审计,PASS,7.77,0.13,2026-06-01T09:39:55,2026-06-01T09:40:03,,['/home/ac/data16t/msc/photovoltaic_forecasting_pj/scripts/posttrain_validation.py']
+[13] Dashboard 预测值校验,PASS,9.052,0.151,2026-06-01T09:40:03,2026-06-01T09:40:12,,['/home/ac/data16t/msc/photovoltaic_forecasting_pj/scripts/check_dashboard_prediction_values.py']
