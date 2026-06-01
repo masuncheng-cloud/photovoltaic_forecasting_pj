@@ -12,7 +12,9 @@
     "scene_is_mid",
     "scene_is_low",
     "scene_is_night",
-    "calibrated_ratio"
+    "calibrated_ratio",
+    "latitude",
+    "longitude"
   ],
   "missing_features": [
     "latitude",
