@@ -281,13 +281,14 @@ def main():
         print(f"  {label}: sm={sm:.4f}%, cn={cn:.4f}%, bad_sites={bad}")
 
     # Guard summary JSON
+    wd = {}
+    for s in SCENES:
+        for w in WEIGHTS:
+            wd[f"{s}_{int(w*100):02d}"] = int(
+                ((ss_df["scene"] == s) & (ss_df["selected_weight"] == w)).sum()
+            )
     guard_summary = {
-        "weight_distribution": {
-            f"{s}_{int(w*100):02d}": int(
-                ((ss_df["scene"] == s) & (ss_df["selected_weight"] == w)
-            ).sum()
-            for s in SCENES for w in WEIGHTS
-        },
+        "weight_distribution": wd,
         "guard_thresholds": {
             "site_scene_max_pp": GUARD_SITE_SCENE,
             "site_hard_max_pp": GUARD_SITE_HARD,
