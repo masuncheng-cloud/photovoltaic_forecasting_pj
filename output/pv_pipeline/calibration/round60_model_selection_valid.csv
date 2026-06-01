@@ -1,0 +1,7 @@
+﻿pred_col,sm_nrmse_6_19,c_nrmse_6_19,sm_nrmse_10_14,c_nrmse_10_14,bias_6_19,abs_bias_6_19,label,score,selected
+power_pred_final,16.0324,4.8669,21.6008,6.8872,-3.3146,3.3146,Round58 baseline,12.725455,False
+power_pred_final_round59,16.0324,4.8669,21.6008,6.8872,-3.3146,3.3146,Round59 current,12.725455,False
+power_pred_round60_hour_scene,16.0399,4.8573,21.6008,6.8872,-3.0934,3.0934,Round60 hour_scene,12.6925,False
+power_pred_round60_site_conservative,15.9874,4.8953,21.576,6.9358,-3.3097,3.3097,Round60 site_conservative,12.70987,False
+power_pred_round60_combined_conservative,15.9874,4.8953,21.576,6.9358,-3.3097,3.3097,Round60 combined,12.70987,False
+power_pred_round60_safe,15.8673,4.8765,21.4025,6.955,-2.632,2.632,Round60 safe,12.518105,True
