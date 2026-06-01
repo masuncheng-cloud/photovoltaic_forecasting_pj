@@ -1,0 +1,5 @@
+﻿sm_nrmse,sm_nrmse_10_14,city_nrmse,city_nrmse_10_14,bias,abs_bias,rmse_mw,mae_mw,candidate,delta_sm,delta_city
+11.2009,15.6099,4.5992,6.589,-8.4163,8.4163,0.9053,0.4293,power_pred_round69_block_lgb,0.6235,0.4675
+11.2488,15.7428,4.6559,6.687,-9.4453,9.4453,0.8875,0.433,power_pred_round69_noon_lgb,0.6714,0.5242
+10.5774,14.6461,4.1317,5.9389,0.5208,0.5208,0.8548,0.4073,power_pred_round69_residual_lgb,0.0,0.0
+10.5774,14.6461,4.1317,5.9389,0.5208,0.5208,0.8548,0.4073,power_pred_round69_high_error_lgb,0.0,0.0
