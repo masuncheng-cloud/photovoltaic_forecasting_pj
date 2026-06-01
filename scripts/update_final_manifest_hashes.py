@@ -109,17 +109,17 @@ def main():
         json.dump(result, f, ensure_ascii=False, indent=2)
     print(f"[OK] JSON: {json_path}")
 
-    # Write back to manifest
+    # Write back to manifest — update artifact_hashes field, preserve artifacts field
     if apply:
-        manifest["artifacts"] = artifact_hashes
+        manifest["artifact_hashes"] = artifact_hashes
         manifest["final_round"] = manifest.get("final_round", "Round64")
         manifest["prediction_column"] = manifest.get("prediction_column", "power_pred_final")
         manifest["exclude_future"] = manifest.get("exclude_future", True)
         manifest["hashes_updated_at"] = pd.Timestamp.now().isoformat()
         manifest_path.write_text(json.dumps(manifest, ensure_ascii=False, indent=2), encoding="utf-8")
-        print(f"\n[UPDATE] {manifest_path} — hashes updated")
+        print(f"\n[UPDATE] {manifest_path} — artifact_hashes updated, artifacts field preserved")
     else:
-        print(f"\n[DRY-RUN] Would update manifest with:")
+        print(f"\n[DRY-RUN] Would update manifest artifact_hashes:")
         for k, v in artifact_hashes.items():
             print(f"  {k}: {v}")
 

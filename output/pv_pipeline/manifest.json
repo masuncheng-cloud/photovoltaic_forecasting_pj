@@ -59,11 +59,40 @@
     "metrics_top_day_zero_sites": "94c9597e8b53e55c01d7a568e3329385dc0329febbda767e7416a9b08a1e22e3"
   },
   "artifact_hashes": {
-    "final_full_pkl_sha256": "1dfbd54db9505154aa46e03f051f54dbb489e8479179e44b6a5e4b4fb779aa2e",
-    "final_eval_pkl_sha256": "2c12ef4523cb47c480cf01504639be49bfcbf8b2d62d83534b0ae9248080398d",
-    "hourly_nrmse_csv_sha256": "e2ef1130f18d1916b3b74b2f92b76bbaa5964fe728826a44bc57194ee8dabb2e",
-    "site_metrics_csv_sha256": "4fa0aee2d7a8fa398913e6703ec7a021d9f2e8d0d7a6e447054daf922799929b",
-    "dashboard_index_sha256": "2e76ca8a2b156ea17c2504f91876a014c5e0a0e3da34a4c774381e8747e21deb"
+    "final_full_pkl": "044eb723094251aa8bd6efabd3a79c174d950b423361b61b38bd63f6c7e75884",
+    "final_eval_pkl": "60614f81497c7119ba6fcc2620de7058220d95c4e6febe76b6b8a0fb29b6e826",
+    "dashboard_metadata": "7b2312624059c1b7d069e617ec5c9820a764554b24810ca2bfb736f07bbbc8ec",
+    "metrics_distributed_metrics_by_hour_fixed": "aa8db40dfd7eaa1a3887d3248a88dfd47cd1b56682a493ee25b68203c88ded19",
+    "metrics_hourly_nrmse_consistent": "e2ef1130f18d1916b3b74b2f92b76bbaa5964fe728826a44bc57194ee8dabb2e",
+    "metrics_hourly_site_nrmse_consistent": "7327f8cd645763eb09b4833ea359c79f8774fd05eadbd6c84e57eeef2e2ca3c8",
+    "metrics_round36_city_hourly_nrmse": "7b07d11310f08f59bca2e1531505ed2a0ea0b65daade5d346f426cf6624e1662",
+    "metrics_round36_site_avg_hourly_nrmse": "46cdeac0102f3e9b80910d48d4952e33c7b9e3cb609b9fd3651be84c72baa6a6",
+    "metrics_round36_site_hourly_nrmse": "4a6194f3bec3792f7025aa698baae2913410fa02d519295e9cd9c14775fb46c7",
+    "metrics_round39_edge_hour_pkl_vs_dashboard": "252198291185b6efe19b2bff7b9519079ca21956f74a3e741a835ea4b618ef8d",
+    "metrics_round39_edge_hour_zero_by_hour": "8492238f19189fc9ff98254181a0571ebb20c0445659b769b2fadd5023638de3",
+    "metrics_round39_edge_hour_zero_by_time": "c4f1fc33c147e7350a9cdacfbb8d9b87238d1ca522993bbe6b1217e0547416d2",
+    "metrics_round46_hourly_nrmse_consistent": "e2ef1130f18d1916b3b74b2f92b76bbaa5964fe728826a44bc57194ee8dabb2e",
+    "metrics_round46_site_hour_nrmse_consistent": "7327f8cd645763eb09b4833ea359c79f8774fd05eadbd6c84e57eeef2e2ca3c8",
+    "metrics_round59_compare_hourly": "ff1dbbad45fe5ffdb6ab6075e9f60bc5cbfc243a127b995403a4425fb3ed4197",
+    "metrics_round60_compare_hourly": "2a93aec95dd07a5eb1766cafe36aebf9cd14b5ec6d8c2ef2cc9f306dfdc95ff5",
+    "metrics_round61_compare_hourly": "0070ce183780e61076f62d02541094e8fc5fd7fa862c4152854c967e77152376",
+    "metrics_audit_site_mapping": "83e491537f8bbd42490cab576215ad67e6112ea66e162d709c64d5c4d25222a5",
+    "metrics_calibration_ablation_by_site": "c4deb77d3fe3ee9ffdbb13559fbc04af8029ca17efe24b86c8628b01bb522a84",
+    "metrics_distributed_metrics_by_site": "26af84c24a20f7a1a5123d92526db3e5e63a209d0c6bc7849457f71577117110",
+    "metrics_distributed_metrics_by_site_fixed": "356cb00342b5b62cec4e57b70548c5b3abf21a8546b9a082e66d796a579ce6a7",
+    "metrics_round36_bias_sites": "7c99c16e4cb6f3a4cebbb23ec15e1a8f289b69c0160d15bec98d99c61d6e3d81",
+    "metrics_round36_distribution_drift_sites": "4e57561feb1675342aec937ab51282b5500e8073531df2e9e64c7e350958339f",
+    "metrics_round36_invalid_eval_sites": "bc0271b2f171ed63034067f00359273f98f253de31733d2be9e25d425f7e617e",
+    "metrics_round36_site_count_summary": "e7e2b56b6ef5ea95e4f97414ad3448aed186c3079d6c4f4b6dc011685962e3cb",
+    "metrics_round36_site_metrics": "4fa0aee2d7a8fa398913e6703ec7a021d9f2e8d0d7a6e447054daf922799929b",
+    "metrics_round36_site_validity": "6c9400c73893b745f9e49cafcd78455a3029bab05254ac65ebff937f78053062",
+    "metrics_round36_typical_sites": "a00da7b1ed4fa11e9f7ea6bc0f0457564448ad072eeed5ab248bb65ff9f4925a",
+    "metrics_round59_compare_site": "28afc6f4acf8821081dae10a19c16ccfa9e4fe59ed875b5f077568b7ed96ce01",
+    "metrics_round60_compare_site": "d82b09e2e7a5dcef89059cd0dc027e521f885ba75164616420df7c72449d6588",
+    "metrics_round61_compare_site": "cf291cf01a7ca865ee32810fbc26436607c433ee27ee58c7b5ff94b9e22ec3bd",
+    "metrics_site_metrics_consistent": "4fa0aee2d7a8fa398913e6703ec7a021d9f2e8d0d7a6e447054daf922799929b",
+    "metrics_site_test_daytime_zero_ratio_summary": "f49ab5305fdff5fd689b8de82527c66e41db7b2493319b15f436dbf7560c85ea",
+    "metrics_top_day_zero_sites": "94c9597e8b53e55c01d7a568e3329385dc0329febbda767e7416a9b08a1e22e3"
   },
   "geo_overrides": {
     "file": "configs/manual_station_geo_overrides.csv",
@@ -101,5 +130,5 @@
   },
   "final_round": "Round64",
   "prediction_column": "power_pred_final",
-  "hashes_updated_at": "2026-06-01T15:31:38.742511"
+  "hashes_updated_at": "2026-06-01T15:32:52.731278"
 }
