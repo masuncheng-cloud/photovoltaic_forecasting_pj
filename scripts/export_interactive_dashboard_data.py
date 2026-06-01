@@ -1949,7 +1949,7 @@ def main():
             before = len(df)
             df = df[df["split"] != "future"].copy()
             print(f"  Excluded future: {before} -> {len(df)} rows")
-        round_name = "custom"
+        round_name = args.label or "round64_candidate"
         pred_col = args.prediction_col or "power_pred_round64_safe"
         pred_path = args.prediction_pkl
         print(f"  Shape: {df.shape}, sites: {df['site_id'].nunique()}")
