@@ -2103,7 +2103,8 @@ def main():
     # [11d] Write metadata.json
     print("\n[11d] Writing metadata.json...")
     meta = write_metadata(dashboard_root, round_name, pred_col, pred_path,
-                          label=args.label, official_final=(not bool(args.prediction_pkl)))
+                          label=args.label,
+                          official_final=(str(dashboard_root).rstrip("/") == "output/pv_pipeline/interactive_dashboard"))
 
     # [11e] Export typical_sites.json
     print("\n[11e] Exporting typical_sites.json...")
