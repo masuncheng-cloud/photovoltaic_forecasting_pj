@@ -1,0 +1,33 @@
+{
+  "decision": "adopt_round64_candidate",
+  "timestamp": "2026-06-01T13:11:29.971424",
+  "valid_metrics": {
+    "Round61": {
+      "sm_nrmse_6_19": 16.0311,
+      "city_nrmse_6_19": 4.863,
+      "city_nrmse_10_14": 6.8864,
+      "sm_nrmse_10_14": 21.6005,
+      "bad_sites": 0
+    },
+    "Round64_safe": {
+      "sm_nrmse_6_19": 15.8893,
+      "city_nrmse_6_19": 4.7094,
+      "city_nrmse_10_14": 6.8713,
+      "sm_nrmse_10_14": 21.5505,
+      "bad_sites": 0
+    }
+  },
+  "checks": {
+    "sm_nrmse_not_worse_than_r61_plus_0.10pp": true,
+    "city_nrmse_not_worse_than_r61_plus_0.05pp": true,
+    "city_nrmse_10_14_not_worse": true,
+    "bad_sites_zero": true,
+    "sm_nrmse_10_14_not_worse": true
+  },
+  "thresholds": {
+    "sm_nrmse_no_worse_than": 0.1,
+    "city_nrmse_not_worse_than": 0.05,
+    "city_nrmse_10_14_not_worse": 0.0
+  },
+  "note": "adopt_round64_candidate: Round64 safe 在 valid 上全部通过安全检查，但本轮不覆盖正式 pkl，只输出候选和建议。keep_round61: Round64 safe 不满足安全检查，保留 Round61。"
+}
