@@ -118,6 +118,10 @@ def main():
         X_valid_raw = np.where(np.isnat(X_valid_raw), 0, X_valid_raw)
         X_valid = np.nan_to_num(X_valid_raw.astype(float), nan=0.0)
 
+        y_train = np.asarray(block_train["y_norm"].values, dtype=float)
+        w_train = np.asarray(block_train["sample_weight"].values, dtype=float)
+        y_valid = np.asarray(block_valid["y_norm"].values, dtype=float)
+
         for model_name in ["ridge", "hgb", "lgb"]:
             if not cfg.get("models", {}).get(model_name, {}).get("enabled", False):
                 continue
