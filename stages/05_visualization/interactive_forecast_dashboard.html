@@ -1165,22 +1165,46 @@ function buildThresholdData(chartData, mode) {
     const vals = qualified.map(p => p[field] || 0).sort((a, b) => a - b);
     const cnt = vals.length;
     const total = chartData.length;
-    const pct = n => vals.length > 0 ? vals[Math.max(0, Math.floor(vals.length * n) - 1)] || 0 : null;
+    // Use linear interpolation for percentile like a real stats library
+    const percentile = (arr, q) => {
+      if (arr.length === 0) return null;
+      const pos = q * (arr.length - 1);
+      const lo = Math.floor(pos);
+      const hi = Math.ceil(pos);
+      return lo === hi ? arr[lo] : arr[lo] + (pos - lo) * (arr[hi] - arr[lo]);
+    };
     results.push({
       threshold_pct: thresh,
       qualified_sites: cnt,
       total_sites: total,
       qualified_ratio_pct: total > 0 ? +(cnt / total * 100).toFixed(2) : 0,
-      min_tv_positive_rows:    vals.length > 0 ? vals[0] : null,
-      p25_tv_positive_rows:    pct(0.25),
-      median_tv_positive_rows: pct(0.50),
-      p75_tv_positive_rows:    pct(0.75),
-      max_tv_positive_rows:    vals.length > 0 ? vals[vals.length - 1] : null,
-      min_full_history_rows:    null,
-      p25_full_history_rows:   null,
-      median_full_history_rows: null,
-      p75_full_history_rows:   null,
-      max_full_history_rows:    null,
+      // full mode keys (field = full_history_rows)
+      min_full_history_rows:    cnt > 0 ? vals[0] : null,
+      p25_full_history_rows:    percentile(vals, 0.25),
+      median_full_history_rows: percentile(vals, 0.50),
+      p75_full_history_rows:    percentile(vals, 0.75),
+      max_full_history_rows:    cnt > 0 ? vals[vals.length - 1] : null,
+      // tv_positive mode keys (field = train_valid_positive_rows)
+      min_tv_positive_rows:    cnt > 0 ? vals[0] : null,
+      p25_tv_positive_rows:    percentile(vals, 0.25),
+      median_tv_positive_rows: percentile(vals, 0.50),
+      p75_tv_positive_rows:    percentile(vals, 0.75),
+      max_tv_positive_rows:    cnt > 0 ? vals[vals.length - 1] : null,
+      // shared: median of train_valid_positive_rows across qualified sites
+      median_train_valid_positive_rows: chartData
+        .filter(p => (p.test_nrmse_pct || 0) <= thresh)
+        .map(p => p.train_valid_positive_rows || 0)
+        .sort((a, b) => a - b)
+        .filter(v => v > 0)
+        .length > 0
+          ? percentile(
+              chartData.filter(p => (p.test_nrmse_pct || 0) <= thresh)
+                .map(p => p.train_valid_positive_rows || 0)
+                .filter(v => v > 0)
+                .sort((a, b) => a - b),
+              0.50
+            )
+          : null,
     });
   }
   return results;
@@ -2981,17 +3005,18 @@ function renderSampleReqSummaryTable() {
     const fallback = gSampleReqSummary || [];
     fallback.forEach(t => {
       const row = document.createElement("tr");
+      const tc = cfg.threshCols;
       row.innerHTML = `
         <td>${t.threshold_pct}%</td>
         <td>${t.qualified_sites}</td>
         <td>${t.total_sites}</td>
         <td>${fmt2(t.qualified_ratio_pct)}%</td>
-        <td>${fmtInt(t.min_full_history_rows)}</td>
-        <td>${fmtInt(t.p25_full_history_rows)}</td>
-        <td>${fmtInt(t.median_full_history_rows)}</td>
-        <td>${fmtInt(t.p75_full_history_rows)}</td>
-        <td>${fmtInt(t.max_full_history_rows)}</td>
-        <td>${fmtInt(t.median_train_valid_positive_rows)}</td>
+        <td>${t[tc.min] != null ? fmtInt(t[tc.min]) : "-"}</td>
+        <td>${t[tc.p25] != null ? fmtInt(t[tc.p25]) : "-"}</td>
+        <td>${t[tc.median] != null ? fmtInt(t[tc.median]) : "-"}</td>
+        <td>${t[tc.p75] != null ? fmtInt(t[tc.p75]) : "-"}</td>
+        <td>${t[tc.max] != null ? fmtInt(t[tc.max]) : "-"}</td>
+        <td>${t.median_train_valid_positive_rows != null ? fmtInt(t.median_train_valid_positive_rows) : "-"}</td>
       `;
       tbody.appendChild(row);
     });
