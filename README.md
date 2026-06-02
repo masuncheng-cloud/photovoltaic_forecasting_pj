@@ -15,6 +15,8 @@ python scripts/posttrain_validation.py
 python scripts/check_dashboard_prediction_values.py
 ```
 
+> **注意**：`run_full_pipeline.py` 是正式主入口；历史 round 脚本（如 round63-73）只作为归档和审计材料，不作为正式训练入口。
+
 训练完成后，启动可视化看板：
 
 ```bash
@@ -49,12 +51,13 @@ python -m http.server 8060
 ## 最终预测文件
 
 ```
-output/pv_pipeline/tables/distributed_predictions_final_round36.pkl
+output/pv_pipeline/predictions/distributed_predictions_final_full.pkl   # 完整预测（含 train/valid/test/future）
+output/pv_pipeline/predictions/distributed_predictions_final_eval.pkl   # 评估口径（test 6-19）
 ```
 
 - 唯一正式预测列：`power_pred_final`（不允许回退）
-- 含 train/valid/test/future 所有数据
-- 仅用于评估和可视化的子集（不含 future，小时 6-19）
+- 正式评估与可视化仅使用 train、valid、test 中的有效样本，不包含 future
+- test 集评估范围：2025-09-01 至 2025-12-31，小时 6-19
 
 ---
 
@@ -101,9 +104,10 @@ photovoltaic_forecasting_pj/
 │   └── 05_visualization/ 可视化看板
 ├── data/                  原始输入数据
 └── output/pv_pipeline/   训练输出
-    ├── tables/           中间和最终预测文件
-    ├── models/           模型文件
-    ├── metrics/          指标文件
+    ├── predictions/        正式预测 pkl（含 canonical）
+    ├── tables/             中间训练表（CSV/Parquet）
+    ├── models/             模型文件
+    ├── metrics/            指标文件
     └── interactive_dashboard/  可视化 JSON
 ```
 
