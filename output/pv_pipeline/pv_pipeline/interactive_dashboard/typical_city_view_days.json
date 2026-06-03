@@ -1,0 +1,54 @@
+{
+  "best": {
+    "category": "best",
+    "category_label": "预测最好",
+    "site_id": "S023",
+    "site_name": "连洋徐圩光伏",
+    "date": "2025-04-06",
+    "sample_count": 14,
+    "site_day_nrmse_pct": 0.9017,
+    "site_day_actual_mwh": 60.9,
+    "site_day_pred_mwh": 61.5602,
+    "available": true,
+    "selection_rule": "该类别典型站点日级 NRMSE 最低的一天"
+  },
+  "worst": {
+    "category": "worst",
+    "category_label": "预测最差",
+    "site_id": "S019",
+    "site_name": "首耀新海光伏",
+    "date": "2025-09-12",
+    "sample_count": 14,
+    "site_day_nrmse_pct": 71.1343,
+    "site_day_actual_mwh": 33.88,
+    "site_day_pred_mwh": 4.0923,
+    "available": true,
+    "selection_rule": "该类别典型站点日级 NRMSE 最高的一天"
+  },
+  "normal": {
+    "category": "normal",
+    "category_label": "相对正确",
+    "site_id": "S025",
+    "site_name": "夏源银得隆光伏",
+    "date": "2024-08-26",
+    "sample_count": 14,
+    "site_day_nrmse_pct": 8.8383,
+    "site_day_actual_mwh": 23.17,
+    "site_day_pred_mwh": 23.2173,
+    "available": true,
+    "selection_rule": "该类别典型站点 pred/actual 最接近 1 的一天"
+  },
+  "low_sample": {
+    "category": "low_sample",
+    "category_label": "样本少",
+    "site_id": "S002",
+    "site_name": "华筑泰宝光伏",
+    "date": "2025-10-02",
+    "sample_count": 14,
+    "site_day_nrmse_pct": 2.3788,
+    "site_day_actual_mwh": 0.78,
+    "site_day_pred_mwh": 0.768,
+    "available": true,
+    "selection_rule": "该类别典型站点可用样本最多的一天"
+  }
+}

@@ -866,7 +866,7 @@ def main():
     skip_ids = set(args.skip.split(",")) - {""}
     step_ids_to_run = set(mode_info["steps"])
 
-    # 运行步骤
+    # ── Phase 1: pre-validation steps ──────────────────────────────────────
     for step in STEPS:
         step_id = step["id"]
         if step_id not in step_ids_to_run:
@@ -875,7 +875,9 @@ def main():
         if step_id in skip_ids:
             print(f"\n[SKIP] [{step_id}] {step['name']}（用户跳过）")
             continue
-
+        # Stop before step 12 (posttrain_validation needs manifest written first)
+        if step_id == "12":
+            break
         ok = run_step(step, python, cwd, cfg, cache)
         if not ok:
             print(f"\n{'='*60}")
@@ -883,18 +885,37 @@ def main():
             print("="*60)
             sys.exit(1)
 
+    # ── Phase 2: manifest must be written before step 12 ─────────────────
     # Step 14：同步正式产物文件名
     if mode_info.get("run_step14", True):
         with timed_step("[14] 同步 canonical 产物"):
             sync_canonical_paths(cwd)
 
-    # Step 15：写出 manifest.json
+    # Step 15：写出 manifest.json（必须在 step 12 之前）
     if mode_info.get("run_step15", True):
         with timed_step("[15] 写出 manifest.json"):
             try:
                 write_manifest(cfg, cwd)
             except Exception as e:
                 print(f"\n[WARN] manifest 写出失败（不影响主流程）: {e}")
+
+    # ── Phase 3: post-validation steps (12, 13) ───────────────────────────
+    for step in STEPS:
+        step_id = step["id"]
+        if step_id not in step_ids_to_run:
+            continue
+        if step_id in skip_ids:
+            print(f"\n[SKIP] [{step_id}] {step['name']}（用户跳过）")
+            continue
+        # Only run step 12 and later (already handled 1-11 above)
+        if step_id < "12":
+            continue
+        ok = run_step(step, python, cwd, cfg, cache)
+        if not ok:
+            print(f"\n{'='*60}")
+            print("训练流程终止")
+            print("="*60)
+            sys.exit(1)
 
     # 写出 timing 日志
     write_timing_logs(out_dir, mode)

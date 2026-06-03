@@ -73,8 +73,19 @@ KEEP_OUTPUT_DIRS = {
 }
 
 
+def is_under_archive(path: Path) -> bool:
+    """检查路径是否在 ROOT/archive/ 目录内。"""
+    try:
+        path.resolve().relative_to((ROOT / "archive").resolve())
+        return True
+    except ValueError:
+        return False
+
+
 def move_to_archive(path: Path):
     if not path.exists():
+        return
+    if is_under_archive(path):
         return
     rel = path.relative_to(ROOT)
     dst = ARCHIVE / rel

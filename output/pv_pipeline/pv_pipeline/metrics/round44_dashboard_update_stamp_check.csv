@@ -1,0 +1,8 @@
+﻿check,value,status,detail
+refresh_detected,True,PASS,
+city_series_consistency,PASS,PASS,"{'city_series_rows_pkl': 15344, 'city_series_rows_json': 15344, 'mismatched_rows': 0, 'max_diff_actual_mw': 0.0, 'max_diff_pred_mw': 5e-05, 'status': 'PASS'}"
+site_series_consistency,PASS,PASS,"{'checks': [{'site_id': 'S017', 'status': 'PASS', 'json_rows': 15344, 'pkl_rows': 15344, 'bad_rows': 0, 'max_diff_actual_mw': 0.0, 'max_diff_pred_mw': 5e-05}, {'site_id': 'S062', 'status': 'PASS', 'json_rows': 15344, 'pkl_rows': 15344, 'bad_rows': 0, 'max_diff_actual_mw': 0.0, 'max_diff_pred_mw': 5e-05}, {'site_id': 'S019', 'status': 'PASS', 'json_rows': 15344, 'pkl_rows': 15344, 'bad_rows': 0, 'max_diff_actual_mw': 0.0, 'max_diff_pred_mw': 5e-05}], 'overall_status': 'PASS'}"
+stamp_freshness,0.0h ago,PASS,"age_hours=0.0, threshold=48h"
+key_file_refreshed_city_series.json,CHANGED,PASS,
+key_file_refreshed_metadata.json,CHANGED,PASS,
+key_file_refreshed_typical_sites.json,CHANGED,PASS,
