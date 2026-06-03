@@ -20,10 +20,11 @@ run_full_pipeline.py
     python scripts/run_full_pipeline.py --mode dashboard-only
     python scripts/run_full_pipeline.py --mode full --force  # 强制重跑（忽略缓存）
 
-训练链路（共 13 步 + 2 内嵌步骤）：
+训练链路（共 14 步 + 2 内嵌步骤）：
     [1]  站点元数据构建              → stages/01_data/build_site_master.py
     [2]  应用人工经纬度覆盖          → scripts/apply_manual_geo_overrides.py
     [3]  数据清洗与气象插值          → stages/01_data/prepare_meteo_and_power.py
+    [3b] 辐照反演                   → stages/02_irradiance/train_inverse_model.py
     [4]  辐照融合                   → stages/02_irradiance/train_irradiance_blend.py
     [5]  训练前数据审计              → scripts/pretrain_audit_round36.py
     [6]  分布式功率模型训练          → stages/03_power/train_distributed_model_v159.py
@@ -176,6 +177,13 @@ STEPS = [
         "timeout": 300,
     },
     {
+        "id": "3b",
+        "name": "辐照反演",
+        "script": "stages/02_irradiance/train_inverse_model.py",
+        "required": True,
+        "timeout": 900,
+    },
+    {
         "id": "4",
         "name": "辐照融合",
         "script": "stages/02_irradiance/train_irradiance_blend.py",
@@ -266,7 +274,7 @@ MODES = {
     },
     "geo-refresh": {
         "desc": "只改经纬度或地理特征：重建站点元数据 + 辐照 + 预测 + 评估 + dashboard",
-        "steps": ["1", "2", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13"],
+        "steps": ["1", "2", "3", "3b", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13"],
         "run_step14": True,
         "run_step15": True,
     },
