@@ -1,0 +1,13 @@
+{
+  "page_uses_full_history": true,
+  "max_full_history_rows": 28464,
+  "full_history_rows_reasonable": true,
+  "hourly_summary_exists": true,
+  "hourly_rows": 14,
+  "hourly_has_site_nrmse": true,
+  "hourly_has_city_nrmse": true,
+  "scatter_has_test_nrmse": true,
+  "page_has_final_note": true,
+  "page_mentions_test_nrmse": true,
+  "index_has_hourly_ref": true
+}

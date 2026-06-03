@@ -1,0 +1,13 @@
+{
+  "refresh_detected": true,
+  "timestamp": "2026-06-01T08:36:00",
+  "pipeline_mode": "eval-only",
+  "pred_col": "power_pred_final",
+  "city_series_consistency": {
+    "status": "PASS",
+    "message": "city_series.json rows=15344, no_future_count=0"
+  },
+  "site_series_consistency": {
+    "overall_status": "PASS"
+  }
+}

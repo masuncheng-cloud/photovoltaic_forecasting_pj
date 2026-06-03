@@ -1,0 +1,183 @@
+ D "Cursor\346\211\247\350\241\214\346\226\271\346\241\210_Round77_\344\277\256\345\244\215\345\217\257\350\247\206\345\214\226\346\240\267\346\234\254\351\207\217\350\241\250\347\274\272\345\244\261\346\230\276\347\244\272.md"
+ D "docs/Round74_\345\233\236\351\200\200\346\234\200\344\274\230\347\211\210\346\234\254\346\270\205\347\220\206\346\256\213\347\225\231\345\271\266\345\210\267\346\226\260\345\217\257\350\247\206\345\214\226\346\212\245\345\221\212.md"
+ D "docs/Round75_output\347\233\256\345\275\225\347\231\275\345\220\215\345\215\225\346\270\205\347\220\206\344\270\216\346\234\200\347\273\210\344\272\247\347\211\251\346\224\266\345\217\243\346\212\245\345\221\212.md"
+ D "docs/Round76_\345\267\245\347\250\213\346\224\266\345\217\243\344\270\216\347\211\210\346\234\254\344\270\200\350\207\264\346\200\247\346\270\205\347\220\206\346\212\245\345\221\212.md"
+ D output/pv_pipeline/backups/round74_cleanup_20260601_225112/git_head_before_round74.txt
+ D output/pv_pipeline/backups/round74_cleanup_20260601_225112/interactive_dashboard_backup/city_series.json
+ D output/pv_pipeline/backups/round74_cleanup_20260601_225112/interactive_dashboard_backup/dashboard_update_stamp.json
+ D output/pv_pipeline/backups/round74_cleanup_20260601_225112/interactive_dashboard_backup/index.html
+ D output/pv_pipeline/backups/round74_cleanup_20260601_225112/interactive_dashboard_backup/index.json
+ D output/pv_pipeline/backups/round74_cleanup_20260601_225112/interactive_dashboard_backup/interactive_forecast_dashboard.html
+ D output/pv_pipeline/backups/round74_cleanup_20260601_225112/interactive_dashboard_backup/metadata.json
+ D output/pv_pipeline/backups/round74_cleanup_20260601_225112/interactive_dashboard_backup/site_series/S002.json
+ D output/pv_pipeline/backups/round74_cleanup_20260601_225112/interactive_dashboard_backup/site_series/S003.json
+ D output/pv_pipeline/backups/round74_cleanup_20260601_225112/interactive_dashboard_backup/site_series/S004.json
+ D output/pv_pipeline/backups/round74_cleanup_20260601_225112/interactive_dashboard_backup/site_series/S006.json
+ D output/pv_pipeline/backups/round74_cleanup_20260601_225112/interactive_dashboard_backup/site_series/S007.json
+ D output/pv_pipeline/backups/round74_cleanup_20260601_225112/interactive_dashboard_backup/site_series/S008.json
+ D output/pv_pipeline/backups/round74_cleanup_20260601_225112/interactive_dashboard_backup/site_series/S009.json
+ D output/pv_pipeline/backups/round74_cleanup_20260601_225112/interactive_dashboard_backup/site_series/S010.json
+ D output/pv_pipeline/backups/round74_cleanup_20260601_225112/interactive_dashboard_backup/site_series/S011.json
+ D output/pv_pipeline/backups/round74_cleanup_20260601_225112/interactive_dashboard_backup/site_series/S012.json
+ D output/pv_pipeline/backups/round74_cleanup_20260601_225112/interactive_dashboard_backup/site_series/S014.json
+ D output/pv_pipeline/backups/round74_cleanup_20260601_225112/interactive_dashboard_backup/site_series/S016.json
+ D output/pv_pipeline/backups/round74_cleanup_20260601_225112/interactive_dashboard_backup/site_series/S017.json
+ D output/pv_pipeline/backups/round74_cleanup_20260601_225112/interactive_dashboard_backup/site_series/S018.json
+ D output/pv_pipeline/backups/round74_cleanup_20260601_225112/interactive_dashboard_backup/site_series/S019.json
+ D output/pv_pipeline/backups/round74_cleanup_20260601_225112/interactive_dashboard_backup/site_series/S020.json
+ D output/pv_pipeline/backups/round74_cleanup_20260601_225112/interactive_dashboard_backup/site_series/S021.json
+ D output/pv_pipeline/backups/round74_cleanup_20260601_225112/interactive_dashboard_backup/site_series/S022.json
+ D output/pv_pipeline/backups/round74_cleanup_20260601_225112/interactive_dashboard_backup/site_series/S023.json
+ D output/pv_pipeline/backups/round74_cleanup_20260601_225112/interactive_dashboard_backup/site_series/S024.json
+ D output/pv_pipeline/backups/round74_cleanup_20260601_225112/interactive_dashboard_backup/site_series/S025.json
+ D output/pv_pipeline/backups/round74_cleanup_20260601_225112/interactive_dashboard_backup/site_series/S028.json
+ D output/pv_pipeline/backups/round74_cleanup_20260601_225112/interactive_dashboard_backup/site_series/S030.json
+ D output/pv_pipeline/backups/round74_cleanup_20260601_225112/interactive_dashboard_backup/site_series/S031.json
+ D output/pv_pipeline/backups/round74_cleanup_20260601_225112/interactive_dashboard_backup/site_series/S032.json
+ D output/pv_pipeline/backups/round74_cleanup_20260601_225112/interactive_dashboard_backup/site_series/S033.json
+ D output/pv_pipeline/backups/round74_cleanup_20260601_225112/interactive_dashboard_backup/site_series/S034.json
+ D output/pv_pipeline/backups/round74_cleanup_20260601_225112/interactive_dashboard_backup/site_series/S035.json
+ D output/pv_pipeline/backups/round74_cleanup_20260601_225112/interactive_dashboard_backup/site_series/S037.json
+ D output/pv_pipeline/backups/round74_cleanup_20260601_225112/interactive_dashboard_backup/site_series/S038.json
+ D output/pv_pipeline/backups/round74_cleanup_20260601_225112/interactive_dashboard_backup/site_series/S039.json
+ D output/pv_pipeline/backups/round74_cleanup_20260601_225112/interactive_dashboard_backup/site_series/S040.json
+ D output/pv_pipeline/backups/round74_cleanup_20260601_225112/interactive_dashboard_backup/site_series/S041.json
+ D output/pv_pipeline/backups/round74_cleanup_20260601_225112/interactive_dashboard_backup/site_series/S042.json
+ D output/pv_pipeline/backups/round74_cleanup_20260601_225112/interactive_dashboard_backup/site_series/S044.json
+ D output/pv_pipeline/backups/round74_cleanup_20260601_225112/interactive_dashboard_backup/site_series/S045.json
+ D output/pv_pipeline/backups/round74_cleanup_20260601_225112/interactive_dashboard_backup/site_series/S046.json
+ D output/pv_pipeline/backups/round74_cleanup_20260601_225112/interactive_dashboard_backup/site_series/S047.json
+ D output/pv_pipeline/backups/round74_cleanup_20260601_225112/interactive_dashboard_backup/site_series/S048.json
+ D output/pv_pipeline/backups/round74_cleanup_20260601_225112/interactive_dashboard_backup/site_series/S049.json
+ D output/pv_pipeline/backups/round74_cleanup_20260601_225112/interactive_dashboard_backup/site_series/S050.json
+ D output/pv_pipeline/backups/round74_cleanup_20260601_225112/interactive_dashboard_backup/site_series/S051.json
+ D output/pv_pipeline/backups/round74_cleanup_20260601_225112/interactive_dashboard_backup/site_series/S052.json
+ D output/pv_pipeline/backups/round74_cleanup_20260601_225112/interactive_dashboard_backup/site_series/S053.json
+ D output/pv_pipeline/backups/round74_cleanup_20260601_225112/interactive_dashboard_backup/site_series/S054.json
+ D output/pv_pipeline/backups/round74_cleanup_20260601_225112/interactive_dashboard_backup/site_series/S055.json
+ D output/pv_pipeline/backups/round74_cleanup_20260601_225112/interactive_dashboard_backup/site_series/S056.json
+ D output/pv_pipeline/backups/round74_cleanup_20260601_225112/interactive_dashboard_backup/site_series/S058.json
+ D output/pv_pipeline/backups/round74_cleanup_20260601_225112/interactive_dashboard_backup/site_series/S059.json
+ D output/pv_pipeline/backups/round74_cleanup_20260601_225112/interactive_dashboard_backup/site_series/S060.json
+ D output/pv_pipeline/backups/round74_cleanup_20260601_225112/interactive_dashboard_backup/site_series/S061.json
+ D output/pv_pipeline/backups/round74_cleanup_20260601_225112/interactive_dashboard_backup/site_series/S062.json
+ D output/pv_pipeline/backups/round74_cleanup_20260601_225112/interactive_dashboard_backup/site_series/S063.json
+ D output/pv_pipeline/backups/round74_cleanup_20260601_225112/interactive_dashboard_backup/site_series/S064.json
+ D output/pv_pipeline/backups/round74_cleanup_20260601_225112/interactive_dashboard_backup/site_series/S065.json
+ D output/pv_pipeline/backups/round74_cleanup_20260601_225112/interactive_dashboard_backup/site_series/S066.json
+ D output/pv_pipeline/backups/round74_cleanup_20260601_225112/interactive_dashboard_backup/site_series/S068.json
+ D output/pv_pipeline/backups/round74_cleanup_20260601_225112/interactive_dashboard_backup/site_series/S069.json
+ D output/pv_pipeline/backups/round74_cleanup_20260601_225112/interactive_dashboard_backup/site_series/S070.json
+ D output/pv_pipeline/backups/round74_cleanup_20260601_225112/interactive_dashboard_backup/site_series/S071.json
+ D output/pv_pipeline/backups/round74_cleanup_20260601_225112/interactive_dashboard_backup/site_series/S072.json
+ D output/pv_pipeline/backups/round74_cleanup_20260601_225112/interactive_dashboard_backup/site_series/S073.json
+ D output/pv_pipeline/backups/round74_cleanup_20260601_225112/interactive_dashboard_backup/site_series/S074.json
+ D output/pv_pipeline/backups/round74_cleanup_20260601_225112/interactive_dashboard_backup/site_series/S075.json
+ D output/pv_pipeline/backups/round74_cleanup_20260601_225112/interactive_dashboard_backup/site_series/S076.json
+ D output/pv_pipeline/backups/round74_cleanup_20260601_225112/interactive_dashboard_backup/site_series/S077.json
+ D output/pv_pipeline/backups/round74_cleanup_20260601_225112/interactive_dashboard_backup/site_series/S115.json
+ D output/pv_pipeline/backups/round74_cleanup_20260601_225112/interactive_dashboard_backup/site_series/S116.json
+ D output/pv_pipeline/backups/round74_cleanup_20260601_225112/manifest.json
+ D output/pv_pipeline/baselines/round58/hourly_nrmse_consistent.csv
+ D output/pv_pipeline/baselines/round58/round57_error_by_site.csv
+ D output/pv_pipeline/baselines/round58/round57_error_by_site_hour.csv
+ D output/pv_pipeline/baselines/round58/site_metrics_consistent.csv
+ D output/pv_pipeline/baselines/round59/hourly_nrmse_consistent.csv
+ D output/pv_pipeline/baselines/round59/site_metrics_consistent.csv
+ D output/pv_pipeline/baselines/round60/hourly_nrmse_consistent.csv
+ D output/pv_pipeline/baselines/round60/site_metrics_consistent.csv
+ D output/pv_pipeline/baselines/round61/hourly_nrmse_consistent.csv
+ D output/pv_pipeline/baselines/round61/manifest.json
+ D output/pv_pipeline/baselines/round61/round61_baseline_files.csv
+ D output/pv_pipeline/baselines/round61/round61_baseline_manifest.json
+ D output/pv_pipeline/baselines/round61/round61_baseline_verify_report.csv
+ D output/pv_pipeline/baselines/round61/round61_compare_hourly.csv
+ D output/pv_pipeline/baselines/round61/round61_compare_site.csv
+ D output/pv_pipeline/baselines/round61/round61_compare_summary.csv
+ D output/pv_pipeline/baselines/round61/site_metrics_consistent.csv
+ M "output/pv_pipeline/docs/Dashboard\351\242\204\346\265\213\345\200\274\344\270\200\350\207\264\346\200\247\346\243\200\346\237\245\346\212\245\345\221\212.md"
+ M output/pv_pipeline/docs/posttrain_validation_report.md
+ M output/pv_pipeline/metrics/dashboard_actual_value_consistency.csv
+ M output/pv_pipeline/metrics/dashboard_prediction_consistency.csv
+ M output/pv_pipeline/metrics/dashboard_vs_power_clean_consistency.csv
+ M output/pv_pipeline/validation/posttrain_validation_results.csv
+ D scripts/apply_round59_calibration.py
+ D scripts/apply_round60_conservative_calibration.py
+ D scripts/apply_round61_city_calibration.py
+ D scripts/archive_failed_round_experiments.py
+ D scripts/archive_legacy_round_files.py
+ D scripts/archive_stale_round_artifacts.py
+ D scripts/audit_stale_round_artifacts.py
+ D scripts/build_round64_safe_residual_blend.py
+ D scripts/build_round70_training_table.py
+ D scripts/build_round71_residual_training_table.py
+ D scripts/build_round72_consistent_base_prediction.py
+ D scripts/check_candidate_prediction_diff.py
+ M scripts/check_dashboard_prediction_values.py
+ D scripts/check_dashboard_prediction_values_round66.py
+ D scripts/cleanup_junk_files_round74.py
+ D scripts/cleanup_output_pv_pipeline_whitelist.py
+ D scripts/cleanup_round74_failed_artifacts.py
+ D scripts/cleanup_round_experiment_artifacts.py
+ D scripts/compare_round58_59_60_61_metrics.py
+ D scripts/compare_round58_round59_metrics.py
+ D scripts/compare_round58_round60_metrics.py
+ D scripts/create_round61_baseline_manifest.py
+ D scripts/diagnose_geo_feature_flow.py
+ D scripts/diagnose_hourly_bias.py
+ D scripts/diagnose_prediction_error_drivers.py
+ D scripts/diagnose_round71_drift_and_error_sources.py
+ D scripts/diagnose_s115_s116_prediction_flow.py
+ D scripts/evaluate_round64_safe_blend.py
+ D scripts/evaluate_round70_candidate_on_test.py
+ D scripts/evaluate_round71_candidate_on_test.py
+ D scripts/evaluate_round72_candidate_on_test.py
+ D scripts/evaluate_round73_candidate_on_test.py
+ M scripts/export_interactive_dashboard_data.py
+ D scripts/fix_round76_manifest_consistency.py
+ D scripts/recheck_round57_diagnostic_metrics.py
+ D scripts/recheck_round59_compare_metrics.py
+ D scripts/round44_dashboard_regression_check.py
+ D scripts/round46_recompute_hourly_nrmse_consistent.py
+ D scripts/select_round59_final_prediction.py
+ D scripts/select_round60_final_prediction.py
+ D scripts/select_round61_final_prediction.py
+ D scripts/select_round64_final_decision.py
+ D scripts/select_round70_final_candidate.py
+ D scripts/select_round71_candidate_multi_window.py
+ D scripts/select_round72_candidate_multi_window.py
+ D scripts/select_round73_candidate_by_backtest.py
+ D scripts/train_round70_active_state_model.py
+ D scripts/train_round70_high_error_site_expert.py
+ D scripts/train_round70_noon_bias_constrained_model.py
+ D scripts/train_round71_conservative_residual_candidates.py
+ D scripts/train_round72_residual_on_consistent_base.py
+ D scripts/train_round73_backtest_candidates.py
+ D scripts/validate_round72_consistent_base.py
+ D scripts/verify_current_best_round68.py
+ D scripts/verify_round61_baseline.py
+ M stages/05_visualization/interactive_forecast_dashboard.html
+?? "Cursor\346\211\247\350\241\214\346\226\271\346\241\210_Round92_\351\241\271\347\233\256\345\256\214\346\225\264\346\200\247\345\256\241\350\256\241\346\270\205\347\220\206\345\256\214\346\225\264\351\207\215\350\256\255\344\270\216\345\217\257\350\247\206\345\214\226\346\233\264\346\226\260.md"
+?? archive/round78_remove_old_version_warning/
+?? archive/round79_dashboard_interaction_fix/
+?? archive/round80_dashboard_loading_fix/
+?? archive/round81_dashboard_bootstrap_fix/
+?? archive/round82_restore_visualization_from_github/
+?? archive/round83_restore_before_round79/
+?? archive/round84_minimal_dashboard_fix/
+?? archive/round85_precise_dashboard_logic_fix/
+?? archive/round87_precise_dashboard_fix/
+?? archive/round88_city_typical_dropdown_fix/
+?? archive/round89_city_typical_representative_day/
+?? archive/round90_city_performance_day_refactor/
+?? archive/round91_1_visual_interaction_fix/
+?? archive/round91_2_export_non_future_full_history/
+?? archive/round91_metric_card_sample_scope/
+?? archive/round92_before_cleanup_and_retrain/
+?? archive/round92_before_full_retrain/
+?? archive/round92_cleanup_removed/
+?? "docs/Round91_1_\345\205\270\345\236\213\346\227\245\346\234\237\344\270\216\345\233\233\345\255\243\346\234\200\344\275\263\346\227\245\344\272\244\344\272\222\344\277\256\345\244\215\346\212\245\345\221\212.md"
+?? "docs/Round91_2_\345\257\274\345\207\272\351\235\236future\345\205\250\345\216\206\345\217\262\345\217\257\350\247\206\345\214\226\346\225\260\346\215\256\346\212\245\345\221\212.md"
+?? output/pv_pipeline/validation/round92_project_integrity_audit.json
+?? scripts/audit_round92_project_integrity.py
+?? scripts/cleanup_round92_redundant_artifacts.py

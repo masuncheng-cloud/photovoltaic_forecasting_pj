@@ -1,0 +1,3912 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>光伏功率预测交互式结果展示</title>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: -apple-system, "Microsoft YaHei", "PingFang SC", Arial, sans-serif;
+  font-size: 13px;
+  background: #f5f7fa;
+  color: #333;
+  padding: 16px 20px;
+}
+
+h1 {
+  font-size: 18px;
+  font-weight: 600;
+  color: #1a1a2e;
+  margin-bottom: 14px;
+  padding-bottom: 8px;
+  border-bottom: 2px solid #e0e6ed;
+}
+
+/* ---- Control Area ---- */
+#controls {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px 12px;
+  align-items: center;
+  background: #ffffff;
+  border: 1px solid #d8e2ee;
+  border-radius: 8px;
+  padding: 10px 14px;
+  margin-bottom: 14px;
+  box-shadow: 0 1px 2px rgba(15, 23, 42, 0.04);
+}
+
+.ctrl-group {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  flex-wrap: wrap;
+  flex-shrink: 0;
+}
+
+.ctrl-label {
+  font-size: 13px;
+  font-weight: 600;
+  color: #334155;
+  line-height: 32px;
+}
+
+.divider {
+  width: 1px;
+  height: 24px;
+  background: #e2e8f0;
+}
+
+.ctrl-group label { display: flex; align-items: center; gap: 4px; cursor: pointer; }
+.ctrl-group input[type="radio"] { cursor: pointer; }
+
+select, input[type="date"], input[type="number"] {
+  border: 1px solid #cbd5e0;
+  border-radius: 4px;
+  padding: 4px 8px;
+  font-size: 12px;
+  background: #fff;
+  color: #2d3748;
+}
+
+input[type="number"] { width: 60px; }
+
+/* ---- BUTTON SYSTEM ---- */
+.btn,
+.btn-seas {
+  height: 32px;
+  min-height: 32px;
+  border-radius: 6px;
+  padding: 0 12px;
+  font-size: 13px;
+  font-weight: 600;
+  line-height: 30px;
+  cursor: pointer;
+  border: 1px solid transparent;
+  transition: transform 0.08s ease, box-shadow 0.15s ease, background 0.15s ease, border-color 0.15s ease;
+  box-shadow: 0 1px 2px rgba(15, 23, 42, 0.10);
+}
+
+.btn:hover,
+.btn-seas:hover:not(:disabled) {
+  transform: translateY(-1px);
+  box-shadow: 0 3px 8px rgba(15, 23, 42, 0.16);
+}
+
+.btn:active,
+.btn-seas:active:not(:disabled) {
+  transform: translateY(0);
+  box-shadow: 0 1px 2px rgba(15, 23, 42, 0.10);
+}
+
+.btn:disabled,
+.btn-seas:disabled {
+  background: #e2e8f0 !important;
+  border-color: #cbd5e1 !important;
+  color: #94a3b8 !important;
+  cursor: not-allowed;
+  box-shadow: none;
+}
+
+/* 典型站点按钮 */
+.btn-site {
+  background: #edf5ff;
+  border-color: #bfdbfe;
+  color: #1d4ed8;
+}
+.btn-site:hover {
+  background: #dbeafe;
+  border-color: #93c5fd;
+}
+.btn-best {
+  background: #ecfdf5;
+  border-color: #a7f3d0;
+  color: #047857;
+}
+.btn-best:hover { background: #d1fae5; border-color: #86efac; }
+.btn-worst {
+  background: #fef2f2;
+  border-color: #fecaca;
+  color: #b91c1c;
+}
+.btn-worst:hover { background: #fee2e2; border-color: #fca5a5; }
+.btn-normal {
+  background: #eff6ff;
+  border-color: #bfdbfe;
+  color: #1d4ed8;
+}
+.btn-normal:hover { background: #dbeafe; border-color: #93c5fd; }
+.btn-low {
+  background: #f8fafc;
+  border-color: #cbd5e1;
+  color: #475569;
+}
+.btn-low:hover { background: #f1f5f9; border-color: #94a3b8; }
+
+/* 10-14 专题按钮 */
+.btn-topic {
+  background: #f5f3ff;
+  border-color: #c4b5fd;
+  color: #6d28d9;
+}
+.btn-topic:hover { background: #ede9fe; border-color: #a78bfa; }
+
+/* 四季按钮 */
+.btn-season.spring {
+  background: #ecfdf5;
+  border-color: #86efac;
+  color: #15803d;
+}
+.btn-season.summer {
+  background: #fff7ed;
+  border-color: #fdba74;
+  color: #c2410c;
+}
+.btn-season.autumn {
+  background: #fefce8;
+  border-color: #fde68a;
+  color: #a16207;
+}
+.btn-season.winter {
+  background: #ecfeff;
+  border-color: #67e8f9;
+  color: #0e7490;
+}
+
+/* 刷新/重置操作按钮 */
+.btn-action {
+  background: #f8fafc;
+  border-color: #cbd5e1;
+  color: #334155;
+}
+.btn-action:hover {
+  background: #f1f5f9;
+  border-color: #94a3b8;
+}
+
+/* 小按钮 */
+.btn-small {
+  height: 28px;
+  min-height: 28px;
+  line-height: 26px;
+  padding: 0 10px;
+  font-size: 12px;
+}
+
+/* 10-14 分类按钮 */
+.btn-purple {
+  background: #f5f3ff;
+  border-color: #c4b5fd;
+  color: #6d28d9;
+}
+.btn-purple:hover {
+  background: #ede9fe;
+  border-color: #8b5cf6;
+}
+
+.btn-indigo {
+  background: #eef2ff;
+  border-color: #a5b4fc;
+  color: #4338ca;
+}
+.btn-indigo:hover {
+  background: #e0e7ff;
+  border-color: #6366f1;
+}
+
+/* 提示文字 */
+.hint-text {
+  margin-top: 6px;
+  color: #64748b;
+  font-size: 13px;
+  line-height: 1.6;
+}
+
+.divider { width: 1px; height: 24px; background: #dde3ec; margin: 0 4px; }
+
+/* ---- Cards ---- */
+#metrics-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: 14px;
+}
+
+.metric-card {
+  background: #fff;
+  border: 1px solid #dde3ec;
+  border-radius: 6px;
+  padding: 10px 14px;
+  min-width: 110px;
+  flex: 1;
+}
+
+.metric-card .label {
+  font-size: 11px;
+  color: #718096;
+  margin-bottom: 3px;
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+}
+
+.metric-card .value {
+  font-size: 18px;
+  font-weight: 700;
+  color: #2d3748;
+}
+
+.metric-card .unit {
+  font-size: 11px;
+  color: #a0aec0;
+  font-weight: 400;
+  margin-left: 2px;
+}
+
+.metric-card .sub-value {
+  font-size: 11px;
+  color: #718096;
+  margin-top: 2px;
+  white-space: nowrap;
+}
+
+/* ---- Chart Area ---- */
+#chart-container {
+  background: #fff;
+  border: 1px solid #dde3ec;
+  border-radius: 6px;
+  padding: 14px;
+  margin-bottom: 14px;
+  position: relative;
+}
+
+#chart-title {
+  font-size: 13px;
+  font-weight: 600;
+  color: #2d3748;
+  margin-bottom: 10px;
+}
+
+#line-chart { width: 100%; height: 340px; display: block; }
+
+/* Tooltip */
+#tooltip {
+  position: fixed;
+  background: rgba(20, 27, 45, 0.92);
+  color: #e2e8f0;
+  padding: 8px 12px;
+  border-radius: 5px;
+  font-size: 12px;
+  pointer-events: none;
+  display: none;
+  z-index: 9999;
+  max-width: 240px;
+  line-height: 1.6;
+}
+#tooltip .tip-label { color: #a0b0c0; font-size: 11px; margin-top: 3px; }
+#tooltip .tip-val { color: #fff; font-weight: 600; }
+
+/* ---- Typical Sites Table ---- */
+#sites-section {
+  background: #fff;
+  border: 1px solid #dde3ec;
+  border-radius: 6px;
+  padding: 14px;
+  margin-bottom: 14px;
+}
+
+.section-title {
+  font-size: 13px;
+  font-weight: 600;
+  color: #2d3748;
+  margin-bottom: 10px;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 12px;
+}
+
+thead th {
+  background: #f0f4f8;
+  padding: 7px 8px;
+  text-align: center;
+  font-weight: 600;
+  color: #4a5568;
+  border-bottom: 2px solid #dde3ec;
+  white-space: nowrap;
+  position: sticky;
+  top: 0;
+}
+
+tbody tr {
+  border-bottom: 1px solid #edf2f7;
+  transition: background 0.1s;
+  cursor: pointer;
+}
+tbody tr:hover { background: #ebf4ff; }
+tbody td {
+  padding: 6px 8px;
+  text-align: center;
+  color: #2d3748;
+}
+
+.cat-best td:first-child { color: #276749; font-weight: 600; }
+.cat-worst td:first-child { color: #c53030; font-weight: 600; }
+.cat-normal td:first-child { color: #2b6cb0; font-weight: 600; }
+.cat-low_sample td:first-child { color: #718096; font-weight: 600; }
+.cat-other td:first-child { color: #a0aec0; }
+
+.cat-best td { background: #f0fff4; }
+.cat-worst td { background: #fff5f5; }
+.cat-normal td { background: #ebf8ff; }
+.cat-low_sample td { background: #f7fafc; }
+
+/* ---- Scatter Section ---- */
+#scatter-section {
+  background: #fff;
+  border: 1px solid #dde3ec;
+  border-radius: 6px;
+  padding: 14px;
+  margin-bottom: 14px;
+}
+
+#scatter-controls {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  margin-bottom: 10px;
+  flex-wrap: wrap;
+}
+
+#scatter-chart { width: 100%; height: 360px; display: block; }
+
+/* ---- Threshold Table ---- */
+#threshold-table {
+  margin-top: 14px;
+  width: 100%;
+  font-size: 12px;
+}
+
+#threshold-table th {
+  background: #f0f4f8;
+  padding: 7px 10px;
+  text-align: center;
+  font-weight: 600;
+  color: #4a5568;
+  border-bottom: 2px solid #dde3ec;
+}
+
+#threshold-table td {
+  padding: 6px 10px;
+  text-align: center;
+  border-bottom: 1px solid #edf2f7;
+  color: #2d3748;
+}
+
+#threshold-note {
+  font-size: 11px;
+  color: #a0aec0;
+  margin-top: 8px;
+  line-height: 1.6;
+  font-style: italic;
+}
+
+#typical-sites-note {
+  font-size: 11px;
+  color: #a0aec0;
+  margin: 6px 12px 10px;
+  line-height: 1.6;
+}
+
+/* ---- Footer ---- */
+#footer {
+  font-size: 11px;
+  color: #a0aec0;
+  padding: 10px 0;
+  border-top: 1px solid #dde3ec;
+  margin-top: 14px;
+  line-height: 1.7;
+}
+
+/* Loading overlay */
+#loading {
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(245,247,250,0.85);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9998;
+  font-size: 16px;
+  color: #3182ce;
+  font-weight: 500;
+}
+
+/* Tab bar for scatter hour filter */
+.tab-bar {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+.tab-btn {
+  padding: 3px 10px;
+  border: 1px solid #cbd5e0;
+  background: #fff;
+  border-radius: 3px;
+  cursor: pointer;
+  font-size: 11px;
+  color: #4a5568;
+}
+.tab-btn.active {
+  background: #3182ce;
+  color: #fff;
+  border-color: #3182ce;
+}
+
+/* Color legend */
+.legend-row {
+  display: flex;
+  gap: 14px;
+  flex-wrap: wrap;
+  align-items: center;
+  font-size: 11px;
+  color: #4a5568;
+}
+.legend-item { display: flex; align-items: center; gap: 4px; }
+.legend-dot { width: 10px; height: 10px; border-radius: 50%; display: inline-block; }
+
+/* ---- Hourly Prediction Panel ---- */
+.hourly-panel {
+  background: #fff;
+  border: 1px solid #dde3ec;
+  border-radius: 6px;
+  padding: 14px;
+  margin-bottom: 14px;
+}
+
+.hourly-panel .panel-header {
+  margin-bottom: 12px;
+}
+
+.hourly-panel h2 {
+  font-size: 14px;
+  font-weight: 600;
+  color: #2d3748;
+  margin-bottom: 4px;
+}
+
+.hourly-panel .panel-desc {
+  font-size: 11px;
+  color: #718096;
+  line-height: 1.6;
+}
+
+.hourly-grid {
+  display: grid;
+  grid-template-columns: minmax(360px, 1.2fr) minmax(360px, 1fr);
+  gap: 16px;
+  align-items: stretch;
+}
+
+.chart-wrap, .table-wrap {
+  min-width: 0;
+}
+
+#hourlyNrmseChart {
+  width: 100%;
+  height: 300px;
+  display: block;
+}
+
+#hourlySummaryTable {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 12px;
+}
+
+#hourlySummaryTable th {
+  background: #f0f4f8;
+  padding: 7px 10px;
+  text-align: center;
+  font-weight: 600;
+  color: #4a5568;
+  border-bottom: 2px solid #dde3ec;
+  white-space: nowrap;
+}
+
+#hourlySummaryTable td {
+  padding: 6px 10px;
+  text-align: center;
+  border-bottom: 1px solid #edf2f7;
+  color: #2d3748;
+}
+
+#hourlySummaryTable tr:hover td {
+  background: #f7fafc;
+}
+
+.hourly-panel .note {
+  font-size: 11px;
+  color: #a0aec0;
+  margin-top: 10px;
+  line-height: 1.6;
+  font-style: italic;
+}
+
+#line-chart {
+  cursor: grab;
+  user-select: none;
+  touch-action: none;
+}
+
+.chart-actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-top: 8px;
+}
+
+.hour-select {
+  height: 34px;
+  min-height: 34px;
+  min-width: 86px;
+  border: 1px solid #cbd5e1;
+  border-radius: 7px;
+  background: #ffffff;
+  color: #1f2937;
+  padding: 0 32px 0 12px;
+  font-size: 14px;
+  font-weight: 700;
+  line-height: 32px;
+  outline: none;
+  box-sizing: border-box;
+  appearance: none;
+  -webkit-appearance: none;
+  cursor: pointer;
+}
+
+.hour-select:focus {
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.16);
+}
+
+.hour-error {
+  display: inline-flex;
+  align-items: center;
+  height: 34px;
+  padding: 0 8px;
+  border: 1px solid #fecaca;
+  border-radius: 6px;
+  background: #fef2f2;
+  color: #b91c1c;
+  font-size: 13px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+#reset-line-zoom {
+  height: 34px;
+  min-width: 86px;
+  padding: 0 12px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid #cbd5e1;
+  background: #ffffff;
+  color: #334155;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 13px;
+  box-sizing: border-box;
+}
+
+.zoom-info {
+  font-size: 12px;
+  color: #64748b;
+}
+
+.select-control,
+#site-select,
+#start-hour,
+#end-hour {
+  height: 32px;
+  min-height: 32px;
+  border: 1px solid #cbd5e1;
+  border-radius: 6px;
+  background: #ffffff;
+  color: #1f2937;
+  padding: 0 8px;
+  font-size: 13px;
+  font-weight: 500;
+  line-height: 30px;
+  outline: none;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease, background 0.15s ease;
+}
+
+.select-control:focus,
+#site-select:focus,
+#start-hour:focus,
+#end-hour:focus {
+  border-color: #3182ce;
+  box-shadow: 0 0 0 3px rgba(49, 130, 206, 0.16);
+}
+
+.date-combo {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  padding: 2px 4px;
+  border-radius: 8px;
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  height: 38px;
+  flex-shrink: 0;
+}
+
+.date-year { width: 76px; }
+
+.date-month,
+.date-day { width: 56px; }
+
+.date-unit {
+  font-size: 12px;
+  color: #64748b;
+  margin-right: 1px;
+  line-height: 1;
+}
+
+#typical-group,
+#site-select-group {
+  flex-shrink: 0;
+}
+
+.hidden-date-input {
+  display: none;
+}
+
+.date-error {
+  align-items: center;
+  height: 32px;
+  padding: 0 10px;
+  border: 1px solid #fecaca;
+  border-radius: 6px;
+  background: #fef2f2;
+  color: #b91c1c;
+  font-size: 13px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+@media (max-width: 900px) {
+  .hourly-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* ---- Invalid Zero Sites Panel ---- */
+.panel {
+  background: #fff;
+  border: 1px solid #dde3ec;
+  border-radius: 6px;
+  padding: 14px;
+  margin-bottom: 14px;
+}
+
+.panel h3 {
+  font-size: 14px;
+  font-weight: 600;
+  color: #2d3748;
+  margin-bottom: 4px;
+}
+
+.panel .hint-text {
+  margin-bottom: 10px;
+}
+
+.empty-note {
+  font-size: 12px;
+  color: #a0aec0;
+  font-style: italic;
+  padding: 8px 0;
+}
+
+.data-integrity-note {
+  margin: 6px 0;
+  padding: 7px 10px;
+  border-radius: 6px;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.data-integrity-note.ok {
+  background: #ecfdf5;
+  border: 1px solid #bbf7d0;
+  color: #047857;
+}
+
+.data-integrity-note.bad {
+  background: #fef2f2;
+  border: 1px solid #fecaca;
+  color: #b91c1c;
+}
+
+#invalid-zero-sites-table {
+  overflow-x: auto;
+  max-height: 320px;
+  overflow-y: auto;
+}
+
+#invalid-zero-sites-table table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 12px;
+}
+
+#invalid-zero-sites-table thead th {
+  background: #f0f4f8;
+  padding: 7px 8px;
+  text-align: center;
+  font-weight: 600;
+  color: #4a5568;
+  border-bottom: 2px solid #dde3ec;
+  white-space: nowrap;
+  position: sticky;
+  top: 0;
+}
+
+#invalid-zero-sites-table tbody tr {
+  border-bottom: 1px solid #edf2f7;
+  cursor: default;
+}
+
+#invalid-zero-sites-table tbody tr:hover {
+  background: #fff5f5;
+}
+
+#invalid-zero-sites-table tbody td {
+  padding: 6px 8px;
+  text-align: center;
+  color: #2d3748;
+}
+</style>
+</head>
+<body>
+
+<div id="loading">正在加载数据，请稍候...</div>
+<div id="tooltip"></div>
+
+<h1>光伏功率预测交互式结果展示</h1>
+<div id="data-version-badge" style="display:none;background:#eef2ff;color:#4338ca;border-radius:6px;padding:6px 12px;margin:8px 0 0;font-size:13px;font-weight:bold;width:fit-content;">
+  数据版本：<span id="badge-data-round">--</span>（<span id="badge-pred-col">--</span> | 默认不含 future）
+</div>
+<div id="data-version-warning" style="display:none;background:#fef2f2;color:#dc2626;border-radius:6px;padding:8px 12px;margin:8px 0;font-size:13px;width:fit-content;">
+  ⚠️ <span id="version-warning-text"></span>
+</div>
+
+<!-- ===== CONTROLS ===== -->
+<div id="controls">
+  <div class="ctrl-group">
+    <span class="ctrl-label">展示对象：</span>
+    <label><input type="radio" name="scope" value="city" checked> 全市</label>
+    <label><input type="radio" name="scope" value="site"> 单站点</label>
+  </div>
+  <div class="divider"></div>
+
+  <div class="ctrl-group" id="site-select-group" style="display:none;">
+    <span class="ctrl-label">选择站点：</span>
+    <select id="site-select"><option value="">-- 请选择 --</option></select>
+  </div>
+
+  <div class="ctrl-group" id="typical-group">
+    <span class="ctrl-label">典型站点：</span>
+    <button class="btn btn-best" id="btn-best">预测最好</button>
+    <button class="btn btn-worst" id="btn-worst">预测最差</button>
+    <button class="btn btn-normal" id="btn-normal">相对正确</button>
+    <button class="btn btn-low" id="btn-low">样本少</button>
+  </div>
+  <div class="divider"></div>
+
+  <div class="ctrl-group">
+    <span class="ctrl-label">日期：</span>
+    <div class="date-combo" data-role="start">
+      <select id="start-year" class="select-control date-year"></select><span class="date-unit">年</span>
+      <select id="start-month" class="select-control date-month"></select><span class="date-unit">月</span>
+      <select id="start-day" class="select-control date-day"></select><span class="date-unit">日</span>
+    </div>
+    <input type="date" id="start-date" class="hidden-date-input">
+    <span class="ctrl-label">至</span>
+    <div class="date-combo" data-role="end">
+      <select id="end-year" class="select-control date-year"></select><span class="date-unit">年</span>
+      <select id="end-month" class="select-control date-month"></select><span class="date-unit">月</span>
+      <select id="end-day" class="select-control date-day"></select><span class="date-unit">日</span>
+    </div>
+    <input type="date" id="end-date" class="hidden-date-input">
+    <span id="date-range-message" class="date-error" style="display:none;"></span>
+  </div>
+  <div class="divider"></div>
+
+  <div class="ctrl-group">
+    <span class="ctrl-label">小时：</span>
+    <select id="start-hour" class="hour-select" aria-label="开始小时"></select>
+    <span class="ctrl-label">至</span>
+    <select id="end-hour" class="hour-select" aria-label="结束小时"></select>
+    <span id="hour-range-message" class="hour-error" style="display:none;"></span>
+  </div>
+  <div class="divider"></div>
+
+  <div class="ctrl-group">
+    <button
+      class="btn btn-purple"
+      id="btn-current-midday"
+      data-help="保持当前日期范围不变，仅切换为全市视角并筛选10-14点。"
+    >当前日期10-14</button>
+    <button
+      class="btn btn-indigo"
+      id="btn-typical-midday"
+      data-help="自动选择全市该季节日级 NRMSE 最低的一天，并切换为全市 6-19 点。"
+    >典型日10-14</button>
+  </div>
+  <div class="divider"></div>
+
+  <div class="ctrl-group" title="单站点模式：选择该站点该季节日级 NRMSE 最低的一天；全市模式：选择全市该季节日级 NRMSE 最低的一天。">
+    <span class="ctrl-label">四季最佳日：</span>
+    <button class="btn btn-season spring" id="btn-spring" disabled>春季</button>
+    <button class="btn btn-season summer" id="btn-summer" disabled>夏季</button>
+    <button class="btn btn-season autumn" id="btn-autumn" disabled>秋季</button>
+    <button class="btn btn-season winter" id="btn-winter" disabled>冬季</button>
+  </div>
+  <div class="divider"></div>
+
+  <button class="btn btn-action" id="btn-refresh">刷新</button>
+</div>
+
+<div class="hint-text">
+  "当前日期10-14"只筛选当前日期范围内的全市10-14点数据；"四季最佳日"会选择该季节日级 NRMSE 最低的一天。
+</div>
+
+<!-- ===== METRICS CARDS ===== -->
+<div id="metrics-row">
+  <div class="metric-card" title="全市模式：当前筛选范围样本数；单站点模式：该站点历史全量样本数（train/valid/test，不含future）。"><div class="label">样本数</div><div class="value" id="m-samples">--</div></div>
+  <div class="metric-card"><div class="label">站点数</div><div class="value" id="m-sites">--</div></div>
+  <div class="metric-card"><div class="label">实际总电量</div><div class="value"><span id="m-actual">--</span><span class="unit">MWh</span></div></div>
+  <div class="metric-card"><div class="label">预测总电量</div><div class="value"><span id="m-pred">--</span><span class="unit">MWh</span></div></div>
+  <div class="metric-card"><div class="label">pred/actual</div><div class="value" id="m-ratio">--</div></div>
+  <div class="metric-card"><div class="label">MAE</div><div class="value"><span id="m-mae">--</span><span class="unit">MW</span></div></div>
+  <div class="metric-card"><div class="label">RMSE</div><div class="value"><span id="m-rmse">--</span><span class="unit">MW</span></div></div>
+  <div class="metric-card" title="NRMSE = RMSE / 容量基准 × 100%。单站点容量基准为该站点装机容量；全市容量基准为参与评价站点总装机容量（capacity_sum_mw）。"><div class="label">NRMSE</div><div class="value"><span id="m-nrmse">--</span><span class="unit">%</span></div><div class="sub-value" id="m-nrmse-cap-ref"></div></div>
+  <div class="metric-card"><div class="label">bias</div><div class="value"><span id="m-bias">--</span><span class="unit">%</span></div></div>
+</div>
+
+<!-- ===== DATA INTEGRITY NOTE ===== -->
+<div id="data-integrity-note"></div>
+
+<!-- ===== LINE CHART ===== -->
+<div id="chart-container">
+  <div id="chart-title">全市总出力折线图</div>
+  <svg id="line-chart"></svg>
+  <div class="chart-actions">
+    <button class="btn btn-action btn-small" id="reset-line-zoom" type="button">重置缩放</button>
+    <span id="line-zoom-info" class="zoom-info">滚轮缩放，拖拽平移，双击复位</span>
+  </div>
+</div>
+
+<!-- ===== TYPICAL SITES TABLE ===== -->
+<div id="sites-section">
+  <div class="section-title">典型站点</div>
+  <div style="overflow-x:auto; max-height:320px; overflow-y:auto;">
+  <table id="sites-table">
+    <thead>
+      <tr>
+        <th>类别</th><th>站点ID</th><th>站点名称</th><th>容量 MW</th>
+        <th>全量历史样本数</th><th>全量正功率样本</th><th>全量零值占比%</th>
+        <th>测试集6-19点0值占比%</th>
+        <th>MAE MW</th><th>RMSE MW</th><th>NRMSE %</th><th>pred/actual</th>
+      </tr>
+    </thead>
+    <tbody></tbody>
+  </table>
+  </div>
+  <div id="typical-sites-note">说明：历史样本数 = train + valid + test，不包含 future；MAE、RMSE、NRMSE、pred/actual 与测试集6-19点0值占比均按测试集 6-19 点计算。全 0 或无正功率样本的站点归入"无有效发电样本站点"，不参与典型站点分类。</div>
+</div>
+
+<!-- ===== HOURLY PREDICTION PANEL ===== -->
+<section class="hourly-panel">
+  <div class="panel-header">
+    <h2>逐小时预测结果</h2>
+    <p class="panel-desc">测试集 6-19 点逐小时样本量、站点平均 NRMSE 与城市 NRMSE。</p>
+  </div>
+  <div class="hourly-grid">
+    <div class="chart-wrap">
+      <svg id="hourlyNrmseChart"></svg>
+    </div>
+    <div class="table-wrap">
+      <table id="hourlySummaryTable">
+        <thead>
+          <tr>
+            <th>小时（时）</th>
+            <th>样本数（行）</th>
+            <th>站点平均 NRMSE（%）</th>
+            <th>城市 NRMSE（%）</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+    </div>
+  </div>
+  <p class="note">
+    说明：站点平均 NRMSE 按"先对每个站点在该小时计算 NRMSE，再对站点取平均"的口径统计；城市 NRMSE 按全市同一小时总功率聚合后计算。样本数为测试集该小时参与统计的站点-时间记录数。
+  </p>
+</section>
+
+<!-- ===== SCATTER PLOT ===== -->
+<div id="scatter-section">
+  <div class="section-title">单站点全量历史样本数与测试集 NRMSE 关系</div>
+  <div id="scatter-controls">
+    <span class="ctrl-label">横轴口径：</span>
+    <div class="tab-bar">
+      <button class="tab-btn active" data-xaxis="full" title="该站点 train/valid/test 的总样本数">全量历史样本数</button>
+      <button class="tab-btn" data-xaxis="tv_positive" title="统计 train + valid 阶段、6-19 点、真实功率 power_mw > 0 的样本数，更接近模型实际可学习的有效发电样本量。">训练验证正功率样本</button>
+    </div>
+    <div class="legend-row" style="margin-left:auto;">
+      <div class="legend-item"><div class="legend-dot" style="background:#38a169"></div>预测最好</div>
+      <div class="legend-item"><div class="legend-dot" style="background:#e53e3e"></div>预测最差</div>
+      <div class="legend-item"><div class="legend-dot" style="background:#3182ce"></div>相对正确</div>
+      <div class="legend-item"><div class="legend-dot" style="background:#718096"></div>样本少</div>
+      <div class="legend-item"><div class="legend-dot" style="background:#d0d0d0"></div>其他</div>
+    </div>
+  </div>
+  <svg id="scatter-chart"></svg>
+  <div id="scatter-desc" style="font-size:11px;color:#718096;margin-top:6px;">
+    本图每个点代表一个具备有效发电样本的站点。横轴为该站点历史样本数（train/valid/test，不包含 future），纵轴为测试集 6-19 点 NRMSE。点越靠右表示历史数据越多，点越靠下表示预测精度越高。0 值占比 100% 或无正功率样本的站点不参与本图统计，单独列入下方"无有效发电样本站点"。全量 0 值占比包含夜间正常 0 值；测试集 6-19 点 0 值占比更适合解释最终测试误差是否受白天 0 值影响。横轴可切换为"训练验证正功率样本"：统计 train + valid 阶段 6-19 点 power_mw > 0 的样本数，更接近模型实际可学习的数据规模。样本量只是经验参考，容量映射、异常0值、限电、遮挡和气象匹配仍会影响最终 NRMSE。
+  </div>
+
+  <div id="sample-req-table-wrap" style="margin-top:12px;">
+    <div class="section-title" style="font-size:12px;" id="threshold-table-title">达到不同 NRMSE 阈值的全量历史样本量分布</div>
+    <table id="threshold-table">
+      <thead>
+        <tr>
+          <th>NRMSE阈值</th><th>达标站点数</th><th>总站点数</th><th>达标比例</th>
+          <th id="thresh-col-1-title">全量样本最小值</th><th id="thresh-col-2-title">全量样本25分位</th><th id="thresh-col-3-title">全量样本中位数</th>
+          <th id="thresh-col-4-title">全量样本75分位</th><th id="thresh-col-5-title">全量样本最大值</th>
+          <th>正功率样本中位数</th>
+        </tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+    <div id="threshold-note">说明：这里统计的是已达到不同 NRMSE 阈值的有效发电站点的历史样本量分布；需结合测试集 6-19 点 0 值占比、容量、站点映射和气象匹配共同判断。历史样本量不包含 future。</div>
+  </div>
+
+  <div id="sample-bins-wrap" style="margin-top:12px;">
+    <div class="section-title" style="font-size:12px;" id="bins-table-title">按单站点全量历史样本数分箱的 NRMSE 分布</div>
+    <table id="sample-bins-table">
+      <thead>
+        <tr>
+          <th>样本区间</th><th>站点数</th><th>全量样本中位数</th><th>全量正功率样本中位数</th><th>训练验证正功率样本中位数</th>
+          <th>NRMSE均值%</th><th>NRMSE中位数%</th><th>NRMSE25分位%</th><th>NRMSE75分位%</th>
+          <th>最佳NRMSE%</th><th>最差NRMSE%</th>
+        </tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+  </div>
+</div>
+
+<!-- ===== INVALID ZERO SITES PANEL ===== -->
+<section class="panel" id="invalid-zero-panel" style="display:none;">
+  <h3>无有效发电样本站点</h3>
+  <p class="hint-text">
+    以下站点历史功率几乎全为0，不参与样本量-NRMSE关系统计和阈值统计。
+  </p>
+  <div id="invalid-zero-sites-table"></div>
+</section>
+
+<!-- ===== FOOTER ===== -->
+<div id="footer">
+  当前折线图真实值 actual_mw 直接来自 distributed_predictions_final_full.pkl 的 power_mw；<br>
+  该字段与 power_clean.pkl 中同一站点、同一时间的 power_mw 一致。<br>
+  正式测试集指标来自 distributed_predictions_final_eval.pkl，通常排除非正功率样本，与 full 展示曲线的样本范围不同。<br>
+  页面只用于展示当前 final/best 预测结果，不参与模型训练和模型选择。<br>
+  注意：当前数据为小时粒度，sum(MW) 可近似理解为 MWh。
+</div>
+
+<script>
+// ============================================================
+// GLOBAL DATA
+// ============================================================
+// Auto-detect DATA_ROOT based on page location
+const DATA_ROOT = (() => {
+  const path = window.location.pathname;
+  if (path.includes("/stages/05_visualization/")) {
+    return "../../output/pv_pipeline/interactive_dashboard";
+  }
+  return ".";
+})();
+const DASHBOARD_BASE = DATA_ROOT;
+const SITE_SERIES_BASE = DATA_ROOT + "/site_series/";
+
+// Centralized fetch that always uses DATA_ROOT and disables browser cache
+async function fetchJSON(relativePath) {
+  const sep = relativePath.includes("?") ? "&" : "?";
+  const url = `${DATA_ROOT}/${relativePath}${sep}v=${Date.now()}`;
+  console.log("[fetchJSON]", relativePath, "=>", url);
+  const res = await fetch(url, { cache: "no-store" });
+  if (!res.ok) throw new Error(`加载数据失败: ${url} (${res.status})`);
+  return await res.json();
+}
+
+// ============================================================
+// PAGE VERSION MARKER (Round39: auto-detect latest round)
+// ============================================================
+const PAGE_VERSION = "Round39";
+let gExpectedRound = null;  // will be set from metadata.json after load
+const gExpectedBestSites = ["S062", "S023", "S049", "S047", "S056"];
+const gExpectedWorstSites = ["S007", "S063", "S065", "S041", "S072"];
+
+let gIndex = null;
+let gCitySeries = [];
+let gSiteMetrics = [];
+let gScatterData = [];
+let gScatterSite = [];
+let gThresholdSummary = [];
+let gSampleReqSummary = [];
+let gSampleReqBins = [];
+let gHourlySummary = [];
+let gSeasonDays = [];
+let gMiddayByDate = [];
+let gSeasonBestCity = {};
+let gSeasonBestBySite = {};
+let gInvalidZeroSites = [];
+
+// In-memory site series cache
+const siteSeriesCache = {};
+let gCurrentSiteRows = [];
+
+// Current view state
+let state = {
+  scope: "city",
+  siteId: "",
+  startDate: "",
+  endDate: "",
+  startHour: 6,
+  endHour: 19,
+  hourRangeValid: true,
+  scatterHourFilter: "all",
+  scatterXAxis: "full",   // "full" | "tv_positive"
+};
+
+// ================================================================
+// SAMPLE SCATTER X-AXIS CONFIG
+// ================================================================
+const SAMPLE_X_AXIS_CONFIG = {
+  full: {
+    label: "全量历史样本数",
+    field: "full_history_rows",
+    axisLabel: "单站点全量历史样本数（行）",
+    sectionTitle: "单站点全量历史样本数与测试集 NRMSE 关系",
+    bins: [
+      [0, 5000, "0-5000"],
+      [5000, 10000, "5000-10000"],
+      [10000, 15000, "10000-15000"],
+      [15000, 20000, "15000-20000"],
+      [20000, 26000, "20000-26000"],
+      [26000, 28000, "26000-28000"],
+      [28000, Infinity, "28000+"],
+    ],
+    binsCol: "median_full_history_rows",
+    threshCols: {
+      min:    "min_full_history_rows",
+      p25:    "p25_full_history_rows",
+      median: "median_full_history_rows",
+      p75:    "p75_full_history_rows",
+      max:    "max_full_history_rows",
+    },
+    threshTitle: "全量历史样本量分布",
+    threshColTitle: "全量样本",
+  },
+  tv_positive: {
+    label: "训练验证正功率样本",
+    field: "train_valid_positive_rows",
+    axisLabel: "训练+验证阶段6-19点正功率样本量（行）",
+    sectionTitle: "训练验证正功率样本量与测试集 NRMSE 关系",
+    bins: [
+      [0, 1000, "0-1000"],
+      [1000, 2000, "1000-2000"],
+      [2000, 3000, "2000-3000"],
+      [3000, 5000, "3000-5000"],
+      [5000, 8000, "5000-8000"],
+      [8000, 11000, "8000-11000"],
+      [11000, Infinity, "11000+"],
+    ],
+    binsCol: "median_train_valid_positive_rows",
+    threshCols: {
+      min:    "min_tv_positive_rows",
+      p25:    "p25_tv_positive_rows",
+      median: "median_tv_positive_rows",
+      p75:    "p75_tv_positive_rows",
+      max:    "max_tv_positive_rows",
+    },
+    threshTitle: "训练验证正功率样本量分布",
+    threshColTitle: "正功率样本",
+  },
+};
+
+// Build derived threshold/bins data from gScatterSite for each axis mode
+function buildThresholdData(chartData, mode) {
+  const cfg = SAMPLE_X_AXIS_CONFIG[mode];
+  const field = cfg.field;
+  const thresholds = [5, 10, 15, 20, 25];
+  const results = [];
+  for (const thresh of thresholds) {
+    const qualified = chartData.filter(p => (p.test_nrmse_pct || 0) <= thresh);
+    const vals = qualified.map(p => p[field] || 0).sort((a, b) => a - b);
+    const cnt = vals.length;
+    const total = chartData.length;
+    // Use linear interpolation for percentile like a real stats library
+    const percentile = (arr, q) => {
+      if (arr.length === 0) return null;
+      const pos = q * (arr.length - 1);
+      const lo = Math.floor(pos);
+      const hi = Math.ceil(pos);
+      return lo === hi ? arr[lo] : arr[lo] + (pos - lo) * (arr[hi] - arr[lo]);
+    };
+    results.push({
+      threshold_pct: thresh,
+      qualified_sites: cnt,
+      total_sites: total,
+      qualified_ratio_pct: total > 0 ? +(cnt / total * 100).toFixed(2) : 0,
+      // full mode keys (field = full_history_rows)
+      min_full_history_rows:    cnt > 0 ? vals[0] : null,
+      p25_full_history_rows:    percentile(vals, 0.25),
+      median_full_history_rows: percentile(vals, 0.50),
+      p75_full_history_rows:    percentile(vals, 0.75),
+      max_full_history_rows:    cnt > 0 ? vals[vals.length - 1] : null,
+      // tv_positive mode keys (field = train_valid_positive_rows)
+      min_tv_positive_rows:    cnt > 0 ? vals[0] : null,
+      p25_tv_positive_rows:    percentile(vals, 0.25),
+      median_tv_positive_rows: percentile(vals, 0.50),
+      p75_tv_positive_rows:    percentile(vals, 0.75),
+      max_tv_positive_rows:    cnt > 0 ? vals[vals.length - 1] : null,
+      // shared: median of train_valid_positive_rows across qualified sites
+      median_train_valid_positive_rows: chartData
+        .filter(p => (p.test_nrmse_pct || 0) <= thresh)
+        .map(p => p.train_valid_positive_rows || 0)
+        .sort((a, b) => a - b)
+        .filter(v => v > 0)
+        .length > 0
+          ? percentile(
+              chartData.filter(p => (p.test_nrmse_pct || 0) <= thresh)
+                .map(p => p.train_valid_positive_rows || 0)
+                .filter(v => v > 0)
+                .sort((a, b) => a - b),
+              0.50
+            )
+          : null,
+    });
+  }
+  return results;
+}
+
+function buildBinsData(chartData, mode) {
+  const cfg = SAMPLE_X_AXIS_CONFIG[mode];
+  const field = cfg.field;
+  const rows = [];
+  for (const [lo, hi, label] of cfg.bins) {
+    const bucket = chartData.filter(p => {
+      const v = p[field] || 0;
+      return v >= lo && v < hi;
+    });
+    const nrmseVals = bucket.map(p => p.test_nrmse_pct).filter(v => v != null).sort((a, b) => a - b);
+    const percentile = (arr, q) => {
+      if (arr.length === 0) return null;
+      const pos = q * (arr.length - 1);
+      const lo = Math.floor(pos);
+      const hi = Math.ceil(pos);
+      return lo === hi ? arr[lo] : arr[lo] + (pos - lo) * (arr[hi] - arr[lo]);
+    };
+    // primary field (field = full_history_rows or train_valid_positive_rows)
+    const primaryVals = bucket.map(p => p[field] || 0).filter(v => v != null).sort((a, b) => a - b);
+    // train_valid_positive_rows (always available in scatter data)
+    const tvPosVals = bucket.map(p => p.train_valid_positive_rows || 0).filter(v => v > 0).sort((a, b) => a - b);
+    rows.push({
+      sample_bin: label,
+      site_count: bucket.length,
+      median_full_history_rows: percentile(primaryVals, 0.50),
+      median_train_valid_positive_rows: percentile(primaryVals, 0.50),
+      median_tv_positive_rows: percentile(tvPosVals, 0.50),
+      mean_nrmse_pct: nrmseVals.length > 0 ? +(nrmseVals.reduce((a, b) => a + b, 0) / nrmseVals.length).toFixed(4) : null,
+      median_nrmse_pct: percentile(nrmseVals, 0.50),
+      p25_nrmse_pct: percentile(nrmseVals, 0.25),
+      p75_nrmse_pct: percentile(nrmseVals, 0.75),
+      best_nrmse_pct: nrmseVals.length > 0 ? nrmseVals[0] : null,
+      worst_nrmse_pct: nrmseVals.length > 0 ? nrmseVals[nrmseVals.length - 1] : null,
+    });
+  }
+  return rows;
+}
+
+// Global computed data (recomputed on axis mode change)
+let gThresholdByMode = { full: [], tv_positive: [] };
+let gBinsByMode = { full: [], tv_positive: [] };
+
+function recomputeThresholdAndBins() {
+  const data = (gScatterSite && gScatterSite.length > 0) ? gScatterSite : [];
+  gThresholdByMode.full = buildThresholdData(data, "full");
+  gThresholdByMode.tv_positive = buildThresholdData(data, "tv_positive");
+  gBinsByMode.full = buildBinsData(data, "full");
+  gBinsByMode.tv_positive = buildBinsData(data, "tv_positive");
+}
+
+// Line chart zoom state
+let gLineRowsFull = [];
+
+let lineZoom = {
+  startIndex: 0,
+  endIndex: -1,
+  isDragging: false,
+  dragStartX: 0,
+  dragStartStartIndex: 0,
+  dragStartEndIndex: -1,
+  bound: false,
+};
+
+// ============================================================
+// DATE COMBO (YMD DROPDOWNS)
+// ============================================================
+let dateComboBound = false;
+
+// ============================================================
+// TYPICAL SITES NORMALIZATION
+// ============================================================
+function normalizeTypicalSites(raw) {
+  const result = { best: [], worst: [], normal: [], small: [] };
+  if (!raw) return result;
+
+  const pushUnique = (key, sid) => {
+    if (!sid) return;
+    sid = String(sid).trim();
+    if (!sid) return;
+    if (!result[key].includes(sid)) result[key].push(sid);
+  };
+
+  if (!Array.isArray(raw) && typeof raw === "object") {
+    const pickArray = (...keys) => {
+      for (const k of keys) {
+        if (Array.isArray(raw[k])) return raw[k];
+      }
+      return [];
+    };
+
+    for (const x of pickArray("best", "预测最好", "typical_best_site_ids", "best_site_ids")) {
+      pushUnique("best", typeof x === "string" ? x : x.site_id);
+    }
+    for (const x of pickArray("worst", "预测最差", "typical_worst_site_ids", "worst_site_ids")) {
+      pushUnique("worst", typeof x === "string" ? x : x.site_id);
+    }
+    for (const x of pickArray("normal", "relative_correct", "相对正确", "typical_normal_site_ids", "correct_site_ids")) {
+      pushUnique("normal", typeof x === "string" ? x : x.site_id);
+    }
+    for (const x of pickArray("small", "sample_small", "low_sample", "few_sample", "样本少", "少样本", "数据少", "typical_small_site_ids", "small_site_ids")) {
+      pushUnique("small", typeof x === "string" ? x : x.site_id);
+    }
+    return result;
+  }
+
+  if (Array.isArray(raw)) {
+    for (const item of raw) {
+      const sid = item.site_id || item.station_id || item.id;
+      const label = String(item.category || item.category_label || item.type || item.label || item["类型"] || "");
+      const labelLower = label.toLowerCase();
+      if (!sid) continue;
+      if (label.includes("最好") || labelLower === "best") {
+        pushUnique("best", sid);
+      } else if (label.includes("最差") || labelLower === "worst") {
+        pushUnique("worst", sid);
+      } else if (label.includes("正确") || label.includes("相对") || labelLower === "normal" || labelLower.includes("correct")) {
+        pushUnique("normal", sid);
+      } else if (
+        label.includes("样本少") || label.includes("少样本") || label.includes("数据少") ||
+        labelLower.includes("small") || labelLower.includes("low_sample") ||
+        labelLower.includes("few_sample") || labelLower.includes("sample_small")
+      ) {
+        pushUnique("small", sid);
+      }
+    }
+  }
+
+  return result;
+}
+
+function getFallbackSmallSampleSites() {
+  const rows = Array.isArray(gSiteMetrics) ? gSiteMetrics : [];
+  return rows
+    .filter(r => {
+      const sid = r.site_id || r.station_id || r.id;
+      const rowsCount = Number(r.full_history_rows ?? r.rows ?? r.sample_count ?? 0);
+      const posRows = Number(r.full_history_positive_rows ?? r.positive_rows ?? r.positive_count ?? 0);
+      return sid && rowsCount > 0 && posRows > 0;
+    })
+    .sort((a, b) => {
+      const ar = Number(a.full_history_rows ?? a.rows ?? a.sample_count ?? 0);
+      const br = Number(b.full_history_rows ?? b.rows ?? b.sample_count ?? 0);
+      return ar - br;
+    })
+    .slice(0, 5)
+    .map(r => r.site_id || r.station_id || r.id);
+}
+
+function pickTypicalSite(category) {
+  const norm = window.gTypicalSitesNorm || {};
+  const map = { best: norm.best, worst: norm.worst, normal: norm.normal, low_sample: norm.small, small: norm.small };
+  let list = map[category] || [];
+
+  if ((!list || !list.length) && (category === "small" || category === "low_sample")) {
+    list = getFallbackSmallSampleSites();
+    console.warn("[pickTypicalSite] small category empty in typical_sites, fallback to site_metrics:", list);
+  }
+
+  if (!list || !list.length) {
+    console.warn("[pickTypicalSite] empty category:", category, norm);
+    return null;
+  }
+  return list[0];
+}
+
+function renderVersionWarning() {
+  const el = document.getElementById("data-version-warning");
+  if (!el) return;
+
+  const messages = [];
+
+  if (!window.gMetadata) {
+    messages.push("metadata.json 未加载。");
+  } else {
+    // Round36 强制检查已删除；Round68 final 是正式版本，不再报错。
+    if (window.gMetadata.prediction_column && window.gMetadata.prediction_column !== "power_pred_final") {
+      messages.push(`当前预测列为 ${window.gMetadata.prediction_column}，不是 power_pred_final。`);
+    }
+    if (window.gMetadata.exclude_future === false) {
+      messages.push("当前可视化数据包含 future，请重新导出不含 future 的 dashboard 数据。");
+    }
+  }
+
+  const norm = window.gTypicalSitesNorm || {};
+  const best = norm.best || [];
+  const worst = norm.worst || [];
+  const normal = norm.normal || [];
+  const small = norm.small || [];
+  if (!best.length) messages.push("typical_sites.json 中缺少预测最好站点。");
+  if (!worst.length) messages.push("typical_sites.json 中缺少预测最差站点。");
+
+  console.info("[renderVersionWarning] messages:", messages.length, messages);
+
+  if (messages.length) {
+    el.style.display = "block";
+    el.textContent = "警告：" + messages.join(" ");
+  } else {
+    el.style.display = "none";
+    el.textContent = "";
+  }
+}
+
+function parseDateParts(dateStr) {
+  const [y, m, d] = String(dateStr || "").split("-").map(x => parseInt(x, 10));
+  return {
+    year: Number.isFinite(y) ? y : 2025,
+    month: Number.isFinite(m) ? m : 1,
+    day: Number.isFinite(d) ? d : 1,
+  };
+}
+
+function pad2(n) {
+  return String(n).padStart(2, "0");
+}
+
+function daysInMonth(year, month) {
+  return new Date(year, month, 0).getDate();
+}
+
+function buildDateString(year, month, day) {
+  return `${year}-${pad2(month)}-${pad2(day)}`;
+}
+
+function parseHourValue(v) {
+  if (typeof v === "number") return v;
+  const s = String(v || "").trim();
+  if (!s) return 0;
+  return Number.parseInt(s.split(":")[0], 10);
+}
+
+function getComboDate(prefix) {
+  const y = document.getElementById(`${prefix}-year`)?.value
+    || document.getElementById(`${prefix}Year`)?.value;
+  const m = document.getElementById(`${prefix}-month`)?.value
+    || document.getElementById(`${prefix}Month`)?.value;
+  const d = document.getElementById(`${prefix}-day`)?.value
+    || document.getElementById(`${prefix}Day`)?.value;
+  return `${y}-${pad2(m)}-${pad2(d)}`;
+}
+
+function getStartDateString() {
+  return state.startDate || getComboDate("start");
+}
+
+function getEndDateString() {
+  return state.endDate || getComboDate("end");
+}
+
+function getStartHourValue() {
+  return parseHourValue(
+    state.startHour ?? document.getElementById("start-hour")?.value
+      ?? document.getElementById("startHour")?.value
+  );
+}
+
+function getEndHourValue() {
+  return parseHourValue(
+    state.endHour ?? document.getElementById("end-hour")?.value
+      ?? document.getElementById("endHour")?.value
+  );
+}
+
+function syncStateFromControls() {
+  const scopeInput = document.querySelector('input[name="scope"]:checked');
+  if (scopeInput) state.scope = scopeInput.value;
+
+  const siteSelect = document.getElementById("site-select") || document.getElementById("siteSelect");
+  if (siteSelect && siteSelect.value) state.siteId = siteSelect.value;
+
+  state.startDate = getComboDate("start");
+  state.endDate = getComboDate("end");
+  state.startHour = getStartHourValue();
+  state.endHour = getEndHourValue();
+}
+
+// Row-level helpers for site series data
+function rowDate(r) {
+  return String(r.date || r.time || "").slice(0, 10);
+}
+
+function rowHour(r) {
+  if (r.hour !== undefined && r.hour !== null && r.hour !== "") {
+    const h = Number(r.hour);
+    if (Number.isFinite(h)) return h;
+  }
+  const t = String(r.time || "");
+  return parseHourValue(t.slice(11, 16));
+}
+
+function populateDayOptions(prefix, year, month, selectedDay) {
+  const dayEl = document.getElementById(`${prefix}-day`);
+  if (!dayEl) return;
+
+  const maxDay = daysInMonth(year, month);
+  const safeDay = Math.min(Math.max(1, selectedDay || 1), maxDay);
+
+  dayEl.innerHTML = "";
+  for (let d = 1; d <= maxDay; d++) {
+    const opt = document.createElement("option");
+    opt.value = d;
+    opt.textContent = pad2(d);
+    dayEl.appendChild(opt);
+  }
+  dayEl.value = safeDay;
+}
+
+function populateDateCombo(prefix, dateStr, minDate, maxDate) {
+  const yearEl = document.getElementById(`${prefix}-year`);
+  const monthEl = document.getElementById(`${prefix}-month`);
+  const dayEl = document.getElementById(`${prefix}-day`);
+  if (!yearEl || !monthEl || !dayEl) return;
+
+  const minParts = parseDateParts(minDate);
+  const maxParts = parseDateParts(maxDate);
+  const cur = parseDateParts(dateStr);
+
+  yearEl.innerHTML = "";
+  for (let y = minParts.year; y <= maxParts.year; y++) {
+    const opt = document.createElement("option");
+    opt.value = y;
+    opt.textContent = y;
+    yearEl.appendChild(opt);
+  }
+  yearEl.value = cur.year;
+
+  monthEl.innerHTML = "";
+  for (let m = 1; m <= 12; m++) {
+    const opt = document.createElement("option");
+    opt.value = m;
+    opt.textContent = pad2(m);
+    monthEl.appendChild(opt);
+  }
+  monthEl.value = cur.month;
+
+  populateDayOptions(prefix, cur.year, cur.month, cur.day);
+}
+
+function getDateComboValue(prefix) {
+  const year = parseInt(document.getElementById(`${prefix}-year`)?.value, 10);
+  const month = parseInt(document.getElementById(`${prefix}-month`)?.value, 10);
+  const day = parseInt(document.getElementById(`${prefix}-day`)?.value, 10);
+  return buildDateString(year, month, day);
+}
+
+function setDateComboValue(prefix, dateStr) {
+  const parts = parseDateParts(dateStr);
+  const yearEl = document.getElementById(`${prefix}-year`);
+  const monthEl = document.getElementById(`${prefix}-month`);
+  const dayEl = document.getElementById(`${prefix}-day`);
+  if (!yearEl || !monthEl || !dayEl) return;
+
+  yearEl.value = parts.year;
+  monthEl.value = parts.month;
+  populateDayOptions(prefix, parts.year, parts.month, parts.day);
+}
+
+function bindHelpTooltips() {
+  document.querySelectorAll("[data-help]").forEach(el => {
+    el.addEventListener("mouseenter", e => {
+      const tip = document.getElementById("tooltip");
+      if (!tip) return;
+      tip.innerHTML = `<div style="max-width:260px;line-height:1.6">${el.dataset.help}</div>`;
+      tip.style.display = "block";
+      moveTooltip(e);
+    });
+    el.addEventListener("mousemove", moveTooltip);
+    el.addEventListener("mouseleave", hideTooltip);
+  });
+}
+
+function validateDateRange(showMessage = true) {
+  const msg = document.getElementById("date-range-message");
+  const valid = state.startDate <= state.endDate;
+
+  if (msg) {
+    msg.textContent = valid ? "" : "开始日期不能晚于结束日期";
+    msg.style.display = valid ? "none" : "inline-flex";
+  }
+
+  return valid;
+}
+
+function syncHiddenDateInputs() {
+  const startInput = document.getElementById("start-date");
+  const endInput = document.getElementById("end-date");
+  if (startInput) startInput.value = state.startDate;
+  if (endInput) endInput.value = state.endDate;
+}
+
+function bindDateComboEvents() {
+  if (dateComboBound) return;
+  dateComboBound = true;
+
+  ["start", "end"].forEach(prefix => {
+    const yearEl = document.getElementById(`${prefix}-year`);
+    const monthEl = document.getElementById(`${prefix}-month`);
+    const dayEl = document.getElementById(`${prefix}-day`);
+    if (!yearEl || !monthEl || !dayEl) return;
+
+    function applyDateChange() {
+      if (prefix === "start") {
+        state.startDate = getDateComboValue("start");
+      } else {
+        state.endDate = getDateComboValue("end");
+      }
+
+      syncHiddenDateInputs();
+
+      if (!validateDateRange(true)) {
+        return;
+      }
+
+      refreshAll();
+    }
+
+    function onYearMonthChange() {
+      const year = parseInt(yearEl.value, 10);
+      const month = parseInt(monthEl.value, 10);
+      const oldDay = parseInt(dayEl.value, 10);
+      populateDayOptions(prefix, year, month, oldDay);
+      applyDateChange();
+    }
+
+    yearEl.addEventListener("change", onYearMonthChange);
+    monthEl.addEventListener("change", onYearMonthChange);
+    dayEl.addEventListener("change", applyDateChange);
+  });
+}
+
+// ============================================================
+// HOUR SELECTS
+// ============================================================
+function initHourSelects() {
+  const startHour = document.getElementById("start-hour");
+  const endHour = document.getElementById("end-hour");
+  if (!startHour || !endHour) return;
+
+  const makeOptions = (selectedValue) => {
+    const opts = [];
+    for (let h = 0; h <= 23; h += 1) {
+      const selected = h === Number(selectedValue) ? "selected" : "";
+      opts.push(`<option value="${h}" ${selected}>${String(h).padStart(2, "0")}:00</option>`);
+    }
+    return opts.join("");
+  };
+
+  startHour.innerHTML = makeOptions(state.startHour ?? 6);
+  endHour.innerHTML = makeOptions(state.endHour ?? 19);
+}
+
+function syncHourSelects() {
+  const startHour = document.getElementById("start-hour");
+  const endHour = document.getElementById("end-hour");
+  if (startHour) startHour.value = String(state.startHour);
+  if (endHour) endHour.value = String(state.endHour);
+}
+
+function validateHourRange() {
+  const startHour = document.getElementById("start-hour");
+  const endHour = document.getElementById("end-hour");
+
+  let start = Number(state.startHour);
+  let end = Number(state.endHour);
+
+  if (!Number.isFinite(start)) start = 6;
+  if (!Number.isFinite(end)) end = 19;
+
+  state.hourRangeValid = start <= end;
+
+  let msg = document.getElementById("hour-range-message");
+  if (!msg) {
+    msg = document.createElement("span");
+    msg.id = "hour-range-message";
+    msg.className = "hour-error";
+    if (endHour && endHour.parentElement) {
+      endHour.parentElement.appendChild(msg);
+    }
+  }
+
+  if (!state.hourRangeValid) {
+    msg.textContent = "开始小时不能晚于结束小时";
+    msg.style.display = "inline-flex";
+  } else {
+    msg.textContent = "";
+    msg.style.display = "none";
+  }
+
+  return state.hourRangeValid;
+}
+
+function bindHourSelectEvents() {
+  const startHour = document.getElementById("start-hour");
+  const endHour = document.getElementById("end-hour");
+
+  if (startHour) {
+    startHour.addEventListener("change", () => {
+      state.startHour = Number(startHour.value);
+      validateHourRange();
+      refreshAll();
+    });
+  }
+
+  if (endHour) {
+    endHour.addEventListener("change", () => {
+      state.endHour = Number(endHour.value);
+      validateHourRange();
+      refreshAll();
+    });
+  }
+}
+
+// ============================================================
+// DATA LOADING
+// ============================================================
+async function loadAll() {
+  const [meta, idx, city, metrics, scatter, threshold, seasons, midday, scatterSite, sampleReq, sampleBins, hourly, invalidZero, integrity, typicalSites, seasonBestCity, seasonBestBySite] = await Promise.all([
+    fetchJSON("metadata.json"),
+    fetchJSON("index.json"),
+    fetchJSON("city_series.json"),
+    fetchJSON("site_metrics.json"),
+    fetchJSON("scatter_site_hour.json"),
+    fetchJSON("error_threshold_summary.json"),
+    fetchJSON("season_days.json"),
+    fetchJSON("midday_city_by_date.json"),
+    fetchJSON("scatter_site_sample_nrmse.json"),
+    fetchJSON("sample_requirement_summary.json"),
+    fetchJSON("sample_requirement_bins.json"),
+    fetchJSON("hourly_prediction_summary.json").catch(() => {
+      console.warn("hourly_prediction_summary.json not found");
+      return [];
+    }),
+    fetchJSON("invalid_zero_sites.json").catch(() => {
+      console.warn("invalid_zero_sites.json not found");
+      return [];
+    }),
+    fetchJSON("data_integrity_check.json").catch(() => null),
+    fetchJSON("typical_sites.json"),
+    fetchJSON("season_best_days_city.json").catch(() => ({})),
+    fetchJSON("season_best_days_by_site.json").catch(() => ({})),
+  ]);
+
+  gIndex = idx;
+  window.gMetadata = meta;
+  gCitySeries = city;
+  gSiteMetrics = metrics;
+  gScatterData = scatter;
+  gThresholdSummary = threshold;
+  gScatterSite = scatterSite;
+  gSampleReqSummary = sampleReq;
+  gSampleReqBins = sampleBins;
+  gHourlySummary = hourly || [];
+  gSeasonDays = seasons;
+  gMiddayByDate = midday;
+  gInvalidZeroSites = invalidZero || [];
+  gSeasonBestCity = seasonBestCity || {};
+  gSeasonBestBySite = seasonBestBySite || {};
+  window.gDataIntegrity = integrity || null;
+  window.gTypicalSites = Array.isArray(typicalSites) ? typicalSites : [];
+  window.gTypicalSitesNorm = normalizeTypicalSites(window.gTypicalSites);
+
+  console.info("[metadata]", meta);
+  console.info("[typicalSitesRaw]", window.gTypicalSites);
+  console.info("[typicalSitesNorm]", window.gTypicalSitesNorm);
+  console.info("[seasonBestCity]", gSeasonBestCity);
+  console.info("[seasonBestBySite sample]", Object.keys(gSeasonBestBySite || {}).slice(0, 5));
+
+  // ---- Round39: version badge from metadata.json ----
+  const metaRound = (meta && meta.round) ? meta.round : "unknown";
+  const metaPredCol = (meta && meta.prediction_column) ? meta.prediction_column : "unknown";
+  const metaGenAt = (meta && meta.generated_at) ? meta.generated_at : "";
+  gExpectedRound = metaRound;
+  const badgeDataRound = document.getElementById("badge-data-round");
+  const badgePredCol = document.getElementById("badge-pred-col");
+  const verBadge = document.getElementById("data-version-badge");
+  if (badgeDataRound) badgeDataRound.textContent = metaRound;
+  if (badgePredCol) badgePredCol.textContent = metaPredCol + (metaGenAt ? " | " + metaGenAt : "");
+  if (verBadge) verBadge.style.display = "block";
+
+  // ---- Round39: clean version check ----
+  renderVersionWarning();
+  // ---- end Round39 version check ----
+
+  // Set date range defaults
+  state.startDate = idx.default_start_date || idx.min_date;
+  state.endDate = idx.default_end_date || idx.max_date;
+
+  const startInput = document.getElementById("start-date");
+  const endInput = document.getElementById("end-date");
+  if (startInput) startInput.value = state.startDate;
+  if (endInput) endInput.value = state.endDate;
+
+  populateDateCombo("start", state.startDate, idx.min_date, idx.max_date);
+  populateDateCombo("end", state.endDate, idx.min_date, idx.max_date);
+
+  // Populate site select
+  populateSiteSelect(metrics);
+
+  // Auto-select a default site so the dropdown has a value even before user switches to "site" scope
+  ensureDefaultSiteSelected();
+
+  // Setup season buttons
+  setupSeasonButtons(seasons);
+
+  // Render scatter site sample tables
+  renderSampleReqSummaryTable();
+  renderSampleReqBinsTable();
+
+  // Render hourly prediction section
+  renderHourlySummaryTable();
+  drawHourlyNrmseChart();
+
+  // Render invalid zero sites panel
+  renderInvalidZeroSites();
+  const panel = document.getElementById("invalid-zero-panel");
+  if (panel) {
+    panel.style.display = gInvalidZeroSites && gInvalidZeroSites.length ? "block" : "none";
+  }
+
+  // Render data integrity status note
+  renderDataIntegrityNote();
+
+  document.getElementById("loading").style.display = "none";
+}
+
+// ============================================================
+// SITE SELECT
+// ============================================================
+function getSiteId(row) {
+  return row?.site_id || row?.station_id || row?.id || "";
+}
+
+function getSiteCategory(row) {
+  return row?.category || row?.类别 || row?.type || "";
+}
+
+function getDefaultSiteId() {
+  const list = Array.isArray(gSiteMetrics) ? gSiteMetrics : [];
+  // Priority: S062 → S023 → S049 → S047 → S056 → first "best" → first available
+  const preferred = ["S062", "S023", "S049", "S047", "S056"];
+  for (const sid of preferred) {
+    const found = list.find(s => getSiteId(s) === sid);
+    if (found) return sid;
+  }
+  // Fall back to first "best" site
+  const best = list.find(row => {
+    const cat = String(getSiteCategory(row));
+    return cat === "best" && getSiteId(row);
+  });
+  if (best) return getSiteId(best);
+  // Last resort: first available site
+  const first = list.find(row => getSiteId(row));
+  return first ? getSiteId(first) : "";
+}
+
+function ensureDefaultSiteSelected() {
+  // 全市模式不需要默认站点，直接返回
+  if (state.scope !== "site") {
+    return true;
+  }
+
+  const sel = document.getElementById("site-select");
+  if (!sel) return false;
+
+  const current = sel.value || state.siteId || "";
+  if (current) {
+    state.siteId = current;
+    return true;
+  }
+
+  const def = getDefaultSiteId();
+  if (!def) return false;
+
+  sel.value = def;
+  state.siteId = def;
+  return true;
+}
+
+function setSelectedSiteInUI(siteId) {
+  if (!siteId) {
+    console.warn("[setSelectedSiteInUI] empty siteId");
+    return;
+  }
+
+  siteId = String(siteId).trim();
+  const isSite = state.scope === "site";
+
+  // 全市模式：只记录 selectedTypicalSiteId，不改变 state.siteId，不改变下拉框
+  // 单站点模式：正常更新 state.siteId 和下拉框
+  state.selectedTypicalSiteId = siteId;
+  if (isSite) {
+    state.siteId = siteId;
+  }
+
+  // Sync radios
+  const siteRadio =
+    document.querySelector('input[name="scope"][value="site"]') ||
+    document.querySelector('input[name="display-scope"][value="site"]');
+  const cityRadio =
+    document.querySelector('input[name="scope"][value="city"]') ||
+    document.querySelector('input[name="display-scope"][value="city"]');
+  if (siteRadio) siteRadio.checked = isSite;
+  if (cityRadio) cityRadio.checked = !isSite;
+
+  // Show site select wrapper
+  const siteSelect =
+    document.getElementById("site-select") ||
+    document.getElementById("siteSelect") ||
+    document.querySelector('select[name="site_id"]') ||
+    document.querySelector('select[name="siteId"]');
+  const siteSelectWrap =
+    document.getElementById("site-select-group") ||
+    document.getElementById("site-select-wrap") ||
+    document.getElementById("siteSelectWrap") ||
+    document.querySelector(".site-select-wrap") ||
+    document.querySelector(".station-select-wrap") ||
+    (siteSelect ? siteSelect.closest(".control-group") : null) ||
+    (siteSelect ? siteSelect.parentElement : null);
+  if (siteSelectWrap) {
+    siteSelectWrap.style.display = "flex";
+    siteSelectWrap.hidden = false;
+    siteSelectWrap.classList.remove("hidden", "is-hidden", "d-none");
+  }
+
+  // Sync select: 全市模式显示"请选择"并禁用，单站点模式正常切换
+  if (siteSelect) {
+    if (isSite) {
+      const options = Array.from(siteSelect.options || []);
+      const hasOption = options.some(opt => opt.value === siteId);
+      if (hasOption) siteSelect.value = siteId;
+      siteSelect.disabled = false;
+    } else {
+      siteSelect.value = "";
+      siteSelect.disabled = true;
+    }
+    siteSelect.style.display = "";
+    siteSelect.hidden = false;
+  } else {
+    console.warn("[setSelectedSiteInUI] site select element not found");
+  }
+
+  console.info("[setSelectedSiteInUI]", {
+    siteId,
+    scope: state.scope,
+    isSite,
+    selectValue: siteSelect?.value,
+    wrapDisplay: siteSelectWrap?.style?.display,
+  });
+}
+
+function preserveSiteSelectionIfNeeded() {
+  const isSite = state.scope === "site";
+  const siteSelect =
+    document.getElementById("site-select") ||
+    document.getElementById("siteSelect");
+
+  if (isSite && siteSelect) {
+    if (!state.siteId && siteSelect.value) {
+      state.siteId = siteSelect.value;
+    }
+    if (state.siteId) {
+      siteSelect.value = state.siteId;
+    }
+  }
+
+  const siteSelectWrap =
+    document.getElementById("site-select-group") ||
+    document.getElementById("site-select-wrap") ||
+    document.querySelector(".site-select-wrap");
+
+  if (siteSelectWrap) {
+    // 全市模式也显示（展示当前选中的典型站点），单站点模式也显示
+    siteSelectWrap.style.display = "";
+  }
+
+  // 更新标签文字
+  const labelEl = siteSelectWrap ? siteSelectWrap.querySelector(":scope > .ctrl-label") : null;
+  if (labelEl) {
+    labelEl.textContent = isSite ? "选择站点：" : "典型站点：";
+  }
+}
+
+function pickSeasonRepresentative(seasonKey) {
+  const data = gSeasonDays || {};
+
+  function normalizeItem(item) {
+    if (!item) return null;
+    if (typeof item === "string") {
+      return { date: item, siteId: null, siteName: null };
+    }
+    if (typeof item === "object") {
+      return {
+        date:
+          item.date || item.day || item.representative_date || item.start_date || null,
+        siteId:
+          item.site_id || item.station_id || item.id ||
+          item.representative_site_id || null,
+        siteName:
+          item.site_name || item.station_name || item.name ||
+          item.representative_site_name || null,
+      };
+    }
+    return null;
+  }
+
+  if (Array.isArray(data)) {
+    const row = data.find(x => {
+      const s = String(x.season || x.season_key || x.name || x.label || "").toLowerCase();
+      return s === seasonKey || s.includes(seasonKey);
+    });
+    return normalizeItem(row);
+  }
+
+  const item =
+    data[seasonKey] ||
+    data[`${seasonKey}_date`] ||
+    data[`${seasonKey}_day`] ||
+    data[`${seasonKey}_representative`];
+
+  return normalizeItem(item);
+}
+
+function pickSeasonDate(seasonKey) {
+  const rep = pickSeasonRepresentative(seasonKey);
+  return rep ? rep.date : null;
+}
+
+function pickSeasonBestRepresentative(seasonKey) {
+  syncStateFromControls();
+
+  if (state.scope === "site") {
+    const siteId = state.siteId;
+    if (!siteId) return null;
+    const siteItem = gSeasonBestBySite?.[siteId];
+    const rep = siteItem?.[seasonKey];
+
+    if (rep && rep.date) {
+      return {
+        ...rep,
+        scope: "site",
+        site_id: siteId,
+        site_name: rep.site_name || siteItem?.site_name || "",
+      };
+    }
+
+    console.warn("[pickSeasonBestRepresentative] no site season best day", {
+      seasonKey,
+      siteId,
+      siteItem,
+    });
+    return null;
+  }
+
+  const rep = gSeasonBestCity?.[seasonKey];
+  if (rep && rep.date) {
+    return { ...rep, scope: "city" };
+  }
+
+  console.warn("[pickSeasonBestRepresentative] no city season best day", {
+    seasonKey,
+    gSeasonBestCity,
+  });
+  return null;
+}
+
+async function selectSeasonDay(seasonKey) {
+  syncStateFromControls();
+
+  let rep = pickSeasonBestRepresentative(seasonKey);
+
+  // 如果推荐日期不在 city_series 中（全市模式），则视为无效
+  if (rep && rep.date && state.scope === "city" && !citySeriesHasDate(rep.date)) {
+    console.warn("[selectSeasonDay] exported season date not in city_series, using fallback", {
+      seasonKey,
+      exportedDate: rep.date,
+    });
+    rep = null;
+  }
+
+  // 如果仍没有有效日期，从 city_series 中直接找该季节第一个有数据的日期
+  if (!rep || !rep.date) {
+    const fallbackDate = pickFirstCitySeriesDateInSeason(seasonKey);
+    if (fallbackDate) {
+      rep = { date: fallbackDate, scope: "city" };
+    }
+  }
+
+  if (!rep || !rep.date) {
+    alert("当前可视化数据未导出该季节的全市曲线数据，请重新导出包含该季节的数据后再查看。");
+    return;
+  }
+
+  // 四季最佳日只切换日期，不改变展示对象
+  state.startDate = rep.date;
+  state.endDate = rep.date;
+  state.startHour = 6;
+  state.endHour = 19;
+  setDateComboValue("start", rep.date);
+  setDateComboValue("end", rep.date);
+  document.getElementById("start-date").value = rep.date;
+  document.getElementById("end-date").value = rep.date;
+  syncHourSelects();
+
+  console.info("[selectSeasonDay]", {
+    seasonKey,
+    scope: rep.scope,
+    date: rep.date,
+    siteId: state.siteId,
+    nrmse_pct: rep.nrmse_pct,
+    rmse_mw: rep.rmse_mw,
+    mae_mw: rep.mae_mw,
+    sample_count: rep.sample_count,
+  });
+
+  await refreshAll();
+}
+
+function populateSiteSelect(metrics) {
+  const sel = document.getElementById("site-select");
+  if (!sel) return;
+
+  // 清空所有选项（避免重复追加）
+  sel.innerHTML = "";
+
+  // 默认占位符：全市模式时显示"请选择"
+  const placeholder = document.createElement("option");
+  placeholder.value = "";
+  placeholder.textContent = "请选择";
+  sel.appendChild(placeholder);
+
+  // 按分类填充所有站点
+  const cats = [
+    { key: "best", label: "预测最好" },
+    { key: "worst", label: "预测最差" },
+    { key: "normal", label: "相对正确" },
+    { key: "low_sample", label: "样本少" },
+    { key: "other", label: "其他" },
+  ];
+  for (const cat of cats) {
+    const group = document.createElement("optgroup");
+    group.label = "── " + cat.label + " ──";
+    const sites = metrics.filter(s => s.category === cat.key);
+    sites.forEach(s => {
+      const opt = document.createElement("option");
+      opt.value = s.site_id;
+      opt.textContent = s.site_id + " " + s.site_name;
+      group.appendChild(opt);
+    });
+    sel.appendChild(group);
+  }
+}
+
+// ============================================================
+// SEASON BUTTONS — utility functions
+// ============================================================
+function citySeriesHasDate(dateStr) {
+  if (!dateStr || !Array.isArray(gCitySeries)) return false;
+  return gCitySeries.some(row => String(rowDate(row)) === String(dateStr));
+}
+
+function getCitySeriesMonths() {
+  const months = new Set();
+  if (!Array.isArray(gCitySeries)) return months;
+  for (const row of gCitySeries) {
+    const d = rowDate(row);
+    const m = String(d || "").match(/^\d{4}-(\d{2})-\d{2}$/);
+    if (m) months.add(Number(m[1]));
+  }
+  return months;
+}
+
+function seasonMonths(seasonKey) {
+  return {
+    spring: [3, 4, 5],
+    summer: [6, 7, 8],
+    autumn: [9, 10, 11],
+    winter: [12, 1, 2],
+  }[seasonKey] || [];
+}
+
+function hasSeasonInCitySeries(seasonKey) {
+  const months = getCitySeriesMonths();
+  return seasonMonths(seasonKey).some(m => months.has(m));
+}
+
+function pickFirstCitySeriesDateInSeason(seasonKey) {
+  if (!Array.isArray(gCitySeries)) return null;
+  const months = new Set(seasonMonths(seasonKey));
+  const dates = [];
+  for (const row of gCitySeries) {
+    const d = rowDate(row);
+    const m = String(d || "").match(/^\d{4}-(\d{2})-\d{2}$/);
+    if (!m) continue;
+    if (!months.has(Number(m[1]))) continue;
+    dates.push(String(d));
+  }
+  dates.sort();
+  return dates.length ? dates[0] : null;
+}
+
+// ============================================================
+// SEASON BUTTONS
+// ============================================================
+function setupSeasonButtons(seasons) {
+  const map = { spring: "btn-spring", summer: "btn-summer", autumn: "btn-autumn", winter: "btn-winter" };
+  const seasonRows = Array.isArray(seasons) ? seasons : [];
+
+  Object.keys(map).forEach(seasonKey => {
+    const btn = document.getElementById(map[seasonKey]);
+    if (!btn) return;
+
+    const exported = seasonRows.find(s => s.season === seasonKey);
+    const exportedDate = (exported && exported.date) ? exported.date : null;
+    const fallbackDate = pickFirstCitySeriesDateInSeason(seasonKey);
+    // 只有 city_series 中实际存在的日期才可用
+    const usableDate = (exportedDate && citySeriesHasDate(exportedDate))
+      ? exportedDate
+      : (fallbackDate || null);
+
+    if (usableDate) {
+      btn.disabled = false;
+      btn.dataset.date = usableDate;
+      btn.title = `切换到${btn.textContent || seasonKey}可展示日期：${usableDate}`;
+    } else {
+      btn.disabled = true;
+      btn.dataset.date = "";
+      btn.title = "当前可视化数据未导出该季节的全市曲线数据";
+    }
+  });
+}
+
+// ============================================================
+// FILTERING
+// ============================================================
+
+async function ensureSiteRows(siteId) {
+  if (!siteId) {
+    gCurrentSiteRows = [];
+    return [];
+  }
+  if (!siteSeriesCache[siteId]) {
+    try {
+      const rows = await fetchJSON(`site_series/${siteId}.json`);
+      siteSeriesCache[siteId] = Array.isArray(rows) ? rows : [];
+      console.info("[ensureSiteRows]", siteId, "loaded", siteSeriesCache[siteId].length);
+    } catch (e) {
+      siteSeriesCache[siteId] = [];
+      console.error("[ensureSiteRows]", siteId, "load failed:", e.message);
+    }
+  }
+  gCurrentSiteRows = siteSeriesCache[siteId];
+  return gCurrentSiteRows;
+}
+
+function filterRowsByCurrentControls(rows) {
+  syncStateFromControls();
+
+  const startDate = getStartDateString();
+  const endDate = getEndDateString();
+  const startHour = getStartHourValue();
+  const endHour = getEndHourValue();
+
+  const filtered = (Array.isArray(rows) ? rows : []).filter((r) => {
+    const d = rowDate(r);
+    const h = rowHour(r);
+    return d >= startDate && d <= endDate && h >= startHour && h <= endHour;
+  });
+
+  console.info("[filterRowsByCurrentControls]", {
+    scope: state.scope,
+    siteId: state.siteId,
+    inputRows: Array.isArray(rows) ? rows.length : 0,
+    filteredRows: filtered.length,
+    startDate,
+    endDate,
+    startHour,
+    endHour,
+    firstInput: Array.isArray(rows) && rows.length ? rows[0] : null,
+    firstFiltered: filtered[0] || null,
+  });
+
+  return filtered;
+}
+
+function getFilteredRows() {
+  if (state.scope === "site") {
+    return filterRowsByCurrentControls(gCurrentSiteRows || []);
+  }
+  return filterRowsByCurrentControls(gCitySeries || []);
+}
+
+async function filterSiteSeries(siteId) {
+  if (!siteId) {
+    console.warn("[site] no siteId, returning empty");
+    return [];
+  }
+  await ensureSiteRows(siteId);
+  return filterRowsByCurrentControls(gCurrentSiteRows);
+}
+
+function filterCitySeries() {
+  return filterRowsByCurrentControls(gCitySeries || []);
+}
+
+// ============================================================
+// METRICS CALCULATION
+// ============================================================
+function getSelectedSiteMetric() {
+  if (!Array.isArray(gSiteMetrics)) return null;
+  const sid = state.siteId;
+  if (!sid) return null;
+  return gSiteMetrics.find(r => String(r.site_id) === String(sid)) || null;
+}
+
+function toNumber(v, fallback) {
+  if (fallback === undefined) fallback = 0;
+  const x = Number(v);
+  return Number.isFinite(x) ? x : fallback;
+}
+
+function sumBy(rows, key) {
+  return rows.reduce(function(acc, r) { return acc + toNumber(r[key], 0); }, 0);
+}
+
+function maxBy(rows, key) {
+  if (!rows.length) return 0;
+  return Math.max.apply(null, rows.map(function(r) { return toNumber(r[key], 0); }));
+}
+
+function meanBy(rows, key) {
+  const vals = rows
+    .map(function(r) { return toNumber(r[key], NaN); })
+    .filter(function(v) { return Number.isFinite(v); });
+  if (!vals.length) return 0;
+  return vals.reduce(function(a, b) { return a + b; }, 0) / vals.length;
+}
+
+function median(values) {
+  const nums = values
+    .map(function(v) { return Number(v); })
+    .filter(function(v) { return Number.isFinite(v); })
+    .sort(function(a, b) { return a - b; });
+
+  if (!nums.length) return 0;
+
+  const mid = Math.floor(nums.length / 2);
+  if (nums.length % 2 === 1) {
+    return nums[mid];
+  }
+  return (nums[mid - 1] + nums[mid]) / 2;
+}
+
+function computeMetrics(rows, scope) {
+  if (!rows || !rows.length) {
+    return { sampleCount: 0, siteCount: 0, actualMwh: 0, predMwh: 0,
+             maeMw: 0, rmseMw: 0, nrmsePct: 0, biasPct: null, ratio: null };
+  }
+
+  const actual = sumBy(rows, 'actual_mw');
+  const pred = sumBy(rows, 'pred_mw');
+  const actualSafe = Math.abs(actual) > 1e-9 ? actual : null;
+
+  // city_series: each row = one time point; sample_count = sites contributing
+  // site_series: each row = one site at one time
+  // city mode: sum of sample_count across rows; site mode: full_history_rows from site_metrics
+  var sampleCount;
+  if (scope === 'city') {
+    sampleCount = Math.round(sumBy(rows, 'sample_count'));
+  } else {
+    var siteMetric = getSelectedSiteMetric();
+    sampleCount = Number(siteMetric ? siteMetric.full_history_rows : NaN);
+    if (!Number.isFinite(sampleCount) || sampleCount <= 0) {
+      sampleCount = rows.length;
+    }
+  }
+
+  // n_sites in city_series = sites contributing at that time; use max across all time points
+  var siteCount = scope === 'city'
+    ? Math.max(1, Math.round(maxBy(rows, 'n_sites')))
+    : 1;
+
+  var errors = rows.map(function(r) { return toNumber(r.pred_mw) - toNumber(r.actual_mw); });
+  var absErrors = errors.map(Math.abs);
+  var mae = absErrors.length
+    ? absErrors.reduce(function(a, b) { return a + b; }, 0) / absErrors.length : 0;
+  var rmse = errors.length
+    ? Math.sqrt(errors.reduce(function(a, b) { return a + b * b; }, 0) / errors.length)
+    : 0;
+
+  // NRMSE denominator: city uses capacity_sum_mw; site uses capacity_mw
+  var capacityRefMw = scope === 'city'
+    ? median(rows.map(function(r) { return r.capacity_sum_mw; }))
+    : median(rows.map(function(r) { return r.capacity_mw; }));
+
+  var nrmsePct = capacityRefMw > 0 ? rmse / capacityRefMw * 100 : 0;
+  var ratio = actualSafe ? pred / actualSafe : null;
+  var biasPct = actualSafe ? (pred - actual) / actualSafe * 100 : null;
+
+  return {
+    sampleCount: sampleCount,
+    siteCount: siteCount,
+    actualMwh: actual,
+    predMwh: pred,
+    maeMw: mae,
+    rmseMw: rmse,
+    nrmsePct: nrmsePct,
+    biasPct: biasPct,
+    ratio: ratio,
+    capacityRefMw: capacityRefMw,
+  };
+}
+
+// ============================================================
+// METRICS DISPLAY
+// ============================================================
+function setCardValue(id, value) {
+  const el = document.getElementById(id);
+  if (el) el.textContent = value;
+}
+
+function updateMetricsCards(rows) {
+  const scope = state.scope;
+  const metrics = computeMetrics(rows, scope);
+
+  setCardValue("m-samples", Number.isFinite(metrics.sampleCount)
+    ? Math.round(metrics.sampleCount).toLocaleString("zh-CN") : "0");
+  setCardValue("m-sites", Number.isFinite(metrics.siteCount)
+    ? Math.round(metrics.siteCount).toLocaleString("zh-CN") : "0");
+  setCardValue("m-actual", fmt2(metrics.actualMwh));
+  setCardValue("m-pred", fmt2(metrics.predMwh));
+  setCardValue("m-ratio", formatRatio(metrics.ratio));
+  setCardValue("m-mae", fmt2(metrics.maeMw));
+  setCardValue("m-rmse", fmt2(metrics.rmseMw));
+  setCardValue("m-nrmse", fmt2(metrics.nrmsePct));
+  var capRefEl = document.getElementById("m-nrmse-cap-ref");
+  if (capRefEl) {
+    capRefEl.textContent = metrics.capacityRefMw && metrics.capacityRefMw > 0
+      ? "容量基准 " + fmt2(metrics.capacityRefMw) + " MW"
+      : "";
+  }
+  setCardValue("m-bias", metrics.biasPct === null ? "-" : fmt2(metrics.biasPct));
+}
+
+// ============================================================
+// LINE CHART ZOOM FUNCTIONS
+// ============================================================
+function setLineRows(rows) {
+  gLineRowsFull = Array.isArray(rows)
+    ? [...rows].sort((a, b) => String(a.time || "").localeCompare(String(b.time || "")))
+    : [];
+
+  lineZoom.startIndex = 0;
+  lineZoom.endIndex = gLineRowsFull.length - 1;
+}
+
+function getVisibleLineRows() {
+  if (!Array.isArray(gLineRowsFull) || gLineRowsFull.length === 0) return [];
+
+  const n = gLineRowsFull.length;
+
+  let start = Number.isFinite(lineZoom.startIndex) ? lineZoom.startIndex : 0;
+  let end = Number.isFinite(lineZoom.endIndex) ? lineZoom.endIndex : n - 1;
+
+  start = Math.max(0, Math.min(n - 1, start));
+  end = Math.max(start, Math.min(n - 1, end));
+
+  lineZoom.startIndex = start;
+  lineZoom.endIndex = end;
+
+  return gLineRowsFull.slice(start, end + 1);
+}
+
+function redrawLineChartFromZoom() {
+  const rows = getVisibleLineRows();
+  drawLineChart(rows);
+  updateLineZoomInfo();
+}
+
+function resetLineZoom() {
+  if (!Array.isArray(gLineRowsFull) || gLineRowsFull.length === 0) {
+    lineZoom.startIndex = 0;
+    lineZoom.endIndex = -1;
+    drawLineChart([]);
+    updateLineZoomInfo();
+    return;
+  }
+
+  lineZoom.startIndex = 0;
+  lineZoom.endIndex = gLineRowsFull.length - 1;
+  redrawLineChartFromZoom();
+}
+
+function handleLineWheel(event) {
+  if (!gLineRowsFull || gLineRowsFull.length < 2) return;
+  event.preventDefault();
+
+  const n = gLineRowsFull.length;
+  const rect = event.currentTarget.getBoundingClientRect();
+  const mouseRatio = Math.max(0, Math.min(1, (event.clientX - rect.left) / Math.max(rect.width, 1)));
+
+  const start = lineZoom.startIndex;
+  const end = lineZoom.endIndex;
+  const currentWindow = Math.max(1, end - start + 1);
+
+  const zoomFactor = event.deltaY < 0 ? 0.8 : 1.25;
+  let newWindow = Math.round(currentWindow * zoomFactor);
+
+  const minWindow = Math.min(12, n);
+  const maxWindow = n;
+  newWindow = Math.max(minWindow, Math.min(maxWindow, newWindow));
+
+  const anchorIndex = start + Math.round(mouseRatio * (currentWindow - 1));
+  let newStart = Math.round(anchorIndex - mouseRatio * (newWindow - 1));
+  let newEnd = newStart + newWindow - 1;
+
+  if (newStart < 0) {
+    newStart = 0;
+    newEnd = newWindow - 1;
+  }
+
+  if (newEnd >= n) {
+    newEnd = n - 1;
+    newStart = n - newWindow;
+  }
+
+  lineZoom.startIndex = newStart;
+  lineZoom.endIndex = newEnd;
+
+  redrawLineChartFromZoom();
+}
+
+function handleLineMouseDown(event) {
+  if (!gLineRowsFull || gLineRowsFull.length < 2) return;
+
+  lineZoom.isDragging = true;
+  lineZoom.dragStartX = event.clientX;
+  lineZoom.dragStartStartIndex = lineZoom.startIndex;
+  lineZoom.dragStartEndIndex = lineZoom.endIndex;
+
+  const svg = document.getElementById("line-chart");
+  if (svg) svg.style.cursor = "grabbing";
+}
+
+function handleLineMouseMove(event) {
+  if (!lineZoom.isDragging) return;
+  if (!gLineRowsFull || !gLineRowsFull.length) return;
+
+  const svg = document.getElementById("line-chart");
+  if (!svg) return;
+
+  const n = gLineRowsFull.length;
+  const start = lineZoom.dragStartStartIndex;
+  const end = lineZoom.dragStartEndIndex;
+  const windowSize = Math.max(1, end - start + 1);
+
+  const rect = svg.getBoundingClientRect();
+  const dx = event.clientX - lineZoom.dragStartX;
+  const pointsPerPixel = windowSize / Math.max(rect.width, 1);
+  const shift = Math.round(-dx * pointsPerPixel);
+
+  let newStart = start + shift;
+  let newEnd = end + shift;
+
+  if (newStart < 0) {
+    newStart = 0;
+    newEnd = windowSize - 1;
+  }
+
+  if (newEnd >= n) {
+    newEnd = n - 1;
+    newStart = n - windowSize;
+  }
+
+  lineZoom.startIndex = newStart;
+  lineZoom.endIndex = newEnd;
+
+  redrawLineChartFromZoom();
+}
+
+function handleLineMouseUp() {
+  lineZoom.isDragging = false;
+  const svg = document.getElementById("line-chart");
+  if (svg) svg.style.cursor = "grab";
+}
+
+function updateLineZoomInfo() {
+  const el = document.getElementById("line-zoom-info");
+  if (!el) return;
+
+  if (!gLineRowsFull || !gLineRowsFull.length) {
+    el.textContent = "暂无数据";
+    return;
+  }
+
+  const n = gLineRowsFull.length;
+  const start = Math.max(0, Math.min(n - 1, lineZoom.startIndex ?? 0));
+  const end = Math.max(start, Math.min(n - 1, lineZoom.endIndex ?? (n - 1)));
+  const a = gLineRowsFull[start];
+  const b = gLineRowsFull[end];
+
+  el.textContent = `当前显示 ${start + 1}-${end + 1} / ${n} 点，${a.time || ""} ~ ${b.time || ""}；滚轮缩放，拖拽平移，双击复位`;
+}
+
+function bindLineZoomEvents() {
+  if (lineZoom.bound) return;
+  lineZoom.bound = true;
+
+  const svg = document.getElementById("line-chart");
+  if (!svg) return;
+
+  svg.addEventListener("wheel", handleLineWheel, { passive: false });
+  svg.addEventListener("mousedown", handleLineMouseDown);
+  svg.addEventListener("dblclick", resetLineZoom);
+
+  window.addEventListener("mousemove", handleLineMouseMove);
+  window.addEventListener("mouseup", handleLineMouseUp);
+
+  const btn = document.getElementById("reset-line-zoom");
+  if (btn) btn.addEventListener("click", resetLineZoom);
+}
+
+// ============================================================
+// LINE CHART (SVG)
+// ============================================================
+function getActualValue(r) {
+  const v = r.actual_mw ?? r.power_mw ?? r.actual ?? r.y_true;
+  const n = Number(v);
+  return Number.isFinite(n) ? n : null;
+}
+
+function getPredValue(r) {
+  const v = r.pred_mw ?? r.power_pred ?? r.pred ?? r.y_pred;
+  const n = Number(v);
+  return Number.isFinite(n) ? n : null;
+}
+
+function drawLineChart(rows) {
+  const svg = document.getElementById("line-chart");
+  const title = document.getElementById("chart-title");
+  const isSite = state.scope === "site";
+
+  if (!svg) {
+    console.error("line-chart svg not found");
+    return;
+  }
+
+  if (title) {
+    title.textContent = isSite
+      ? "站点 " + (state.siteId || "") + " 功率曲线"
+      : "全市总出力折线图";
+  }
+
+  svg.innerHTML = "";
+
+  rows = Array.isArray(rows) ? rows.filter(Boolean) : [];
+
+  if (!rows.length) {
+    svg.setAttribute("viewBox", "0 0 1000 160");
+    svg.setAttribute("width", "100%");
+    svg.setAttribute("height", "160");
+    const empty = svgNS("text", {
+      x: 24,
+      y: 48,
+      fill: "#94a3b8",
+      "font-size": "14",
+    });
+    empty.textContent = "当前筛选条件下暂无折线图数据";
+    svg.appendChild(empty);
+    return;
+  }
+
+  rows = [...rows].sort((a, b) => String(a.time || "").localeCompare(String(b.time || "")));
+
+  const parentWidth = svg.parentElement
+    ? Math.max(svg.parentElement.getBoundingClientRect().width, 360)
+    : 1200;
+
+  const W = Math.max(720, Math.floor(parentWidth - 28));
+  const H = 340;
+  const ML = 56, MR = 24, MT = 16, MB = 46;
+  const cw = W - ML - MR;
+  const ch = H - MT - MB;
+
+  svg.setAttribute("viewBox", `0 0 ${W} ${H}`);
+  svg.setAttribute("width", W);
+  svg.setAttribute("height", H);
+
+  const n = rows.length;
+  const xOf = i => ML + (i / Math.max(n - 1, 1)) * cw;
+
+  const actuals = rows.map(getActualValue);
+  const preds = rows.map(getPredValue);
+
+  const finiteVals = [...actuals, ...preds].filter(v => Number.isFinite(v));
+  const maxRaw = finiteVals.length ? Math.max(...finiteVals) : 100;
+  const maxV = Math.max(1, maxRaw * 1.08);
+  const minV = 0;
+
+  const yOf = v => MT + ch - ((v - minV) / (maxV - minV)) * ch;
+
+  function buildPath(vals) {
+    return vals.map((v, i) => {
+      const x = xOf(i);
+      const y = yOf(Number.isFinite(v) ? v : 0);
+      if (!Number.isFinite(x) || !Number.isFinite(y)) return null;
+      return `${x.toFixed(1)},${y.toFixed(1)}`;
+    }).filter(Boolean).join(" ");
+  }
+
+  const predPoints = buildPath(preds);
+  const actualPoints = buildPath(actuals);
+
+  if (!predPoints && !actualPoints) {
+    const msg = svgNS("text", {
+      x: 24,
+      y: 48,
+      fill: "#e53e3e",
+      "font-size": "13",
+    });
+    msg.textContent = "折线图数据存在，但坐标生成失败，请检查 actual_mw / pred_mw 字段";
+    svg.appendChild(msg);
+    return;
+  }
+
+  const xLabels = buildXLabels(rows);
+  const gridLines = buildYGrid(minV, maxV);
+  const g = svgNS("g");
+
+  // Grid
+  gridLines.forEach(({ v, label }) => {
+    const y = yOf(v).toFixed(1);
+    const line = svgNS("line", {
+      x1: ML, y1: y, x2: (ML + cw).toFixed(1), y2: y,
+      stroke: "#e8edf2", "stroke-width": 1,
+    });
+    g.appendChild(line);
+    const text = svgNS("text", {
+      x: (ML - 6).toFixed(1), y: (parseFloat(y) + 4).toFixed(1),
+      "text-anchor": "end", fill: "#a0aec0", "font-size": "11",
+    });
+    text.textContent = label;
+    g.appendChild(text);
+  });
+
+  // Zero reference
+  if (minV < 0) {
+    const y0 = yOf(0).toFixed(1);
+    g.appendChild(svgNS("line", {
+      x1: ML, y1: y0, x2: (ML + cw).toFixed(1), y2: y0,
+      stroke: "#ccc", "stroke-width": 1, "stroke-dasharray": "4,2",
+    }));
+  }
+
+  // Prediction line (orange, behind)
+  const predPath = svgNS("polyline", {
+    points: predPoints,
+    fill: "none", stroke: "#f6ad55", "stroke-width": 1.6,
+    "stroke-opacity": 0.85, "stroke-linejoin": "round",
+  });
+  g.appendChild(predPath);
+
+  // Actual line (blue, front)
+  const actualPath = svgNS("polyline", {
+    points: actualPoints,
+    fill: "none", stroke: "#3182ce", "stroke-width": 1.8,
+    "stroke-opacity": 0.9, "stroke-linejoin": "round",
+  });
+  g.appendChild(actualPath);
+
+  // X-axis labels
+  xLabels.forEach(({ i, label }) => {
+    const x = xOf(i).toFixed(1);
+    g.appendChild(svgNS("line", {
+      x1: x, y1: (MT + ch).toFixed(1), x2: x,
+      y2: (MT + ch + 4).toFixed(1), stroke: "#cbd5e0", "stroke-width": 1,
+    }));
+    const text = svgNS("text", {
+      x: x, y: (MT + ch + 16).toFixed(1),
+      "text-anchor": "middle", fill: "#718096", "font-size": "10",
+    });
+    text.textContent = label;
+    g.appendChild(text);
+  });
+
+  // X-axis title
+  const xTitle = svgNS("text", {
+    x: (ML + cw / 2).toFixed(1), y: (H - 4).toFixed(1),
+    "text-anchor": "middle", fill: "#718096", "font-size": "11",
+  });
+  xTitle.textContent = "时间";
+  g.appendChild(xTitle);
+
+  // Y-axis title
+  const yTitle = svgNS("text", {
+    x: 12, y: (MT + ch / 2).toFixed(1),
+    "text-anchor": "middle", fill: "#718096", "font-size": "11",
+    transform: `rotate(-90, 12, ${(MT + ch / 2).toFixed(1)})`,
+  });
+  yTitle.textContent = "功率 (MW)";
+  g.appendChild(yTitle);
+
+  // Legend
+  const legendY = (MT + 8).toFixed(1);
+  g.appendChild(svgNS("line", {
+    x1: (ML + 10).toFixed(1), y1: legendY, x2: (ML + 30).toFixed(1), y2: legendY,
+    stroke: "#3182ce", "stroke-width": 2.5,
+  }));
+  const leg1 = svgNS("text", {
+    x: (ML + 36).toFixed(1), y: (parseFloat(legendY) + 4).toFixed(1),
+    fill: "#4a5568", "font-size": "12",
+  });
+  leg1.textContent = "真实功率 MW";
+  g.appendChild(leg1);
+
+  g.appendChild(svgNS("line", {
+    x1: (ML + 130).toFixed(1), y1: legendY, x2: (ML + 150).toFixed(1), y2: legendY,
+    stroke: "#f6ad55", "stroke-width": 2.5,
+  }));
+  const leg2 = svgNS("text", {
+    x: (ML + 156).toFixed(1), y: (parseFloat(legendY) + 4).toFixed(1),
+    fill: "#4a5568", "font-size": "12",
+  });
+  leg2.textContent = "预测功率 MW";
+  g.appendChild(leg2);
+
+  // Invisible hover rects for tooltip
+  const hoverRects = svgNS("g");
+  const stepW = cw / Math.max(n, 1);
+  rows.forEach((r, i) => {
+    const rect = svgNS("rect", {
+      x: xOf(i).toFixed(1), y: MT.toFixed(1),
+      width: Math.max(stepW, 3).toFixed(1), height: ch.toFixed(1),
+      fill: "transparent", cursor: "crosshair",
+    });
+    rect.addEventListener("mouseenter", e => showTooltip(e, r, isSite));
+    rect.addEventListener("mousemove", moveTooltip);
+    rect.addEventListener("mouseleave", hideTooltip);
+    hoverRects.appendChild(rect);
+  });
+  g.appendChild(hoverRects);
+
+  svg.appendChild(g);
+}
+
+function buildXLabels(rows) {
+  if (!rows.length) return [];
+  const labels = [];
+  // Determine appropriate step
+  const n = rows.length;
+  if (n <= 30) {
+    rows.forEach((r, i) => labels.push({ i, label: fmtTime(r.time) }));
+  } else if (n <= 100) {
+    rows.forEach((r, i) => { if (i % 3 === 0) labels.push({ i, label: fmtTime(r.time) }); });
+  } else {
+    const step = Math.ceil(n / 16);
+    rows.forEach((r, i) => { if (i % step === 0) labels.push({ i, label: fmtTime(r.time) }); });
+  }
+  return labels;
+}
+
+function buildYGrid(minV, maxV) {
+  const range = maxV - minV;
+  const roughStep = niceStep(range / 6);
+  const lines = [];
+  let v = Math.ceil(minV / roughStep) * roughStep;
+  while (v <= maxV) {
+    lines.push({ v, label: fmt2(v) });
+    v += roughStep;
+  }
+  return lines;
+}
+
+function niceStep(rough) {
+  const mag = Math.pow(10, Math.floor(Math.log10(rough)));
+  const norm = rough / mag;
+  if (norm <= 1.5) return mag;
+  if (norm <= 3.5) return mag * 2;
+  if (norm <= 7.5) return mag * 5;
+  return mag * 10;
+}
+
+// ============================================================
+// SCATTER CHART (SVG) - Site-level: train+valid samples vs test NRMSE
+// ============================================================
+function drawScatterChart(data) {
+  const svg = document.getElementById("scatter-chart");
+  svg.innerHTML = "";
+
+  const parentW = svg.parentElement ? svg.parentElement.clientWidth : 0;
+  const W = Math.max(360, parentW) - 28;
+  const H = 360;
+  const ML = 60, MR = 28, MT = 16, MB = 50;
+  const cw = W - ML - MR;
+  const ch = H - MT - MB;
+
+  svg.setAttribute("viewBox", `0 0 ${W} ${H}`);
+  svg.setAttribute("width", W);
+  svg.setAttribute("height", H);
+
+  // Use site-level data (gScatterSite) if available, fallback to old data
+  const chartData = (gScatterSite && gScatterSite.length > 0)
+    ? gScatterSite
+    : (data || []);
+
+  if (!chartData || chartData.length === 0) return;
+
+  // Determine x-axis field from current mode
+  const mode = state.scatterXAxis || "full";
+  const axisCfg = SAMPLE_X_AXIS_CONFIG[mode] || SAMPLE_X_AXIS_CONFIG["full"];
+  const xField = axisCfg.field;
+
+  // Filter valid points (has finite x value > 0)
+  const validPoints = chartData.filter(p => {
+    const xv = Number(p[xField]);
+    return isFinite(xv) && xv > 0;
+  });
+
+  const xVals = validPoints.map(p => Number(p[xField]));
+  const yVals = validPoints.map(p => p["test_nrmse_pct"] || 0);
+
+  const maxX = Math.max(...xVals, 1) * 1.05;
+  const maxY = Math.max(...yVals.filter(v => isFinite(v)), 30) * 1.15;
+
+  const catColors = {
+    "预测最好": "#38a169",
+    "预测最差": "#e53e3e",
+    "相对正确": "#3182ce",
+    "样本少": "#718096",
+    "其他": "#d0d0d0",
+  };
+
+  const xOf = v => ML + (v / maxX) * cw;
+  const yOf = v => MT + ch - ((isFinite(v) ? v : 0) / maxY) * ch;
+
+  const g = svgNS("g");
+
+  // Reference lines at 5, 10, 15, 20, 25%
+  [5, 10, 15, 20, 25].forEach(v => {
+    if (v > maxY) return;
+    const y = yOf(v).toFixed(1);
+    g.appendChild(svgNS("line", {
+      x1: ML, y1: y, x2: (ML + cw).toFixed(1), y2: y,
+      stroke: v === 10 ? "#e53e3e" : "#cbd5e0",
+      "stroke-width": v === 10 ? 1.5 : 1,
+      "stroke-dasharray": v === 10 ? "5,3" : "4,2",
+    }));
+    const text = svgNS("text", {
+      x: (ML + cw + 4).toFixed(1), y: (parseFloat(y) + 4).toFixed(1),
+      fill: v === 10 ? "#e53e3e" : "#a0aec0", "font-size": "10",
+    });
+    text.textContent = v + "%";
+    g.appendChild(text);
+  });
+
+  // X-axis
+  g.appendChild(svgNS("line", {
+    x1: ML, y1: (MT + ch).toFixed(1), x2: (ML + cw).toFixed(1), y2: (MT + ch).toFixed(1),
+    stroke: "#cbd5e0", "stroke-width": 1,
+  }));
+  // Y-axis
+  g.appendChild(svgNS("line", {
+    x1: ML, y1: MT.toFixed(1), x2: ML, y2: (MT + ch).toFixed(1),
+    stroke: "#cbd5e0", "stroke-width": 1,
+  }));
+
+  // Y labels
+  const ySteps = 5;
+  for (let i = 0; i <= ySteps; i++) {
+    const v = (maxY / ySteps) * i;
+    const y = yOf(v).toFixed(1);
+    g.appendChild(svgNS("text", {
+      x: (ML - 6).toFixed(1), y: (parseFloat(y) + 4).toFixed(1),
+      "text-anchor": "end", fill: "#a0aec0", "font-size": "11",
+    })).textContent = fmt2(v);
+    g.appendChild(svgNS("line", {
+      x1: ML, y1: y, x2: (ML + cw).toFixed(1), y2: y,
+      stroke: "#edf2f7", "stroke-width": 0.5,
+    }));
+  }
+
+  // X labels
+  const xSteps = 5;
+  for (let i = 0; i <= xSteps; i++) {
+    const v = (maxX / xSteps) * i;
+    const x = xOf(v).toFixed(1);
+    g.appendChild(svgNS("text", {
+      x: x, y: (MT + ch + 16).toFixed(1),
+      "text-anchor": "middle", fill: "#718096", "font-size": "10",
+    })).textContent = Math.round(v);
+    g.appendChild(svgNS("line", {
+      x1: x, y1: MT.toFixed(1), x2: x, y2: (MT + ch).toFixed(1),
+      stroke: "#edf2f7", "stroke-width": 0.5,
+    }));
+  }
+
+  // Dynamic axis title
+  const xAxisLabel = axisCfg.axisLabel;
+  g.appendChild(svgNS("text", {
+    x: (ML + cw / 2).toFixed(1), y: (H - 4).toFixed(1),
+    "text-anchor": "middle", fill: "#718096", "font-size": "11",
+  })).textContent = xAxisLabel;
+
+  const yAxisTitle = svgNS("text", {
+    x: 12, y: (MT + ch / 2).toFixed(1),
+    "text-anchor": "middle", fill: "#718096", "font-size": "11",
+    transform: `rotate(-90, 12, ${(MT + ch / 2).toFixed(1)})`,
+  });
+  yAxisTitle.textContent = "测试集站点 NRMSE（%）";
+  g.appendChild(yAxisTitle);
+
+  // Dots
+  validPoints.forEach(p => {
+    const xVal = Number(p[xField]) || 0;
+    const yVal = p["test_nrmse_pct"] || 0;
+    const cx = xOf(xVal).toFixed(1);
+    const cy = yOf(yVal).toFixed(1);
+    const color = catColors[p.category_label] || catColors["其他"];
+    const r = 6;
+
+    const circle = svgNS("circle", {
+      cx, cy, r,
+      fill: color, "fill-opacity": 0.7,
+      stroke: color, "stroke-width": 0.5,
+      cursor: "pointer",
+    });
+    circle.addEventListener("mouseenter", e => showSiteScatterTooltip(e, p, xField));
+    circle.addEventListener("mousemove", moveTooltip);
+    circle.addEventListener("mouseleave", hideTooltip);
+    g.appendChild(circle);
+  });
+
+  svg.appendChild(g);
+
+  // Recompute threshold/bins data for current mode and render tables
+  recomputeThresholdAndBins();
+  updateThresholdTableTitle();
+  updateBinsTableTitle();
+  renderSampleReqSummaryTable();
+  renderSampleReqBinsTable();
+}
+
+function showSiteScatterTooltip(e, p, xField) {
+  const tip = document.getElementById("tooltip");
+  const tvPositive = p.train_valid_positive_rows != null ? p.train_valid_positive_rows : (p["train_valid_positive_rows_6_19"] || "-");
+  tip.innerHTML = `
+    <div style="font-weight:600;margin-bottom:4px">${p.site_id} ${p.site_name || ""}</div>
+    <div class="tip-label">容量</div><div class="tip-val">${fmt2(p.capacity_mw || 0)} MW</div>
+    <div class="tip-label">全量历史样本数</div><div class="tip-val">${fmtInt(p.full_history_rows || 0)} 行</div>
+    <div class="tip-label">全量正功率样本数</div><div class="tip-val">${fmtInt(p.full_history_positive_rows || 0)} 行</div>
+    <div class="tip-label">训练验证6-19点正功率样本数</div><div class="tip-val">${typeof tvPositive === "number" ? fmtInt(tvPositive) + " 行" : "-"}</div>
+    <div class="tip-label">全量0值占比</div><div class="tip-val">${fmt2(p.full_history_zero_ratio_pct || 0)}%</div>
+    <div class="tip-label">测试集6-19点0值占比</div><div class="tip-val">${fmt2(p.test_daytime_zero_ratio_6_19_pct || 0)}%</div>
+    <div class="tip-label">记录日期范围</div><div class="tip-val">${p.full_history_start_date || "-"} ~ ${p.full_history_end_date || "-"}</div>
+    <div class="tip-label">测试集站点 NRMSE</div><div class="tip-val">${fmt2(p.test_nrmse_pct || 0)}%</div>
+    <div class="tip-label">测试 MAE</div><div class="tip-val">${fmt2(p.test_mae_mw || 0)} MW</div>
+    <div class="tip-label">测试 RMSE</div><div class="tip-val">${fmt2(p.test_rmse_mw || 0)} MW</div>
+    <div class="tip-label">pred/actual</div><div class="tip-val">${formatRatio(p.test_pred_actual_ratio)}</div>
+    <div class="tip-label">类型</div><div class="tip-val">${p.category_label || "其他"}</div>
+  `;
+  tip.style.display = "block";
+  moveTooltip(e);
+}
+
+function updateThresholdTableTitle() {
+  const el = document.getElementById("threshold-table-title");
+  if (!el) return;
+  const cfg = SAMPLE_X_AXIS_CONFIG[state.scatterXAxis] || SAMPLE_X_AXIS_CONFIG["full"];
+  el.textContent = "达到不同 NRMSE 阈值的" + cfg.threshTitle;
+  // Update column headers
+  const titles = [cfg.threshColTitle + "最小值", cfg.threshColTitle + "25分位", cfg.threshColTitle + "中位数", cfg.threshColTitle + "75分位", cfg.threshColTitle + "最大值"];
+  const ids = ["thresh-col-1-title", "thresh-col-2-title", "thresh-col-3-title", "thresh-col-4-title", "thresh-col-5-title"];
+  ids.forEach((id, i) => {
+    const th = document.getElementById(id);
+    if (th) th.textContent = titles[i];
+  });
+}
+
+function updateBinsTableTitle() {
+  const el = document.getElementById("bins-table-title");
+  if (!el) return;
+  const cfg = SAMPLE_X_AXIS_CONFIG[state.scatterXAxis] || SAMPLE_X_AXIS_CONFIG["full"];
+  el.textContent = "按" + cfg.label + "分箱的 NRMSE 分布";
+}
+
+function renderSampleReqSummaryTable() {
+  const tbody = document.querySelector("#threshold-table tbody");
+  if (!tbody) return;
+  tbody.innerHTML = "";
+  const mode = state.scatterXAxis || "full";
+  const data = gThresholdByMode[mode] || [];
+  const cfg = SAMPLE_X_AXIS_CONFIG[mode] || SAMPLE_X_AXIS_CONFIG["full"];
+  if (data.length === 0) {
+    // Fallback to original gSampleReqSummary if not yet computed
+    const fallback = gSampleReqSummary || [];
+    fallback.forEach(t => {
+      const row = document.createElement("tr");
+      const tc = cfg.threshCols;
+      row.innerHTML = `
+        <td>${t.threshold_pct}%</td>
+        <td>${t.qualified_sites}</td>
+        <td>${t.total_sites}</td>
+        <td>${fmt2(t.qualified_ratio_pct)}%</td>
+        <td>${t[tc.min] != null ? fmtInt(t[tc.min]) : "-"}</td>
+        <td>${t[tc.p25] != null ? fmtInt(t[tc.p25]) : "-"}</td>
+        <td>${t[tc.median] != null ? fmtInt(t[tc.median]) : "-"}</td>
+        <td>${t[tc.p75] != null ? fmtInt(t[tc.p75]) : "-"}</td>
+        <td>${t[tc.max] != null ? fmtInt(t[tc.max]) : "-"}</td>
+        <td>${t.median_train_valid_positive_rows != null ? fmtInt(t.median_train_valid_positive_rows) : "-"}</td>
+      `;
+      tbody.appendChild(row);
+    });
+    return;
+  }
+  data.forEach(t => {
+    const row = document.createElement("tr");
+    const tc = cfg.threshCols;
+    row.innerHTML = `
+      <td>${t.threshold_pct}%</td>
+      <td>${t.qualified_sites}</td>
+      <td>${t.total_sites}</td>
+      <td>${fmt2(t.qualified_ratio_pct)}%</td>
+      <td>${t[tc.min] != null ? fmtInt(t[tc.min]) : "-"}</td>
+      <td>${t[tc.p25] != null ? fmtInt(t[tc.p25]) : "-"}</td>
+      <td>${t[tc.median] != null ? fmtInt(t[tc.median]) : "-"}</td>
+      <td>${t[tc.p75] != null ? fmtInt(t[tc.p75]) : "-"}</td>
+      <td>${t[tc.max] != null ? fmtInt(t[tc.max]) : "-"}</td>
+      <td>${t.median_train_valid_positive_rows != null ? fmtInt(t.median_train_valid_positive_rows) : "-"}</td>
+    `;
+    tbody.appendChild(row);
+  });
+}
+
+function renderSampleReqBinsTable() {
+  const tbody = document.querySelector("#sample-bins-table tbody");
+  if (!tbody) return;
+  tbody.innerHTML = "";
+  const mode = state.scatterXAxis || "full";
+  const data = gBinsByMode[mode] || [];
+  if (data.length === 0) {
+    // Fallback to original gSampleReqBins
+    const fallback = gSampleReqBins || [];
+    fallback.forEach(b => {
+      const row = document.createElement("tr");
+      row.innerHTML = `
+        <td>${b.sample_bin}</td>
+        <td>${b.site_count}</td>
+        <td>${fmtInt(b.median_full_history_rows)}</td>
+        <td>${fmtInt(b.median_full_history_rows)}</td>
+        <td>${fmtInt(b.median_train_valid_positive_rows)}</td>
+        <td>${b.mean_nrmse_pct != null ? fmt2(b.mean_nrmse_pct) : "-"}</td>
+        <td>${b.median_nrmse_pct != null ? fmt2(b.median_nrmse_pct) : "-"}</td>
+        <td>${b.p25_nrmse_pct != null ? fmt2(b.p25_nrmse_pct) : "-"}</td>
+        <td>${b.p75_nrmse_pct != null ? fmt2(b.p75_nrmse_pct) : "-"}</td>
+        <td>${b.best_nrmse_pct != null ? fmt2(b.best_nrmse_pct) : "-"}</td>
+        <td>${b.worst_nrmse_pct != null ? fmt2(b.worst_nrmse_pct) : "-"}</td>
+      `;
+      tbody.appendChild(row);
+    });
+    return;
+  }
+  const cfg = SAMPLE_X_AXIS_CONFIG[mode] || SAMPLE_X_AXIS_CONFIG["full"];
+  data.forEach(b => {
+    const row = document.createElement("tr");
+    // binsCol may be null if the field isn't in scatter data; fall back to primary field
+    const medianVal = b[cfg.binsCol] != null ? fmtInt(b[cfg.binsCol]) : fmtInt(b[field] || b.median_full_history_rows);
+    row.innerHTML = `
+      <td>${b.sample_bin}</td>
+      <td>${b.site_count}</td>
+      <td>${medianVal}</td>
+      <td>${fmtInt(b.median_full_history_rows)}</td>
+      <td>${fmtInt(b.median_train_valid_positive_rows)}</td>
+      <td>${b.mean_nrmse_pct != null ? fmt2(b.mean_nrmse_pct) : "-"}</td>
+      <td>${b.median_nrmse_pct != null ? fmt2(b.median_nrmse_pct) : "-"}</td>
+      <td>${b.p25_nrmse_pct != null ? fmt2(b.p25_nrmse_pct) : "-"}</td>
+      <td>${b.p75_nrmse_pct != null ? fmt2(b.p75_nrmse_pct) : "-"}</td>
+      <td>${b.best_nrmse_pct != null ? fmt2(b.best_nrmse_pct) : "-"}</td>
+      <td>${b.worst_nrmse_pct != null ? fmt2(b.worst_nrmse_pct) : "-"}</td>
+    `;
+    tbody.appendChild(row);
+  });
+}
+
+// ============================================================
+// TOOLTIP
+// ============================================================
+function showTooltip(e, row, isSite) {
+  const tip = document.getElementById("tooltip");
+  const date = row.date || "";
+  const hour = row.hour != null ? row.hour : "";
+  const actual = fmt2(row.actual_mw || 0);
+  const pred = fmt2(row.pred_mw || 0);
+  const err = fmt2(Math.abs((row.pred_mw || 0) - (row.actual_mw || 0)));
+  const errPct = fmt2(row.point_nrmse_pct || 0);
+  const siteName = row.site_name || row.site_id || "";
+  const cap = fmt2(row.capacity_mw || row.capacity_sum_mw || 0);
+
+  let html = `<div style="font-weight:600;margin-bottom:4px">${date} ${hour}:00</div>`;
+  if (isSite) {
+    html += `<div style="color:#a0b0c0;font-size:11px">${siteName}</div>`;
+    html += `<div class="tip-label">容量</div><div class="tip-val">${cap} MW</div>`;
+  }
+  html += `<div class="tip-label">真实功率</div><div class="tip-val">${actual} MW</div>`;
+  html += `<div class="tip-label">预测功率</div><div class="tip-val">${pred} MW</div>`;
+  html += `<div class="tip-label">绝对误差</div><div class="tip-val">${err} MW</div>`;
+  if (isSite) {
+    html += `<div class="tip-label">点NRMSE</div><div class="tip-val">${errPct}%</div>`;
+  }
+
+  tip.innerHTML = html;
+  tip.style.display = "block";
+  moveTooltip(e);
+}
+
+function showScatterTooltip(e, p) {
+  const tip = document.getElementById("tooltip");
+  tip.innerHTML = `
+    <div style="font-weight:600;margin-bottom:4px">${p.site_id} ${p.site_name}</div>
+    <div class="tip-label">小时</div><div class="tip-val">${p.hour}:00</div>
+    <div class="tip-label">样本数</div><div class="tip-val">${p.sample_count}</div>
+    <div class="tip-label">NRMSE</div><div class="tip-val">${fmt2(p.nrmse_pct)}%</div>
+    <div class="tip-label">MAE</div><div class="tip-val">${fmt2(p.mae_mw)} MW</div>
+    <div class="tip-label">RMSE</div><div class="tip-val">${fmt2(p.rmse_mw)} MW</div>
+    <div class="tip-label">pred/actual</div><div class="tip-val">${fmt2(p.pred_actual_ratio)}</div>
+    <div class="tip-label">类型</div><div class="tip-val">${p.category_label}</div>
+  `;
+  tip.style.display = "block";
+  moveTooltip(e);
+}
+
+function moveTooltip(e) {
+  const tip = document.getElementById("tooltip");
+  const x = e.clientX + 14;
+  const y = e.clientY - 20;
+  tip.style.left = Math.min(x, window.innerWidth - tip.offsetWidth - 10) + "px";
+  tip.style.top = y + "px";
+}
+
+function hideTooltip() {
+  document.getElementById("tooltip").style.display = "none";
+}
+
+// ============================================================
+// INVALID ZERO SITES TABLE
+// ============================================================
+function renderDataIntegrityNote() {
+  return;
+}
+
+function renderInvalidZeroSites() {
+  const el = document.getElementById("invalid-zero-sites-table");
+  if (!el) return;
+
+  const rows = gInvalidZeroSites || [];
+  if (!rows.length) {
+    el.innerHTML = '<div class="empty-note">暂无无有效发电样本站点</div>';
+    return;
+  }
+
+  const html = `
+    <table>
+      <thead>
+        <tr>
+          <th>站点ID</th>
+          <th>站点名称</th>
+          <th>容量 MW</th>
+          <th>历史样本数（行）</th>
+          <th>正功率样本数（行）</th>
+          <th>0值占比（%）</th>
+          <th>说明</th>
+        </tr>
+      </thead>
+      <tbody>
+        ${rows.map(r => `
+          <tr>
+            <td>${r.site_id ?? "-"}</td>
+            <td>${r.site_name ?? "-"}</td>
+            <td>${fmt2(r.capacity_mw)}</td>
+            <td>${fmtInt(r.full_history_rows)}</td>
+            <td>${fmtInt(r.full_history_positive_rows)}</td>
+            <td>${fmt2(r.full_history_zero_ratio_pct)}</td>
+            <td>无有效正功率样本，不参与正常精度统计</td>
+          </tr>
+        `).join("")}
+      </tbody>
+    </table>
+  `;
+
+  el.innerHTML = html;
+}
+
+// ============================================================
+// TYPICAL SITES TABLE
+// ============================================================
+function buildSitesTable() {
+  const tbody = document.querySelector("#sites-table tbody");
+  tbody.innerHTML = "";
+
+  const catPriority = { low_sample: 0, worst: 1, best: 2, normal: 3, other: 4 };
+  const sorted = [...gSiteMetrics].sort((a, b) => {
+    return (catPriority[a.category] || 4) - (catPriority[b.category] || 4);
+  });
+
+  sorted.forEach(s => {
+    const tr = document.createElement("tr");
+    tr.className = "cat-" + (s.category || "other");
+    tr.title = "点击查看 " + s.site_name + " 的曲线";
+    tr.innerHTML = `
+      <td>${s.category_label || ""}</td>
+      <td>${s.site_id}</td>
+      <td style="text-align:left;max-width:160px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${s.site_name || ""}</td>
+      <td>${fmt2(s.capacity_mw)}</td>
+      <td>${fmtInt(s.full_history_rows)}</td>
+      <td>${fmtInt(s.full_history_positive_rows)}</td>
+      <td>${fmt2(s.full_history_zero_ratio_pct)}</td>
+      <td>${fmt2(s.test_daytime_zero_ratio_6_19_pct || 0)}</td>
+      <td>${fmt2(s.mae_mw)}</td>
+      <td>${fmt2(s.rmse_mw)}</td>
+      <td>${fmt2(s.nrmse_pct)}</td>
+      <td>${formatRatio(s.pred_actual_ratio)}</td>
+    `;
+    tr.addEventListener("click", () => selectSite(s.site_id));
+    tbody.appendChild(tr);
+  });
+}
+
+async function selectSite(siteId) {
+  document.querySelector('input[name="scope"][value="site"]').checked = true;
+  state.scope = "site";
+  state.siteId = siteId;
+  const sel = document.getElementById("site-select");
+  if (sel) sel.value = siteId;
+  await ensureSiteRows(state.siteId);
+  if (onScopeChange() !== false) {
+    await refreshAll();
+  }
+}
+
+// ============================================================
+// SCOPE CHANGE
+// ============================================================
+async function onScopeChange() {
+  syncStateFromControls();
+  const isSite = state.scope === "site";
+  const siteGroup = document.getElementById("site-select-group");
+  const siteSelect = document.getElementById("site-select");
+  if (siteGroup) {
+    siteGroup.style.display = "flex";
+  }
+  // 更新标签文字：全市模式显示"典型站点"，单站点模式显示"选择站点"
+  const labelEl = siteGroup ? siteGroup.querySelector(":scope > .ctrl-label") : null;
+  if (labelEl) {
+    labelEl.textContent = isSite ? "选择站点：" : "典型站点：";
+  }
+  // 全市模式：禁用下拉框，显示"请选择"；单站点模式：启用下拉框
+  if (siteSelect) {
+    if (isSite) {
+      siteSelect.disabled = false;
+      if (!state.siteId && siteSelect.options.length > 1) {
+        state.siteId = siteSelect.options[1].value;
+      }
+      if (state.siteId) siteSelect.value = state.siteId;
+    } else {
+      siteSelect.value = "";
+      siteSelect.disabled = true;
+    }
+  }
+  // In site mode: keep buttons enabled but they'll use current site data
+  // (getFilteredRows() handles scope automatically)
+  const btnCurrent = document.getElementById("btn-current-midday");
+  const btnTypical = document.getElementById("btn-typical-midday");
+  if (btnCurrent) {
+    btnCurrent.disabled = false;
+    btnCurrent.title = isSite ? "筛选当前站点 10-14 点数据" : "筛选当前日期 10-14 点全市数据";
+  }
+  if (btnTypical) {
+    btnTypical.disabled = false;
+    btnTypical.title = isSite ? "筛选典型站点日 10-14 点数据" : "筛选典型站点日 10-14 点全市数据";
+  }
+
+  if (isSite) {
+    if (!state.siteId) {
+      showStatusMessage("没有可用站点数据，无法展示单站点曲线");
+      return false;
+    }
+    await ensureSiteRows(state.siteId);
+  }
+
+  if (!validateDateRange(true)) {
+    return false;
+  }
+
+  return true;
+}
+
+function showStatusMessage(msg) {
+  const el = document.getElementById("date-range-message");
+  if (el) {
+    el.textContent = msg;
+    el.style.display = "inline-flex";
+    el.style.color = "#b91c1c";
+    el.style.borderColor = "#fecaca";
+    el.style.background = "#fef2f2";
+  }
+}
+
+// ============================================================
+// MAIN REFRESH
+// ============================================================
+async function refreshAll() {
+  if (!validateHourRange()) {
+    updateMetricsCards([]);
+    setLineRows([]);
+    drawLineChart([]);
+    updateLineZoomInfo();
+    return;
+  }
+
+  // Ensure site data is loaded before filtering
+  if (state.scope === "site") {
+    const ok = ensureDefaultSiteSelected();
+    if (!ok) {
+      updateMetricsCards([]);
+      setLineRows([]);
+      drawLineChart([]);
+      updateLineZoomInfo();
+      return;
+    }
+    await ensureSiteRows(state.siteId);
+  }
+
+  const rows = await getFilteredRows();
+  const isSite = state.scope === "site";
+
+  console.info("[refreshAll]", {
+    scope: state.scope,
+    siteId: state.siteId,
+    rows: rows.length,
+    firstRow: rows[0] || null,
+  });
+
+  updateMetricsCards(rows);
+
+  setLineRows(rows);
+  resetLineZoom();
+
+  drawHourlyNrmseChart();
+  if (!isSite) drawScatterChart(gScatterSite);
+  recomputeThresholdAndBins();
+}
+
+// ============================================================
+// UTILITIES
+// ============================================================
+function svgNS(tag, attrs) {
+  const el = document.createElementNS("http://www.w3.org/2000/svg", tag);
+  for (const [k, v] of Object.entries(attrs || {})) el.setAttribute(k, v);
+  return el;
+}
+
+function fmt2(v) {
+  const n = Number(v);
+  if (!isFinite(n) || v === null || v === undefined) return "-";
+  return parseFloat(n.toFixed(2));
+}
+
+function fmtTime(ts) {
+  if (!ts) return "";
+  // ts format: "2025-10-01 14:00:00"
+  const s = ts.substring(5, 16); // "10-01 14:00"
+  return s;
+}
+
+function fmtInt(v) {
+  if (v === null || v === undefined || Number.isNaN(Number(v))) return "-";
+  return Math.round(Number(v)).toLocaleString("zh-CN");
+}
+
+function fmtNum(v, digits = 2) {
+  const n = Number(v);
+  if (v === null || v === undefined || isNaN(n)) return "-";
+  return n.toFixed(digits);
+}
+
+function formatRatio(v) {
+  const x = Number(v);
+  if (!Number.isFinite(x)) return "-";
+  if (Math.abs(x) > 99) return "-";
+  if (x < 0) return "-";
+  return x.toFixed(2);
+}
+
+// ============================================================
+// HOURLY PREDICTION CHART + TABLE
+// ============================================================
+function drawHourlyNrmseChart() {
+  const svg = document.getElementById("hourlyNrmseChart");
+  if (!svg) return;
+  svg.innerHTML = "";
+
+  const data = gHourlySummary || [];
+  if (!data.length) {
+    svg.innerHTML = `<text x="20" y="40" fill="#64748b" font-size="13">暂无逐小时预测结果数据</text>`;
+    return;
+  }
+
+  const parentW = svg.parentElement ? svg.parentElement.clientWidth : 0;
+  const W = Math.max(360, parentW) - 28;
+  const H = 300;
+  const ML = 52, MR = 20, MT = 20, MB = 40;
+  const cw = W - ML - MR;
+  const ch = H - MT - MB;
+
+  svg.setAttribute("viewBox", `0 0 ${W} ${H}`);
+  svg.setAttribute("width", W);
+  svg.setAttribute("height", H);
+
+  const hours = data.map(d => d.hour);
+  const siteVals = data.map(d => d.site_avg_nrmse_pct);
+  const cityVals = data.map(d => d.city_nrmse_pct);
+
+  const maxX = 19;
+  const minX = 6;
+  const allVals = [...siteVals, ...cityVals].filter(v => isFinite(v));
+  const maxY = Math.max(...allVals, 1) * 1.15;
+
+  const xOf = h => ML + ((h - minX) / (maxX - minX)) * cw;
+  const yOf = v => MT + ch - ((isFinite(v) ? v : 0) / maxY) * ch;
+
+  const g = svgNS("g");
+
+  // Grid lines
+  const ySteps = 5;
+  for (let i = 0; i <= ySteps; i++) {
+    const v = (maxY / ySteps) * i;
+    const y = yOf(v).toFixed(1);
+    g.appendChild(svgNS("line", {
+      x1: ML, y1: y, x2: (ML + cw).toFixed(1), y2: y,
+      stroke: "#edf2f7", "stroke-width": 0.5,
+    }));
+    g.appendChild(svgNS("text", {
+      x: (ML - 6).toFixed(1), y: (parseFloat(y) + 4).toFixed(1),
+      "text-anchor": "end", fill: "#a0aec0", "font-size": "11",
+    })).textContent = fmtNum(v, 1);
+  }
+
+  // X-axis
+  g.appendChild(svgNS("line", {
+    x1: ML, y1: (MT + ch).toFixed(1), x2: (ML + cw).toFixed(1), y2: (MT + ch).toFixed(1),
+    stroke: "#cbd5e0", "stroke-width": 1,
+  }));
+
+  // X labels (every 2 hours)
+  for (let h = 6; h <= 19; h += 2) {
+    const x = xOf(h).toFixed(1);
+    g.appendChild(svgNS("text", {
+      x, y: (MT + ch + 16).toFixed(1),
+      "text-anchor": "middle", fill: "#718096", "font-size": "10",
+    })).textContent = h + "时";
+    g.appendChild(svgNS("line", {
+      x1: x, y1: MT.toFixed(1), x2: x, y2: (MT + ch).toFixed(1),
+      stroke: "#edf2f7", "stroke-width": 0.5,
+    }));
+  }
+
+  // Y-axis title
+  g.appendChild(svgNS("text", {
+    x: 12, y: (MT + ch / 2).toFixed(1),
+    "text-anchor": "middle", fill: "#718096", "font-size": "11",
+    transform: `rotate(-90, 12, ${(MT + ch / 2).toFixed(1)})`,
+  })).textContent = "NRMSE（%）";
+
+  // Helper: build polyline points
+  function buildLinePoints(vals, color, key) {
+    const pts = vals.map((v, i) => {
+      const x = xOf(hours[i]).toFixed(1);
+      const y = yOf(v).toFixed(1);
+      return `${x},${y}`;
+    }).join(" ");
+    const line = svgNS("polyline", {
+      points: pts,
+      fill: "none",
+      stroke: color,
+      "stroke-width": 2,
+      "stroke-linejoin": "round",
+    });
+
+    // Tooltip dots
+    vals.forEach((v, i) => {
+      if (!isFinite(v)) return;
+      const dot = svgNS("circle", {
+        cx: xOf(hours[i]).toFixed(1),
+        cy: yOf(v).toFixed(1),
+        r: 4,
+        fill: color,
+        "fill-opacity": 0.8,
+        stroke: "#fff",
+        "stroke-width": 1,
+        cursor: "pointer",
+      });
+      dot.addEventListener("mouseenter", e => showHourlyTooltip(e, data[i], key, color));
+      dot.addEventListener("mousemove", moveTooltip);
+      dot.addEventListener("mouseleave", hideTooltip);
+      g.appendChild(dot);
+    });
+
+    g.appendChild(line);
+  }
+
+  buildLinePoints(siteVals, "#2563eb", "site_avg_nrmse_pct");
+  buildLinePoints(cityVals, "#f97316", "city_nrmse_pct");
+
+  // Legend
+  const legendY = (MT + 8).toFixed(1);
+  g.appendChild(svgNS("line", {
+    x1: (ML + cw - 180).toFixed(1), y1: legendY, x2: (ML + cw - 155).toFixed(1), y2: legendY,
+    stroke: "#2563eb", "stroke-width": 2,
+  }));
+  g.appendChild(svgNS("text", {
+    x: (ML + cw - 150).toFixed(1), y: (parseFloat(legendY) + 4).toFixed(1),
+    fill: "#2563eb", "font-size": "11",
+  })).textContent = "站点平均 NRMSE";
+
+  g.appendChild(svgNS("line", {
+    x1: (ML + cw - 60).toFixed(1), y1: legendY, x2: (ML + cw - 35).toFixed(1), y2: legendY,
+    stroke: "#f97316", "stroke-width": 2,
+  }));
+  g.appendChild(svgNS("text", {
+    x: (ML + cw - 30).toFixed(1), y: (parseFloat(legendY) + 4).toFixed(1),
+    fill: "#f97316", "font-size": "11",
+  })).textContent = "城市 NRMSE";
+
+  svg.appendChild(g);
+}
+
+function showHourlyTooltip(e, row, key, color) {
+  const tip = document.getElementById("tooltip");
+  const siteAvg = row.site_avg_nrmse_pct;
+  const cityVal = row.city_nrmse_pct;
+  tip.innerHTML = `
+    <div style="font-weight:600;margin-bottom:4px">${row.hour}时 逐小时预测结果</div>
+    <div class="tip-label">样本数</div><div class="tip-val">${fmtInt(row.rows)} 行</div>
+    <div style="margin-top:4px;color:#2563eb;font-size:11px">站点平均 NRMSE</div>
+    <div class="tip-val" style="color:#2563eb">${fmtNum(siteAvg, 2)}%</div>
+    <div style="margin-top:4px;color:#f97316;font-size:11px">城市 NRMSE</div>
+    <div class="tip-val" style="color:#f97316">${fmtNum(cityVal, 3)}%</div>
+  `;
+  tip.style.display = "block";
+  moveTooltip(e);
+}
+
+function renderHourlySummaryTable() {
+  const tbody = document.querySelector("#hourlySummaryTable tbody");
+  if (!tbody) return;
+  tbody.innerHTML = "";
+
+  const data = gHourlySummary || [];
+  if (!data.length) {
+    tbody.innerHTML = `<tr><td colspan="4" style="text-align:center;color:#a0aec0">暂无逐小时预测结果数据</td></tr>`;
+    return;
+  }
+
+  for (const row of data) {
+    const tr = document.createElement("tr");
+    tr.innerHTML = `
+      <td>${row.hour}</td>
+      <td>${fmtInt(row.rows)}</td>
+      <td>${fmtNum(row.site_avg_nrmse_pct, 2)}%</td>
+      <td>${fmtNum(row.city_nrmse_pct, 3)}%</td>
+    `;
+    tbody.appendChild(tr);
+  }
+}
+
+// ============================================================
+// EVENT LISTENERS
+// ============================================================
+document.addEventListener("DOMContentLoaded", () => {
+  // Prevent fetch from failing when opened via file://
+  if (window.location.protocol === "file:") {
+    const loading = document.getElementById("loading");
+    if (loading) {
+      loading.innerHTML = `
+        页面不能直接双击打开。请在项目根目录运行：
+        <br><code>python -m http.server 8060</code>
+        <br>然后访问：
+        <br><code>http://127.0.0.1:8060/stages/05_visualization/interactive_forecast_dashboard.html</code>
+      `;
+    }
+    return;
+  }
+
+  loadAll().then(async () => {
+    buildSitesTable();
+    await onScopeChange();
+    bindLineZoomEvents();
+    bindDateComboEvents();
+    bindHourSelectEvents();
+    initHourSelects();
+    bindHelpTooltips();
+    await refreshAll();
+  }).catch(err => {
+    const loading = document.getElementById("loading");
+    if (loading) {
+      loading.innerHTML = `
+        加载失败：${err.message}<br>
+        请确认：<br>
+        1. 已在项目根目录启动 <code>python -m http.server 8060</code><br>
+        2. 当前访问地址是 <code>/stages/05_visualization/interactive_forecast_dashboard.html</code><br>
+        3. <code>output/pv_pipeline/interactive_dashboard/index.json</code> 存在
+      `;
+    }
+    console.error(err);
+  });
+
+  // Scope radio
+  document.querySelectorAll('input[name="scope"]').forEach(r => {
+    r.addEventListener("change", async () => {
+      state.scope = r.value;
+      if (state.scope === "site") {
+        // Ensure site data is loaded before refresh
+        const ok = await onScopeChange();
+        if (ok !== false) {
+          await refreshAll();
+        }
+      } else {
+        if (onScopeChange() !== false) {
+          await refreshAll();
+        }
+      }
+    });
+  });
+
+  // Site select
+  document.getElementById("site-select").addEventListener("change", async e => {
+    // 全市模式下下拉框已禁用，此事件理论上不会触发，加保护
+    if (state.scope !== "site") {
+      e.target.value = "";
+      return;
+    }
+    state.siteId = e.target.value;
+    state.selectedTypicalSiteId = e.target.value;
+    if (state.siteId) {
+      await ensureSiteRows(state.siteId);
+    }
+    if (onScopeChange() !== false) {
+      await refreshAll();
+    }
+  });
+
+  // Date/hours — date changes handled by bindDateComboEvents(); hour changes handled by bindHourSelectEvents()
+
+  // Typical sites buttons — now use typical_sites.json with fallback
+  async function selectTypicalSite(category) {
+    const sid = pickTypicalSite(category);
+    if (!sid) {
+      console.warn("[selectTypicalSite] no site for category", category, gTypicalSites);
+      return;
+    }
+
+    state.selectedTypicalCategory = category;
+    state.selectedTypicalSiteId = sid;
+
+    if (state.scope === "site") {
+      // 单站点模式：正常更新站点 UI 并刷新
+      state.siteId = sid;
+      setSelectedSiteInUI(sid);
+      await ensureSiteRows(sid);
+    } else {
+      // 全市模式：只记录上下文，确保下拉框显示"请选择"并禁用
+      const siteSelect = document.getElementById("site-select");
+      if (siteSelect) {
+        siteSelect.value = "";
+        siteSelect.disabled = true;
+      }
+    }
+
+    await refreshAll();
+
+    console.info("[selectTypicalSite]", {
+      category,
+      sid,
+      scope: state.scope,
+      siteId: state.siteId,
+    });
+  }
+  document.getElementById("btn-best")?.addEventListener("click", () => selectTypicalSite("best").catch(console.error));
+  document.getElementById("btn-worst")?.addEventListener("click", () => selectTypicalSite("worst").catch(console.error));
+  document.getElementById("btn-normal")?.addEventListener("click", () => selectTypicalSite("normal").catch(console.error));
+  document.getElementById("btn-low")?.addEventListener("click", () => selectTypicalSite("small").catch(console.error));
+
+  // Midday buttons — current date range 10-14
+  const btnCurrentMidday = document.getElementById("btn-current-midday");
+  if (btnCurrentMidday) {
+    btnCurrentMidday.addEventListener("click", async () => {
+      // Keep current scope (city or site), only change hour range
+      state.startHour = 10;
+      state.endHour = 14;
+      syncHourSelects();
+      if (typeof onScopeChange === "function") await onScopeChange();
+      if (!validateDateRange(true)) return;
+      await refreshAll();
+    });
+  }
+
+  // Typical midday date
+  const btnTypicalMidday = document.getElementById("btn-typical-midday");
+  if (btnTypicalMidday) {
+    btnTypicalMidday.addEventListener("click", async () => {
+      if (!gMiddayByDate || !gMiddayByDate.length) {
+        alert("没有可用的全市10-14典型日数据");
+        return;
+      }
+
+      const validDays = gMiddayByDate.filter(d => {
+        const v = Number(d.nrmse_pct);
+        return d.date && Number.isFinite(v);
+      });
+
+      if (!validDays.length) {
+        alert("没有可用的全市10-14典型日数据");
+        return;
+      }
+
+      const sortedVals = validDays.map(d => Number(d.nrmse_pct)).sort((a, b) => a - b);
+      const median = sortedVals[Math.floor(sortedVals.length / 2)];
+      const closest = validDays.slice().sort((a, b) =>
+        Math.abs(Number(a.nrmse_pct) - median) - Math.abs(Number(b.nrmse_pct) - median)
+      )[0];
+
+      // Typical midday is city-level; switch scope to city
+      if (state.scope !== "city") {
+        state.scope = "city";
+        const cityRadio = document.querySelector('input[name="scope"][value="city"]');
+        if (cityRadio) cityRadio.checked = true;
+      }
+      state.startDate = closest.date;
+      state.endDate = closest.date;
+      state.startHour = 10;
+      state.endHour = 14;
+
+      setDateComboValue("start", state.startDate);
+      setDateComboValue("end", state.endDate);
+      syncHiddenDateInputs();
+
+      syncHourSelects();
+      if (typeof onScopeChange === "function") await onScopeChange();
+      validateDateRange(false);
+      await refreshAll();
+    });
+  }
+
+  // Season buttons — preserve site selection when in site mode
+  document.getElementById("btn-spring")?.addEventListener("click", () => selectSeasonDay("spring").catch(console.error));
+  document.getElementById("btn-summer")?.addEventListener("click", () => selectSeasonDay("summer").catch(console.error));
+  document.getElementById("btn-autumn")?.addEventListener("click", () => selectSeasonDay("autumn").catch(console.error));
+  document.getElementById("btn-winter")?.addEventListener("click", () => selectSeasonDay("winter").catch(console.error));
+
+  // Refresh
+  document.getElementById("btn-refresh").addEventListener("click", async () => {
+    // Reload all data fresh
+    if (state.scope === "site" && state.siteId) {
+      // Invalidate cache for current site
+      delete siteSeriesCache[state.siteId];
+      await ensureSiteRows(state.siteId);
+    }
+    await refreshAll();
+  });
+
+  // Scatter x-axis toggle (new site-level scatter)
+  document.querySelectorAll(".tab-btn").forEach(btn => {
+    btn.addEventListener("click", () => {
+      const xaxis = btn.dataset.xaxis;
+      if (!xaxis) return; // skip non-scatter tab-btns
+      document.querySelectorAll(".tab-btn[data-xaxis]").forEach(b => b.classList.remove("active"));
+      btn.classList.add("active");
+      state.scatterXAxis = xaxis;
+      // Update section title, table titles, then redraw
+      const scatterTitle = document.querySelector("#scatter-section .section-title");
+      if (scatterTitle) {
+        const cfg = SAMPLE_X_AXIS_CONFIG[xaxis] || SAMPLE_X_AXIS_CONFIG["full"];
+        scatterTitle.textContent = cfg.sectionTitle;
+      }
+      if (state.scope !== "site") drawScatterChart(gScatterSite);
+    });
+  });
+
+  // Window resize -> redraw charts
+  let resizeTimer;
+  window.addEventListener("resize", () => {
+    clearTimeout(resizeTimer);
+    resizeTimer = setTimeout(() => {
+      drawLineChart(getVisibleLineRows());
+      updateLineZoomInfo();
+      drawHourlyNrmseChart();
+      if (state.scope !== "site") drawScatterChart(gScatterSite);
+    }, 200);
+  });
+});
+</script>
+</body>
+</html>

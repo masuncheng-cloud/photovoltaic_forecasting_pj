@@ -78,5 +78,11 @@ data/
 *.h5
 *.joblib
 
+# Archive snapshots from experiment rounds — not source code
+archive/
+
+# Staging artifacts
+output/pv_pipeline_round92_1_fresh_*/
+
 # Config with secrets (optional)
 # configs/secrets.yaml

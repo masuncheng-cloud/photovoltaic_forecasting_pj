@@ -1,0 +1,57 @@
+{
+  "generated_at": "2026-06-01T10:53:24",
+  "pipeline_entry": "scripts/run_full_pipeline.py",
+  "config": "configs/pipeline.yaml",
+  "split": {
+    "train_start": "2023-01-01",
+    "train_end": "2025-06-30",
+    "valid_start": "2025-07-01",
+    "valid_end": "2025-08-31",
+    "test_start": "2025-09-01",
+    "test_end": "2025-12-31",
+    "future_start": "2026-01-01",
+    "future_end": "2026-03-31"
+  },
+  "eval": {
+    "split": "test",
+    "start_hour": 6,
+    "end_hour": 19,
+    "exclude_future": true,
+    "nrmse_denominator": "capacity_mw",
+    "city_nrmse_denominator": "capacity_sum_mw",
+    "exclude_night": true
+  },
+  "final_prediction_column": "power_pred_final",
+  "artifacts": {
+    "final_full_pkl": "output/pv_pipeline/predictions/distributed_predictions_final_full.pkl",
+    "final_eval_pkl": "output/pv_pipeline/predictions/distributed_predictions_final_eval.pkl",
+    "hourly_nrmse_csv": "output/pv_pipeline/metrics/hourly_nrmse_consistent.csv",
+    "site_metrics_csv": "output/pv_pipeline/metrics/site_metrics_consistent.csv",
+    "dashboard_dir": "output/pv_pipeline/interactive_dashboard",
+    "dashboard_index": "output/pv_pipeline/interactive_dashboard/index.json"
+  },
+  "artifact_hashes": {
+    "final_full_pkl_sha256": "1dfbd54db9505154aa46e03f051f54dbb489e8479179e44b6a5e4b4fb779aa2e",
+    "final_eval_pkl_sha256": "2c12ef4523cb47c480cf01504639be49bfcbf8b2d62d83534b0ae9248080398d",
+    "hourly_nrmse_csv_sha256": "e2ef1130f18d1916b3b74b2f92b76bbaa5964fe728826a44bc57194ee8dabb2e",
+    "site_metrics_csv_sha256": "4fa0aee2d7a8fa398913e6703ec7a021d9f2e8d0d7a6e447054daf922799929b",
+    "dashboard_index_sha256": "2e76ca8a2b156ea17c2504f91876a014c5e0a0e3da34a4c774381e8747e21deb"
+  },
+  "geo_overrides": {
+    "file": "configs/manual_station_geo_overrides.csv",
+    "low_confidence_sites": [
+      "S116"
+    ],
+    "note": "S115: GEM WGS84 approximate, confidence=medium, precision requires on-site confirmation. S116: town-center approximation from Wikipedia, confidence=low, MUST be replaced with actual PV-site coordinates from operator records."
+  },
+  "station_count_note": "final_full may include all stations; final_eval and dashboard include only stations with valid test 6-19 evaluation rows; S115/S116 have has_geo=0 and no irradiance data; scene_v151 all-night in 'all' scope is normal (includes nighttime hours); test 10-14 daytime window should have non-night scenes per GEO5 checks",
+  "notes": [
+    "test set is only used for final evaluation",
+    "dashboard data is exported after final prediction generation",
+    "BIAS = mean(pred - actual); BIAS < 0 means under-prediction",
+    "NRMSE denominator: station capacity for site metrics, total capacity for city metrics",
+    "all NRMSE values are in percent (%)",
+    "final prediction column: power_pred_final (no fallback allowed)",
+    "Round56 修正说明：S115/S116 scene_v151=all-night in full scope（含夜间）为正常；test 10-14 评估窗口以 GEO5 检查为准，链路正常。"
+  ]
+}

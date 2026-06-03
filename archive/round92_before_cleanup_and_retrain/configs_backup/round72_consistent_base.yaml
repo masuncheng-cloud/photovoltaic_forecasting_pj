@@ -1,0 +1,62 @@
+# Round72：重建全历史一致基线配置
+
+input_pkl: output/pv_pipeline/predictions/distributed_predictions_final_full.pkl
+output_dir: output/pv_pipeline/round72
+
+baseline_final_col: power_pred_final
+consistent_base_col: power_pred_consistent_base
+
+target_col: power_mw
+capacity_col: capacity_mw
+split_col: split
+site_col: site_id
+time_col: datetime
+
+exclude_future: true
+eval_hours: [6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19]
+
+# 滚动时间 OOF folds（训练集内）
+# train 范围：2023-01 到 2025-06
+oof:
+  enabled: true
+  folds:
+    - train_end: "2024-06-30"
+      valid_start: "2024-07-01"
+      valid_end: "2025-06-30"
+    - train_end: "2023-12-31"
+      valid_start: "2024-01-01"
+      valid_end: "2024-06-30"
+    - train_end: "2023-06-30"
+      valid_start: "2023-07-01"
+      valid_end: "2023-12-31"
+
+model:
+  type: lgb
+  fallback_type: hgb
+  target: capacity_normalized_power
+  n_estimators: 500
+  max_depth: 8
+  num_leaves: 63
+  learning_rate: 0.05
+  reg_lambda: 2.0
+  reg_alpha: 0.5
+  min_child_samples: 30
+  subsample: 0.8
+  colsample_bytree: 0.8
+
+guards:
+  no_test_in_train_base: true
+  no_future: true
+  no_null_consistent_base: true
+
+residual_clip:
+  max_abs_norm: 0.10
+  noon_max_abs_norm: 0.08
+
+candidate_guards:
+  bad_site_gt_1pp_max: 0
+  site_mean_nrmse_improve_min_pp: 0.10
+  city_nrmse_6_19_max_worse_pp: 0.05
+  city_nrmse_10_14_must_not_worse: true
+  abs_bias_6_19_max_worse_pp: 0.20
+  abs_bias_10_14_must_not_worse: true

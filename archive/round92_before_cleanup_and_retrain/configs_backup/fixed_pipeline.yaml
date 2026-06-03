@@ -1,0 +1,44 @@
+# 光伏预测项目固定版流水线配置
+# ====================================
+# 本配置用于修复后的稳定流水线
+
+calibration:
+  # 是否启用安全版 calibration
+  enabled: true
+  # 是否启用 guardrail（只有优于baseline时才启用）
+  guardrail: true
+  # 参数约束范围
+  a_min: 0.95
+  a_max: 1.30
+  b_min: -0.10
+  b_max: 0.20
+  # 改善阈值: calibrated_score <= baseline_score * threshold 时才启用
+  improvement_threshold: 0.98
+  # 最小active样本数
+  min_active_rows: 30
+
+dawn_dusk:
+  # 是否启用早晚边界修正
+  enabled: true
+  # 边界时段
+  hours: [6, 7, 17, 18, 19]
+  # floor_factor约束范围
+  floor_min: 0.05
+  floor_max: 0.80
+  # 学习用的分位数
+  quantile_level: 0.20
+
+city_level:
+  # 是否启用城市级P1修正
+  p1_enabled: true
+  # P1因子约束
+  factor_min: 0.70
+  factor_max: 1.40
+  # P1是否应用到站点预测（不应为true）
+  apply_to_site_prediction: false
+
+output:
+  # 固定版输出文件名后缀
+  suffix: "_fixed"
+  # 是否覆盖原始文件
+  overwrite: false

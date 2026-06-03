@@ -1,0 +1,56 @@
+# Round63 分场景残差模型实验配置
+
+baseline_prediction_col: power_pred_final
+target_col: power_mw
+capacity_col: capacity_mw
+split_col: split
+
+# 评估小时范围
+eval_hours: [6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19]
+
+# 场景定义
+scenes:
+  dawn:
+    hours: [6, 7, 8]
+    description: 弱光启动阶段
+  day:
+    hours: [9, 10, 11, 12, 13, 14, 15, 16]
+    description: 正常发电阶段
+  dusk:
+    hours: [17, 18, 19]
+    description: 傍晚下降阶段
+
+# 残差目标
+residual_target: capacity_normalized
+
+# Valid 安全门控
+valid_guard:
+  max_site_mean_nrmse_pp_increase: 0.10
+  max_city_nrmse_pp_increase: 0.10
+  max_bad_site_count_gt_1pp: 0
+  require_10_14_city_nrmse_not_worse: true
+
+# Test 评估（只报告，不用于选择）
+test_guard:
+  report_only: true
+
+# 模型配置
+models:
+  ridge:
+    type: sklearn.linear_model.Ridge
+    params:
+      alpha: 1.0
+  lightgbm:
+    type: lightgbm.LGBMRegressor
+    params:
+      n_estimators: 100
+      num_leaves: 15
+      max_depth: 4
+      learning_rate: 0.05
+      min_child_samples: 100
+      subsample: 0.8
+      colsample_bytree: 0.8
+      reg_alpha: 1.0
+      reg_lambda: 1.0
+      verbosity: -1
+      force_row_wise: true

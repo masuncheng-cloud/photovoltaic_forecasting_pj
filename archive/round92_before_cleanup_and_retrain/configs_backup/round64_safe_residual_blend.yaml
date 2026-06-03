@@ -1,0 +1,50 @@
+# Round64 安全残差融合配置
+
+baseline_col: power_pred_final
+candidate_col: power_pred_lgb_residual
+output_col: power_pred_round64_safe
+
+split_col: split
+target_col: power_mw
+capacity_col: capacity_mw
+site_col: site_id
+time_col: datetime
+
+eval_hours: [6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19]
+
+scene_groups:
+  dawn: [6, 7, 8]
+  day: [9, 10, 11, 12, 13, 14, 15, 16]
+  dusk: [17, 18, 19]
+  noon_focus: [10, 11, 12, 13, 14]
+
+guards:
+  # 站点级：单站点该场景 NRMSE 不能比 Round61 高超过 0.30pp
+  site_scene_max_nrmse_increase_pp: 0.30
+  # 站点级硬上线：单站点全时段 NRMSE 不能比 Round61 高超过 1.00pp
+  site_hard_max_nrmse_increase_pp: 1.00
+  # 小时级：城市 NRMSE 不能比 Round61 高超过 0.05pp
+  hour_city_max_nrmse_increase_pp: 0.05
+  # 小时级：站点平均 NRMSE 不能比 Round61 高超过 0.10pp
+  hour_sm_max_nrmse_increase_pp: 0.10
+  # 场景级：场景内站点平均 NRMSE 不能比 Round61 高超过 0.10pp
+  scene_sm_max_nrmse_increase_pp: 0.10
+  # 硬约束：变差 > +1pp 的站点必须为 0
+  require_bad_site_count_zero: true
+
+blend:
+  # 权重搜索网格
+  allowed_weights: [0.00, 0.25, 0.50, 0.75, 1.00]
+  # 默认完全采用 lgb_residual
+  default_weight: 1.00
+  # 退回到 Round61 的权重
+  fallback_weight: 0.00
+
+adoption_criteria:
+  # 必须满足以下条件才建议采用 Round64
+  sm_nrmse_improvement_required: false  # 不强制要求改善
+  sm_nrmse_no_worse_than: 0.10  # sm_nrmse 不能比 Round61 差超过 0.10pp
+  city_nrmse_not_worse_than: 0.05  # city_nrmse 不能比 Round61 差超过 0.05pp
+  city_nrmse_10_14_not_worse_than: 0.00  # city_nrmse_10_14 不能比 Round61 差
+  bad_sites_zero: true  # 变差 > +1pp 的站点必须为 0
+  sm_nrmse_10_14_not_worse: true  # 10-14 站点平均 NRMSE 不能变差

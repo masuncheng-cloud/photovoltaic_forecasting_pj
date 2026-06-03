@@ -1,0 +1,3 @@
+station_id,station_name,latitude,longitude,geo_source,geo_address,confidence,note
+S115,鑫众墩尚光伏电站,34.5933,119.2172,GEM_Wiki_WGS84,"连云港市赣榆区墩尚镇黄海水产养殖场",medium,"S115=连云港鑫众光伏电力墩尚镇7MWp渔光互补项目；坐标来源：Global Energy Monitor GEM数据库 WGS84近似坐标；GEM引用来源：国网新能源云存档数据2024-03；项目状态：operating 2018年投运；坐标系：WGS84；精确光伏场区中心有待甲方确认"
+S116,林洋伊山光伏电站,34.2983,119.2318,manual_wiki_town_center,"连云港市灌云县伊山镇胜利西路672-2",low,"S116=灌云林洋新能源科技林洋伊山6MWp农光互补项目；公开资料仅显示公司注册地址为伊山镇丁庄村丁庄路；伊山镇21个行政村中不存在丁庄村；伊山镇政府WGS84坐标来源：维基百科；GEM坐标系：WGS84；原公开规模6MWp与当前项目22MW存在差异，可能存在多期归并；精确光伏场区中心有待甲方运维台账确认"

@@ -1,0 +1,54 @@
+{
+  "spring": {
+    "date": "2025-03-02",
+    "season": "spring",
+    "scope": "city",
+    "nrmse_pct": 1.297125,
+    "rmse_mw": 3.367953,
+    "mae_mw": 2.444513,
+    "sample_count": 14,
+    "site_count_median": 41.0,
+    "capacity_sum_mw": 259.64748,
+    "actual_mwh": 107.68,
+    "pred_mwh": 73.456816
+  },
+  "summer": {
+    "date": "2024-08-12",
+    "season": "summer",
+    "scope": "city",
+    "nrmse_pct": 1.391027,
+    "rmse_mw": 3.034268,
+    "mae_mw": 2.476518,
+    "sample_count": 14,
+    "site_count_median": 33.0,
+    "capacity_sum_mw": 218.13148,
+    "actual_mwh": 1000.5,
+    "pred_mwh": 990.402193
+  },
+  "autumn": {
+    "date": "2024-10-30",
+    "season": "autumn",
+    "scope": "city",
+    "nrmse_pct": 1.162922,
+    "rmse_mw": 2.704973,
+    "mae_mw": 2.51305,
+    "sample_count": 14,
+    "site_count_median": 36.0,
+    "capacity_sum_mw": 232.60148,
+    "actual_mwh": 715.73,
+    "pred_mwh": 739.127962
+  },
+  "winter": {
+    "date": "2025-12-28",
+    "season": "winter",
+    "scope": "city",
+    "nrmse_pct": 0.92261,
+    "rmse_mw": 3.586162,
+    "mae_mw": 3.151039,
+    "sample_count": 14,
+    "site_count_median": 68.0,
+    "capacity_sum_mw": 388.69748,
+    "actual_mwh": 864.7,
+    "pred_mwh": 858.454557
+  }
+}

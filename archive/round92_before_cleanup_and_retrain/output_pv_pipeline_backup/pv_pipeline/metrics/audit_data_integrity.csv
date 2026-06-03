@@ -1,0 +1,11 @@
+file,path,exists,rows,cols,key_fields_ok,status,has_time,null_frac_time,has_power_cols,null_frac_power_mw,null_frac_power_pred
+power_long_raw,output/pv_pipeline/tables/power_long_raw.pkl,True,2874864,6,True,PASS,True,0.000,,,
+power_clean,output/pv_pipeline/tables/power_clean.pkl,True,2874864,37,True,PASS,True,0.000,True,0.333,
+site_master,output/pv_pipeline/tables/site_master.csv,True,118,24,True,PASS,,,,,
+site_meteo,output/pv_pipeline/tables/site_meteo.pkl,True,2972352,6,True,PASS,True,0.000,,,
+site_irradiance,output/pv_pipeline/tables/site_irradiance.pkl,True,2972352,6,True,PASS,True,0.000,,,
+train_table,output/pv_pipeline/tables/distributed_train_table_v159.pkl,True,1172180,68,True,PASS,True,0.000,True,0.000,
+final_eval,output/pv_pipeline/tables/distributed_predictions_final_eval.pkl,True,68888,27,True,PASS,True,0.000,True,0.000,0.000
+final_full,output/pv_pipeline/tables/distributed_predictions_final_full.pkl,True,1172180,27,True,PASS,True,0.000,True,0.000,0.000
+best_eval,output/pv_pipeline/tables/best_predictions_eval.pkl,True,68888,27,True,PASS,True,0.000,True,0.000,0.000
+best_full,output/pv_pipeline/tables/best_predictions_full.pkl,True,1172180,27,True,PASS,True,0.000,True,0.000,0.000

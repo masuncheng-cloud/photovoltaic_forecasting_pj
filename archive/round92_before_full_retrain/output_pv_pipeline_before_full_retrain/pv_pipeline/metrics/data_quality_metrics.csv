@@ -1,0 +1,7 @@
+﻿metric,value
+site_mapping_rate,1.0
+negative_large_rate,0.010390752397330795
+over_capacity_rate,0.018049897316881773
+day_zero_rate,0.4212732198721691
+day_zero_run_rate,0.0
+usable_sample_rate,0.6673491337329348

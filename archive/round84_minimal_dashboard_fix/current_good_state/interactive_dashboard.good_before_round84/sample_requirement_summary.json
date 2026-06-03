@@ -1,0 +1,72 @@
+[
+  {
+    "threshold_pct": 5,
+    "qualified_sites": 1,
+    "total_sites": 67,
+    "qualified_ratio_pct": 1.49,
+    "min_full_history_rows": 4095,
+    "p25_full_history_rows": 4095,
+    "median_full_history_rows": 4095,
+    "p75_full_history_rows": 4095,
+    "max_full_history_rows": 4095,
+    "median_full_history_positive_rows": 2360,
+    "median_train_valid_positive_rows": 1438,
+    "note": "经验估计：在当前数据和当前模型下，达到指定NRMSE阈值的站点通常具备的历史样本量分布。历史样本量仅包含 train/valid/test，不包含 future；0值占比100%或无正功率样本的站点已从统计中剔除。样本量不是唯一决定因素，容量、站点映射、异常0值、限电、遮挡和气象插值都会影响最终NRMSE。"
+  },
+  {
+    "threshold_pct": 10,
+    "qualified_sites": 37,
+    "total_sites": 67,
+    "qualified_ratio_pct": 55.22,
+    "min_full_history_rows": 4049,
+    "p25_full_history_rows": 4304,
+    "median_full_history_rows": 16101,
+    "p75_full_history_rows": 24464,
+    "max_full_history_rows": 24464,
+    "median_full_history_positive_rows": 7763,
+    "median_train_valid_positive_rows": 6502,
+    "note": "经验估计：在当前数据和当前模型下，达到指定NRMSE阈值的站点通常具备的历史样本量分布。历史样本量仅包含 train/valid/test，不包含 future；0值占比100%或无正功率样本的站点已从统计中剔除。样本量不是唯一决定因素，容量、站点映射、异常0值、限电、遮挡和气象插值都会影响最终NRMSE。"
+  },
+  {
+    "threshold_pct": 15,
+    "qualified_sites": 61,
+    "total_sites": 67,
+    "qualified_ratio_pct": 91.04,
+    "min_full_history_rows": 3503,
+    "p25_full_history_rows": 4193,
+    "median_full_history_rows": 8639,
+    "p75_full_history_rows": 24464,
+    "max_full_history_rows": 24464,
+    "median_full_history_positive_rows": 5076,
+    "median_train_valid_positive_rows": 3764,
+    "note": "经验估计：在当前数据和当前模型下，达到指定NRMSE阈值的站点通常具备的历史样本量分布。历史样本量仅包含 train/valid/test，不包含 future；0值占比100%或无正功率样本的站点已从统计中剔除。样本量不是唯一决定因素，容量、站点映射、异常0值、限电、遮挡和气象插值都会影响最终NRMSE。"
+  },
+  {
+    "threshold_pct": 20,
+    "qualified_sites": 64,
+    "total_sites": 67,
+    "qualified_ratio_pct": 95.52,
+    "min_full_history_rows": 3503,
+    "p25_full_history_rows": 4193,
+    "median_full_history_rows": 8639,
+    "p75_full_history_rows": 24464,
+    "max_full_history_rows": 24464,
+    "median_full_history_positive_rows": 5076,
+    "median_train_valid_positive_rows": 3764,
+    "note": "经验估计：在当前数据和当前模型下，达到指定NRMSE阈值的站点通常具备的历史样本量分布。历史样本量仅包含 train/valid/test，不包含 future；0值占比100%或无正功率样本的站点已从统计中剔除。样本量不是唯一决定因素，容量、站点映射、异常0值、限电、遮挡和气象插值都会影响最终NRMSE。"
+  },
+  {
+    "threshold_pct": 25,
+    "qualified_sites": 66,
+    "total_sites": 67,
+    "qualified_ratio_pct": 98.51,
+    "min_full_history_rows": 3503,
+    "p25_full_history_rows": 4193,
+    "median_full_history_rows": 8639,
+    "p75_full_history_rows": 24464,
+    "max_full_history_rows": 24464,
+    "median_full_history_positive_rows": 5076,
+    "median_train_valid_positive_rows": 3764,
+    "note": "经验估计：在当前数据和当前模型下，达到指定NRMSE阈值的站点通常具备的历史样本量分布。历史样本量仅包含 train/valid/test，不包含 future；0值占比100%或无正功率样本的站点已从统计中剔除。样本量不是唯一决定因素，容量、站点映射、异常0值、限电、遮挡和气象插值都会影响最终NRMSE。"
+  }
+]

@@ -1,0 +1,15 @@
+{
+  "row_count_match": true,
+  "final_rows": 68888,
+  "best_rows": 68888,
+  "time_match": true,
+  "site_id_match": true,
+  "split_match": true,
+  "max_pred_diff": 0.0,
+  "mean_pred_diff": 0.0,
+  "pred_identical": true,
+  "round10_check_status": "ok",
+  "round10_delta": 0.0,
+  "candidate_count": 1,
+  "accepted_count": 0
+}

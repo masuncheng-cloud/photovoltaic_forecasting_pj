@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-06-01T10:53:24",
+  "generated_at": "2026-06-03T19:26:47",
   "pipeline_entry": "scripts/run_full_pipeline.py",
   "config": "configs/pipeline.yaml",
   "split": {
@@ -25,15 +25,17 @@
   "artifacts": {
     "final_full_pkl": "output/pv_pipeline/predictions/distributed_predictions_final_full.pkl",
     "final_eval_pkl": "output/pv_pipeline/predictions/distributed_predictions_final_eval.pkl",
-    "dashboard_dir": "output/pv_pipeline/interactive_dashboard",
-    "dashboard_metadata": "output/pv_pipeline/interactive_dashboard/metadata.json",
     "hourly_nrmse_csv": "output/pv_pipeline/metrics/hourly_nrmse_consistent.csv",
-    "site_metrics_csv": "output/pv_pipeline/metrics/site_metrics_consistent.csv"
+    "site_metrics_csv": "output/pv_pipeline/metrics/site_metrics_consistent.csv",
+    "dashboard_dir": "output/pv_pipeline/interactive_dashboard",
+    "dashboard_index": "output/pv_pipeline/interactive_dashboard/index.json"
   },
   "artifact_hashes": {
-    "final_full_pkl": "d528169285c9e4df7db476b40b642e6165afe01351a71d8fc0b1098f58bc1708",
-    "final_eval_pkl": "ef9e7b9640ae79d1ca88f0127c7893c962074cf38c7bd6f2bf33a34dad9cb4f7",
-    "dashboard_metadata_json": "ef2c632908445175e94eb7e45713d02cf3cc1817e9f456d33528d4f72cfbafc5"
+    "final_full_pkl_sha256": "3b0db7265c537ae735fa35127b7934d6c8bd783066734b749233db5bb54afb7b",
+    "final_eval_pkl_sha256": "9300a226f6846c165e828bfe809c6ff44f5e7214473c2682120257978163ba33",
+    "hourly_nrmse_csv_sha256": "f0463565678d0172bc7b0cf2eef40264d3b66ff8cc0b72e476d824f3c2b1ff01",
+    "site_metrics_csv_sha256": "99883bbc6a469a850350fdb11267d025ede1a111db50495a2132a2f868bd9c52",
+    "dashboard_index_sha256": "2e76ca8a2b156ea17c2504f91876a014c5e0a0e3da34a4c774381e8747e21deb"
   },
   "geo_overrides": {
     "file": "configs/manual_station_geo_overrides.csv",
@@ -51,39 +53,5 @@
     "all NRMSE values are in percent (%)",
     "final prediction column: power_pred_final (no fallback allowed)",
     "Round56 修正说明：S115/S116 scene_v151=all-night in full scope（含夜间）为正常；test 10-14 评估窗口以 GEO5 检查为准，链路正常。"
-  ],
-  "source_round": "Round68 lgb_safe_blend",
-  "source_column": "power_pred_round68_lgb_safe_blend",
-  "promoted_at": "2026-06-01T16:56:51.998006",
-  "exclude_future": true,
-  "full_sha256": "d528169285c9e4df7db476b40b642e6165afe01351a71d8fc0b1098f58bc1708",
-  "eval_sha256": "ef9e7b9640ae79d1ca88f0127c7893c962074cf38c7bd6f2bf33a34dad9cb4f7",
-  "full_rows": 898175,
-  "eval_rows": 175168,
-  "full_splits": {
-    "train": 723007,
-    "test": 116144,
-    "valid": 59024
-  },
-  "eval_splits": {
-    "test": 116144,
-    "valid": 59024
-  },
-  "final_round": "Round68 final",
-  "prediction_column": "power_pred_final",
-  "hashes_updated_at": "2026-06-01T23:23:41.134777",
-  "actual_column": "power_mw",
-  "official_final": true,
-  "final_prediction_files": {
-    "full": "output/pv_pipeline/predictions/distributed_predictions_final_full.pkl",
-    "eval": "output/pv_pipeline/predictions/distributed_predictions_final_eval.pkl"
-  },
-  "dashboard": {
-    "path": "stages/05_visualization/interactive_forecast_dashboard.html",
-    "data_root": "output/pv_pipeline/interactive_dashboard",
-    "metadata": "output/pv_pipeline/interactive_dashboard/metadata.json",
-    "exclude_future": true,
-    "round": "Round68 final",
-    "prediction_column": "power_pred_final"
-  }
+  ]
 }
