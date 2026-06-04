@@ -1,3 +1,0 @@
-﻿candidate,split,sm_nrmse_pct,city_nrmse_pct,bias_pct,abs_bias_pct,bad_1pp
-round64_final,valid,15.8893,5.2283,-3.0632,3.0632,0
-lgb_safe_blend,valid,14.1965,5.252,-5.0054,5.0054,0

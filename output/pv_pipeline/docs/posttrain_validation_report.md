@@ -1,6 +1,6 @@
 # 训练后逻辑审计报告
 
-**生成时间**: 2026-06-03 12:56:21
+**生成时间**: 2026-06-04 11:55:44
 **最终预测列**: power_pred_final
 **评估口径**: split=test, hour=6-19
 
@@ -27,9 +27,9 @@
 | 9 | ⚠ WARN | C9: 夜间/future 不参与评估 | 夜间 180,660 行（评估时会排除） |
 | 10 | ✓ PASS | C10: hourly_nrmse_consistent.csv 正确 | 14 小时数据, NRMSE范围: 3.94%~16.97% |
 | 11 | ✓ PASS | C11: dashboard 一致性校验 | 68 站, 全部 PASS |
-| 12 | ✓ PASS | C12: dashboard 数据新鲜 | dashboard 晚于 canonical pkl 35.96h |
+| 12 | ✓ PASS | C12: dashboard 数据新鲜 | dashboard 晚于 canonical pkl 40.52h |
 | 13 | ✓ PASS | C13: Git 不追踪 pkl | 0 个 |
-| 14 | ✓ PASS | C13: Git 不追踪 site_series JSON | [NOTE] 138 个（交互式数据，可按需生成，.gitignore 规则正常） |
+| 14 | ✓ PASS | C13: Git 不追踪 site_series JSON | [NOTE] 1311 个（交互式数据，可按需生成，.gitignore 规则正常） |
 | 15 | ✓ PASS | C14: 训练集样本量 | 421,771 行（2023-01-01~2025-06-30 白天） |
 | 16 | ✓ PASS | C15: 站点数量合理 | 68 个站点 |
 | 17 | ✓ PASS | C16: manifest.pipeline_entry | scripts/run_full_pipeline.py |

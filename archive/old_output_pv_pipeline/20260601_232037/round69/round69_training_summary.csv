@@ -1,4 +1,0 @@
-﻿split,rows,sites,y_norm_mean,y_norm_std,zero_ratio,capacity_mean
-test,116144,68,0.1493,0.1865,0.323,5.7161
-train,723007,68,0.1282,0.2091,0.5496,6.4624
-valid,59024,68,0.2778,0.2529,0.1562,5.7161

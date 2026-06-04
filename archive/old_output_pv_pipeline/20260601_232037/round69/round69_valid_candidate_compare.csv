@@ -1,5 +1,0 @@
-﻿candidate,sm_nrmse,delta_sm,city_nrmse,delta_city,sm_nrmse_10_14,city_nrmse_10_14,bias,abs_bias,bad_1pp,passed,failed
-power_pred_round69_block_lgb,15.8421,1.6456,6.3223,1.0703,21.4389,8.1665,-9.6094,9.6094,35,False,"sm_nrmse_improves, city_not_too_bad, city_10_14_ok, abs_bias_ok, no_bad_sites"
-power_pred_round69_noon_lgb,15.5733,1.3768,6.4404,1.1884,21.0562,8.4309,-10.6917,10.6917,24,False,"sm_nrmse_improves, city_not_too_bad, city_10_14_ok, abs_bias_ok, no_bad_sites"
-power_pred_round69_residual_lgb,14.1965,0.0,5.252,0.0,19.286,6.8691,-5.0054,5.0054,0,False,sm_nrmse_improves
-power_pred_round69_high_error_lgb,14.1965,0.0,5.252,0.0,19.286,6.8691,-5.0054,5.0054,0,False,sm_nrmse_improves

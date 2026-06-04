@@ -1,4 +1,0 @@
-﻿candidate,pred_col,sm_nrmse_6_19,city_nrmse_6_19,city_nrmse_10_14,sm_nrmse_10_14,bias_6_19,bias_10_14,abs_bias_6_19,abs_bias_10_14,rmse,mae,bad_sites_count
-Round61 baseline,power_pred_final,11.4095,3.9531,6.2359,15.7862,1.4232,8.3998,1.4232,8.3998,0.9321,0.4478,0
-ridge_residual,power_pred_ridge_residual,11.6672,3.8791,6.0225,16.1188,0.3667,6.7782,0.3667,6.7782,0.9617,0.4627,12
-lgb_residual,power_pred_lgb_residual,11.0694,3.7726,5.9827,15.487,-0.8697,6.1353,0.8697,6.1353,0.8999,0.4219,0

@@ -1,5 +1,0 @@
-﻿month,rows,site_mean_nrmse_percent,city_nrmse_percent,bias_percent_city,pred_actual_ratio_city,top_error_sites
-9,28560,13.9598,5.4932,-3.3644,0.9664,S053|S071|S007
-10,29512,10.6751,4.5293,1.6642,1.0166,S071|S053|S012
-11,28560,10.3785,4.2938,2.8206,1.0282,S053|S071|S012
-12,29512,9.0008,3.1458,5.3553,1.0536,S053|S012|S032

@@ -445,7 +445,7 @@ def run_step_with_subs(step: dict, python: str, cwd: Path, cfg: dict) -> bool:
         cmd = [python, str(sub_script)]
         data_root = str(cwd / cfg.get("data", {}).get("data_root", "data"))
         output_root = str(cwd / cfg.get("data", {}).get("output_root", "output/pv_pipeline"))
-        if "stages" in sub_script.name or "irradiance" in str(sub_script):
+        if _script_needs_output_root(sub_script):
             cmd.extend(["--data-root", data_root, "--output-root", output_root])
 
         with timed_step(f"[{sub_id}] {sub_name} ({sub_desc})", outputs=[str(sub_script)]):
@@ -488,7 +488,6 @@ def _find_sub_script(sub_name: str, cwd: Path) -> Path | None:
             cwd / "scripts" / "check_dashboard_data_freshness.py",
         ],
         "dashboard_regression_check": [
-            cwd / "scripts" / "round44_dashboard_regression_check.py",
             cwd / "scripts" / "dashboard_regression_check.py",
         ],
     }
@@ -496,6 +495,12 @@ def _find_sub_script(sub_name: str, cwd: Path) -> Path | None:
         if path.exists():
             return path
     return None
+
+
+def _script_needs_output_root(script: Path) -> bool:
+    """判断脚本是否需要 --output-root 参数（stages 脚本 + dashboard 相关脚本）。"""
+    name = str(script)
+    return "stages" in name or "irradiance" in name or "dashboard" in name or "regression" in name
 
 
 # ─── Post-steps ───────────────────────────────────────────────────────────────

@@ -1,7 +1,0 @@
-{
-  "ts": "20260601_150723",
-  "backup_full": "output/pv_pipeline/backups/distributed_predictions_final_full_before_round64_20260601_150723.pkl",
-  "backup_eval": "output/pv_pipeline/backups/distributed_predictions_final_eval_before_round64_20260601_150723.pkl",
-  "source_sha_full": "1dfbd54db9505154aa46e03f051f54dbb489e8479179e44b6a5e4b4fb779aa2e",
-  "source_sha_eval": "2c12ef4523cb47c480cf01504639be49bfcbf8b2d62d83534b0ae9248080398d"
-}

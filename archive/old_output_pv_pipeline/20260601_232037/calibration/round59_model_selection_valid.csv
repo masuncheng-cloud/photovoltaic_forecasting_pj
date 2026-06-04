@@ -1,5 +1,0 @@
-﻿pred_col,sm_nrmse_6_19,c_nrmse_6_19,c_nrmse_10_14,sm_nrmse_10_14,bias_6_19,abs_bias_6_19,label,score,selected
-power_pred_final,16.0324,0.2701,0.3572,21.6008,-3.3146,3.3146,baseline Round58,11.297835,False
-power_pred_round59_hour_scene,15.9976,0.2681,0.3546,21.5766,-5.0559,5.0559,hour_scene only,11.53977,False
-power_pred_round59_site,15.845,0.2671,0.3539,21.3867,-2.9584,2.9584,site only,11.125875,True
-power_pred_round59_combined,15.8657,0.2666,0.354,21.4667,-4.4871,4.4871,combined,11.379335,False

@@ -1,6 +1,0 @@
-﻿check,max_diff,pass
-actual_mw,8.881784197001252e-16,True
-pred_mw,4.9999678845003004e-05,False
-city_actual,8.526512829121202e-14,True
-future_excluded,0.0,True
-metadata,0.0,True

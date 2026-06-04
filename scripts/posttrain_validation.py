@@ -552,15 +552,33 @@ def run_validation(cfg: dict) -> ValidationCheck:
                 scene_col = "scene_v151" if "scene_v151" in sdf.columns else None
                 scene_ok = False
                 if scene_col:
-                    scene_vals = sdf[scene_col].astype(str).value_counts().to_dict()
-                    scene_all_night = set(str(k) for k in scene_vals.keys()) <= {"night"}
-                    if scene_all_night:
+                    raw_scene_vals = sdf[scene_col]
+                    # Normalize: treat empty-dict/None/NaN/empty-string as missing
+                    valid_scenes = []
+                    for x in raw_scene_vals:
+                        if x is None:
+                            continue
+                        if isinstance(x, float) and pd.isna(x):
+                            continue
+                        if isinstance(x, dict) and not x:
+                            continue
+                        s = str(x).strip()
+                        if not s or s in ("{}", "nan", "NaN", "None"):
+                            continue
+                        valid_scenes.append(s)
+
+                    if not valid_scenes:
+                        c.warn(f"GEO5: {sid} scene_v151 test 10-14",
+                               f"字段为空/缺失，标签缺失，但 g_blend/power_pred_final 链路正常，跳过 all-night 判断")
+                        scene_ok = True
+                    elif set(valid_scenes) <= {"night"}:
                         c.fail(f"GEO5: {sid} scene_v151 test 10-14",
-                               f"scene 全为 night！{scene_vals}（后处理/校准可能覆盖了预测）")
+                               f"scene 全为 night！{dict(zip(valid_scenes, [valid_scenes.count(v) for v in set(valid_scenes)]))}（后处理/校准可能覆盖了预测）")
                     else:
                         scene_ok = True
+                        uniq = {v: valid_scenes.count(v) for v in set(valid_scenes)}
                         c.ok(f"GEO5: {sid} scene_v151 test 10-14",
-                             f"scene 正常 {scene_vals}，非 all-night")
+                             f"scene 正常 {uniq}，非 all-night")
                 else:
                     c.warn(f"GEO5: {sid} scene_v151", "字段不存在")
 

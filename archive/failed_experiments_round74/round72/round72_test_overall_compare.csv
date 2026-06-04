@@ -1,5 +1,0 @@
-﻿candidate,city_nrmse_6_19,city_nrmse_10_14,site_mean_nrmse_6_19,city_bias_6_19,city_bias_10_14,rmse_city
-power_pred_final,4.1317,5.9379,10.5774,0.5208,5.5959,16.0599
-power_pred_round72_season_residual,4.2118,6.0379,10.5818,-0.0086,6.4049,16.3713
-power_pred_round72_noon_residual,4.19,6.0491,10.6286,1.0631,6.4199,16.2863
-power_pred_round72_high_error_residual,4.1473,5.9528,10.5497,0.4401,5.7419,16.1203

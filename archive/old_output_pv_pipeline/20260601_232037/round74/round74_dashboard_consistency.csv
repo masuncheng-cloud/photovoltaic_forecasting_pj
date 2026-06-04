@@ -1,6 +1,0 @@
-﻿check,status,detail
-actual_mw,PASS,"{'status': 'PASS', 'max_diff': 17.88}"
-pred_mw,PASS (浮点精度级差异),"{'status': 'PASS (浮点精度级差异)', 'max_diff': 15.949750842769754}"
-city_series,PASS,"{'status': 'PASS', 'max_diff': 0.0}"
-future_rows,PASS,"{'status': 'PASS', 'count': 0}"
-metadata_exclude_future,PASS,{'status': 'PASS'}

@@ -1,9 +1,0 @@
-{
-  "round": "Round68 final",
-  "prediction_column": "power_pred_final",
-  "official_final": true,
-  "exclude_future": true,
-  "source_round": "Round68 lgb_safe_blend",
-  "generated_at": "2026-06-01T17:00:46.955039",
-  "dashboard_version": "3.0"
-}

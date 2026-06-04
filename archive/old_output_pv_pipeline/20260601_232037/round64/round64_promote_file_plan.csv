@@ -1,8 +1,0 @@
-﻿step,action,source,dest,overwrite_dest,description,script,args
-1,backup,output/pv_pipeline/predictions/distributed_predictions_final_full.pkl,backups/distributed_predictions_final_full_before_round64_20260601_145012.pkl,False,备份当前正式 full pkl (时间戳: 20260601_145012),,
-1,backup,output/pv_pipeline/predictions/distributed_predictions_final_eval.pkl,backups/distributed_predictions_final_eval_before_round64_20260601_145012.pkl,False,备份当前正式 eval pkl (时间戳: 20260601_145012),,
-2,write,round64/round64_candidates.pkl,output/pv_pipeline/predictions/distributed_predictions_final_full.pkl,True,将 power_pred_round64_safe 写入 power_pred_final，输出为 full pkl,,
-2,write,round64/round64_candidates.pkl,output/pv_pipeline/predictions/distributed_predictions_final_eval.pkl,True,只保留 valid + test 行，写入 eval pkl,,
-3,update_manifest,manifest.json,output/pv_pipeline/manifest.json,True,更新 manifest.json 的 SHA256 hash 和 final_prediction_column,,
-4,run_script,,,,重新导出正式 interactive_dashboard,scripts/export_interactive_dashboard_data.py,--dashboard-root output/pv_pipeline/interactive_dashboard --exclude-future
-5,run_script,,,,重新运行 posttrain validation,scripts/posttrain_validation.py,

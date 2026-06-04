@@ -1,5 +1,0 @@
-﻿candidate,sm_nrmse_valid,city_nrmse_valid,bias_valid
-round64_final,,0.2646,-0.0478
-ridge,16.1007,0.2783,-0.0508
-hgb,15.697,0.273,-0.1692
-lgb,15.3879,0.2622,-0.1581

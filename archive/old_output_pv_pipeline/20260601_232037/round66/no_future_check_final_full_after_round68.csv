@@ -1,2 +1,0 @@
-﻿name,type,file,total_rows,future_rows,split_distribution,status,fail_on_future
-final_full_after_round68,pkl,output/pv_pipeline/predictions/distributed_predictions_final_full.pkl,898175,0,"{'train': 723007, 'test': 116144, 'valid': 59024}",PASS,True
