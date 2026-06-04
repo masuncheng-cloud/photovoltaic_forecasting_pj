@@ -1,17 +1,17 @@
 # ERA5 输入文件预检报告
 
-生成时间: 2026-06-04 11:24:27
+生成时间: 2026-06-04 17:24:58
 
 ## 1. 文件结构检查
 
 | 年份 | 文件 | 状态 | 说明 |
 |------|------|------|------|
-| 2023 | instant | PASS | t2m units=K, 8760h (expected 8760), lat=(34.0, 35.0), lon=(118.5, 120.0) |
-| 2023 | accum | PASS | ssrd units=J m**-2, 8760h (expected 8760), lat=(34.0, 35.0), lon=(118.5, 120.0) |
-| 2024 | instant | PASS | t2m units=K, 8784h (expected 8784), lat=(34.0, 35.0), lon=(118.5, 120.0) |
-| 2024 | accum | PASS | ssrd units=J m**-2, 8784h (expected 8784), lat=(34.0, 35.0), lon=(118.5, 120.0) |
-| 2025 | instant | PASS | t2m units=K, 8760h (expected 8760), lat=(34.0, 35.0), lon=(118.5, 120.0) |
-| 2025 | accum | PASS | ssrd units=J m**-2, 8760h (expected 8760), lat=(34.0, 35.0), lon=(118.5, 120.0) |
+| 2023 | instant | PASS | t2m units=K, 8760h (expected 8760), lat=(33.5, 35.75), lon=(118.0, 120.5) |
+| 2023 | accum | PASS | ssrd units=J m**-2, 8760h (expected 8760), lat=(33.5, 35.75), lon=(118.0, 120.5) |
+| 2024 | instant | PASS | t2m units=K, 8784h (expected 8784), lat=(33.5, 35.75), lon=(118.0, 120.5) |
+| 2024 | accum | PASS | ssrd units=J m**-2, 8784h (expected 8784), lat=(33.5, 35.75), lon=(118.0, 120.5) |
+| 2025 | instant | PASS | t2m units=K, 8760h (expected 8760), lat=(33.5, 35.75), lon=(118.0, 120.5) |
+| 2025 | accum | PASS | ssrd units=J m**-2, 8760h (expected 8760), lat=(33.5, 35.75), lon=(118.0, 120.5) |
 
 ## 2. 空间范围检查
 

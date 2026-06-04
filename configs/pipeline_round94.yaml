@@ -1,0 +1,122 @@
+# 光伏预测流水线统一配置文件
+# ============================================================
+# 所有正式训练、评估、可视化脚本优先读取此文件。
+# 不允许在多个脚本里硬编码 split 日期、小时范围或预测列名。
+
+data:
+  # 项目根目录（相对于本文件 ../..）
+  project_root: .
+  # 原始数据目录
+  data_root: data
+  # 训练输出根目录
+  output_root: output/pv_pipeline_round94_era5_expanded_20260604_172517
+
+# ============================================================
+# 数据切分口径
+# ============================================================
+split:
+  train_start:  "2023-01-01"
+  train_end:    "2025-06-30"
+  valid_start:  "2025-07-01"
+  valid_end:    "2025-08-31"
+  test_start:   "2025-09-01"
+  test_end:     "2025-12-31"
+  future_start:  "2026-01-01"
+  future_end:    "2026-03-31"
+
+# ============================================================
+# 评估口径（所有报告和页面必须使用此口径）
+# ============================================================
+eval:
+  split: test                  # 只评估 test 集
+  start_hour: 6
+  end_hour: 19
+  exclude_future: true
+  # 站点 NRMSE 分母 = 站点容量
+  nrmse_denominator: capacity_mw
+  # 城市 NRMSE 分母 = 参与评估站点容量之和
+  city_nrmse_denominator: capacity_sum_mw
+  # 评估时排除夜间（hour < 6 或 > 19）
+  exclude_night: true
+
+# ============================================================
+# 最终预测列（必须存在，不允许回退）
+# ============================================================
+prediction:
+  # 唯一正式预测列
+  final_column: power_pred_final
+  # 不使用回退列（不允许静默降级）
+  allow_fallback: false
+  # 预测列优先级（strict 模式下只使用第一个）
+  priority_columns:
+    - power_pred_final
+  # 容量列
+  capacity_column: capacity_mw
+  # 真实功率列
+  actual_column: power_mw
+  # 时间列
+  time_column: time
+  # split 列
+  split_column: split
+
+# ============================================================
+# 数据质量门槛
+# ============================================================
+quality:
+  # 训练+验证阶段 6-19 点有效正功率样本最低要求
+  min_positive_train_valid_6_19: 300
+  # 测试集 6-19 点零值比例超过此值视为疑似异常站点
+  test_zero_ratio_threshold: 0.98
+  # 功率/容量比超过此值视为超容异常
+  max_power_over_capacity: 1.2
+  # 最小容量门槛（MW）
+  min_capacity_mw: 0.5
+
+# ============================================================
+# 可视化看板
+# ============================================================
+dashboard:
+  enabled: true
+  output_dir: output/pv_pipeline/interactive_dashboard
+  html_path: stages/05_visualization/interactive_forecast_dashboard.html
+  exclude_future: true
+  # 启动服务端口
+  http_port: 8060
+
+# ============================================================
+# 校准（站点 bias 校准）
+# ============================================================
+calibration:
+  enabled: true
+  # 只用 train + valid 计算校准系数，test 只评估
+  use_splits: [train, valid]
+  # 校准系数约束
+  factor_min: 0.80
+  factor_max: 1.20
+  offset_min: -0.5
+  offset_max: 0.5
+  # 小样本站点向全局系数收缩
+  small_sample_threshold: 100
+  global_shrink_weight: 0.5
+
+# ============================================================
+# 归档配置
+# ============================================================
+archive:
+  # 归档目录（不删除，仅归档）
+  archive_root: archive
+  # 归档哪些 round 脚本
+  archive_round_scripts: true
+  # 保留哪些文档（Round*.md 移到 archive/round_docs）
+  keep_round_docs: false
+  # 不归档的正式脚本
+  protected_scripts:
+    - run_full_pipeline.py
+    - posttrain_validation.py
+    - check_dashboard_prediction_values.py
+    - export_interactive_dashboard_data.py
+    - update_dashboard_after_training.py
+    - compute_hourly_nrmse_consistent.py
+    - common_paths.py
+    - metrics_common.py
+    - archive_legacy_round_files.py
