@@ -281,7 +281,7 @@ def build_training_table_v159(power_clean, site_master, quality, site_irradiance
     pr_compare['pr_diff'] = diff
     changed = pr_compare[pr_compare['pr_diff'] > 0.05]
     print(f"[v159] pr_month 变化>0.05的站点-月: {len(changed)}/{len(pr_compare)}")
-    pr_compare.to_csv(PROJECT_ROOT / 'output' / 'pv_pipeline' / 'metrics' / 'pr_month_comparison.csv',
+    pr_compare.to_csv(paths.metrics / 'pr_month_comparison.csv',
                       index=False, encoding='utf-8-sig')
     print(f"[v159] pr_month对比已保存")
 
