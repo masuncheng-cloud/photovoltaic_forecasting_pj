@@ -1,0 +1,4 @@
+usage: run_full_pipeline.py [-h] [--config CONFIG]
+                            [--mode {full,geo-refresh,train-only,eval-only,dashboard-only,audit-only,round64-experiment,round70-performance-upgrade,round71-conservative-residual,round72-consistent-base-residual,round73-training-framework-reset}]
+                            [--force] [--python PYTHON] [--skip SKIP]
+run_full_pipeline.py: error: unrecognized arguments: --output-root 

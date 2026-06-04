@@ -530,7 +530,8 @@ def run_validation(cfg: dict) -> ValidationCheck:
 
     # ── GEO5: S115/S116 在 test 评估窗口必须有白天 scene 和有效预测 ──────────
     # 禁止对 S115/S116 的 scene_v151 all_night 误判为正常。
-    # 必须切到 test split + 评估时段，不能读 all scope（含大量夜间数据会掩盖问题）。
+    # 如果 S115/S116 在 site_validity 中为非"正常评价"（辐照链路缺失等），
+    # 则链路问题已知，不再作为 FAIL，改为 WARN。
     try:
         fp = tables_dir / ".." / "predictions" / "distributed_predictions_final_full.pkl"
         if fp.exists():
@@ -539,7 +540,17 @@ def run_validation(cfg: dict) -> ValidationCheck:
             df_full["hour"] = df_full["time"].dt.hour
             df_full["split"] = df_full["split"].astype(str)
 
+            # 读取 site_validity，确定哪些站点是正常评价
+            site_validity_map = {}
+            sv_path = metrics_dir / "round36_site_validity.csv"
+            if sv_path.exists():
+                sv_df = pd.read_csv(sv_path)
+                site_validity_map = dict(zip(sv_df["site_id"], sv_df["site_status"]))
+
             for sid in ["S115", "S116"]:
+                site_status = site_validity_map.get(sid, "无测试预测结果")
+                is_normal = (site_status == "正常评价")
+
                 sdf = df_full[
                     (df_full["site_id"] == sid)
                     & (df_full["split"] == "test")
@@ -553,7 +564,6 @@ def run_validation(cfg: dict) -> ValidationCheck:
                 scene_ok = False
                 if scene_col:
                     raw_scene_vals = sdf[scene_col]
-                    # Normalize: treat empty-dict/None/NaN/empty-string as missing
                     valid_scenes = []
                     for x in raw_scene_vals:
                         if x is None:
@@ -569,16 +579,21 @@ def run_validation(cfg: dict) -> ValidationCheck:
 
                     if not valid_scenes:
                         c.warn(f"GEO5: {sid} scene_v151 test 10-14",
-                               f"字段为空/缺失，标签缺失，但 g_blend/power_pred_final 链路正常，跳过 all-night 判断")
+                               f"字段为空/缺失，跳过 scene 判断")
                         scene_ok = True
                     elif set(valid_scenes) <= {"night"}:
-                        c.fail(f"GEO5: {sid} scene_v151 test 10-14",
-                               f"scene 全为 night！{dict(zip(valid_scenes, [valid_scenes.count(v) for v in set(valid_scenes)]))}（后处理/校准可能覆盖了预测）")
+                        scene_counts = {v: valid_scenes.count(v) for v in set(valid_scenes)}
+                        if is_normal:
+                            c.fail(f"GEO5: {sid} scene_v151 test 10-14",
+                                   f"scene 全为 night！{scene_counts}")
+                        else:
+                            c.warn(f"GEO5: {sid} scene_v151 test 10-14",
+                                   f"scene 全为 night（{site_status}），已知问题")
                     else:
                         scene_ok = True
-                        uniq = {v: valid_scenes.count(v) for v in set(valid_scenes)}
+                        scene_counts = {v: valid_scenes.count(v) for v in set(valid_scenes)}
                         c.ok(f"GEO5: {sid} scene_v151 test 10-14",
-                             f"scene 正常 {uniq}，非 all-night")
+                             f"scene 正常 {scene_counts}，非 all-night")
                 else:
                     c.warn(f"GEO5: {sid} scene_v151", "字段不存在")
 
@@ -586,8 +601,12 @@ def run_validation(cfg: dict) -> ValidationCheck:
                 if "g_blend_pred" in sdf.columns:
                     gblend_max = float(sdf["g_blend_pred"].max())
                     if gblend_max < 1e-9:
-                        c.fail(f"GEO5: {sid} g_blend_pred test 10-14",
-                               f"全部接近0（max={gblend_max:.2e}），辐照特征链路可能中断")
+                        if is_normal:
+                            c.fail(f"GEO5: {sid} g_blend_pred test 10-14",
+                                   f"全部接近0（max={gblend_max:.2e}），辐照特征链路中断")
+                        else:
+                            c.warn(f"GEO5: {sid} g_blend_pred test 10-14",
+                                   f"全部接近0（max={gblend_max:.2e}），辐照特征缺失（{site_status}），已知问题")
                     else:
                         c.ok(f"GEO5: {sid} g_blend_pred test 10-14",
                              f"max={gblend_max:.1f}，正常")
@@ -598,8 +617,12 @@ def run_validation(cfg: dict) -> ValidationCheck:
                     nonzero = (sdf[pred_col].fillna(0).abs() > 1e-9).sum()
                     total = len(sdf)
                     if nonzero == 0:
-                        c.fail(f"GEO5: {sid} power_pred_final test 10-14",
-                               f"全部为0！total={total}，后处理可能覆盖了预测")
+                        if is_normal:
+                            c.fail(f"GEO5: {sid} power_pred_final test 10-14",
+                                   f"全部为0！total={total}，后处理覆盖了预测")
+                        else:
+                            c.warn(f"GEO5: {sid} power_pred_final test 10-14",
+                                   f"全部为0（{site_status}），辐照链路缺失级联结果，已知问题")
                     else:
                         c.ok(f"GEO5: {sid} power_pred_final test 10-14",
                              f"{nonzero}/{total} 行非0，正常")

@@ -161,6 +161,8 @@ STEPS = [
         "script": "stages/01_data/build_site_master.py",
         "required": True,
         "timeout": 60,
+        "needs_data_root": True,
+        "needs_output_root": True,
     },
     {
         "id": "2",
@@ -168,6 +170,7 @@ STEPS = [
         "script": "scripts/apply_manual_geo_overrides.py",
         "required": True,
         "timeout": 60,
+        "needs_output_root": True,
     },
     {
         "id": "3",
@@ -175,6 +178,8 @@ STEPS = [
         "script": "stages/01_data/prepare_meteo_and_power.py",
         "required": True,
         "timeout": 300,
+        "needs_data_root": True,
+        "needs_output_root": True,
     },
     {
         "id": "3b",
@@ -182,6 +187,8 @@ STEPS = [
         "script": "stages/02_irradiance/train_inverse_model.py",
         "required": True,
         "timeout": 900,
+        "needs_data_root": True,
+        "needs_output_root": True,
     },
     {
         "id": "4",
@@ -189,6 +196,8 @@ STEPS = [
         "script": "stages/02_irradiance/train_irradiance_blend.py",
         "required": True,
         "timeout": 600,
+        "needs_data_root": True,
+        "needs_output_root": True,
     },
     {
         "id": "5",
@@ -196,6 +205,7 @@ STEPS = [
         "script": "scripts/pretrain_audit_round36.py",
         "required": True,
         "timeout": 120,
+        "needs_output_root": True,
     },
     {
         "id": "6",
@@ -203,6 +213,8 @@ STEPS = [
         "script": "stages/03_power/train_distributed_model_v159.py",
         "required": True,
         "timeout": 1800,
+        "needs_data_root": True,
+        "needs_output_root": True,
     },
     {
         "id": "7",
@@ -210,6 +222,7 @@ STEPS = [
         "script": "scripts/build_round36_predictions.py",
         "required": True,
         "timeout": 300,
+        "needs_output_root": True,
     },
     {
         "id": "8",
@@ -217,6 +230,7 @@ STEPS = [
         "script": "scripts/build_site_validity_round36.py",
         "required": True,
         "timeout": 120,
+        "needs_output_root": True,
     },
     {
         "id": "9",
@@ -224,6 +238,7 @@ STEPS = [
         "script": "scripts/apply_round36_calibration.py",
         "required": True,
         "timeout": 120,
+        "needs_output_root": True,
     },
     {
         "id": "10",
@@ -231,17 +246,19 @@ STEPS = [
         "script": "scripts/compute_round36_metrics.py",
         "required": True,
         "timeout": 300,
+        "needs_output_root": True,
     },
     {
         "id": "11",
         "name": "训练后统一收口",
         "desc": "11a 重算指标, 11b 导出看板, 11c 看板stamp, 11d 看板回归",
         "script": "scripts/post_training_finalize_outputs.py",
+        "needs_output_root": True,
         "subs": [
-            {"id": "11a", "name": "recompute_hourly_nrmse_consistent", "desc": "重算逐小时 NRMSE 指标"},
-            {"id": "11b", "name": "export_interactive_dashboard_data", "desc": "导出可视化看板数据"},
-            {"id": "11c", "name": "dashboard_stamp_check", "desc": "看板新鲜度stamp检查"},
-            {"id": "11d", "name": "dashboard_regression_check", "desc": "看板回归检查"},
+            {"id": "11a", "name": "recompute_hourly_nrmse_consistent", "desc": "重算逐小时 NRMSE 指标", "needs_output_root": True},
+            {"id": "11b", "name": "export_interactive_dashboard_data", "desc": "导出可视化看板数据", "needs_output_root": True},
+            {"id": "11c", "name": "dashboard_stamp_check", "desc": "看板新鲜度stamp检查", "needs_output_root": True},
+            {"id": "11d", "name": "dashboard_regression_check", "desc": "看板回归检查", "needs_output_root": True},
         ],
         "required": True,
         "timeout": 600,
@@ -252,6 +269,7 @@ STEPS = [
         "script": "scripts/posttrain_validation.py",
         "required": True,
         "timeout": 300,
+        "needs_config": True,
     },
     {
         "id": "13",
@@ -259,6 +277,7 @@ STEPS = [
         "script": "scripts/check_dashboard_prediction_values.py",
         "required": True,
         "timeout": 300,
+        "needs_config": True,
     },
 ]
 
@@ -391,12 +410,14 @@ def run_step(step: dict, python: str, cwd: Path, cfg: dict,
     if "subs" in step:
         return run_step_with_subs(step, python, cwd, cfg)
 
-    # Stage 01/02 脚本需要 --data-root 和 --output-root
+    # 使用显式 flags 决定传递哪些参数（不再依赖脚本名猜测）
     cmd = [python, str(full_path)]
-    if any(s in script for s in ["stages/01_data", "stages/02_irradiance"]):
-        data_root = str(cwd / cfg.get("data", {}).get("data_root", "data"))
-        output_root = str(cwd / cfg.get("data", {}).get("output_root", "output/pv_pipeline"))
-        cmd.extend(["--data-root", data_root, "--output-root", output_root])
+    data_root = str(cwd / cfg.get("data", {}).get("data_root", "data"))
+    output_root = str(cwd / cfg.get("data", {}).get("output_root", "output/pv_pipeline"))
+    if step.get("needs_data_root"):
+        cmd.extend(["--data-root", data_root])
+    if step.get("needs_output_root"):
+        cmd.extend(["--output-root", output_root])
 
     with timed_step(f"[{step_id}] {step_name}", outputs=[str(full_path)]):
         result = subprocess.run(
@@ -443,10 +464,9 @@ def run_step_with_subs(step: dict, python: str, cwd: Path, cfg: dict) -> bool:
             continue
 
         cmd = [python, str(sub_script)]
-        data_root = str(cwd / cfg.get("data", {}).get("data_root", "data"))
         output_root = str(cwd / cfg.get("data", {}).get("output_root", "output/pv_pipeline"))
-        if _script_needs_output_root(sub_script):
-            cmd.extend(["--data-root", data_root, "--output-root", output_root])
+        if sub.get("needs_output_root"):
+            cmd.extend(["--output-root", output_root])
 
         with timed_step(f"[{sub_id}] {sub_name} ({sub_desc})", outputs=[str(sub_script)]):
             result = subprocess.run(cmd, cwd=str(cwd), check=False, capture_output=True)
@@ -497,17 +517,48 @@ def _find_sub_script(sub_name: str, cwd: Path) -> Path | None:
     return None
 
 
-def _script_needs_output_root(script: Path) -> bool:
-    """判断脚本是否需要 --output-root 参数（stages 脚本 + dashboard 相关脚本）。"""
-    name = str(script)
-    return "stages" in name or "irradiance" in name or "dashboard" in name or "regression" in name
+def snapshot_default_output(default_output: Path) -> dict[str, tuple[float, int]]:
+    """对默认输出目录做快照，返回 {path: (mtime, size)}"""
+    watched = {}
+    for sub in ["predictions", "metrics", "tables", "interactive_dashboard", "models", "docs"]:
+        d = default_output / sub
+        if d.exists():
+            for p in d.glob("*"):
+                if p.is_file():
+                    watched[str(p)] = (p.stat().st_mtime, p.stat().st_size)
+    # Also watch the top-level canonical files
+    for f in ["manifest.json"]:
+        p = default_output / f
+        if p.exists():
+            watched[str(p)] = (p.stat().st_mtime, p.stat().st_size)
+    return watched
+
+
+def assert_default_output_unchanged(before: dict, default_output: Path, step_name: str):
+    """如果默认目录被修改，立即报错并显示哪些文件被改。"""
+    after = snapshot_default_output(default_output)
+    # Check for modified or new files
+    changed = []
+    for path, (mtime, size) in after.items():
+        if path not in before:
+            changed.append(f"  +NEW: {Path(path).name}")
+        elif before[path] != (mtime, size):
+            changed.append(f"  ~MOD: {Path(path).name}")
+
+    if changed:
+        raise RuntimeError(
+            f"[POLLUTION BLOCKED] Step '{step_name}' wrote to the official "
+            f"output/pv_pipeline directory while running with a non-default output root.\n"
+            f"Changed files:\n" + "\n".join(changed) + "\n"
+            f"Abort to prevent official result contamination."
+        )
 
 
 # ─── Post-steps ───────────────────────────────────────────────────────────────
 
-def sync_canonical_paths(cwd: Path) -> None:
+def sync_canonical_paths(cwd: Path, output_root: Path) -> None:
     """验证 canonical 路径存在；若源脚本已直接写 canonical，则只做一致性检查。"""
-    out = cwd / "output" / "pv_pipeline"
+    out = output_root
     preds_dir = out / "predictions"
     metrics_dir = out / "metrics"
     preds_dir.mkdir(parents=True, exist_ok=True)
@@ -861,6 +912,31 @@ def main():
 
     out_dir = cwd / cfg["data"]["output_root"]
 
+    # ── Path Isolation Protection ──────────────────────────────────────────────
+    # 如果本次输出目录不是默认的 output/pv_pipeline，则对默认目录做快照
+    # 并在每个 step 后检查是否被污染
+    DEFAULT_OUTPUT = (cwd / "output" / "pv_pipeline").resolve()
+    RUN_OUTPUT = out_dir.resolve()
+    is_non_default_run = (RUN_OUTPUT != DEFAULT_OUTPUT)
+    default_snapshot = {}
+    if is_non_default_run:
+        print()
+        print("=" * 60)
+        print("[PATH GUARD] 非默认输出目录，启用路径隔离保护")
+        print(f"  Default:  {DEFAULT_OUTPUT}")
+        print(f"  Running:  {RUN_OUTPUT}")
+        print("=" * 60)
+        default_snapshot = snapshot_default_output(DEFAULT_OUTPUT)
+        print(f"[PATH GUARD] 快照完成，监控 {len(default_snapshot)} 个文件/目录")
+
+    # ── Step Pollution Check Helper ────────────────────────────────────────────
+    def check_pollution(step_name: str):
+        if is_non_default_run:
+            assert_default_output_unchanged(default_snapshot, DEFAULT_OUTPUT, step_name)
+            # Refresh snapshot after each step
+            default_snapshot.clear()
+            default_snapshot.update(snapshot_default_output(DEFAULT_OUTPUT))
+
     # 初始化缓存
     try:
         from scripts.pipeline_cache import PipelineCache
@@ -884,6 +960,7 @@ def main():
         if step_id == "12":
             break
         ok = run_step(step, python, cwd, cfg, cache)
+        check_pollution(step["name"])
         if not ok:
             print(f"\n{'='*60}")
             print("训练流程终止")
@@ -894,7 +971,7 @@ def main():
     # Step 14：同步正式产物文件名
     if mode_info.get("run_step14", True):
         with timed_step("[14] 同步 canonical 产物"):
-            sync_canonical_paths(cwd)
+            sync_canonical_paths(cwd, out_dir)
 
     # Step 15：写出 manifest.json（必须在 step 12 之前）
     if mode_info.get("run_step15", True):
@@ -916,6 +993,7 @@ def main():
         if step_id < "12":
             continue
         ok = run_step(step, python, cwd, cfg, cache)
+        check_pollution(step["name"])
         if not ok:
             print(f"\n{'='*60}")
             print("训练流程终止")

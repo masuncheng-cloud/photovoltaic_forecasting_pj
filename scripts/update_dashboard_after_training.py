@@ -14,8 +14,13 @@ Round44 新增：训练完成后自动刷新可视化 dashboard 数据，并检�
 
 此脚本必须在每次完整训练（Round41/42 融合、指标重算等）之后执行，
 作为训练流程的最后一个自动化环节。
+
+用法：
+  python scripts/update_dashboard_after_training.py
+  python scripts/update_dashboard_after_training.py --output-root output/pv_pipeline
 """
 
+import argparse
 import hashlib
 import json
 import os
@@ -28,22 +33,28 @@ import pandas as pd
 
 PROJECT_ROOT = Path(__file__).parent.parent.resolve()
 SCRIPTS_DIR = PROJECT_ROOT / "scripts"
-TABLE_DIR = PROJECT_ROOT / "output" / "pv_pipeline" / "tables"
-DASH_DIR = PROJECT_ROOT / "output" / "pv_pipeline" / "interactive_dashboard"
-METRIC_DIR = PROJECT_ROOT / "output" / "pv_pipeline" / "metrics"
-METRIC_DIR.mkdir(parents=True, exist_ok=True)
 
 
-def find_final_pkl():
-    """找到最新的 distributed_predictions_final_roundXX.pkl"""
-    candidates = sorted(TABLE_DIR.glob("distributed_predictions_final_round*.pkl"))
-    if candidates:
-        return candidates[-1]
+def resolve_paths(output_root: Path):
+    DASH_DIR = output_root / "interactive_dashboard"
+    METRIC_DIR = output_root / "metrics"
+    METRIC_DIR.mkdir(parents=True, exist_ok=True)
+    return DASH_DIR, METRIC_DIR
+
+
+def find_final_pkl(output_root: Path):
+    """找到 canonical distributed_predictions_final_eval.pkl"""
+    predictions_dir = output_root / "predictions"
+    canonical = predictions_dir / "distributed_predictions_final_eval.pkl"
+    if canonical.exists():
+        return canonical
     for name in ["distributed_predictions_final_full.pkl", "distributed_predictions_final.pkl"]:
-        p = TABLE_DIR / name
+        p = predictions_dir / name
         if p.exists():
             return p
-    raise FileNotFoundError("找不到 distributed_predictions_final*.pkl")
+    raise FileNotFoundError(
+        f"找不到 distributed_predictions_final*.pkl（尝试过: {predictions_dir}）"
+    )
 
 
 def file_signature(path):
@@ -74,9 +85,9 @@ def snapshot_dir(dir_path, extensions=None):
     return sigs
 
 
-def check_city_series_consistency():
+def check_city_series_consistency(output_root, DASH_DIR):
     """校验 city_series.json 与 final pkl 的一致性"""
-    pkl_path = find_final_pkl()
+    pkl_path = find_final_pkl(output_root)
     df = pd.read_pickle(pkl_path).copy()
     df["time"] = pd.to_datetime(df["time"])
     if "hour" not in df.columns:
@@ -125,9 +136,9 @@ def check_city_series_consistency():
     }
 
 
-def check_site_series_consistency():
+def check_site_series_consistency(output_root, DASH_DIR):
     """校验 site_series/*.json 与 final pkl 的一致性（采样检查 3 个站点）"""
-    pkl_path = find_final_pkl()
+    pkl_path = find_final_pkl(output_root)
     df = pd.read_pickle(pkl_path).copy()
     df["time"] = pd.to_datetime(df["time"])
     if "hour" not in df.columns:
@@ -188,8 +199,22 @@ def check_site_series_consistency():
 
 
 def main():
+    parser = argparse.ArgumentParser(description="Dashboard auto-update after training")
+    parser.add_argument(
+        "--output-root",
+        type=str,
+        default="output/pv_pipeline",
+        help="输出根目录 (default: output/pv_pipeline)",
+    )
+    args = parser.parse_args()
+    output_root = PROJECT_ROOT / args.output_root
+    DASH_DIR, METRIC_DIR = resolve_paths(output_root)
+    dash_root = str(output_root / "interactive_dashboard")
+    out_root_str = str(output_root)
+
     print("=" * 60)
     print("Round44: update_dashboard_after_training")
+    print(f"Output root: {output_root}")
     print("=" * 60)
 
     # 1. 刷新前快照
@@ -201,8 +226,8 @@ def main():
     print("\n[2] 执行 export_interactive_dashboard_data.py...")
     export_script = SCRIPTS_DIR / "export_interactive_dashboard_data.py"
     cmd = [sys.executable, str(export_script),
-           "--output-root", "output/pv_pipeline",
-           "--dashboard-root", "output/pv_pipeline/interactive_dashboard"]
+           "--output-root", out_root_str,
+           "--dashboard-root", dash_root]
     result = subprocess.run(cmd, cwd=str(PROJECT_ROOT))
     if result.returncode != 0:
         print(result.stdout.decode("utf-8", errors="replace")[-2000:])
@@ -215,11 +240,11 @@ def main():
 
     # 4. 一致性校验
     print("\n[4] city_series.json 与 final pkl 一致性校验...")
-    city_check = check_city_series_consistency()
+    city_check = check_city_series_consistency(output_root, DASH_DIR)
     print(f"  city_series: {city_check}")
 
     print("\n[5] site_series/*.json 与 final pkl 一致性校验（采样 S017/S062/S019）...")
-    site_check = check_site_series_consistency()
+    site_check = check_site_series_consistency(output_root, DASH_DIR)
     for r in site_check["checks"]:
         print(f"  {r['site_id']}: {r['status']} (max_diff_actual={r.get('max_diff_actual_mw')}, max_diff_pred={r.get('max_diff_pred_mw')})")
 
@@ -253,7 +278,7 @@ def main():
     # 7. 写出 stamp
     stamp = {
         "generated_at": pd.Timestamp.now().strftime("%Y-%m-%d %H:%M:%S"),
-        "final_pkl": str(find_final_pkl()),
+        "final_pkl": str(find_final_pkl(output_root)),
         "dashboard_root": str(DASH_DIR),
         "refresh_detected": refreshed,
         "refresh_details": changed,

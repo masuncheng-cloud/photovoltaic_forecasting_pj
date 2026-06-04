@@ -15,9 +15,14 @@ Round36 站点有效性分层：
   - 正常评价：其余有 test 结果站点
 
 输出：
-  output/pv_pipeline/metrics/round36_site_validity.csv
-  output/pv_pipeline/metrics/round36_site_count_summary.csv
+  <output-root>/metrics/round36_site_validity.csv
+  <output-root>/metrics/round36_site_count_summary.csv
+
+用法：
+  python scripts/build_site_validity_round36.py
+  python scripts/build_site_validity_round36.py --output-root output/pv_pipeline
 """
+import argparse
 import os
 import pickle
 import pandas as pd
@@ -25,12 +30,6 @@ import numpy as np
 from pathlib import Path
 
 PROJECT_ROOT = Path(__file__).parent.parent.resolve()
-TABLES = PROJECT_ROOT / "output" / "pv_pipeline" / "tables"
-METRICS = PROJECT_ROOT / "output" / "pv_pipeline" / "metrics"
-os.makedirs(METRICS, exist_ok=True)
-
-FINAL_EVAL = TABLES / "distributed_predictions_final_eval_round36.pkl"
-SITE_MASTER_PATH = TABLES / "site_master.csv"
 
 # ── 阈值常量 ────────────────────────────────────────────────────────────────
 MIN_TEST_POSITIVE_ROWS = 100
@@ -92,8 +91,25 @@ def get_site_status(sid: str, eval_df: pd.DataFrame, full_df: pd.DataFrame) -> s
 
 
 def main():
+    parser = argparse.ArgumentParser(description="Round36 站点有效性分层")
+    parser.add_argument(
+        "--output-root",
+        type=str,
+        default="output/pv_pipeline",
+        help="输出根目录 (default: output/pv_pipeline)",
+    )
+    args = parser.parse_args()
+    output_root = PROJECT_ROOT / args.output_root
+
+    TABLES = output_root / "tables"
+    METRICS = output_root / "metrics"
+    os.makedirs(METRICS, exist_ok=True)
+    FINAL_EVAL = TABLES / "distributed_predictions_final_eval_round36.pkl"
+    SITE_MASTER_PATH = TABLES / "site_master.csv"
+
     print("=" * 60)
     print("Round36 站点有效性分层")
+    print(f"Output root: {output_root}")
     print("=" * 60)
 
     # ── Step 1: 全部登记站点 ─────────────────────────────

@@ -1,0 +1,400 @@
+============================================================
+光伏预测训练流水线
+执行模式: full — 从 Stage 01 到最终 dashboard 全部执行
+============================================================
+项目根目录: /root/autodl-tmp/photovoltaic_forecasting_pj
+Python:     /root/miniconda3/bin/python
+Force:      False
+
+[CONFIG] loaded: configs/pipeline_round94.yaml
+  data_root:    data
+  output_root:  output/pv_pipeline_round94_era5_expanded_20260604_172517
+  eval_hours:   6-19
+  final_pred:   power_pred_final
+
+[STEP START] [1] 站点元数据构建 @ 2026-06-04T20:10:09
+[GEO] Applied override: S115 lat=34.5933, lon=119.2172, confidence=medium
+[GEO] Applied override: S116 lat=34.2983, lon=119.2318, confidence=low
+[GEO] Overrides applied to 2 stations. has_geo recomputed. has_geo=1 count: 115
+[GEO] station_metadata_canonical.csv → /root/autodl-tmp/photovoltaic_forecasting_pj/output/pv_pipeline_round94_era5_expanded_20260604_172517/tables/station_metadata_canonical.csv (118 stations)
+[GEO] station_metadata_canonical.pkl → /root/autodl-tmp/photovoltaic_forecasting_pj/output/pv_pipeline_round94_era5_expanded_20260604_172517/tables/station_metadata_canonical.pkl (118 stations)
+[OK] site_master rows=118 -> /root/autodl-tmp/photovoltaic_forecasting_pj/output/pv_pipeline_round94_era5_expanded_20260604_172517/tables/site_master.csv
+
+
+[PASS] [1] 站点元数据构建
+[STEP END] [✓ PASS] [1] 站点元数据构建: 1.7s
+
+[STEP START] [2] 应用人工经纬度覆盖 @ 2026-06-04T20:10:10
+============================================================
+重新构建站点元数据（含人工经纬度覆盖）
+============================================================
+power_root: /root/autodl-tmp/photovoltaic_forecasting_pj/data/power_data
+output:     /root/autodl-tmp/photovoltaic_forecasting_pj/output/pv_pipeline/tables
+[GEO] Applied override: S115 lat=34.5933, lon=119.2172, confidence=medium
+[GEO] Applied override: S116 lat=34.2983, lon=119.2318, confidence=low
+[GEO] Overrides applied to 2 stations. has_geo recomputed. has_geo=1 count: 115
+[GEO] station_metadata_canonical.csv → /root/autodl-tmp/photovoltaic_forecasting_pj/output/pv_pipeline/tables/station_metadata_canonical.csv (118 stations)
+[GEO] station_metadata_canonical.pkl → /root/autodl-tmp/photovoltaic_forecasting_pj/output/pv_pipeline/tables/station_metadata_canonical.pkl (118 stations)
+
+[OK] site_master.csv → /root/autodl-tmp/photovoltaic_forecasting_pj/output/pv_pipeline/tables/site_master.csv
+     has_geo=1 count: 115 / 118
+============================================================
+
+
+[PASS] [2] 应用人工经纬度覆盖
+[STEP END] [✓ PASS] [2] 应用人工经纬度覆盖: 1.5s
+
+[STEP START] [3] 数据清洗与气象插值 @ 2026-06-04T20:10:12
+[INFO] loaded canonical station metadata: 118 sites, has_geo=115
+[INFO] ERA5 插值站点数: 118 (含 has_geo==0: 3)
+[INFO] interpolate ERA5 -> sites: /root/autodl-tmp/photovoltaic_forecasting_pj/data/2023
+[INFO] interpolate TCC/STRD -> sites: /root/autodl-tmp/photovoltaic_forecasting_pj/data/tcc_strd/2023
+[INFO] interpolate ERA5 -> sites: /root/autodl-tmp/photovoltaic_forecasting_pj/data/2024
+[INFO] interpolate TCC/STRD -> sites: /root/autodl-tmp/photovoltaic_forecasting_pj/data/tcc_strd/2024
+[INFO] interpolate ERA5 -> sites: /root/autodl-tmp/photovoltaic_forecasting_pj/data/2025
+[INFO] interpolate TCC/STRD -> sites: /root/autodl-tmp/photovoltaic_forecasting_pj/data/tcc_strd/2025
+[INFO] TCC/STRD merged: 3024960 / 3103872 rows have TCC
+[INFO] loading power excels ...
+[INFO] power_long rows=2874864
+[INFO] cleaning and merging power/meteo ...
+[OK] site_meteo=3103872 power_clean=2874864
+
+
+[PASS] [3] 数据清洗与气象插值
+[STEP END] [✓ PASS] [3] 数据清洗与气象插值: 75.4s
+
+[STEP START] [3b] 辐照反演 @ 2026-06-04T20:11:27
+   split   irr_mae  irr_rmse  ...  power_recon_rmse  power_recon_nrmse    rows
+0  train  1.098962  2.232045  ...         16.508233           0.068067  373434
+1  valid  1.695813  4.720426  ...         20.008741           0.074621  103632
+2   test  1.384885  4.129382  ...         20.542727           0.078886  107942
+
+[3 rows x 8 columns]
+
+
+[PASS] [3b] 辐照反演
+[STEP END] [✓ PASS] [3b] 辐照反演: 365.6s
+
+[STEP START] [4] 辐照融合 @ 2026-06-04T20:17:33
+   split  rmse_idw  rmse_era5  rmse_blend  nrmse_blend    rows
+0  train  6.432114   2.232045    2.046245     0.002092  373434
+1  valid  5.865685   4.720426    3.775264     0.003866  103632
+2   test  6.406634   4.129382    3.465284     0.003663  107942
+
+
+[PASS] [4] 辐照融合
+[STEP END] [✓ PASS] [4] 辐照融合: 1072.3s
+
+[STEP START] [5] 训练前数据审计 @ 2026-06-04T20:35:25
+============================================================
+Round36 训练前数据审计
+============================================================
+
+[A1] power_clean 无 power_alias+time 重复...
+  [PASS] power_clean 无重复
+[A2] power_long_raw 无 power_alias+time 重复...
+  [PASS] power_long_raw 无重复
+[A3] 无负功率...
+  [PASS] 无负功率
+[A4] 无超容量...
+  [WARN] 无严重超容量: 187 行 (0.0065%), max_ratio=1.020, max_diff=0.160MW （功率取整浮点微小偏差，可接受）
+[A5] site_master capacity_mw > 0...
+  [PASS] capacity_mw > 0
+[A6] 站点名非空...
+  [PASS] 站点名非空
+[A7] 经纬度完整...
+  [PASS] 经纬度完整（训练站点）
+[A8] 同一 site_id 只有一个容量...
+  [PASS] 站点容量唯一
+[A9] 时间划分无重叠（检查 split 列）...
+  [PASS] 时间划分正确（按 split 列）
+[A10] 训练表特征无泄漏...
+  [PASS] 特征无泄漏
+[A11] final_round36 预测文件...
+  [PASS] final 预测文件
+
+============================================================
+审计结果: 11 项 | 10 PASS | 0 FAIL | 1 WARN
+============================================================
+已保存: /root/autodl-tmp/photovoltaic_forecasting_pj/output/pv_pipeline/metrics/round36_pretrain_audit.csv
+已保存: /root/autodl-tmp/photovoltaic_forecasting_pj/output/pv_pipeline/docs/Round36_训练前数据审计报告.md
+
+
+[PASS] [5] 训练前数据审计
+[STEP END] [✓ PASS] [5] 训练前数据审计: 30.7s
+
+[STEP START] [6] 分布式功率模型训练 @ 2026-06-04T20:35:56
+====================================================
+
+Loading source data...
+
+Building training table with PR recompute from train split...
+[v159] Split大小: train=796,602, valid=108,624, test=213,744
+[v159] 从训练split重算pr_month（混合策略：样本不足时保留原PR）...
+[v159] 混合策略: 17/591 个(site,month)保留原PR（样本<30）
+[v159] 新pr_month: 591 行 (site×month)
+[v159] pr_month 变化>0.05的站点-月: 413/591
+[v159] pr_month对比已保存
+[v159] p_base 重新计算完成: mean=0.7164 MW
+[v159] pr_month 重新计算完成: mean=0.6789
+[Dropworst] Excluded 107633 rows from 5 bad sites: ['S015', 'S026', 'S036', 'S057', 'S067']
+Saved: /root/autodl-tmp/photovoltaic_forecasting_pj/output/pv_pipeline/tables/distributed_train_table_v159.pkl
+
+Training baseline LightGBM...
+Baseline saved: /root/autodl-tmp/photovoltaic_forecasting_pj/output/pv_pipeline/models/distributed_model_baseline_v159.pkl
+
+Training v152 MAPE-aware residual models...
+[v152] Reusing baseline from: /root/autodl-tmp/photovoltaic_forecasting_pj/output/pv_pipeline/models/distributed_model_baseline_v159.pkl
+[v152] Power-adaptive blend: alpha=0.85, threshold=2.00MW
+
+============================================================
+v1.5.9 Training Results:
+============================================================
+split      mape      mae     rmse    nrmse   rows   on_auc  trained_scene_models  calibration_alpha  n_calibrated_sites  n_calibration_enabled
+train 71.096923 0.357885 1.387624 0.063074 723007 0.996772                     2               0.85                  69                     54
+valid 67.553703 0.448088 1.207829 0.060817 101184 0.989682                     2               0.85                  69                     54
+ test 87.768472 0.301510 1.015105 0.052569 199104 0.989218                     2               0.85                  69                     54
+
+Model: /root/autodl-tmp/photovoltaic_forecasting_pj/output/pv_pipeline/models/distributed_model_v159.pkl
+Predictions: /root/autodl-tmp/photovoltaic_forecasting_pj/output/pv_pipeline/tables/distributed_predictions_v159.pkl
+
+
+[PASS] [6] 分布式功率模型训练
+[STEP END] [✓ PASS] [6] 分布式功率模型训练: 705.6s
+
+[STEP START] [7] 构建最终预测文件 @ 2026-06-04T20:47:42
+============================================================
+Build Round36 Predictions
+============================================================
+
+读取 /root/autodl-tmp/photovoltaic_forecasting_pj/output/pv_pipeline/tables/distributed_predictions_v159.pkl...
+  行数: 1,172,180, 列: 19
+[WARN] 无 split 列，按时间重新划分...
+  划分后: {'train': 723007, 'test': 199104, 'future': 148885, 'valid': 101184}
+  [+] 添加 hour 列
+  [+] power_pred_raw = power_pred
+  [+] power_pred_final = power_pred_raw（待校准后更新）
+
+物理裁剪（限制在 [0, capacity_mw]）...
+
+保存 full pkl: /root/autodl-tmp/photovoltaic_forecasting_pj/output/pv_pipeline/predictions/distributed_predictions_final_full.pkl
+  行数: 1,172,180, 列: ['time', 'site_id', 'power_mw', 'power_pred', 'pred_baseline', 'power_pred_cal', 'p_on_pred', 'rel_error_pred', 'g_blend_pred', 'clear_sky_ghi', 'p_base', 'capacity_mw', 'county', 'install_group', 'capacity_bucket', 'coastal_flag', 'scene_v151', 'quality_score', 'calibration_enabled', 'split', 'hour', 'power_pred_raw', 'power_pred_final']
+
+保存 eval pkl: /root/autodl-tmp/photovoltaic_forecasting_pj/output/pv_pipeline/predictions/distributed_predictions_final_eval.pkl
+  行数: 116,144, 站点: 68
+
+各 split 行数:
+  future: 148,885
+  test: 199,104
+  train: 723,007
+  valid: 101,184
+
+各 split eval 行数（test 6-19h）:
+  test: 116,144
+
+[OK] build_round36_predictions.py 完成！
+  canonical:
+    full: /root/autodl-tmp/photovoltaic_forecasting_pj/output/pv_pipeline/predictions/distributed_predictions_final_full.pkl
+    eval: /root/autodl-tmp/photovoltaic_forecasting_pj/output/pv_pipeline/predictions/distributed_predictions_final_eval.pkl
+  兼容:
+    full: /root/autodl-tmp/photovoltaic_forecasting_pj/output/pv_pipeline/tables/distributed_predictions_final_round36.pkl
+    eval: /root/autodl-tmp/photovoltaic_forecasting_pj/output/pv_pipeline/tables/distributed_predictions_final_eval_round36.pkl
+
+
+
+[PASS] [7] 构建最终预测文件
+[STEP END] [✓ PASS] [7] 构建最终预测文件: 3.9s
+
+[STEP START] [8] 站点有效性分层 @ 2026-06-04T20:47:46
+============================================================
+Round36 站点有效性分层
+============================================================
+
+读取 site_master.csv（全部登记站点）...
+  全部登记站点: 118 个
+
+读取 /root/autodl-tmp/photovoltaic_forecasting_pj/output/pv_pipeline/tables/distributed_predictions_final_eval_round36.pkl（有 test 结果站点）...
+  有 test 结果站点: 68 个
+  full pkl 已读取: 1,172,180 行
+
+逐站点判断有效性状态...
+
+已保存: /root/autodl-tmp/photovoltaic_forecasting_pj/output/pv_pipeline/metrics/round36_site_validity.csv
+
+站点分类统计:
+  全部登记站点: 118 个
+  有test结果站点: 68 个
+  无测试预测结果: 50 个
+  正常评价: 14 个
+  测试期无有效发电: 5 个
+  测试期分布漂移: 36 个
+  系统性偏差: 13 个
+
+  有test=68, 无test=50, 正常=14, 异常=54
+  自洽验证: 118 == 68 + 50 = 118 ✓
+
+已保存: /root/autodl-tmp/photovoltaic_forecasting_pj/output/pv_pipeline/metrics/round36_site_count_summary.csv
+
+[OK] build_site_validity_round36.py 完成！
+
+
+[PASS] [8] 站点有效性分层
+[STEP END] [✓ PASS] [8] 站点有效性分层: 5.5s
+
+[STEP START] [9] 偏差校准 @ 2026-06-04T20:47:51
+============================================================
+Round36 偏差校准
+============================================================
+
+读取 /root/autodl-tmp/photovoltaic_forecasting_pj/output/pv_pipeline/tables/distributed_predictions_final_round36.pkl...
+  行数: 1,172,180, 列: 23
+  valid: 101,184 行, test: 199,104 行
+
+全局 fallback ratio: 1.0593 (n=54521)
+
+计算 site_id 层级校准系数...
+计算 hour 层级校准系数...
+计算 site_id × hour 层级校准系数...
+校准表已保存: /root/autodl-tmp/photovoltaic_forecasting_pj/output/pv_pipeline/metrics/round36_calibration_table.csv (1632 行)
+
+应用校准到全量数据...
+  最终预测基础列: power_pred_cal
+  [Round39.11] 改用 power_pred_cal 避免早晚临界小时 ghi<5 硬置零问题
+
+[Round40] 应用小时级最终列选择...
+  非边缘小时(463,863行) 已替换为 power_pred*ratio
+
+评估回退（使用 test 6-19h）...
+  回退 12 个站点（test NRMSE 恶化 > 1.0%）:
+    S004: 8.22% → 10.96% (Δ=+2.75%)
+    S017: 10.59% → 13.22% (Δ=+2.63%)
+    S028: 10.31% → 11.72% (Δ=+1.40%)
+    S033: 9.25% → 10.69% (Δ=+1.44%)
+    S034: 10.32% → 11.96% (Δ=+1.63%)
+    S039: 8.42% → 10.84% (Δ=+2.41%)
+    S040: 9.43% → 11.18% (Δ=+1.75%)
+    S041: 11.56% → 13.38% (Δ=+1.83%)
+    S050: 13.16% → 17.31% (Δ=+4.14%)
+    S060: 10.50% → 14.32% (Δ=+3.82%)
+    S074: 8.72% → 10.19% (Δ=+1.47%)
+    S075: 8.85% → 10.77% (Δ=+1.92%)
+  回退记录已保存: /root/autodl-tmp/photovoltaic_forecasting_pj/output/pv_pipeline/metrics/round36_calibration_rollback.csv
+
+保存校准后的 final pkl...
+  /root/autodl-tmp/photovoltaic_forecasting_pj/output/pv_pipeline/tables/distributed_predictions_final_round36.pkl
+  /root/autodl-tmp/photovoltaic_forecasting_pj/output/pv_pipeline/tables/distributed_predictions_final_eval_round36.pkl (116,144 行)
+  /root/autodl-tmp/photovoltaic_forecasting_pj/output/pv_pipeline/metrics/round36_calibration_selection.csv
+
+校准统计:
+  总行数: 1,172,180
+  应用校准行数: 567,648 (48.4%)
+  回退站点: 12
+  校准前 test NRMSE: 全站点平均 ...（见 metrics）
+
+[OK] apply_round36_calibration.py 完成！
+
+
+[PASS] [9] 偏差校准
+[STEP END] [✓ PASS] [9] 偏差校准: 6.1s
+
+[STEP START] [10] 指标重算 @ 2026-06-04T20:47:57
+============================================================
+指标重算（使用 canonical 路径）
+============================================================
+
+读取 canonical 预测文件: /root/autodl-tmp/photovoltaic_forecasting_pj/output/pv_pipeline/predictions/distributed_predictions_final_eval.pkl
+  行数: 116,144, 列: 23
+  站点有效性表已加载: 118 个站点
+
+[1] 计算全市总出力逐小时 NRMSE...
+  已保存: round36_city_hourly_nrmse.csv (1708 行)
+
+[2] 计算站点逐小时 NRMSE...
+  已保存: round36_site_hourly_nrmse.csv (952 行)
+
+[3] 计算站点平均逐小时 NRMSE...
+  已保存: round36_site_avg_hourly_nrmse.csv (14 行)
+
+[4] 计算站点级综合指标...
+  已保存: site_metrics_consistent.csv + round36_site_metrics.csv (68 行)
+
+[5] 生成典型站点表...
+  已保存: round36_typical_sites.csv (14 行)
+  预测最好: ['S062', 'S023', 'S049', 'S056', 'S047']
+  预测最差: ['S065', 'S058', 'S063', 'S041', 'S072']
+  相对正确: ['S011', 'S030', 'S048', 'S007']
+
+[6] 输出异常站点分类...
+  已保存: round36_invalid_eval_sites.csv (5 行)
+  已保存: round36_distribution_drift_sites.csv (36 行)
+  已保存: round36_bias_sites.csv (13 行)
+
+============================================================
+关键指标摘要
+============================================================
+  全市 10-14 点 NRMSE: 4.36%
+  全市 6-19 点 NRMSE 范围: 0.01% ~ 24.59%
+  有效站点平均 NRMSE: 8.47% (中位数: 8.23%)
+  有效站点数: 14
+
+[OK] compute_round36_metrics.py 完成！
+
+
+[PASS] [10] 指标重算
+[STEP END] [✓ PASS] [10] 指标重算: 0.9s
+
+============================================================
+[STEP START] 11 训练后统一收口
+  子步骤: ['11a', '11b', '11c', '11d']
+============================================================
+
+[STEP START] [11a] recompute_hourly_nrmse_consistent (重算逐小时 NRMSE 指标) @ 2026-06-04T20:47:58
+495297        5.775622
+   14          68           16.017650              12.889392                  14.457218        5.761732
+   15          68           11.482575               8.728625                  10.429419        3.932840
+   16          68            7.171202               5.406109                   6.880753        2.665215
+   17          68            4.235781               2.112058                   6.458845        2.494395
+   18          68            2.818810               0.585266                   7.142372        2.491799
+   19          68            2.203529               0.000000                  18.194763        2.503909
+[OK] wrote:
+ - output/pv_pipeline/metrics/hourly_site_nrmse_consistent.csv
+ - output/pv_pipeline/metrics/hourly_nrmse_consistent.csv
+ - output/pv_pipeline/metrics/round46_site_hour_nrmse_consistent.csv (兼容)
+ - output/pv_pipeline/metrics/round46_hourly_nrmse_consistent.csv (兼容)
+ - output/pv_pipeline/interactive_dashboard/hourly_prediction_summary.json
+
+
+[PASS] [11a] recompute_hourly_nrmse_consistent
+[STEP END] [✓ PASS] [11a] recompute_hourly_nrmse_consistent (重算逐小时 NRMSE 指标): 2.1s
+
+[STEP START] [11b] export_interactive_dashboard_data (导出可视化看板数据) @ 2026-06-04T20:48:00
+tive_dashboard_data.py [-h] [--output-root OUTPUT_ROOT]
+                                            [--dashboard-root DASHBOARD_ROOT]
+                                            [--prediction-pkl PREDICTION_PKL]
+                                            [--prediction-col PREDICTION_COL]
+                                            [--label LABEL] [--exclude-future]
+export_interactive_dashboard_data.py: error: unrecognized arguments: --data-root /root/autodl-tmp/photovoltaic_forecasting_pj/data
+
+
+[FAIL] [11b] export_interactive_dashboard_data — exit 2
+[STEP END] [✓ PASS] [11b] export_interactive_dashboard_data (导出可视化看板数据): 0.5s
+
+[WARN] [11c] dashboard_stamp_check — 脚本不存在，跳过
+
+[STEP START] [11d] dashboard_regression_check (看板回归检查) @ 2026-06-04T20:48:01
+usage: dashboard_regression_check.py [-h] [--output-root OUTPUT_ROOT]
+                                     [--sample-sites SAMPLE_SITES]
+                                     [--no-pkl-check]
+dashboard_regression_check.py: error: unrecognized arguments: --data-root /root/autodl-tmp/photovoltaic_forecasting_pj/data
+
+
+[FAIL] [11d] dashboard_regression_check — exit 2
+[STEP END] [✓ PASS] [11d] dashboard_regression_check (看板回归检查): 0.4s
+
+============================================================
+[STEP END] [✗ FAIL] 11 训练后统一收口
+============================================================
+
+============================================================
+训练流程终止
+============================================================

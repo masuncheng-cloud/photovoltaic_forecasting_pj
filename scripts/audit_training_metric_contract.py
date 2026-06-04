@@ -66,11 +66,40 @@ def audit_metric_contract(output_root: Path) -> bool:
         check("Has 'test' split", has_test, f"unique values: {sorted(split_vals)}")
         all_ok &= has_test
 
-        # No future in canonical reporting
+        # Full pkl CAN contain future (for prediction scenarios); report as INFO only
         has_future = "future" in split_vals
-        check("No 'future' in split column", not has_future, "" if not has_future else "future split FOUND")
         if has_future:
-            all_ok = False
+            REPORT_ITEMS.append(("INFO", "Full pkl contains 'future' split", "future split FOUND (INFO — full pkl may contain future)"))
+            print(f"[INFO] Full pkl contains 'future' split — INFO, not FAIL (full pkl may contain future for prediction scenarios)")
+        else:
+            REPORT_ITEMS.append(("INFO", "Full pkl has no 'future' split", "INFO — future split is optional in full pkl"))
+            print(f"[INFO] Full pkl has no 'future' split — INFO (future split is optional in full pkl)")
+        # NOTE: all_ok is NOT set to False here; future in full pkl is informational only
+
+    # 2b. Eval pkl must NOT contain future
+    eval_path = output_root / "predictions" / "distributed_predictions_final_eval.pkl"
+    if eval_path.exists():
+        try:
+            df_eval = pd.read_pickle(eval_path)
+            if "split" in df_eval.columns:
+                eval_splits = set(df_eval["split"].unique())
+                has_future_eval = "future" in eval_splits
+                check(
+                    "Eval pkl must NOT contain 'future'",
+                    not has_future_eval,
+                    f"eval splits: {sorted(eval_splits)}" if has_future_eval else "eval contains no future"
+                )
+                if has_future_eval:
+                    all_ok = False
+            else:
+                REPORT_ITEMS.append(("WARN", "Eval pkl has no 'split' column", "cannot verify future exclusion"))
+                print(f"[WARN] Eval pkl has no 'split' column — cannot verify future exclusion")
+        except Exception as e:
+            REPORT_ITEMS.append(("WARN", "Eval pkl check failed", str(e)))
+            print(f"[WARN] Eval pkl check failed: {e}")
+    else:
+        REPORT_ITEMS.append(("WARN", "Eval pkl exists", f"not found: {eval_path}"))
+        print(f"[WARN] Eval pkl not found: {eval_path}")
 
     # 3. Canonical hour range
     df["time"] = pd.to_datetime(df["time"], errors="coerce")

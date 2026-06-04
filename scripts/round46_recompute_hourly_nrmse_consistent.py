@@ -12,8 +12,13 @@ Round46 Step 2: 用统一口径重新计算逐小时站点 NRMSE。
 - round46_site_hour_nrmse_consistent.csv  ← 兼容
 - round46_hourly_nrmse_consistent.csv      ← 兼容
 - hourly_prediction_summary.json
+
+用法：
+  python scripts/round46_recompute_hourly_nrmse_consistent.py
+  python scripts/round46_recompute_hourly_nrmse_consistent.py --output-root output/pv_pipeline
 """
 
+import argparse
 from pathlib import Path
 import shutil
 import json
@@ -22,17 +27,9 @@ import numpy as np
 import pandas as pd
 
 
-ROOT = Path("output/pv_pipeline")
-TABLE_DIR = ROOT / "tables"
-METRIC_DIR = ROOT / "metrics"
-DASH_DIR = ROOT / "interactive_dashboard"
-METRIC_DIR.mkdir(parents=True, exist_ok=True)
-DASH_DIR.mkdir(parents=True, exist_ok=True)
-
-
-def find_final_pkl():
+def find_final_pkl(output_root: Path):
     # Round54：只读 canonical 路径，缺失即 FAIL
-    canonical = Path("output/pv_pipeline/predictions/distributed_predictions_final_eval.pkl")
+    canonical = output_root / "predictions" / "distributed_predictions_final_eval.pkl"
     if canonical.exists():
         return canonical
     raise FileNotFoundError(
@@ -136,7 +133,23 @@ def compute_city_hour_metrics(work):
 
 
 def main():
-    pkl = find_final_pkl()
+    parser = argparse.ArgumentParser(description="Round46 统一口径指标重算")
+    parser.add_argument(
+        "--output-root",
+        type=str,
+        default="output/pv_pipeline",
+        help="输出根目录 (default: output/pv_pipeline)",
+    )
+    args = parser.parse_args()
+    project_root = Path(__file__).parent.parent.resolve()
+    output_root = project_root / args.output_root
+
+    METRIC_DIR = output_root / "metrics"
+    DASH_DIR = output_root / "interactive_dashboard"
+    METRIC_DIR.mkdir(parents=True, exist_ok=True)
+    DASH_DIR.mkdir(parents=True, exist_ok=True)
+
+    pkl = find_final_pkl(output_root)
     df = pd.read_pickle(pkl)
     work = build_eval_frame(df)
 
@@ -205,4 +218,5 @@ def main():
 
 
 if __name__ == "__main__":
-    main()
+    import sys
+    sys.exit(main())

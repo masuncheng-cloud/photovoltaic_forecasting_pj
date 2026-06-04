@@ -15,13 +15,18 @@ Shrinkage 防止过拟合：
 回退逻辑：
   如果站点 test NRMSE 校准后比校准前差 1% 以上，回退该站点。
 
-输入：distributed_predictions_final_round36.pkl
+输入：<output-root>/tables/distributed_predictions_final_round36.pkl
 输出：
-  distributed_predictions_final_round36.pkl（已更新 power_pred_final）
-  distributed_predictions_final_eval_round36.pkl（已更新 power_pred_final）
-  round36_calibration_table.csv
-  round36_calibration_selection.csv
+  <output-root>/tables/distributed_predictions_final_round36.pkl（已更新 power_pred_final）
+  <output-root>/tables/distributed_predictions_final_eval_round36.pkl（已更新 power_pred_final）
+  <output-root>/metrics/round36_calibration_table.csv
+  <output-root>/metrics/round36_calibration_selection.csv
+
+用法：
+  python scripts/apply_round36_calibration.py
+  python scripts/apply_round36_calibration.py --output-root output/pv_pipeline
 """
+import argparse
 import os
 import sys
 import pickle
@@ -31,13 +36,6 @@ from pathlib import Path
 
 PROJECT_ROOT = Path(__file__).parent.parent.resolve()
 sys.path.insert(0, str(PROJECT_ROOT / "src"))
-
-TABLES = PROJECT_ROOT / "output" / "pv_pipeline" / "tables"
-METRICS = PROJECT_ROOT / "output" / "pv_pipeline" / "metrics"
-os.makedirs(METRICS, exist_ok=True)
-
-FINAL_PATH = TABLES / "distributed_predictions_final_round36.pkl"
-EVAL_PATH  = TABLES / "distributed_predictions_final_eval_round36.pkl"
 
 SHRINKAGE_K = 200
 RATIO_CLIP_MIN = 0.70
@@ -72,8 +70,25 @@ def apply_shrinkage(ratio, n, k, fallback):
 
 
 def main():
+    parser = argparse.ArgumentParser(description="Round36 偏差校准")
+    parser.add_argument(
+        "--output-root",
+        type=str,
+        default="output/pv_pipeline",
+        help="输出根目录 (default: output/pv_pipeline)",
+    )
+    args = parser.parse_args()
+    output_root = PROJECT_ROOT / args.output_root
+
+    TABLES = output_root / "tables"
+    METRICS = output_root / "metrics"
+    os.makedirs(METRICS, exist_ok=True)
+    FINAL_PATH = TABLES / "distributed_predictions_final_round36.pkl"
+    EVAL_PATH  = TABLES / "distributed_predictions_final_eval_round36.pkl"
+
     print("=" * 60)
     print("Round36 偏差校准")
+    print(f"Output root: {output_root}")
     print("=" * 60)
 
     if not FINAL_PATH.exists():

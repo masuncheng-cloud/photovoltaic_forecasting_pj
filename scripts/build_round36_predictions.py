@@ -4,32 +4,26 @@ build_round36_predictions.py
 将 v159 训练输出（distributed_predictions_v159.pkl）整合为：
 
   Canonical 路径（正式输出）:
-    output/pv_pipeline/predictions/distributed_predictions_final_full.pkl  ← 含 train/valid/test/future
-    output/pv_pipeline/predictions/distributed_predictions_final_eval.pkl  ← 仅 test 6-19h
+    <output-root>/predictions/distributed_predictions_final_full.pkl  ← 含 train/valid/test/future
+    <output-root>/predictions/distributed_predictions_final_eval.pkl  ← 仅 test 6-19h
 
   兼容路径（从 canonical 同步，供历史脚本兼容）:
-    output/pv_pipeline/tables/distributed_predictions_final_round36.pkl
-    output/pv_pipeline/tables/distributed_predictions_final_eval_round36.pkl
+    <output-root>/tables/distributed_predictions_final_round36.pkl
+    <output-root>/tables/distributed_predictions_final_eval_round36.pkl
 
 用法：
   python scripts/build_round36_predictions.py
+  python scripts/build_round36_predictions.py --output-root output/pv_pipeline
 """
-import os, sys, pickle, time, shutil
+import argparse
+import os
+import pickle
+import shutil
+import sys
 from pathlib import Path
 
 PROJECT_ROOT = Path(__file__).parent.parent.resolve()
 sys.path.insert(0, str(PROJECT_ROOT / "src"))
-
-TABLES     = PROJECT_ROOT / "output" / "pv_pipeline" / "tables"
-PREDICTIONS = PROJECT_ROOT / "output" / "pv_pipeline" / "predictions"
-METRICS    = PROJECT_ROOT / "output" / "pv_pipeline" / "metrics"
-
-# Canonical 路径（正式输出）
-OUT_FULL = PREDICTIONS / "distributed_predictions_final_full.pkl"
-OUT_EVAL = PREDICTIONS / "distributed_predictions_final_eval.pkl"
-# 兼容路径（历史别名）
-OUT_FULL_LEGACY = TABLES / "distributed_predictions_final_round36.pkl"
-OUT_EVAL_LEGACY = TABLES / "distributed_predictions_final_eval_round36.pkl"
 
 SPLIT_START = {
     "train":  "2023-01-01",
@@ -40,8 +34,30 @@ SPLIT_START = {
 
 
 def main():
+    parser = argparse.ArgumentParser(description="Build Round36 Predictions")
+    parser.add_argument(
+        "--output-root",
+        type=str,
+        default="output/pv_pipeline",
+        help="输出根目录 (default: output/pv_pipeline)",
+    )
+    args = parser.parse_args()
+    output_root = PROJECT_ROOT / args.output_root
+
+    TABLES     = output_root / "tables"
+    PREDICTIONS = output_root / "predictions"
+    METRICS    = output_root / "metrics"
+
+    # Canonical 路径（正式输出）
+    OUT_FULL = PREDICTIONS / "distributed_predictions_final_full.pkl"
+    OUT_EVAL = PREDICTIONS / "distributed_predictions_final_eval.pkl"
+    # 兼容路径（历史别名）
+    OUT_FULL_LEGACY = TABLES / "distributed_predictions_final_round36.pkl"
+    OUT_EVAL_LEGACY = TABLES / "distributed_predictions_final_eval_round36.pkl"
+
     print("=" * 60)
     print("Build Round36 Predictions")
+    print(f"Output root: {output_root}")
     print("=" * 60)
 
     # ── 读取 v159 预测结果 ─────────────────────────────────
@@ -154,4 +170,4 @@ def main():
 
 if __name__ == "__main__":
     import pandas as pd
-    main()
+    sys.exit(main())

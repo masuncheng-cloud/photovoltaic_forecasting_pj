@@ -11,8 +11,13 @@ Round44 新增：读取 dashboard_update_stamp.json，验证以下内容：
 
 此脚本在 update_dashboard_after_training.py 之后执行，
 也用于独立验证 dashboard 刷新状态。
+
+用法：
+  python scripts/check_dashboard_auto_update_stamp.py
+  python scripts/check_dashboard_auto_update_stamp.py --output-root output/pv_pipeline
 """
 
+import argparse
 import json
 import sys
 from datetime import datetime, timedelta
@@ -22,11 +27,21 @@ from pathlib import Path
 import pandas as pd
 
 PROJECT_ROOT = Path(__file__).parent.parent.resolve()
-DASH_DIR = PROJECT_ROOT / "output" / "pv_pipeline" / "interactive_dashboard"
-METRIC_DIR = PROJECT_ROOT / "output" / "pv_pipeline" / "metrics"
 
 
 def main():
+    parser = argparse.ArgumentParser(description="Dashboard auto-update stamp 检查")
+    parser.add_argument(
+        "--output-root",
+        type=str,
+        default="output/pv_pipeline",
+        help="输出根目录 (default: output/pv_pipeline)",
+    )
+    args = parser.parse_args()
+    output_root = PROJECT_ROOT / args.output_root
+    DASH_DIR = output_root / "interactive_dashboard"
+    METRIC_DIR = output_root / "metrics"
+
     stamp_path = DASH_DIR / "dashboard_update_stamp.json"
 
     print("=" * 60)

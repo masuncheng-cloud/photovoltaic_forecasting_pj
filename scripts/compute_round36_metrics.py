@@ -9,8 +9,8 @@ compute_round36_metrics.py
   - 典型站点：从正常可排名站点中选最好、最差、相对正确各若干
   - BIAS = mean(power_pred_final - power_mw)；BIAS < 0 表示预测偏低
 
-输入：output/pv_pipeline/predictions/distributed_predictions_final_eval.pkl
-输出（全部在 output/pv_pipeline/metrics/）：
+输入：<output-root>/predictions/distributed_predictions_final_eval.pkl
+输出（全部在 <output-root>/metrics/）：
   city_hourly_nrmse.csv
   site_hourly_nrmse.csv
   site_avg_hourly_nrmse.csv
@@ -19,7 +19,12 @@ compute_round36_metrics.py
   invalid_eval_sites.csv
   distribution_drift_sites.csv
   bias_sites.csv
+
+用法：
+  python scripts/compute_round36_metrics.py
+  python scripts/compute_round36_metrics.py --output-root output/pv_pipeline
 """
+import argparse
 import os
 import sys
 import pickle
@@ -30,15 +35,6 @@ from pathlib import Path
 
 PROJECT_ROOT = Path(__file__).parent.parent.resolve()
 sys.path.insert(0, str(PROJECT_ROOT / "src"))
-
-TABLES     = PROJECT_ROOT / "output" / "pv_pipeline" / "tables"
-PREDICTIONS = PROJECT_ROOT / "output" / "pv_pipeline" / "predictions"
-METRICS    = PROJECT_ROOT / "output" / "pv_pipeline" / "metrics"
-METRICS.mkdir(parents=True, exist_ok=True)
-
-# Canonical 路径（必须存在）
-EVAL_PATH = PREDICTIONS / "distributed_predictions_final_eval.pkl"
-SITE_VALIDITY_PATH = METRICS / "round36_site_validity.csv"
 
 
 def nrmse(y_true, y_pred, cap):
@@ -65,8 +61,27 @@ def mae(y_true, y_pred):
 
 
 def main():
+    parser = argparse.ArgumentParser(description="指标重算")
+    parser.add_argument(
+        "--output-root",
+        type=str,
+        default="output/pv_pipeline",
+        help="输出根目录 (default: output/pv_pipeline)",
+    )
+    args = parser.parse_args()
+    output_root = PROJECT_ROOT / args.output_root
+
+    TABLES     = output_root / "tables"
+    PREDICTIONS = output_root / "predictions"
+    METRICS    = output_root / "metrics"
+    METRICS.mkdir(parents=True, exist_ok=True)
+
+    EVAL_PATH = PREDICTIONS / "distributed_predictions_final_eval.pkl"
+    SITE_VALIDITY_PATH = METRICS / "round36_site_validity.csv"
+
     print("=" * 60)
     print("指标重算（使用 canonical 路径）")
+    print(f"Output root: {output_root}")
     print("=" * 60)
 
     # canonical 路径（Round54：必须存在，缺失即 FAIL）
