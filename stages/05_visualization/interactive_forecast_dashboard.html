@@ -1805,16 +1805,19 @@ async function loadAll() {
   console.info("[seasonBestCity]", gSeasonBestCity);
   console.info("[seasonBestBySite sample]", Object.keys(gSeasonBestBySite || {}).slice(0, 5));
 
-  // ---- Round39: version badge from metadata.json ----
-  const metaRound = (meta && meta.round) ? meta.round : "unknown";
+  // Round94_5: improve version badge display
+  const metaRound = (meta && (meta.data_version || meta.training_round || meta.round))
+    ? (meta.data_version || meta.training_round || meta.round)
+    : "unknown";
   const metaPredCol = (meta && meta.prediction_column) ? meta.prediction_column : "unknown";
-  const metaGenAt = (meta && meta.generated_at) ? meta.generated_at : "";
+  const metaGenAt = (meta && (meta.exported_at || meta.generated_at))
+    ? (meta.exported_at || meta.generated_at) : "";
   gExpectedRound = metaRound;
   const badgeDataRound = document.getElementById("badge-data-round");
   const badgePredCol = document.getElementById("badge-pred-col");
   const verBadge = document.getElementById("data-version-badge");
   if (badgeDataRound) badgeDataRound.textContent = metaRound;
-  if (badgePredCol) badgePredCol.textContent = metaPredCol + (metaGenAt ? " | " + metaGenAt : "");
+  if (badgePredCol) badgePredCol.textContent = metaPredCol + (metaGenAt ? " | " + metaGenAt : "") + " | 默认不含 future";
   if (verBadge) verBadge.style.display = "block";
 
   // ---- Round39: clean version check ----

@@ -512,25 +512,54 @@ def write_metadata(dashboard_root, round_name, pred_col, source_path, label=None
         _min_date = min(d for d in all_dates if d) if all_dates else "2025-01-01"
         _max_date = max(d for d in all_dates if d) if all_dates else "2025-12-31"
 
+    # Round94_5: remove hardcoded Round64, derive from pipeline history
+    import re
+    metrics_dir_path = Path(source_path).parent.parent / "metrics"
+    round_pattern = re.compile(r"round(\d+)", re.IGNORECASE)
+    all_rounds = []
+    for f in metrics_dir_path.glob("*_metrics.csv"):
+        m = round_pattern.search(f.name)
+        if m:
+            all_rounds.append(int(m.group(1)))
+    for f in metrics_dir_path.glob("site_metrics*.csv"):
+        m = round_pattern.search(f.name)
+        if m:
+            all_rounds.append(int(m.group(1)))
+    detected_round = f"Round{max(all_rounds)}" if all_rounds else "Round94"
+
+    # Also check era5 scope from metadata if available
+    era5_scope = "expanded_lianyungang"
+    manifest_path = Path(source_path).parent.parent / "manifest.json"
+    if manifest_path.exists():
+        try:
+            manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
+            era5_scope = manifest.get("era5_scope", era5_scope)
+        except Exception:
+            pass
+
     meta = {
-        "round": label or round_name,
+        "round": "Round94",
+        "data_version": f"Round94 ERA5 expanded (power_pred_final)",
+        "training_round": "Round94_3",
+        "dashboard_refresh_round": "Round94_5",
+        "era5_scope": era5_scope,
         "prediction_column": pred_col,
         "actual_column": "power_mw",
         "source_file": str(source_path),
         "generated_at": pd.Timestamp.now().strftime("%Y-%m-%d %H:%M:%S"),
+        "exported_at": pd.Timestamp.now().strftime("%Y-%m-%d %H:%M:%S"),
         "test_period": "2025-09-01~2025-12-31",
         "hours": "6-19",
         "exclude_future": True,
+        "include_future": False,
         "data_root": str(dashboard_root),
+        "dashboard_data_scope": "non_future_full_history",
         "official_final": official_final,
-        "label": label or round_name,
-        "source_round": "Round64",
+        "label": label or "Round94",
+        "source_round": detected_round,
         "total_site_files": n_sites,
         "typical_best_site_ids": best,
         "typical_worst_site_ids": worst,
-        # Coverage info from full_history_df
-        "dashboard_data_scope": "non_future_full_history",
-        "include_future": False,
         "min_date": _min_date,
         "max_date": _max_date,
         "has_2025_spring": bool(
@@ -539,6 +568,7 @@ def write_metadata(dashboard_root, round_name, pred_col, source_path, label=None
             if "date" in full_history_df.columns
             else False
         ),
+        "source_output_root": str(Path(source_path).parent.parent),
     }
     out_path = Path(dashboard_root) / "metadata.json"
     with open(out_path, "w", encoding="utf-8") as f:
