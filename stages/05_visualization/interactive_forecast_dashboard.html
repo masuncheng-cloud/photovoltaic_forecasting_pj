@@ -815,13 +815,21 @@ tbody td {
 </head>
 <body>
 <script>
-// Round94_7: redirect to the canonical round94 page
-if (!location.pathname.includes("interactive_forecast_dashboard_round94")) {
-  location.replace(location.pathname.replace(
-    "interactive_forecast_dashboard.html",
-    "interactive_forecast_dashboard_round94.html"
-  ) + (location.search ? location.search + "&" : "?") + "v=round94_7_" + Date.now());
-}
+// Round94_8_1: sessionStorage auto-reload to bust HTML browser cache.
+// On load: set flag.  On next load: if flag present, reload then clear it.
+// This catches cases where the page body is served from browser cache even
+// though the HTTP server sends no-store.
+(function() {
+  try {
+    var v = sessionStorage.getItem('dvb_r94');
+    if (v === '1') {
+      sessionStorage.removeItem('dvb_r94');
+      location.reload();
+      return;
+    }
+  } catch(e) {}
+  try { sessionStorage.setItem('dvb_r94', '1'); } catch(e) {}
+})();
 </script>
 
 <div id="loading">正在加载数据，请稍候...</div>
@@ -1834,7 +1842,7 @@ async function loadAll() {
   if (badgePredCol) badgePredCol.textContent = metaPredCol + (metaTime ? " | " + metaTime : "") + " | 默认不含 future";
   if (verBadge) verBadge.style.display = "block";
   // Mark page as successfully loaded so next sessionStorage check passes silently
-  try { sessionStorage.setItem('dvb_v2', 'ready'); } catch(e) {}
+  try { sessionStorage.setItem('dvb_r94', 'ready'); } catch(e) {}
 
   // ---- Round39: clean version check ----
   renderVersionWarning();

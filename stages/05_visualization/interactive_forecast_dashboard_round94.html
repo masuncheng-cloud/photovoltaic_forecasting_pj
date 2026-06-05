@@ -833,14 +833,14 @@ tbody td {
 // After reloading, the flag becomes 'ready' and normal execution resumes.
 (function() {
   try {
-    var v = sessionStorage.getItem('dvb_v2');
+    var v = sessionStorage.getItem('dvb_r94');
     if (v === '1') {
-      sessionStorage.removeItem('dvb_v2');
+      sessionStorage.removeItem('dvb_r94');
       location.reload();
       return;
     }
   } catch(e) {}
-  try { sessionStorage.setItem('dvb_v2', '1'); } catch(e) {}
+  try { sessionStorage.setItem('dvb_r94', '1'); } catch(e) {}
 })();
 </script>
 
@@ -1855,7 +1855,7 @@ async function loadAll() {
   if (badgePredCol) badgePredCol.textContent = metaPredCol + (metaTime ? " | " + metaTime : "") + " | 默认不含 future";
   if (verBadge) verBadge.style.display = "block";
   // Mark page as successfully loaded so next sessionStorage check passes silently
-  try { sessionStorage.setItem('dvb_v2', 'ready'); } catch(e) {}
+  try { sessionStorage.setItem('dvb_r94', 'ready'); } catch(e) {}
 
   // Round94_7: render debug row showing actual metadata source and values
   const debugEl = document.getElementById("metadata-debug-row");
