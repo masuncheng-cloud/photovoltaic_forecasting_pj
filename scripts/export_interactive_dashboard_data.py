@@ -378,7 +378,7 @@ def export_index(df, site_names, dashboard_root, round_name="unknown", pred_col=
             f"output/pv_pipeline/tables/（{label or round_name}，预测列：{pred_col}）"
         ),
         "prediction_column": pred_col,
-        "round": round_name,
+        "round": label or round_name,
         "data_scope": "train/valid/test only; future excluded (默认不展示未来数据)",
         "口径说明": (
             f"统计口径：test 6-19点；指标口径：NRMSE%=RMSE/capacity_sum_mw×100%；"
@@ -2517,7 +2517,9 @@ def main():
 
     # Export all data files
     print("\n[3] Exporting index.json...")
-    export_index(df, site_names, dashboard_root, round_name, pred_col, label=args.label)
+    # Round94_6: use display label "Round94" instead of "canonical"
+    display_label = args.label if args.label else "Round94"
+    export_index(df, site_names, dashboard_root, round_name, pred_col, label=display_label)
 
     print("\n[4] Exporting city_series.json...")
     city = export_city_series(full_history_df, dashboard_root)
