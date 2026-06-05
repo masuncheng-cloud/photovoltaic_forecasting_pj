@@ -806,7 +806,17 @@ tbody td {
   background: #fff5f5;
 }
 
-#invalid-zero-sites-table tbody td {
+#metadata-debug-row {
+  margin: 4px 0 0 14px;
+  color: #64748b;
+  font-size: 12px;
+  font-family: monospace;
+}
+#metadata-debug-row.error {
+  color: #dc2626;
+  font-weight: 700;
+  font-size: 13px;
+}
   padding: 6px 8px;
   text-align: center;
   color: #2d3748;
@@ -815,13 +825,23 @@ tbody td {
 </head>
 <body>
 <script>
-// Round94_7: redirect to the canonical round94 page
-if (!location.pathname.includes("interactive_forecast_dashboard_round94")) {
-  location.replace(location.pathname.replace(
-    "interactive_forecast_dashboard.html",
-    "interactive_forecast_dashboard_round94.html"
-  ) + (location.search ? location.search + "&" : "?") + "v=round94_7_" + Date.now());
-}
+// Round94_6: auto-force reload if HTML version has changed.
+// The sessionStorage flag is set every time the page loads.
+// If the JS inside the page body runs (implying the page was NOT cached),
+// the flag becomes 'ready'.  On the NEXT load, if the flag is still '1',
+// it means the previous load's JS never ran (HTML was cached), so reload.
+// After reloading, the flag becomes 'ready' and normal execution resumes.
+(function() {
+  try {
+    var v = sessionStorage.getItem('dvb_v2');
+    if (v === '1') {
+      sessionStorage.removeItem('dvb_v2');
+      location.reload();
+      return;
+    }
+  } catch(e) {}
+  try { sessionStorage.setItem('dvb_v2', '1'); } catch(e) {}
+})();
 </script>
 
 <div id="loading">正在加载数据，请稍候...</div>
@@ -834,6 +854,7 @@ if (!location.pathname.includes("interactive_forecast_dashboard_round94")) {
 <div id="data-version-warning" style="display:none;background:#fef2f2;color:#dc2626;border-radius:6px;padding:8px 12px;margin:8px 0;font-size:13px;width:fit-content;">
   ⚠️ <span id="version-warning-text"></span>
 </div>
+<div id="metadata-debug-row"></div>
 
 <!-- ===== CONTROLS ===== -->
 <div id="controls">
@@ -1835,6 +1856,21 @@ async function loadAll() {
   if (verBadge) verBadge.style.display = "block";
   // Mark page as successfully loaded so next sessionStorage check passes silently
   try { sessionStorage.setItem('dvb_v2', 'ready'); } catch(e) {}
+
+  // Round94_7: render debug row showing actual metadata source and values
+  const debugEl = document.getElementById("metadata-debug-row");
+  if (debugEl) {
+    const round = meta?.data_version || meta?.training_round || meta?.round || "unknown";
+    const time = meta?.exported_at || meta?.generated_at || "";
+    debugEl.textContent = `[DEBUG metadata] round=${round} | time=${time} | pred=${meta?.prediction_column || "?"}`;
+    if (String(round).toLowerCase().includes("canonical") || String(time).includes("2026-06-03")) {
+      debugEl.classList.add("error");
+      debugEl.textContent = `[ERROR] Still reading OLD data! round="${round}" time="${time}" — expected Round94 / 2026-06-05`;
+    } else {
+      debugEl.classList.remove("error");
+    }
+  }
+}
 
   // ---- Round39: clean version check ----
   renderVersionWarning();

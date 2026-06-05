@@ -9,8 +9,8 @@
 7,PASS,C8: 测试集有预测结果,"199,104 行"
 8,WARN,C9: 夜间/future 不参与评估,pkl 中存在夜间和 future 记录（评估时会排除）
 9,PASS,C10: hourly_nrmse_consistent.csv 正确,"14 小时数据, NRMSE范围: 2.20%~16.68%"
-10,FAIL,C11: dashboard 一致性校验,"68/68 FAIL, max_pred=6.02e+00"
-11,PASS,C12: dashboard 数据新鲜,dashboard 晚于 canonical pkl 0.25h
+10,PASS,C11: dashboard 一致性校验,"68 站, 全部 PASS"
+11,PASS,C12: dashboard 数据新鲜,dashboard 晚于 canonical pkl 12.75h
 12,PASS,C13: Git 不追踪 pkl,0 个
 13,PASS,C13: Git 不追踪 site_series JSON,[NOTE] 69 个（交互式数据，可按需生成，.gitignore 规则正常）
 14,PASS,C14: 训练集样本量,"421,771 行（2023-01-01~2025-06-30 白天）"
@@ -26,10 +26,10 @@
 24,PASS,GEO3: 置信度,S115 confidence=medium
 25,PASS,GEO3: 置信度,S116 confidence=low
 26,WARN,GEO4: 低置信度警告,S116 confidence=low，精确光伏场区中心有待甲方/运维台账确认
-27,PASS,GEO5: S115 scene_v151 test 10-14,"scene 正常 {'clear_peak': 186, 'mid': 375, 'low': 49}，非 all-night"
+27,PASS,GEO5: S115 scene_v151 test 10-14,"scene 正常 {'low': 49, 'clear_peak': 186, 'mid': 375}，非 all-night"
 28,PASS,GEO5: S115 g_blend_pred test 10-14,max=827.7，正常
 29,PASS,GEO5: S115 power_pred_final test 10-14,610/610 行非0，正常
-30,PASS,GEO5: S116 scene_v151 test 10-14,"scene 正常 {'clear_peak': 185, 'mid': 371, 'low': 54}，非 all-night"
+30,PASS,GEO5: S116 scene_v151 test 10-14,"scene 正常 {'low': 54, 'clear_peak': 185, 'mid': 371}，非 all-night"
 31,PASS,GEO5: S116 g_blend_pred test 10-14,max=836.3，正常
 32,PASS,GEO5: S116 power_pred_final test 10-14,610/610 行非0，正常
 33,PASS,C17: 站点数量一致性,"full=69, eval=68，相差1站"

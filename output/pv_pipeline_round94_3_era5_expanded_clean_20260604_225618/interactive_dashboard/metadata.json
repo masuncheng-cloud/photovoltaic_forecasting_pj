@@ -1,16 +1,23 @@
 {
-  "round": "canonical",
+  "round": "Round94",
+  "data_version": "Round94 ERA5 expanded (power_pred_final)",
+  "training_round": "Round94_3",
+  "dashboard_refresh_round": "Round94_5",
+  "era5_scope": "expanded_lianyungang",
   "prediction_column": "power_pred_final",
   "actual_column": "power_mw",
-  "source_file": "output/pv_pipeline_round94_3_era5_expanded_clean_20260604_225618/predictions/distributed_predictions_final_full.pkl",
-  "generated_at": "2026-06-04 23:45:44",
+  "source_file": "output/pv_pipeline/predictions/distributed_predictions_final_full.pkl",
+  "generated_at": "2026-06-05 12:16:07",
+  "exported_at": "2026-06-05 12:16:07",
   "test_period": "2025-09-01~2025-12-31",
   "hours": "6-19",
   "exclude_future": true,
-  "data_root": "output/pv_pipeline_round94_3_era5_expanded_clean_20260604_225618/interactive_dashboard",
+  "include_future": false,
+  "data_root": "output/pv_pipeline/interactive_dashboard",
+  "dashboard_data_scope": "non_future_full_history",
   "official_final": true,
-  "label": "canonical",
-  "source_round": "Round64",
+  "label": "Round94",
+  "source_round": "Round36",
   "total_site_files": 68,
   "typical_best_site_ids": [
     "S062",
@@ -26,9 +33,8 @@
     "S072",
     "S115"
   ],
-  "dashboard_data_scope": "non_future_full_history",
-  "include_future": false,
   "min_date": "2023-01-01",
   "max_date": "2025-12-31",
-  "has_2025_spring": true
+  "has_2025_spring": true,
+  "source_output_root": "output/pv_pipeline"
 }

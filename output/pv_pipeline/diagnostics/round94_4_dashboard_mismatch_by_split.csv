@@ -1,4 +1,0 @@
-split,pred_col,n_sites,max_diff_site,max_diff,mean_diff
-train,power_pred_cal,68,S064,4.9999974053527296e-05,1.729351901400124e-05
-valid,power_pred_final,68,S065,4.999939404404241e-05,2.3655670128458986e-05
-test,power_pred_final,68,S022,4.999914303971398e-05,1.8259416069400984e-05
