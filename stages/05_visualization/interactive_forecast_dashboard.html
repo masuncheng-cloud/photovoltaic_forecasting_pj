@@ -814,6 +814,25 @@ tbody td {
 </style>
 </head>
 <body>
+<script>
+// Round94_6: auto-force reload if HTML version has changed.
+// The sessionStorage flag is set every time the page loads.
+// If the JS inside the page body runs (implying the page was NOT cached),
+// the flag becomes 'ready'.  On the NEXT load, if the flag is still '1',
+// it means the previous load's JS never ran (HTML was cached), so reload.
+// After reloading, the flag becomes 'ready' and normal execution resumes.
+(function() {
+  try {
+    var v = sessionStorage.getItem('dvb_v2');
+    if (v === '1') {
+      sessionStorage.removeItem('dvb_v2');
+      location.reload();
+      return;
+    }
+  } catch(e) {}
+  try { sessionStorage.setItem('dvb_v2', '1'); } catch(e) {}
+})();
+</script>
 
 <div id="loading">正在加载数据，请稍候...</div>
 <div id="tooltip"></div>
@@ -1808,20 +1827,24 @@ async function loadAll() {
   console.info("[seasonBestCity]", gSeasonBestCity);
   console.info("[seasonBestBySite sample]", Object.keys(gSeasonBestBySite || {}).slice(0, 5));
 
-  // Round94_5: improve version badge display
+  // Round94_5+6: improve version badge display
+  // Priority: data_version > training_round > round > unknown
   const metaRound = (meta && (meta.data_version || meta.training_round || meta.round))
     ? (meta.data_version || meta.training_round || meta.round)
     : "unknown";
   const metaPredCol = (meta && meta.prediction_column) ? meta.prediction_column : "unknown";
-  const metaGenAt = (meta && (meta.exported_at || meta.generated_at))
+  // exported_at is the most recent export time, prefer it over generated_at
+  const metaTime = (meta && (meta.exported_at || meta.generated_at))
     ? (meta.exported_at || meta.generated_at) : "";
   gExpectedRound = metaRound;
   const badgeDataRound = document.getElementById("badge-data-round");
   const badgePredCol = document.getElementById("badge-pred-col");
   const verBadge = document.getElementById("data-version-badge");
   if (badgeDataRound) badgeDataRound.textContent = metaRound;
-  if (badgePredCol) badgePredCol.textContent = metaPredCol + (metaGenAt ? " | " + metaGenAt : "") + " | 默认不含 future";
+  if (badgePredCol) badgePredCol.textContent = metaPredCol + (metaTime ? " | " + metaTime : "") + " | 默认不含 future";
   if (verBadge) verBadge.style.display = "block";
+  // Mark page as successfully loaded so next sessionStorage check passes silently
+  try { sessionStorage.setItem('dvb_v2', 'ready'); } catch(e) {}
 
   // ---- Round39: clean version check ----
   renderVersionWarning();
