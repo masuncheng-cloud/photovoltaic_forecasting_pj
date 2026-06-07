@@ -1,0 +1,57 @@
+[
+  {
+    "threshold_pct": 5,
+    "qualified_points": 210,
+    "total_points": 952,
+    "qualified_ratio_pct": 22.06,
+    "min_sample_count": 222,
+    "p25_sample_count": 251,
+    "median_sample_count": 436,
+    "p75_sample_count": 1096,
+    "note": "该表表示在当前数据和模型结果中，达到指定误差阈值的站点-小时组合通常具备的样本量分布，不代表样本量是唯一决定因素。"
+  },
+  {
+    "threshold_pct": 10,
+    "qualified_points": 410,
+    "total_points": 952,
+    "qualified_ratio_pct": 43.07,
+    "min_sample_count": 222,
+    "p25_sample_count": 252,
+    "median_sample_count": 531,
+    "p75_sample_count": 1096,
+    "note": "该表表示在当前数据和模型结果中，达到指定误差阈值的站点-小时组合通常具备的样本量分布，不代表样本量是唯一决定因素。"
+  },
+  {
+    "threshold_pct": 15,
+    "qualified_points": 683,
+    "total_points": 952,
+    "qualified_ratio_pct": 71.74,
+    "min_sample_count": 222,
+    "p25_sample_count": 252,
+    "median_sample_count": 597,
+    "p75_sample_count": 1096,
+    "note": "该表表示在当前数据和模型结果中，达到指定误差阈值的站点-小时组合通常具备的样本量分布，不代表样本量是唯一决定因素。"
+  },
+  {
+    "threshold_pct": 20,
+    "qualified_points": 844,
+    "total_points": 952,
+    "qualified_ratio_pct": 88.66,
+    "min_sample_count": 222,
+    "p25_sample_count": 252,
+    "median_sample_count": 499,
+    "p75_sample_count": 1096,
+    "note": "该表表示在当前数据和模型结果中，达到指定误差阈值的站点-小时组合通常具备的样本量分布，不代表样本量是唯一决定因素。"
+  },
+  {
+    "threshold_pct": 25,
+    "qualified_points": 907,
+    "total_points": 952,
+    "qualified_ratio_pct": 95.27,
+    "min_sample_count": 222,
+    "p25_sample_count": 251,
+    "median_sample_count": 499,
+    "p75_sample_count": 1096,
+    "note": "该表表示在当前数据和模型结果中，达到指定误差阈值的站点-小时组合通常具备的样本量分布，不代表样本量是唯一决定因素。"
+  }
+]

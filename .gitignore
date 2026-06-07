@@ -25,64 +25,23 @@ Thumbs.db
 # Logs
 *.log
 
-# Large pipeline outputs — keep ONLY lightweight metrics/docs/csv
-output/pv_pipeline/tables/
-output/pv_pipeline/models/
-output/pv_pipeline/figures/
-output/pv_pipeline/figures_dashboard/
-output/pv_pipeline/analyze_and_annotate.py
-output/pv_pipeline/analyze_predictions.py
-output/pv_pipeline/move_time.py
-output/pv_pipeline/reorganize_back40.py
-output/pv_pipeline/reorganize_cols.py
+# CatBoost
 catboost_info/
 
-# Large interactive dashboard data (generated, not source)
-output/pv_pipeline/interactive_dashboard/
-output/pv_pipeline/verified_backup_round14/output/pv_pipeline/interactive_dashboard/
+# Staging artifacts — experiment snapshots not needed in repo
+output/pv_pipeline_round92_1_fresh_*/
+output/pv_pipeline_round94_*/
+output/round95_clean_retrain_*/
 
-# Archive nested output/docs — these contain copies of large pkl/metrics/docs
-output/pv_pipeline/archive_round7/
-output/pv_pipeline/archive_round11/
-output/pv_pipeline/archive_round14/output/
-output/pv_pipeline/archive_round14/docs/
-output/pv_pipeline/verified_backup_round14/output/
-output/pv_pipeline/verified_backup_round14/docs/
+# Archive snapshots from experiment rounds — not source code
+archive/
 
-# Keep lightweight outputs
-!output/
-!output/pv_pipeline/
-!output/pv_pipeline/docs/
-!output/pv_pipeline/docs/*.md
-!output/pv_pipeline/metrics/
-!output/pv_pipeline/metrics/*.csv
-!output/pv_pipeline/metrics/*.json
-!output/pv_pipeline/metrics/*.txt
-!output/pv_pipeline/tables/power_mapping.csv
-!output/pv_pipeline/tables/site_master.csv
-!output/pv_pipeline/tables/site_quality.csv
-
-# Data
+# Data (raw data files, never commit)
 data/
 *.zip
 *.tar
 *.tar.gz
 *.7z
-
-# Large binary files
-*.pkl
-*.pth
-*.pt
-*.npy
-*.parquet
-*.h5
-*.joblib
-
-# Archive snapshots from experiment rounds — not source code
-archive/
-
-# Staging artifacts
-output/pv_pipeline_round92_1_fresh_*/
 
 # Config with secrets (optional)
 # configs/secrets.yaml

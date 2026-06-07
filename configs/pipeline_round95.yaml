@@ -1,0 +1,59 @@
+# Round95 干净重训专用配置
+# 继承 pipeline.yaml 所有设置，只替换 output_root
+data:
+  project_root: .
+  data_root: data
+  output_root: output/round95_clean_retrain_20260606_164341
+
+dashboard:
+  enabled: true
+  output_dir: output/round95_clean_retrain_20260606_164341/interactive_dashboard
+  html_path: stages/05_visualization/interactive_forecast_dashboard.html
+  exclude_future: true
+  http_port: 8060
+
+# 以下配置完全继承自 pipeline.yaml
+split:
+  train_start:  "2023-01-01"
+  train_end:    "2025-06-30"
+  valid_start:  "2025-07-01"
+  valid_end:    "2025-08-31"
+  test_start:   "2025-09-01"
+  test_end:     "2025-12-31"
+  future_start:  "2026-01-01"
+  future_end:    "2026-03-31"
+
+eval:
+  split: test
+  start_hour: 6
+  end_hour: 19
+  exclude_future: true
+  nrmse_denominator: capacity_mw
+  city_nrmse_denominator: capacity_sum_mw
+  exclude_night: true
+
+prediction:
+  final_column: power_pred_final
+  allow_fallback: false
+  priority_columns:
+    - power_pred_final
+  capacity_column: capacity_mw
+  actual_column: power_mw
+  time_column: time
+  split_column: split
+
+quality:
+  min_positive_train_valid_6_19: 300
+  test_zero_ratio_threshold: 0.98
+  max_power_over_capacity: 1.2
+  min_capacity_mw: 0.5
+
+calibration:
+  enabled: true
+  use_splits: [train, valid]
+  factor_min: 0.80
+  factor_max: 1.20
+  offset_min: -0.5
+  offset_max: 0.5
+  small_sample_threshold: 100
+  global_shrink_weight: 0.5

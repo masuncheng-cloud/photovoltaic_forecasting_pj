@@ -93,8 +93,8 @@ def parse_args():
     parser.add_argument(
         "--dashboard-root",
         type=str,
-        default="output/pv_pipeline/interactive_dashboard",
-        help="Output directory for dashboard JSON files",
+        default=None,
+        help="Output directory for dashboard JSON files (default: {output_root}/interactive_dashboard)",
     )
     parser.add_argument(
         "--prediction-pkl",
@@ -2435,12 +2435,16 @@ def validate_against_power_clean(dashboard_root, output_root):
 
 def main():
     args = parse_args()
-    dashboard_root = args.dashboard_root
     output_root = args.output_root
-
-    print(f"\n=== Auto Export Interactive Dashboard Data ===")
-    print(f"  Output root : {output_root}")
-    print(f"  Dashboard dir: {dashboard_root}")
+    dashboard_root = args.dashboard_root or (output_root + "/interactive_dashboard")
+    if args.dashboard_root:
+        print(f"\n=== Auto Export Interactive Dashboard Data ===")
+        print(f"  Output root : {output_root}")
+        print(f"  Dashboard dir: {dashboard_root}")
+    else:
+        print(f"\n=== Auto Export Interactive Dashboard Data ===")
+        print(f"  Output root : {output_root}")
+        print(f"  Dashboard dir: {dashboard_root} (derived from output_root)")
 
     # ── Clean output directory (only json/csv, keep subdirs) ──────────────────────
     dash_dir = Path(dashboard_root)

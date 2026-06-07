@@ -1,0 +1,40 @@
+{
+  "round": "Round94",
+  "data_version": "Round94 ERA5 expanded (power_pred_final)",
+  "training_round": "Round94_3",
+  "dashboard_refresh_round": "Round94_5",
+  "era5_scope": "expanded_lianyungang",
+  "prediction_column": "power_pred_final",
+  "actual_column": "power_mw",
+  "source_file": "output/pv_pipeline/predictions/distributed_predictions_final_full.pkl",
+  "generated_at": "2026-06-06 19:28:33",
+  "exported_at": "2026-06-06 19:28:33",
+  "test_period": "2025-09-01~2025-12-31",
+  "hours": "6-19",
+  "exclude_future": true,
+  "include_future": false,
+  "data_root": "output/pv_pipeline/interactive_dashboard",
+  "dashboard_data_scope": "non_future_full_history",
+  "official_final": true,
+  "label": "Round94",
+  "source_round": "Round36",
+  "total_site_files": 68,
+  "typical_best_site_ids": [
+    "S062",
+    "S023",
+    "S049",
+    "S047",
+    "S056"
+  ],
+  "typical_worst_site_ids": [
+    "S116",
+    "S041",
+    "S063",
+    "S072",
+    "S115"
+  ],
+  "min_date": "2023-01-01",
+  "max_date": "2025-12-31",
+  "has_2025_spring": true,
+  "source_output_root": "output/pv_pipeline"
+}

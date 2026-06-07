@@ -281,9 +281,11 @@ def build_training_table_v159(power_clean, site_master, quality, site_irradiance
     pr_compare['pr_diff'] = diff
     changed = pr_compare[pr_compare['pr_diff'] > 0.05]
     print(f"[v159] pr_month 变化>0.05的站点-月: {len(changed)}/{len(pr_compare)}")
-    pr_compare.to_csv(paths.metrics / 'pr_month_comparison.csv',
-                      index=False, encoding='utf-8-sig')
-    print(f"[v159] pr_month对比已保存")
+    # 对比新旧 pr_month（调试输出，仅打印）
+    print(f"[v159] pr_month 变化>0.05的站点-月: {len(changed)}/{len(pr_compare)}")
+    if len(changed) > 0:
+        print(f"[v159] pr_month变化站点-月示例:")
+        print(changed[['site_id', 'month', 'pr_month_old', 'pr_month_final', 'pr_diff']].head(5).to_string(index=False))
 
     # 用新的 pr_month 重新计算所有依赖特征
     # p_base 已改变 → p_base_lag 需要在 recompute 之后追加
