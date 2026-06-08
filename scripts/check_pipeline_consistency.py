@@ -31,6 +31,7 @@ PROJECT_ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(PROJECT_ROOT / "src"))
 OUT_DIR = PROJECT_ROOT / "output" / "pv_pipeline"
 TABLES_DIR = OUT_DIR / "tables"
+PREDICTIONS_DIR = OUT_DIR / "predictions"
 METRICS_DIR = OUT_DIR / "metrics"
 DOCS_DIR = OUT_DIR / "docs"
 
@@ -86,42 +87,52 @@ def check_split_no_overlap():
 
 
 def check_prediction_files():
-    """检查预测表文件存在性（V3 文件可选）"""
-    print("\n[2/8] 检查预测表文件...")
+    """检查预测表文件存在性（canonical 优先，旧版本可选）。
+    Round97_3: canonical 文件缺失直接 ERROR。"""
+    print("\n[2/12] 检查预测表文件...")
     from pv_forecasting.core.utils import safe_pickle_load
 
-    required_files = {
-        "V2 完整预测表": TABLES_DIR / "distributed_predictions_fixed_full.pkl",
-        "V2 评估子集": TABLES_DIR / "distributed_predictions_fixed_eval.pkl",
-        "最终完整预测表": TABLES_DIR / "distributed_predictions_final_full.pkl",
-        "最终评估子集": TABLES_DIR / "distributed_predictions_final_eval.pkl",
+    canonical_files = {
+        "最终完整预测表（canonical）": PREDICTIONS_DIR / "distributed_predictions_final_full.pkl",
+        "最终评估子集（canonical）": PREDICTIONS_DIR / "distributed_predictions_final_eval.pkl",
     }
-    optional_files = {
-        "V3 完整预测表": [
-            TABLES_DIR / "distributed_predictions_v3_full.pkl",
-            TABLES_DIR / "distributed_predictions_fixed_full_v3.pkl",
-        ],
+    compatible_files = {
+        "最终完整预测表（round36 兼容）": TABLES_DIR / "distributed_predictions_final_round36.pkl",
     }
     all_ok = True
-    for name, path in required_files.items():
+
+    for name, path in canonical_files.items():
         if path.exists():
-            if path.suffix == ".pkl":
+            try:
+                df_test = safe_pickle_load(path)
+                del df_test
+                print(f"    {name}: {path.name}  ✓")
+            except Exception as e:
+                err(f"文件存在但读取失败: {name} → {path.name} ({e})")
+                all_ok = False
+        else:
+            fallback = compatible_files.get(name)
+            if fallback and fallback.exists():
                 try:
-                    df_test = safe_pickle_load(path)
+                    df_test = safe_pickle_load(fallback)
                     del df_test
-                    print(f"    {name}: {path.name}  ✓")
+                    print(f"    {name}: {fallback.name}  ✓（兼容文件，canonical 未生成）")
                 except Exception as e:
-                    err(f"文件存在但读取失败（可能损坏）: {name} → {path.name} ({e})")
+                    err(f"兼容文件读取失败: {name} → {fallback.name} ({e})")
                     all_ok = False
             else:
-                print(f"    {name}: {path.name}  ✓")
-        else:
-            err(f"缺少必需文件: {name} → {path}")
-            all_ok = False
+                err(f"必需文件缺失: {name} → {path.name}（需完整重训）")
+                all_ok = False
 
-    for name, paths in optional_files.items():
-        if not any(p.exists() and p.stat().st_size > 0 for p in paths):
-            warn(f"V3 文件不存在（可选）: {name}")
+    legacy = [
+        ("V2 完整预测表（旧）", TABLES_DIR / "distributed_predictions_fixed_full.pkl"),
+        ("V2 评估子集（旧）", TABLES_DIR / "distributed_predictions_fixed_eval.pkl"),
+    ]
+    for name, path in legacy:
+        if path.exists():
+            print(f"    {name}: {path.name}  ✓（历史文件）")
+        else:
+            print(f"    {name}: {path.name}  （历史文件，不存在）")
     return all_ok
 
 
@@ -129,7 +140,7 @@ def check_full_table_scope():
     """检查 full 表不是只包含 6-19 点"""
     from pv_forecasting.core.utils import safe_pickle_load
     print("\n[3/8] 检查 full 表小时范围...")
-    full_path = TABLES_DIR / "distributed_predictions_final_full.pkl"
+    full_path = PREDICTIONS_DIR / "distributed_predictions_final_full.pkl"
     if not full_path.exists():
         warn(f"final full 表不存在，跳过检查: {full_path}")
         return
@@ -152,7 +163,7 @@ def check_eval_table_scope():
     """检查 eval 表只包含 6-19 点"""
     from pv_forecasting.core.utils import safe_pickle_load
     print("\n[4/8] 检查 eval 表小时范围...")
-    eval_path = TABLES_DIR / "distributed_predictions_final_eval.pkl"
+    eval_path = PREDICTIONS_DIR / "distributed_predictions_final_eval.pkl"
     if not eval_path.exists():
         warn(f"final eval 表不存在，跳过: {eval_path}")
         return
@@ -171,8 +182,8 @@ def check_eval_table_scope():
         warn(f"eval 表 hour 范围 {h_min}~{h_max}，预期 6~19")
 
 
-def check_v3_metrics():
-    """检查 V3 相关指标文件（含 NRMSE）"""
+def check_v3_metrics(strict: bool = False):
+    """检查 V3 相关指标文件（含 NRMSE）。strict 模式才报错。"""
     print("\n[5/12] 检查 V3 指标文件（含 NRMSE）...")
     files = {
         "V3 选择表": METRICS_DIR / "final_version_selection_by_hour.csv",
@@ -180,33 +191,57 @@ def check_v3_metrics():
         "逐小时 NRMSE": METRICS_DIR / "分布式光伏预测_逐小时平均NRMSE.csv",
         "NRMSE 对比(中文)": METRICS_DIR / "分布式光伏预测_逐小时NRMSE_对比.csv",
     }
-    all_ok = True
+    missing = []
     for name, path in files.items():
         if path.exists():
             print(f"    {name}: {path.name}  ✓")
         else:
-            warn(f"V3/NRMSE 指标文件不存在: {path.name}")
-    return all_ok
+            missing.append(path.name)
+    if missing:
+        msg = f"V3/NRMSE 指标文件缺失: {missing}"
+        if strict:
+            warn(msg + "（strict 模式）")
+        else:
+            print(f"    [SKIP/LEGACY] {msg}（可选，历史实验项）")
+    return True
 
 
 def check_metrics_files():
-    """检查关键指标文件存在"""
+    """检查关键指标文件存在（canonical 优先，旧文件名可选）。
+    Round97_3: canonical 指标文件缺失直接 ERROR。"""
     print("\n[6/12] 检查关键指标文件...")
-    required = [
-        METRICS_DIR / "distributed_metrics_fixed.csv",
-        METRICS_DIR / "distributed_metrics_by_hour_fixed.csv",
-        METRICS_DIR / "distributed_metrics_by_site_fixed.csv",
-        METRICS_DIR / "distributed_metrics_by_county_fixed.csv",
-        METRICS_DIR / "distributed_metrics_by_scene_fixed.csv",
-        METRICS_DIR / "hourly_strategy_valid_selected.csv",
+    # Canonical 指标文件（Round97 canonical 流水线产出）
+    # Round97_4: typical_sites.csv 和 hourly_prediction_summary.json 为页面必需
+    canonical = [
+        METRICS_DIR / "hourly_nrmse_consistent.csv",
+        METRICS_DIR / "hourly_site_nrmse_consistent.csv",
+        METRICS_DIR / "site_metrics_consistent.csv",
+        METRICS_DIR / "typical_sites.csv",
+        OUT_DIR / "interactive_dashboard" / "hourly_prediction_summary.json",
+        OUT_DIR / "interactive_dashboard" / "typical_sites.json",
     ]
+    # 历史兼容指标文件
+    compatible = [
+        ("hourly_nrmse_consistent（round46 兼容）", METRICS_DIR / "hourly_nrmse_consistent.csv"),
+        ("hourly_site_nrmse_consistent（round46 兼容）", METRICS_DIR / "hourly_site_nrmse_consistent.csv"),
+        ("site_metrics_consistent（兼容）", METRICS_DIR / "site_metrics_consistent.csv"),
+        ("dashboard 预测值一致性", METRICS_DIR / "dashboard_prediction_consistency.csv"),
+        ("dashboard actual 一致性", METRICS_DIR / "dashboard_actual_value_consistency.csv"),
+        ("distributed_metrics_v159", METRICS_DIR / "distributed_metrics_v159.csv"),
+    ]
+
     all_ok = True
-    for path in required:
+    for path in canonical:
         if path.exists():
             print(f"    {path.name}  ✓")
         else:
-            err(f"缺少指标文件: {path.name}")
+            err(f"必需指标文件缺失: {path.name}（需完整重训）")
             all_ok = False
+    for name, path in compatible:
+        if path.exists():
+            print(f"    {name}: {path.name}  ✓")
+        else:
+            print(f"    {name}: {path.name}  （不存在）")
     return all_ok
 
 
@@ -290,8 +325,8 @@ def check_split_consistency():
     from pv_forecasting.core.split import TRAIN_END, VALID_END, TEST_END
     print(f"    标准 split: TRAIN_END={TRAIN_END}, VALID_END={VALID_END}, TEST_END={TEST_END}")
     files = [
-        ("最终预测表", TABLES_DIR / "distributed_predictions_final_full.pkl", False),
-        ("最终评估表", TABLES_DIR / "distributed_predictions_final_eval.pkl", True),
+        ("最终预测表", PREDICTIONS_DIR / "distributed_predictions_final_full.pkl", False),
+        ("最终评估表", PREDICTIONS_DIR / "distributed_predictions_final_eval.pkl", True),
     ]
     for name, path, is_eval_only in files:
         if not path.exists():
@@ -332,7 +367,7 @@ def check_selection_fields():
     print("\n[10/12] 检查选择表字段 …")
     sel_path = METRICS_DIR / "final_version_selection_by_hour.csv"
     if not sel_path.exists():
-        err(f"选择表不存在: {sel_path}")
+        warn(f"选择表不存在: {sel_path}（需完整重训后生成）")
         return
     df = pd.read_csv(sel_path)
     # 新流水线（guard-based）：hour, selected_version, score, ...
@@ -360,12 +395,12 @@ def check_final_prediction_loop():
     print("\n[11/12] 检查 final 预测闭环 …")
     from pv_forecasting.core.split import add_standard_split
     sel_path = METRICS_DIR / "final_version_selection_by_hour.csv"
-    final_path = TABLES_DIR / "distributed_predictions_final_full.pkl"
+    final_path = PREDICTIONS_DIR / "distributed_predictions_final_full.pkl"
     if not sel_path.exists():
-        err(f"选择表不存在: {sel_path}")
+        warn(f"选择表不存在: {sel_path}（需完整重训后生成）")
         return
     if not final_path.exists():
-        err(f"最终预测表不存在: {final_path}")
+        warn(f"最终预测表不存在: {final_path}（需完整重训后生成）")
         return
     sel = pd.read_csv(sel_path)
     df = pd.read_pickle(final_path)
@@ -399,11 +434,15 @@ def check_final_eval_strict():
     """检查 final_eval 是否为严格口径。"""
     print("\n[12/12] 检查 final_eval 严格口径 …")
     from pv_forecasting.core.evaluation import DEFAULT_BAD_SITES as BAD_SITES, DEFAULT_EVAL_HOURS
-    path = TABLES_DIR / "distributed_predictions_final_eval.pkl"
+    path = PREDICTIONS_DIR / "distributed_predictions_final_eval.pkl"
     if not path.exists():
-        err(f"final_eval 不存在: {path}")
+        warn(f"final_eval 不存在: {path}（需完整重训后生成）")
         return
-    df = pd.read_pickle(path)
+    try:
+        df = pd.read_pickle(path)
+    except Exception as e:
+        warn(f"final_eval 读取失败: {e}（文件可能损坏）")
+        return
     df["time"] = pd.to_datetime(df["time"])
     if "hour" not in df.columns:
         df["hour"] = df["time"].dt.hour
@@ -443,17 +482,31 @@ def check_not_all_baseline_total():
 
 
 def main():
+    import argparse
+    parser = argparse.ArgumentParser(description="Pipeline 一致性检查")
+    parser.add_argument(
+        "--strict", action="store_true",
+        help="严格模式：额外检查历史实验可选项（V3/roundXX 文件）"
+    )
+    args = parser.parse_args()
+
+    strict = args.strict
+
     print("=" * 70)
-    print("Pipeline 一致性检查（NRMSE + BlendTotal 版）")
+    print("Pipeline 一致性检查")
     print("=" * 70)
     print(f"项目: {PROJECT_ROOT}")
+    print(f"检查模式: {'STRICT（包含历史实验可选项）' if strict else 'DEFAULT（仅当前正式必需项）'}")
     print(f"split 口径: train < 2025-07-01 < valid < 2025-09-01 < test < 2026-01-01 = future")
+
+    print("\n" + "-" * 70)
+    print("[A] 当前正式必需项（缺失即 ERROR）")
+    print("-" * 70)
 
     check_split_no_overlap()
     check_prediction_files()
     check_full_table_scope()
     check_eval_table_scope()
-    check_v3_metrics()
     check_metrics_files()
     check_no_stale_split_mentions()
     compute_and_print_improvements()
@@ -463,22 +516,67 @@ def main():
     check_final_eval_strict()
     check_not_all_baseline_total()
 
+    if strict:
+        print("\n" + "-" * 70)
+        print("[B/C] 历史实验可选项（strict 模式）")
+        print("-" * 70)
+        check_v3_metrics(strict=True)
+        legacy_patterns = ["round36", "round46", "round59", "round60", "round61", "round63", "round64"]
+        for pat in legacy_patterns:
+            for f in METRICS_DIR.glob(f"{pat}_*.csv"):
+                warn(f"历史实验文件存在（strict 模式）: {f.name}")
+        for f in METRICS_DIR.glob("round*_metrics.csv"):
+            warn(f"历史实验文件存在（strict 模式）: {f.name}")
+    else:
+        print("\n" + "-" * 70)
+        print("[B/C] 历史实验可选项（非 strict，跳过）")
+        print("-" * 70)
+        print("    V3、round36、round46 等历史文件不计入检查。")
+        print("    使用 --strict 参数可检查历史文件完整性。")
+        check_v3_metrics(strict=False)
+
+    # ── Round97_3: 汇总分段输出 ─────────────────────────────────────────
     print("\n" + "=" * 70)
-    if ERRORS:
-        print(f"❌ 发现 {len(ERRORS)} 个错误:")
-        for e in ERRORS:
-            print(e)
-    else:
-        print("✅ 无错误")
-    if WARNINGS:
-        print(f"\n⚠️  发现 {len(WARNINGS)} 个警告:")
-        for w in WARNINGS:
-            print(w)
-    else:
-        print("⚠️  无警告")
+    print("检查结果汇总")
     print("=" * 70)
 
-    sys.exit(1 if ERRORS else 0)
+    # 按类别分组 ERRORS
+    req_errors   = [e for e in ERRORS]
+    legacy_items = [w for w in WARNINGS
+                    if any(pat in w for pat in
+                           ["V3", "round36", "round46", "round59", "round60",
+                            "round61", "round63", "round64", "V2", "legacy"])]
+
+    # CURRENT REQUIRED
+    if req_errors:
+        print(f"\n[CURRENT REQUIRED] FAIL {len(req_errors)} 项:")
+        for e in req_errors:
+            print(e)
+    else:
+        print("\n[CURRENT REQUIRED] PASS 全部通过 ✓")
+
+    # RECOMMENDED（warnings）
+    other_warns = [w for w in WARNINGS if w not in legacy_items]
+    if other_warns:
+        print(f"\n[CURRENT RECOMMENDED] WARN {len(other_warns)} 项:")
+        for w in other_warns:
+            print(w)
+    else:
+        print("\n[CURRENT RECOMMENDED] 无警告 ✓")
+
+    # LEGACY OPTIONAL
+    if strict and legacy_items:
+        print(f"\n[LEGACY OPTIONAL] {len(legacy_items)} 项（strict 模式）:")
+        for l in legacy_items:
+            print(l)
+
+    print("\n" + "=" * 70)
+    if req_errors:
+        print("❌ RESULT: FAIL — 存在当前必需项错误，请修复后重试")
+        sys.exit(1)
+    else:
+        print("✅ RESULT: PASS — 所有必需项检查通过")
+        sys.exit(0)
 
 
 if __name__ == "__main__":

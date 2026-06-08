@@ -6,6 +6,7 @@ import numpy as np
 import pandas as pd
 
 from ..core.models import fit_tabular_regressor, predict_bundle
+from ..core.progress import progress_iter
 from ..core.utils import idw_predict, nrmse, rmse, safe_pickle_dump
 
 
@@ -32,7 +33,14 @@ def prepare_blend_training(inverse_pred: pd.DataFrame, site_master: pd.DataFrame
     if 'coastal_flag' not in data.columns:
         data = _coalesce_columns(data, 'coastal_flag', ['coastal_flag_meta', 'coastal_flag_x', 'coastal_flag_y'], default=0)
     rows = []
-    for t, g in data.groupby('time'):
+    time_groups = list(data.groupby('time'))
+    for t, g in progress_iter(
+        time_groups,
+        total=len(time_groups),
+        desc="[4.1] blend training time groups",
+        min_interval=3.0,
+        every=500,
+    ):
         if len(g) < 4:
             continue
         src_lon = g['lon'].to_numpy(dtype=float)
@@ -81,7 +89,13 @@ def train_blend_model(train_df: pd.DataFrame, model_path: Path, metrics_path: Pa
     bundle = fit_tabular_regressor(train, valid, feature_cols, 'alpha_target', cat_cols=cat_cols)
     metric_rows = []
     pred_frames = []
-    for split_name, split_df in [('train', train), ('valid', valid), ('test', test)]:
+    for item in progress_iter(
+        [('train', train), ('valid', valid), ('test', test)],
+        total=3,
+        desc="[4.2] blend model predict splits",
+        min_interval=0.5,
+    ):
+        split_name, split_df = item
         if len(split_df) == 0:
             continue
         split_df = split_df.copy()
@@ -114,7 +128,14 @@ def infer_site_irradiance(inverse_pred: pd.DataFrame, site_master: pd.DataFrame,
     source = _coalesce_columns(source, 'county', ['county', 'county_meta', 'county_x', 'county_y'], default='unknown')
     meteo = site_meteo[['time', 'site_id', 'ssrd_wm2']].rename(columns={'ssrd_wm2': 'era5_site_ssrd'})
     out_rows = []
-    for t, g in source.groupby('time'):
+    time_groups = list(source.groupby('time'))
+    for t, g in progress_iter(
+        time_groups,
+        total=len(time_groups),
+        desc="[4.3] infer site irradiance time groups",
+        min_interval=10.0,
+        every=500,
+    ):
         if len(g) < 2:
             continue
         target = target_sites.copy()

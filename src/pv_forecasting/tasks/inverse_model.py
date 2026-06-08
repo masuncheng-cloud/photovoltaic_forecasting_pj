@@ -132,7 +132,14 @@ def train_inverse_model(df: pd.DataFrame, model_path: Path, metrics_path: Path):
     bundle = fit_tabular_regressor(train, valid, feature_cols, "g_residual_target", cat_cols=cat_cols, sample_weight_col="sample_weight")
 
     metrics_rows = []
-    for split_name, split_df in [("train", train), ("valid", valid), ("test", test)]:
+    from ..core.progress import progress_iter
+    for item in progress_iter(
+        [("train", train), ("valid", valid), ("test", test)],
+        total=3,
+        desc="[3b] inverse predict splits",
+        min_interval=0.5,
+    ):
+        split_name, split_df = item
         if len(split_df) == 0:
             continue
         split_df = split_df.copy()

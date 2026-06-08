@@ -415,31 +415,6 @@ tbody td {
   color: #2d3748;
 }
 
-#threshold-note {
-  font-size: 11px;
-  color: #a0aec0;
-  margin-top: 8px;
-  line-height: 1.6;
-  font-style: italic;
-}
-
-#typical-sites-note {
-  font-size: 11px;
-  color: #a0aec0;
-  margin: 6px 12px 10px;
-  line-height: 1.6;
-}
-
-/* ---- Footer ---- */
-#footer {
-  font-size: 11px;
-  color: #a0aec0;
-  padding: 10px 0;
-  border-top: 1px solid #dde3ec;
-  margin-top: 14px;
-  line-height: 1.7;
-}
-
 /* Loading overlay */
 #loading {
   position: fixed;
@@ -507,10 +482,11 @@ tbody td {
   margin-bottom: 4px;
 }
 
-.hourly-panel .panel-desc {
-  font-size: 11px;
-  color: #718096;
-  line-height: 1.6;
+.hourly-note {
+  margin: 4px 0 10px;
+  color: #667085;
+  font-size: 13px;
+  line-height: 1.5;
 }
 
 .hourly-grid {
@@ -672,6 +648,88 @@ tbody td {
   border-color: #cbd5e1 !important;
   cursor: not-allowed !important;
   opacity: 1;
+}
+
+/* ============================================================
+   TOOLTIP WRAPPER — CSS-only fast tooltip (no native title delay)
+   ============================================================ */
+.tooltip-wrap {
+  display: inline-flex;
+  align-items: center;
+  position: relative;
+  overflow: visible;
+}
+
+.tooltip-wrap.is-disabled {
+  cursor: not-allowed;
+}
+
+.tooltip-wrap.is-disabled > button,
+.tooltip-wrap.is-disabled > select {
+  pointer-events: none;
+}
+
+/* Fast CSS tooltip via data-tooltip attribute */
+.tooltip-wrap[data-tooltip]:not([data-tooltip=""])::after {
+  content: attr(data-tooltip);
+  position: absolute;
+  left: 50%;
+  bottom: calc(100% + 8px);
+  transform: translateX(-50%) translateY(2px);
+  max-width: 320px;
+  min-width: max-content;
+  white-space: normal;
+  word-break: break-word;
+  padding: 7px 10px;
+  border-radius: 6px;
+  background: rgba(17, 24, 39, 0.96);
+  color: #fff;
+  font-size: 12px;
+  line-height: 1.45;
+  font-weight: 500;
+  box-shadow: 0 8px 20px rgba(15, 23, 42, 0.18);
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  z-index: 9999;
+  transition: opacity 0.08s ease, transform 0.08s ease, visibility 0.08s ease;
+}
+
+.tooltip-wrap[data-tooltip]:not([data-tooltip=""])::before {
+  content: "";
+  position: absolute;
+  left: 50%;
+  bottom: calc(100% + 3px);
+  transform: translateX(-50%);
+  border: 5px solid transparent;
+  border-top-color: rgba(17, 24, 39, 0.96);
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  z-index: 9999;
+  transition: opacity 0.08s ease, visibility 0.08s ease;
+}
+
+.tooltip-wrap[data-tooltip]:not([data-tooltip=""]):hover::after,
+.tooltip-wrap[data-tooltip]:not([data-tooltip=""]):focus-within::after {
+  opacity: 1;
+  visibility: visible;
+  transform: translateX(-50%) translateY(0);
+}
+
+.tooltip-wrap[data-tooltip]:not([data-tooltip=""]):hover::before,
+.tooltip-wrap[data-tooltip]:not([data-tooltip=""]):focus-within::before {
+  opacity: 1;
+  visibility: visible;
+}
+
+/* 站点下拉框 wrapper：禁用时鼠标变为 not-allowed */
+#site-select-wrap {
+  display: inline-flex;
+  align-items: center;
+}
+#site-select-wrap:has(select:disabled) {
+  cursor: not-allowed;
 }
 
 .date-combo {
@@ -837,7 +895,7 @@ tbody td {
 
 <h1>光伏功率预测交互式结果展示</h1>
 <div id="data-version-badge" style="display:none;background:#eef2ff;color:#4338ca;border-radius:6px;padding:6px 12px;margin:8px 0 0;font-size:13px;font-weight:bold;width:fit-content;">
-  数据版本：<span id="badge-data-round">--</span>（<span id="badge-pred-col">--</span> | 默认不含 future）
+  数据更新时间：<span id="badge-update-time">--</span>
 </div>
 <div id="data-version-warning" style="display:none;background:#fef2f2;color:#dc2626;border-radius:6px;padding:8px 12px;margin:8px 0;font-size:13px;width:fit-content;">
   ⚠️ <span id="version-warning-text"></span>
@@ -854,14 +912,22 @@ tbody td {
 
   <div class="ctrl-group" id="site-select-group" style="display:none;">
     <span class="ctrl-label">选择站点：</span>
-    <select id="site-select"><option value="">-- 请选择 --</option></select>
+    <span id="site-select-wrap" class="tooltip-wrap" data-tooltip="">
+      <select id="site-select"><option value="">-- 请选择 --</option></select>
+    </span>
   </div>
 
   <div class="ctrl-group" id="typical-group">
     <span class="ctrl-label" id="performance-group-label">典型日期：</span>
-    <button class="btn btn-best" id="btn-best">最佳日</button>
-    <button class="btn btn-worst" id="btn-worst">最差日</button>
-    <button class="btn btn-normal" id="btn-normal">典型日</button>
+    <span class="tooltip-wrap" id="btn-best-wrap" data-tooltip="">
+      <button class="btn btn-best" id="btn-best">最佳日</button>
+    </span>
+    <span class="tooltip-wrap" id="btn-worst-wrap" data-tooltip="">
+      <button class="btn btn-worst" id="btn-worst">最差日</button>
+    </span>
+    <span class="tooltip-wrap" id="btn-normal-wrap" data-tooltip="">
+      <button class="btn btn-normal" id="btn-normal">典型日</button>
+    </span>
   </div>
   <div class="divider"></div>
 
@@ -894,33 +960,41 @@ tbody td {
   <div class="divider"></div>
 
   <div class="ctrl-group">
-    <button
-      class="btn btn-purple"
-      id="btn-current-midday"
-      data-help="保持当前日期范围不变，仅切换为全市视角并筛选10-14点。"
-    >当前日期10-14</button>
-    <button
-      class="btn btn-indigo"
-      id="btn-typical-midday"
-      data-help="自动选择全市该季节日级 NRMSE 最低的一天，并切换为全市 6-19 点。"
-    >典型日10-14</button>
+    <span class="tooltip-wrap" id="btn-current-midday-wrap" data-tooltip="">
+      <button
+        class="btn btn-purple"
+        id="btn-current-midday"
+        data-help="保持当前日期范围不变，仅切换为全市视角并筛选10-14点。"
+      >当前日期10-14</button>
+    </span>
+    <span class="tooltip-wrap" id="btn-typical-midday-wrap" data-tooltip="">
+      <button
+        class="btn btn-indigo"
+        id="btn-typical-midday"
+        data-help="自动选择全市该季节日级 NRMSE 最低的一天，并切换为全市 6-19 点。"
+      >典型日10-14</button>
+    </span>
   </div>
   <div class="divider"></div>
 
-  <div class="ctrl-group" title="单站点模式：选择该站点该季节日级 NRMSE 最低的一天；全市模式：选择全市该季节日级 NRMSE 最低的一天。">
+  <div class="ctrl-group">
     <span class="ctrl-label">四季最佳日：</span>
-    <button class="btn btn-season spring" id="btn-spring" disabled>春季</button>
-    <button class="btn btn-season summer" id="btn-summer" disabled>夏季</button>
-    <button class="btn btn-season autumn" id="btn-autumn" disabled>秋季</button>
-    <button class="btn btn-season winter" id="btn-winter" disabled>冬季</button>
+    <span class="tooltip-wrap" id="btn-spring-wrap" data-tooltip="">
+      <button class="btn btn-season spring" id="btn-spring" disabled>春季</button>
+    </span>
+    <span class="tooltip-wrap" id="btn-summer-wrap" data-tooltip="">
+      <button class="btn btn-season summer" id="btn-summer" disabled>夏季</button>
+    </span>
+    <span class="tooltip-wrap" id="btn-autumn-wrap" data-tooltip="">
+      <button class="btn btn-season autumn" id="btn-autumn" disabled>秋季</button>
+    </span>
+    <span class="tooltip-wrap" id="btn-winter-wrap" data-tooltip="">
+      <button class="btn btn-season winter" id="btn-winter" disabled>冬季</button>
+    </span>
   </div>
   <div class="divider"></div>
 
   <button class="btn btn-action" id="btn-refresh">刷新</button>
-</div>
-
-<div class="hint-text">
-  
 </div>
 
 <!-- ===== METRICS CARDS ===== -->
@@ -956,23 +1030,22 @@ tbody td {
   <table id="sites-table">
     <thead>
       <tr>
-        <th>类别</th><th>站点ID</th><th>站点名称</th><th>容量 MW</th>
-        <th>全量历史样本数</th><th>全量正功率样本</th><th>全量零值占比%</th>
-        <th>测试集6-19点0值占比%</th>
-        <th>MAE MW</th><th>RMSE MW</th><th>NRMSE %</th><th>pred/actual</th>
+        <th>类别</th><th>站点ID</th><th>站点名称</th><th>容量（MW）</th>
+        <th>全量历史样本数</th><th>全量正功率样本</th><th>全量零值占比（%）</th>
+        <th>测试集6-19点0值占比（%）</th>
+        <th>MAE（MW）</th><th>RMSE（MW）</th><th>NRMSE（%）</th><th>pred/actual</th>
       </tr>
     </thead>
     <tbody></tbody>
   </table>
   </div>
-  <div id="typical-sites-note">说明：历史样本数 = train + valid + test，不包含 future；MAE、RMSE、NRMSE、pred/actual 与测试集6-19点0值占比均按测试集 6-19 点计算。全 0 或无正功率样本的站点归入"无有效发电样本站点"，不参与典型站点分类。</div>
 </div>
 
 <!-- ===== HOURLY PREDICTION PANEL ===== -->
 <section class="hourly-panel">
   <div class="panel-header">
     <h2>逐小时预测结果</h2>
-    <p class="panel-desc">测试集 6-19 点逐小时样本量、站点平均 NRMSE 与城市 NRMSE。</p>
+    <div class="hourly-note">测试集 6-19 点逐小时样本量、站点平均 NRMSE 与城市 NRMSE。</div>
   </div>
   <div class="hourly-grid">
     <div class="chart-wrap">
@@ -992,9 +1065,7 @@ tbody td {
       </table>
     </div>
   </div>
-  <p class="note">
-    说明：站点平均 NRMSE 按"先对每个站点在该小时计算 NRMSE，再对站点取平均"的口径统计；城市 NRMSE 按全市同一小时总功率聚合后计算。样本数为测试集该小时参与统计的站点-时间记录数。
-  </p>
+  <div class="hourly-note" style="margin-top:8px;">站点平均 NRMSE = 先按单站单小时计算 RMSE / 容量 × 100%，再对站点取平均；城市 NRMSE = 先汇总全市同一小时总功率，再计算 RMSE / 全市容量 × 100%。</div>
 </section>
 
 <!-- ===== SCATTER PLOT ===== -->
@@ -1015,9 +1086,6 @@ tbody td {
     </div>
   </div>
   <svg id="scatter-chart"></svg>
-  <div id="scatter-desc" style="font-size:11px;color:#718096;margin-top:6px;">
-    本图每个点代表一个具备有效发电样本的站点。横轴为该站点历史样本数（train/valid/test，不包含 future），纵轴为测试集 6-19 点 NRMSE。点越靠右表示历史数据越多，点越靠下表示预测精度越高。0 值占比 100% 或无正功率样本的站点不参与本图统计，单独列入下方"无有效发电样本站点"。全量 0 值占比包含夜间正常 0 值；测试集 6-19 点 0 值占比更适合解释最终测试误差是否受白天 0 值影响。横轴可切换为"训练验证正功率样本"：统计 train + valid 阶段 6-19 点 power_mw > 0 的样本数，更接近模型实际可学习的数据规模。样本量只是经验参考，容量映射、异常0值、限电、遮挡和气象匹配仍会影响最终 NRMSE。
-  </div>
 
   <div id="sample-req-table-wrap" style="margin-top:12px;">
     <div class="section-title" style="font-size:12px;" id="threshold-table-title">达到不同 NRMSE 阈值的全量历史样本量分布</div>
@@ -1032,7 +1100,6 @@ tbody td {
       </thead>
       <tbody></tbody>
     </table>
-    <div id="threshold-note">说明：这里统计的是已达到不同 NRMSE 阈值的有效发电站点的历史样本量分布；需结合测试集 6-19 点 0 值占比、容量、站点映射和气象匹配共同判断。历史样本量不包含 future。</div>
   </div>
 
   <div id="sample-bins-wrap" style="margin-top:12px;">
@@ -1053,21 +1120,10 @@ tbody td {
 <!-- ===== INVALID ZERO SITES PANEL ===== -->
 <section class="panel" id="invalid-zero-panel" style="display:none;">
   <h3>无有效发电样本站点</h3>
-  <p class="hint-text">
-    以下站点历史功率几乎全为0，不参与样本量-NRMSE关系统计和阈值统计。
-  </p>
   <div id="invalid-zero-sites-table"></div>
 </section>
 
 <!-- ===== FOOTER ===== -->
-<div id="footer">
-  当前折线图真实值 actual_mw 直接来自 distributed_predictions_final_full.pkl 的 power_mw；<br>
-  该字段与 power_clean.pkl 中同一站点、同一时间的 power_mw 一致。<br>
-  正式测试集指标来自 distributed_predictions_final_eval.pkl，通常排除非正功率样本，与 full 展示曲线的样本范围不同。<br>
-  页面只用于展示当前 final/best 预测结果，不参与模型训练和模型选择。<br>
-  注意：当前数据为小时粒度，sum(MW) 可近似理解为 MWh。
-</div>
-
 <script>
 // ============================================================
 // GLOBAL DATA
@@ -1109,6 +1165,11 @@ let gScatterSite = [];
 let gThresholdSummary = [];
 let gSampleReqSummary = [];
 let gSampleReqBins = [];
+
+// Cache of current scatter chart points for bins table derivation
+let gCurrentScatterPoints = [];
+let gCurrentScatterXField = "full_history_rows";
+let gCurrentScatterXMode = "full";
 let gHourlySummary = [];
 let gSeasonDays = [];
 let gMiddayByDate = [];
@@ -1191,6 +1252,86 @@ const SAMPLE_X_AXIS_CONFIG = {
   },
 };
 
+// ============================================================
+// SCATTER POINT FIELD UTILITIES
+// ============================================================
+function pickNumber(row, fields) {
+  for (const field of fields) {
+    if (row && row[field] !== undefined && row[field] !== null && row[field] !== "") {
+      const value = Number(row[field]);
+      if (Number.isFinite(value)) return value;
+    }
+  }
+  return null;
+}
+
+function getPointNrmsePct(row) {
+  const value = pickNumber(row, [
+    "test_nrmse_pct",
+    "nrmse_pct",
+    "site_nrmse_pct",
+    "nrmse_percent",
+  ]);
+  if (value === null) return null;
+  return value <= 1 ? value * 100 : value;
+}
+
+function getHistorySampleCount(row) {
+  return pickNumber(row, [
+    "full_history_rows",
+    "full_history_sample_count",
+    "total_history_samples",
+    "history_sample_count",
+    "rows",
+    "sample_count",
+    "total_samples",
+  ]);
+}
+
+function getTrainValidPositiveSampleCount(row) {
+  return pickNumber(row, [
+    "train_valid_positive_rows",
+    "train_valid_positive_sample_count",
+    "train_valid_daytime_positive_rows",
+  ]);
+}
+
+// ============================================================
+// STATISTICS UTILITIES
+// ============================================================
+function finiteNumbers(values) {
+  return values.map(Number).filter(Number.isFinite);
+}
+
+function mean(values) {
+  const xs = finiteNumbers(values);
+  return xs.length ? xs.reduce((a, b) => a + b, 0) / xs.length : null;
+}
+
+function percentile(values, q) {
+  const xs = finiteNumbers(values).sort((a, b) => a - b);
+  if (!xs.length) return null;
+  const pos = (xs.length - 1) * q;
+  const base = Math.floor(pos);
+  const rest = pos - base;
+  if (xs[base + 1] !== undefined) {
+    return xs[base] + rest * (xs[base + 1] - xs[base]);
+  }
+  return xs[base];
+}
+
+function median(values) {
+  return percentile(values, 0.5);
+}
+
+function fmtInt(value) {
+  return Number.isFinite(Number(value)) ? Math.round(Number(value)).toLocaleString("zh-CN") : "-";
+}
+
+function fmtPct(value) {
+  return Number.isFinite(Number(value)) ? Number(value).toFixed(2) : "-";
+}
+
 // Build derived threshold/bins data from gScatterSite for each axis mode
 function buildThresholdData(chartData, mode) {
   const cfg = SAMPLE_X_AXIS_CONFIG[mode];
@@ -1247,42 +1388,53 @@ function buildThresholdData(chartData, mode) {
   return results;
 }
 
-function buildBinsData(chartData, mode) {
-  const cfg = SAMPLE_X_AXIS_CONFIG[mode];
-  const field = cfg.field;
-  const rows = [];
-  for (const [lo, hi, label] of cfg.bins) {
-    const bucket = chartData.filter(p => {
-      const v = p[field] || 0;
-      return v >= lo && v < hi;
+function buildBinsData(points, xMode) {
+  const getX = (row) => {
+    if (xMode === "tv_positive") {
+      return getTrainValidPositiveSampleCount(row);
+    }
+    return getHistorySampleCount(row);
+  };
+
+  const allBins = [
+    { label: "0-5000", min: 0, max: 5000 },
+    { label: "5000-10000", min: 5000, max: 10000 },
+    { label: "10000-15000", min: 10000, max: 15000 },
+    { label: "15000-20000", min: 15000, max: 20000 },
+    { label: "20000-26000", min: 20000, max: 26000 },
+    { label: "26000-28000", min: 26000, max: 28000 },
+    { label: "28000+", min: 28000, max: Infinity },
+  ];
+
+  return allBins.map((bin) => {
+    const rows = (points || []).filter((row) => {
+      const x = getX(row);
+      const nrmse = getPointNrmsePct(row);
+      return (
+        Number.isFinite(x) &&
+        Number.isFinite(nrmse) &&
+        x >= bin.min &&
+        x < bin.max
+      );
     });
-    const nrmseVals = bucket.map(p => p.test_nrmse_pct).filter(v => v != null).sort((a, b) => a - b);
-    const percentile = (arr, q) => {
-      if (arr.length === 0) return null;
-      const pos = q * (arr.length - 1);
-      const lo = Math.floor(pos);
-      const hi = Math.ceil(pos);
-      return lo === hi ? arr[lo] : arr[lo] + (pos - lo) * (arr[hi] - arr[lo]);
-    };
-    // primary field (field = full_history_rows or train_valid_positive_rows)
-    const primaryVals = bucket.map(p => p[field] || 0).filter(v => v != null).sort((a, b) => a - b);
-    // train_valid_positive_rows (always available in scatter data)
-    const tvPosVals = bucket.map(p => p.train_valid_positive_rows || 0).filter(v => v > 0).sort((a, b) => a - b);
-    rows.push({
-      sample_bin: label,
-      site_count: bucket.length,
-      median_full_history_rows: percentile(primaryVals, 0.50),
-      median_train_valid_positive_rows: percentile(primaryVals, 0.50),
-      median_tv_positive_rows: percentile(tvPosVals, 0.50),
-      mean_nrmse_pct: nrmseVals.length > 0 ? +(nrmseVals.reduce((a, b) => a + b, 0) / nrmseVals.length).toFixed(4) : null,
-      median_nrmse_pct: percentile(nrmseVals, 0.50),
+
+    const xVals = rows.map(getX).filter(Number.isFinite);
+    const trainValidPosVals = rows.map(getTrainValidPositiveSampleCount).filter(Number.isFinite);
+    const nrmseVals = rows.map(getPointNrmsePct).filter(Number.isFinite);
+
+    return {
+      sample_bin: bin.label,
+      site_count: rows.length,
+      median_full_history_rows: median(xVals),
+      median_train_valid_positive_rows: median(trainValidPosVals),
+      mean_nrmse_pct: mean(nrmseVals),
+      median_nrmse_pct: median(nrmseVals),
       p25_nrmse_pct: percentile(nrmseVals, 0.25),
       p75_nrmse_pct: percentile(nrmseVals, 0.75),
-      best_nrmse_pct: nrmseVals.length > 0 ? nrmseVals[0] : null,
-      worst_nrmse_pct: nrmseVals.length > 0 ? nrmseVals[nrmseVals.length - 1] : null,
-    });
-  }
-  return rows;
+      best_nrmse_pct: nrmseVals.length ? Math.min(...nrmseVals) : null,
+      worst_nrmse_pct: nrmseVals.length ? Math.max(...nrmseVals) : null,
+    };
+  });
 }
 
 // Global computed data (recomputed on axis mode change)
@@ -1291,10 +1443,11 @@ let gBinsByMode = { full: [], tv_positive: [] };
 
 function recomputeThresholdAndBins() {
   const data = (gScatterSite && gScatterSite.length > 0) ? gScatterSite : [];
+  const points = gCurrentScatterPoints.length ? gCurrentScatterPoints : data;
   gThresholdByMode.full = buildThresholdData(data, "full");
   gThresholdByMode.tv_positive = buildThresholdData(data, "tv_positive");
-  gBinsByMode.full = buildBinsData(data, "full");
-  gBinsByMode.tv_positive = buildBinsData(data, "tv_positive");
+  gBinsByMode.full = buildBinsData(points, "full");
+  gBinsByMode.tv_positive = buildBinsData(points, "tv_positive");
 }
 
 // Line chart zoom state
@@ -1835,11 +1988,10 @@ async function loadAll() {
   const metaTime = (meta && (meta.exported_at || meta.generated_at))
     ? (meta.exported_at || meta.generated_at) : "";
   gExpectedRound = metaRound;
-  const badgeDataRound = document.getElementById("badge-data-round");
-  const badgePredCol = document.getElementById("badge-pred-col");
+  // Only show update time, no round/prediction_column/future info
+  const badgeUpdateTime = document.getElementById("badge-update-time");
   const verBadge = document.getElementById("data-version-badge");
-  if (badgeDataRound) badgeDataRound.textContent = metaRound;
-  if (badgePredCol) badgePredCol.textContent = metaPredCol + (metaTime ? " | " + metaTime : "") + " | 默认不含 future";
+  if (badgeUpdateTime) badgeUpdateTime.textContent = metaTime || "-";
   if (verBadge) verBadge.style.display = "block";
   // Mark page as successfully loaded so next sessionStorage check passes silently
   try { sessionStorage.setItem('dvb_r94', 'ready'); } catch(e) {}
@@ -1870,6 +2022,7 @@ async function loadAll() {
   setupSeasonButtons(seasons);
 
   // Render scatter site sample tables
+  recomputeThresholdAndBins();
   renderSampleReqSummaryTable();
   renderSampleReqBinsTable();
 
@@ -1943,6 +2096,72 @@ function ensureDefaultSiteSelected() {
   return true;
 }
 
+function updateSiteSelectTooltip(reason) {
+  const wrap = document.getElementById("site-select-wrap");
+  if (!wrap) return;
+  if (reason === "city") {
+    setControlTooltip("site-select", "全市模式下不选择单个站点；切换到「单站点」后可选择站点。");
+  } else if (reason === "site") {
+    setControlTooltip("site-select", "当前数据中没有可展示的站点。");
+  } else {
+    setControlTooltip("site-select", "");
+  }
+}
+
+/**
+ * Remove trailing full-width/half-width punctuation to keep tooltips tidy.
+ */
+function normalizeTooltipText(text) {
+  return String(text || "").replace(/[。.!！?？]+$/g, "");
+}
+
+/**
+ * Set a fast CSS tooltip on the wrapper via data-tooltip attribute.
+ * Does NOT use the native slow `title` attribute.
+ */
+function setControlTooltip(controlOrId, text) {
+  const el = typeof controlOrId === "string"
+    ? document.getElementById(controlOrId)
+    : controlOrId;
+  if (!el) return;
+
+  const wrap =
+    document.getElementById(`${el.id}-wrap`) ||
+    el.closest(".tooltip-wrap");
+
+  if (!wrap) return;
+
+  const value = normalizeTooltipText(text);
+  wrap.dataset.tooltip = value;
+  wrap.setAttribute("aria-label", value);
+  // Remove title to avoid double tooltip (native slow + CSS fast)
+  wrap.removeAttribute("title");
+  el.removeAttribute("title");
+}
+
+/**
+ * Disable/enable a control and set its tooltip via data-tooltip.
+ * Safari/Chrome don't reliably show title on disabled elements,
+ * so we use CSS ::after via data-tooltip on the wrapper.
+ */
+function setDisabledReason(controlOrId, disabled, reason) {
+  const el = typeof controlOrId === "string"
+    ? document.getElementById(controlOrId)
+    : controlOrId;
+  if (!el) return;
+
+  const wrap =
+    document.getElementById(`${el.id}-wrap`) ||
+    el.closest(".tooltip-wrap");
+
+  el.disabled = !!disabled;
+
+  if (wrap) {
+    wrap.classList.toggle("is-disabled", !!disabled);
+    setControlTooltip(el, disabled && reason ? reason : "");
+  }
+}
+
 function setSelectedSiteInUI(siteId) {
   if (!siteId) {
     console.warn("[setSelectedSiteInUI] empty siteId");
@@ -1995,10 +2214,14 @@ function setSelectedSiteInUI(siteId) {
       const options = Array.from(siteSelect.options || []);
       const hasOption = options.some(opt => opt.value === siteId);
       if (hasOption) siteSelect.value = siteId;
-      siteSelect.disabled = false;
+      setDisabledReason("site-select", false, "");
     } else {
       siteSelect.value = "";
-      siteSelect.disabled = true;
+      setDisabledReason(
+        "site-select",
+        true,
+        "全市模式下不选择单个站点；切换到「单站点」后可选择站点。"
+      );
     }
     siteSelect.style.display = "";
     siteSelect.hidden = false;
@@ -2297,21 +2520,29 @@ function updateSeasonButtonsAvailability() {
     ? (Array.isArray(gCurrentSiteRows) ? gCurrentSiteRows : [])
     : (Array.isArray(gCitySeries) ? gCitySeries : []);
 
+  const seasonUnavailableReasons = {
+    spring: "当前日期范围没有春季（3-5月）可用信息",
+    summer: "当前日期范围没有夏季（6-8月）可用信息",
+    autumn: "当前日期范围没有秋季（9-11月）可用信息",
+    winter: "当前日期范围没有冬季（12-2月）可用信息",
+  };
+
   ["spring", "summer", "autumn", "winter"].forEach((season) => {
     const btn = document.getElementById(`btn-${season}`);
     if (!btn) return;
 
     const available = hasSeasonData(rows, season);
-    btn.disabled = !available;
-    btn.classList.toggle("is-disabled", !available);
 
     if (available) {
+      // 可用：只显示简短功能说明，不显示单站点/全市模式区分
+      setDisabledReason(btn, false, "");
+      setControlTooltip(btn, "选择该季节 NRMSE 最低的一天");
       const fallbackDate = pickFirstCitySeriesDateInSeason(season);
       btn.dataset.date = fallbackDate || "";
-      btn.title = `切换到当前日期范围内${seasonNames[season]}日级 NRMSE 最低的一天；不改写日期选择框`;
     } else {
+      // 不可用：只显示不可用原因，不叠加功能说明
+      setDisabledReason(btn, true, seasonUnavailableReasons[season]);
       btn.dataset.date = "";
-      btn.title = `当前日期范围内没有${seasonNames[season]}可用数据`;
     }
   });
 }
@@ -3063,6 +3294,11 @@ function drawScatterChart(data) {
     return isFinite(xv) && xv > 0;
   });
 
+  // Cache for bins table derivation
+  gCurrentScatterPoints = validPoints;
+  gCurrentScatterXField = xField;
+  gCurrentScatterXMode = mode;
+
   const xVals = validPoints.map(p => Number(p[xField]));
   const yVals = validPoints.map(p => p["test_nrmse_pct"] || 0);
 
@@ -3279,52 +3515,61 @@ function renderSampleReqSummaryTable() {
 }
 
 function renderSampleReqBinsTable() {
-  const tbody = document.querySelector("#sample-bins-table tbody");
-  if (!tbody) return;
-  tbody.innerHTML = "";
-  const mode = state.scatterXAxis || "full";
-  const data = gBinsByMode[mode] || [];
-  if (data.length === 0) {
-    // Fallback to original gSampleReqBins
-    const fallback = gSampleReqBins || [];
-    fallback.forEach(b => {
-      const row = document.createElement("tr");
-      row.innerHTML = `
-        <td>${b.sample_bin}</td>
-        <td>${b.site_count}</td>
-        <td>${fmtInt(b.median_full_history_rows)}</td>
-        <td>${fmtInt(b.median_full_history_rows)}</td>
-        <td>${fmtInt(b.median_train_valid_positive_rows)}</td>
-        <td>${b.mean_nrmse_pct != null ? fmt2(b.mean_nrmse_pct) : "-"}</td>
-        <td>${b.median_nrmse_pct != null ? fmt2(b.median_nrmse_pct) : "-"}</td>
-        <td>${b.p25_nrmse_pct != null ? fmt2(b.p25_nrmse_pct) : "-"}</td>
-        <td>${b.p75_nrmse_pct != null ? fmt2(b.p75_nrmse_pct) : "-"}</td>
-        <td>${b.best_nrmse_pct != null ? fmt2(b.best_nrmse_pct) : "-"}</td>
-        <td>${b.worst_nrmse_pct != null ? fmt2(b.worst_nrmse_pct) : "-"}</td>
-      `;
-      tbody.appendChild(row);
-    });
+  const table = document.getElementById("sample-bins-table");
+  if (!table) {
+    console.warn("[sample bins] table not found: sample-bins-table");
     return;
   }
-  const cfg = SAMPLE_X_AXIS_CONFIG[mode] || SAMPLE_X_AXIS_CONFIG["full"];
-  data.forEach(b => {
-    const row = document.createElement("tr");
-    // binsCol may be null if the field isn't in scatter data; fall back to primary field
-    const medianVal = b[cfg.binsCol] != null ? fmtInt(b[cfg.binsCol]) : fmtInt(b[field] || b.median_full_history_rows);
-    row.innerHTML = `
-      <td>${b.sample_bin}</td>
-      <td>${b.site_count}</td>
-      <td>${medianVal}</td>
-      <td>${fmtInt(b.median_full_history_rows)}</td>
-      <td>${fmtInt(b.median_train_valid_positive_rows)}</td>
-      <td>${b.mean_nrmse_pct != null ? fmt2(b.mean_nrmse_pct) : "-"}</td>
-      <td>${b.median_nrmse_pct != null ? fmt2(b.median_nrmse_pct) : "-"}</td>
-      <td>${b.p25_nrmse_pct != null ? fmt2(b.p25_nrmse_pct) : "-"}</td>
-      <td>${b.p75_nrmse_pct != null ? fmt2(b.p75_nrmse_pct) : "-"}</td>
-      <td>${b.best_nrmse_pct != null ? fmt2(b.best_nrmse_pct) : "-"}</td>
-      <td>${b.worst_nrmse_pct != null ? fmt2(b.worst_nrmse_pct) : "-"}</td>
-    `;
-    tbody.appendChild(row);
+
+  const xMode = state.scatterXAxis || gCurrentScatterXMode || "full";
+  const points = gCurrentScatterPoints && gCurrentScatterPoints.length
+    ? gCurrentScatterPoints
+    : (gScatterSite || []);
+
+  const rows = buildBinsData(points, xMode);
+
+  console.log("[sample bins]", {
+    xMode,
+    points: points.length,
+    rows: rows.length,
+    nonEmptyBins: rows.filter((r) => r.site_count > 0).length,
+  });
+
+  const tbody = table.querySelector("tbody");
+  if (!tbody) return;
+  tbody.innerHTML = rows.map((r) => `
+    <tr>
+      <td>${r.sample_bin}</td>
+      <td>${fmtInt(r.site_count)}</td>
+      <td>${fmtInt(r.median_full_history_rows)}</td>
+      <td>${fmtInt(r.median_train_valid_positive_rows)}</td>
+      <td>${fmtInt(r.median_train_valid_positive_rows)}</td>
+      <td>${fmtPct(r.mean_nrmse_pct)}</td>
+      <td>${fmtPct(r.median_nrmse_pct)}</td>
+      <td>${fmtPct(r.p25_nrmse_pct)}</td>
+      <td>${fmtPct(r.p75_nrmse_pct)}</td>
+      <td>${fmtPct(r.best_nrmse_pct)}</td>
+      <td>${fmtPct(r.worst_nrmse_pct)}</td>
+    </tr>
+  `).join("");
+
+  assertSampleBinsRendered();
+}
+
+function assertSampleBinsRendered() {
+  const table = document.getElementById("sample-bins-table");
+  if (!table) {
+    console.error("[sample bins] table missing");
+    return;
+  }
+  const bodyRows = table.querySelectorAll("tbody tr");
+  const nonEmptyRows = Array.from(bodyRows).filter((tr) => {
+    const cells = Array.from(tr.querySelectorAll("td")).map((td) => td.textContent.trim());
+    return cells.length > 1 && cells[1] !== "-" && cells[1] !== "0";
+  });
+  console.log("[sample bins rendered]", {
+    bodyRows: bodyRows.length,
+    nonEmptyRows: nonEmptyRows.length,
   });
 }
 
@@ -3410,7 +3655,7 @@ function renderInvalidZeroSites() {
         <tr>
           <th>站点ID</th>
           <th>站点名称</th>
-          <th>容量 MW</th>
+          <th>容量（MW）</th>
           <th>历史样本数（行）</th>
           <th>正功率样本数（行）</th>
           <th>0值占比（%）</th>
@@ -3455,7 +3700,7 @@ function buildSitesTable() {
     tr.innerHTML = `
       <td>${s.category_label || ""}</td>
       <td>${s.site_id}</td>
-      <td style="text-align:left;max-width:160px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${s.site_name || ""}</td>
+      <td style="text-align:center;max-width:160px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${s.site_name || ""}</td>
       <td>${fmt2(s.capacity_mw)}</td>
       <td>${fmtInt(s.full_history_rows)}</td>
       <td>${fmtInt(s.full_history_positive_rows)}</td>
@@ -3497,14 +3742,18 @@ async function onScopeChange() {
   // 全市模式：禁用下拉框，显示"请选择"；单站点模式：启用下拉框
   if (siteSelect) {
     if (isSite) {
-      siteSelect.disabled = false;
+      setDisabledReason("site-select", false, "");
       if (!state.siteId && siteSelect.options.length > 1) {
         state.siteId = siteSelect.options[1].value;
       }
       if (state.siteId) siteSelect.value = state.siteId;
     } else {
       siteSelect.value = "";
-      siteSelect.disabled = true;
+      setDisabledReason(
+        "site-select",
+        true,
+        "全市模式下不选择单个站点；切换到「单站点」后可选择站点。"
+      );
     }
   }
 
@@ -3523,12 +3772,18 @@ async function onScopeChange() {
   const btnCurrent = document.getElementById("btn-current-midday");
   const btnTypical = document.getElementById("btn-typical-midday");
   if (btnCurrent) {
-    btnCurrent.disabled = false;
-    btnCurrent.title = isSite ? "筛选当前站点 10-14 点数据" : "筛选当前日期 10-14 点全市数据";
+    setDisabledReason(
+      btnCurrent,
+      false,
+      isSite ? "筛选当前站点 10-14 点数据" : "筛选当前日期 10-14 点全市数据"
+    );
   }
   if (btnTypical) {
-    btnTypical.disabled = false;
-    btnTypical.title = isSite ? "筛选典型站点日 10-14 点数据" : "筛选典型站点日 10-14 点全市数据";
+    setDisabledReason(
+      btnTypical,
+      false,
+      isSite ? "筛选典型站点日 10-14 点数据" : "筛选典型站点日 10-14 点全市数据"
+    );
   }
 
   if (isSite) {
@@ -3956,16 +4211,14 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   function updatePerformanceButtonTooltips() {
-    // 根据当前 scope 动态设置 tooltip，让用户知道按钮是针对全市还是当前站点
-    const scopeName = state.scope === "site" ? "当前站点" : "全市";
-  const tips = {
-    "btn-best": `${scopeName}日级 NRMSE 最低的一天；只切换图表展示，不改写日期选择框`,
-    "btn-worst": `${scopeName}日级 NRMSE 最高的一天；只切换图表展示，不改写日期选择框`,
-    "btn-normal": `${scopeName}日级 NRMSE 接近中位数且总量偏差较小的一天；只切换图表展示，不改写日期选择框`,
-  };
-    Object.entries(tips).forEach(([id, title]) => {
-      const btn = document.getElementById(id);
-      if (btn) btn.title = title;
+    // 精简文案：不区分全市/单站点，末尾无句号
+    const tips = {
+      "btn-best": "选择当前范围内 NRMSE 最低的一天",
+      "btn-worst": "选择当前范围内 NRMSE 最高的一天",
+      "btn-normal": "选择当前范围内表现接近中位数的一天",
+    };
+    Object.entries(tips).forEach(([id, tip]) => {
+      setControlTooltip(id, tip);
     });
   }
 
@@ -3977,11 +4230,11 @@ document.addEventListener("DOMContentLoaded", () => {
       return;
     }
     applyQuickDate(item.date, "已切换到典型日期");
-    const siteSelect = document.getElementById("site-select");
-    if (siteSelect) {
-      siteSelect.value = "";
-      siteSelect.disabled = true;
-    }
+    setDisabledReason(
+      "site-select",
+      true,
+      "全市模式下不选择单个站点；切换到「单站点」后可选择站点。"
+    );
     console.info("[city performance day]", category, item);
   }
 
@@ -4128,6 +4381,11 @@ document.addEventListener("DOMContentLoaded", () => {
         scatterTitle.textContent = cfg.sectionTitle;
       }
       if (state.scope !== "site") drawScatterChart(gScatterSite);
+      updateThresholdTableTitle();
+      updateBinsTableTitle();
+      recomputeThresholdAndBins();
+      renderSampleReqSummaryTable();
+      renderSampleReqBinsTable();
     });
   });
 

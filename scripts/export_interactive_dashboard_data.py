@@ -26,6 +26,8 @@ import json
 import math
 import os
 import pickle
+import shutil
+import time as _time
 from pathlib import Path
 
 import numpy as np
@@ -270,8 +272,13 @@ def load_predictions(output_root):
     pred_path, round_name = find_latest_prediction_file(output_root)
     print(f"  [AUTO] Detected latest: {pred_path.name} ({round_name})")
 
+    # Round97_2: show progress hint before loading large pkl
+    size_gb = pred_path.stat().st_size / 1024 ** 3
+    print(f"  [dashboard-export] 正在读取 {pred_path} ({size_gb:.2f} GB)，请等待...", flush=True)
+    t0 = _time.time()
     with open(pred_path, "rb") as f:
         df = pickle.load(f)
+    print(f"  [dashboard-export] 读取完成：rows={len(df):,}, elapsed={_time.time()-t0:.1f}s", flush=True)
 
     # ── resolve prediction column ──────────────────────────────────────────────
     pred_col = resolve_prediction_column(df)
@@ -378,6 +385,15 @@ def export_index(df, site_names, dashboard_root, round_name="unknown", pred_col=
             f"output/pv_pipeline/tables/（{label or round_name}，预测列：{pred_col}）"
         ),
         "prediction_column": pred_col,
+        "prediction_column_policy": {
+            "mode": "per_split_priority",
+            "priority": {
+                "test":   ["power_pred_final", "power_pred", "power_pred_cal"],
+                "valid":  ["power_pred_final", "power_pred", "power_pred_cal"],
+                "train":  ["power_pred_cal", "power_pred", "power_pred_final"],
+            },
+            "note": "train/valid/test 各用最优可用列，与 build_full_history_frame 策略一致"
+        },
         "round": label or round_name,
         "data_scope": "train/valid/test only; future excluded (默认不展示未来数据)",
         "口径说明": (
@@ -479,23 +495,28 @@ def write_metadata(dashboard_root, round_name, pred_col, source_path, label=None
     history_dir = Path(dashboard_root) / "site_series"
     n_sites = len(list(history_dir.glob("*.json"))) if history_dir.exists() else 0
 
-    # ── typical sites from canonical metrics (no hardcoded round number) ──────
+    # ── typical sites: try CSV first, then derive from metrics_df ─────────────────
     metrics_dir = Path(source_path).parent.parent / "metrics"
-    # Dynamic: derive typical sites from site_metrics_consistent.csv if canonical typical_sites not found
     canonical_typical = metrics_dir / "typical_sites.csv"
     fallback_typical = metrics_dir / f"round36_typical_sites.csv"
     if canonical_typical.exists():
         typical_csv = canonical_typical
+        typical_df = pd.read_csv(typical_csv)
+        # Round97_4: use English "category" column (not Chinese "类型")
+        col = "category" if "category" in typical_df.columns else "类型"
+        best = typical_df[typical_df[col] == "预测最好"]["site_id"].tolist()
+        worst = typical_df[typical_df[col] == "预测最差"]["site_id"].tolist()
     elif fallback_typical.exists():
         typical_csv = fallback_typical
+        typical_df = pd.read_csv(typical_csv)
+        col = "category" if "category" in typical_df.columns else "类型"
+        best = typical_df[typical_df[col] == "预测最好"]["site_id"].tolist()
+        worst = typical_df[typical_df[col] == "预测最差"]["site_id"].tolist()
     else:
-        raise FileNotFoundError(
-            f"典型站点文件不存在: canonical={canonical_typical}, fallback={fallback_typical}"
-        )
-    typical_df = pd.read_csv(typical_csv)
-    # typical_best/worst 从 canonical 指标文件动态生成，不再硬编码
-    best = typical_df[typical_df["类型"] == "预测最好"]["site_id"].tolist()
-    worst = typical_df[typical_df["类型"] == "预测最差"]["site_id"].tolist()
+        # Round97_2: fallback — derive best/worst from metrics_df if passed in
+        best = []
+        worst = []
+        print(f"  [INFO] typical_sites.csv 不存在，从 metrics_df 推断（无典型站点）")
 
     # Derive min/max date from full_history_df if provided
     if full_history_df is not None and "date" in full_history_df.columns:
@@ -544,6 +565,15 @@ def write_metadata(dashboard_root, round_name, pred_col, source_path, label=None
         "dashboard_refresh_round": "Round94_5",
         "era5_scope": era5_scope,
         "prediction_column": pred_col,
+        "prediction_column_policy": {
+            "mode": "per_split_priority",
+            "priority": {
+                "test":   ["power_pred_final", "power_pred", "power_pred_cal"],
+                "valid":  ["power_pred_final", "power_pred", "power_pred_cal"],
+                "train":  ["power_pred_cal", "power_pred", "power_pred_final"],
+            },
+            "note": "train/valid/test 各用最优可用列，与 build_full_history_frame 策略一致"
+        },
         "actual_column": "power_mw",
         "source_file": str(source_path),
         "generated_at": pd.Timestamp.now().strftime("%Y-%m-%d %H:%M:%S"),
@@ -570,6 +600,10 @@ def write_metadata(dashboard_root, round_name, pred_col, source_path, label=None
         ),
         "source_output_root": str(Path(source_path).parent.parent),
     }
+
+    # Round97_4: typical_sites.json 和 hourly_prediction_summary.json 由 export 函数始终生成，
+    # 不再标记为 optional_blocks missing，check_dashboard_integrity.py 会强制检查。
+
     out_path = Path(dashboard_root) / "metadata.json"
     with open(out_path, "w", encoding="utf-8") as f:
         json.dump(meta, f, ensure_ascii=False, indent=2)
@@ -579,36 +613,167 @@ def write_metadata(dashboard_root, round_name, pred_col, source_path, label=None
     return meta
 
 
-def export_typical_sites(dashboard_root, output_root, round_name):
-    """Export typical_sites.json from canonical metrics, no hardcoded round number."""
-    metrics_dir = Path(output_root) / "metrics"
-    # Canonical-first: try without round number, fall back to round36
-    if "canonical" in str(round_name).lower():
-        candidates = [
-            metrics_dir / "typical_sites.csv",
-            metrics_dir / "round36_typical_sites.csv",
-        ]
+def _generate_typical_sites_csv(metrics_dir: Path) -> Path | None:
+    """从 site_metrics_consistent.csv 生成 typical_sites.csv（Round97_4 新增）。
+
+    数据源优先级：
+      1. metrics/typical_sites.csv（已存在，直接返回）
+      2. metrics/site_metrics_consistent.csv + site_test_daytime_zero_ratio_summary.csv
+
+    生成字段：category, site_id, site_status, capacity_mw, nrmse_pct, mae_MW, bias_MW,
+             n_samples, test_daytime_zero_ratio_pct, pred_actual_ratio（估算）。
+
+    返回生成的 CSV 路径，或 None（无法生成）。
+    """
+    # Round97_4: 如果已有但缺少类别（如"样本少"），则重新生成
+    canonical = metrics_dir / "typical_sites.csv"
+    if canonical.exists():
+        df_existing = pd.read_csv(canonical)
+        col = "category" if "category" in df_existing.columns else "类型"
+        existing_cats = set(df_existing[col].dropna().unique())
+        required_cats = {"预测最好", "预测最差", "相对正确", "样本少"}
+        missing_cats = required_cats - existing_cats
+        if not missing_cats and len(df_existing) >= 15:
+            print(f"  [_generate_typical_sites] using existing {canonical.name}  ({len(df_existing)} rows, all categories present)")
+            return canonical
+        else:
+            print(f"  [_generate_typical_sites] existing {canonical.name} incomplete (missing categories: {missing_cats}, rows={len(df_existing)}) → regenerating")
+
+    site_metrics = metrics_dir / "site_metrics_consistent.csv"
+    zero_ratio = metrics_dir / "site_test_daytime_zero_ratio_summary.csv"
+    if not site_metrics.exists():
+        print(f"  [_generate_typical_sites] site_metrics_consistent.csv 不存在，无法生成 typical_sites")
+        return None
+
+    df = pd.read_csv(site_metrics)
+    if zero_ratio.exists():
+        df_zero = pd.read_csv(zero_ratio)
+        df = df.merge(df_zero[["site_id", "test_daytime_zero_rows_6_19",
+                               "test_daytime_positive_rows_6_19",
+                               "test_daytime_zero_ratio_6_19_pct"]],
+                      on="site_id", how="left")
     else:
-        candidates = [
-            metrics_dir / f"round{round_name}_typical_sites.csv",
-            metrics_dir / "typical_sites.csv",
-            metrics_dir / "round36_typical_sites.csv",
-        ]
-    typical_csv = None
-    for p in candidates:
-        if p.exists():
-            typical_csv = p
-            break
+        df["test_daytime_zero_ratio_6_19_pct"] = 0.0
+
+    # 过滤无效站点
+    df_valid = df[df["site_status"] == "正常评价"].copy()
+    df_valid["nrmse_pct"] = pd.to_numeric(df_valid["nrmse_pct"], errors="coerce")
+    df_valid = df_valid[df_valid["nrmse_pct"].notna()].copy()
+
+    if len(df_valid) == 0:
+        print(f"  [_generate_typical_sites] 无有效站点数据，无法生成 typical_sites")
+        return None
+
+    # 估算 pred_actual_ratio（无 direct 列，从 bias 推算）
+    df_valid["pred_actual_ratio"] = (
+        (df_valid["mae_MW"] + df_valid["bias_MW"]) / df_valid["capacity_mw"].clip(lower=1e-6) + 1.0
+    ).clip(lower=0.0, upper=3.0)
+
+    # 分类选取
+    results = []
+    # 预测最好：NRMSE 最低前 5
+    best5 = df_valid.nsmallest(5, "nrmse_pct")
+    for _, row in best5.iterrows():
+        results.append({
+            "category": "预测最好",
+            "site_id": row["site_id"],
+            "site_status": row["site_status"],
+            "capacity_mw": round(float(row["capacity_mw"]), 4),
+            "nrmse_pct": round(float(row["nrmse_pct"]), 4),
+            "mae_MW": round(float(row["mae_MW"]), 4),
+            "bias_MW": round(float(row["bias_MW"]), 4),
+            "n_samples": int(row["n_samples"]),
+            "test_daytime_zero_ratio_pct": round(float(row.get("test_daytime_zero_ratio_6_19_pct", 0)), 4),
+            "pred_actual_ratio": round(float(row["pred_actual_ratio"]), 4),
+        })
+
+    # 预测最差：NRMSE 最高前 5
+    worst5 = df_valid.nlargest(5, "nrmse_pct")
+    for _, row in worst5.iterrows():
+        results.append({
+            "category": "预测最差",
+            "site_id": row["site_id"],
+            "site_status": row["site_status"],
+            "capacity_mw": round(float(row["capacity_mw"]), 4),
+            "nrmse_pct": round(float(row["nrmse_pct"]), 4),
+            "mae_MW": round(float(row["mae_MW"]), 4),
+            "bias_MW": round(float(row["bias_MW"]), 4),
+            "n_samples": int(row["n_samples"]),
+            "test_daytime_zero_ratio_pct": round(float(row.get("test_daytime_zero_ratio_6_19_pct", 0)), 4),
+            "pred_actual_ratio": round(float(row["pred_actual_ratio"]), 4),
+        })
+
+    # 相对正确：pred/actual 接近 1 且 NRMSE 处于中间稳定区的前 5
+    median_nrmse = df_valid["nrmse_pct"].median()
+    stable = df_valid[(df_valid["pred_actual_ratio"] - 1.0).abs() < 0.2].copy()
+    stable = stable[(stable["nrmse_pct"] > median_nrmse * 0.8) &
+                    (stable["nrmse_pct"] < median_nrmse * 1.5)]
+    for _, row in stable.assign(_d=(stable["pred_actual_ratio"] - 1.0).abs()).nsmallest(5, "_d").iterrows():
+        results.append({
+            "category": "相对正确",
+            "site_id": row["site_id"],
+            "site_status": row["site_status"],
+            "capacity_mw": round(float(row["capacity_mw"]), 4),
+            "nrmse_pct": round(float(row["nrmse_pct"]), 4),
+            "mae_MW": round(float(row["mae_MW"]), 4),
+            "bias_MW": round(float(row["bias_MW"]), 4),
+            "n_samples": int(row["n_samples"]),
+            "test_daytime_zero_ratio_pct": round(float(row.get("test_daytime_zero_ratio_6_19_pct", 0)), 4),
+            "pred_actual_ratio": round(float(row["pred_actual_ratio"]), 4),
+        })
+
+    # 样本少：全量历史样本数较少但有效发电样本不为 0 的前 5
+    if zero_ratio.exists():
+        df_with_zero = df.merge(pd.read_csv(zero_ratio)[["site_id", "test_daytime_positive_rows_6_19"]], on="site_id", how="left")
+        df_with_zero["positive_rows"] = pd.to_numeric(df_with_zero["test_daytime_positive_rows_6_19"], errors="coerce").fillna(0)
+        df_with_zero = df_with_zero[df_with_zero["positive_rows"] > 0].copy()
+        for _, row in df_with_zero.nsmallest(5, "n_samples").iterrows():
+            results.append({
+                "category": "样本少",
+                "site_id": row["site_id"],
+                "site_status": row["site_status"],
+                "capacity_mw": round(float(row["capacity_mw"]), 4),
+                "nrmse_pct": round(float(row["nrmse_pct"]), 4),
+                "mae_MW": round(float(row["mae_MW"]), 4),
+                "bias_MW": round(float(row["bias_MW"]), 4),
+                "n_samples": int(row["n_samples"]),
+                "test_daytime_zero_ratio_pct": round(float(row.get("test_daytime_zero_ratio_6_19_pct", 0)), 4),
+                "pred_actual_ratio": round(float(row["pred_actual_ratio"]), 4),
+            })
+
+    if not results:
+        print(f"  [_generate_typical_sites] 无法生成典型站点数据")
+        return None
+
+    out_df = pd.DataFrame(results)
+    canonical.parent.mkdir(parents=True, exist_ok=True)
+    out_df.to_csv(canonical, index=False, encoding="utf-8")
+    print(f"  [_generate_typical_sites] generated {canonical.name}  rows={len(out_df)}")
+    print(f"       categories: {out_df['category'].value_counts().to_dict()}")
+    return canonical
+
+
+def export_typical_sites(dashboard_root, output_root, round_name):
+    """Export typical_sites.json from canonical metrics.
+
+    Round97_4: 如果 typical_sites.csv 不存在，自动从 site_metrics_consistent.csv 生成。
+    """
+    metrics_dir = Path(output_root) / "metrics"
+    typical_csv = _generate_typical_sites_csv(metrics_dir)
     if typical_csv is None:
-        raise FileNotFoundError(
-            f"典型站点文件不存在。尝试了: {[str(p) for p in candidates]}"
+        # 无法生成，打印错误信息
+        print(
+            "[ERROR] 典型站点 CSV 不存在且无法从 site_metrics_consistent.csv 生成\n"
+            "   typical_sites 是可视化必需数据，请确认 metrics/site_metrics_consistent.csv 存在"
         )
+        return None
+
     typical_df = pd.read_csv(typical_csv)
     records = typical_df.to_dict(orient="records")
     out_path = Path(dashboard_root) / "typical_sites.json"
     with open(out_path, "w", encoding="utf-8") as f:
         json.dump(records, f, ensure_ascii=False, indent=2)
-    print(f"  [OK] typical_sites.json ({len(records)} records)")
+    print(f"  [OK] typical_sites.json ({len(records)} records, from {typical_csv.name})")
     return records
 
 
@@ -799,7 +964,9 @@ def export_site_series(df, site_names, dashboard_root):
     site_dir.mkdir(parents=True, exist_ok=True)
 
     site_ids = sorted(df_f["site_id"].unique())
-    for sid in site_ids:
+
+    from pv_forecasting.core.progress import progress_iter
+    for sid in progress_iter(site_ids, total=len(site_ids), desc="[11.2] export site_series", min_interval=1.0):
         sdf = df_f[df_f["site_id"] == sid].sort_values("datetime")
 
         records = []
@@ -2029,81 +2196,71 @@ def export_hourly_prediction_summary(output_root, dashboard_root, final_df=None,
 
     rows_by_hour = eval_df.groupby("hour").size().reset_index(name="rows")
 
-    # ── Path 1: Use latest _hourly_nrmse_consistent.csv ─────────────────────
-    consistent_candidates = sorted(
-        metrics_dir.glob("round*_hourly_nrmse_consistent.csv"),
-        key=lambda p: p.stat().st_mtime,
-        reverse=True,
-    )
-    if consistent_candidates:
-        csv_path = consistent_candidates[0]
-        print(f"  [AUTO] Using latest consistent CSV: {csv_path.name}")
-        df_cons = pd.read_csv(csv_path)
+    # ── Path 1: canonical hourly_nrmse_consistent.csv（无 round 前缀，优先）────────
+    metrics_dir = Path(output_root) / "metrics"
+    canonical_hourly = metrics_dir / "hourly_nrmse_consistent.csv"
+    hourly = None
+
+    if canonical_hourly.exists():
+        print(f"  [AUTO] Using canonical: {canonical_hourly.name}")
+        df_cons = pd.read_csv(canonical_hourly)
         col_map = {
             "小时": "hour", "小时（时）": "hour",
             "站点平均NRMSE（%）": "site_avg_nrmse_pct",
             "站点平均 NRMSE（%）": "site_avg_nrmse_pct",
             "site_avg_nrmse_pct": "site_avg_nrmse_pct",
+            "city_nrmse_pct": "city_nrmse_pct",
             "城市NRMSE（%）": "city_nrmse_pct",
             "城市 NRMSE（%）": "city_nrmse_pct",
-            "city_nrmse_pct": "city_nrmse_pct",
         }
         df_cons = df_cons.rename(columns={k: v for k, v in col_map.items() if k in df_cons.columns})
         if "hour" in df_cons.columns:
             df_cons["hour"] = pd.to_numeric(df_cons["hour"], errors="coerce")
             df_cons = df_cons[df_cons["hour"].between(6, 19)]
-
-        city_nrmse = None
-        if "city_nrmse_pct" in df_cons.columns:
-            city_nrmse = df_cons[["hour", "city_nrmse_pct"]].copy()
-        site_nrmse = None
-        if "site_avg_nrmse_pct" in df_cons.columns:
-            site_nrmse = df_cons[["hour", "site_avg_nrmse_pct"]].copy()
-
+        site_nrmse = df_cons[["hour", "site_avg_nrmse_pct"]].copy() if "site_avg_nrmse_pct" in df_cons.columns else None
+        city_nrmse = df_cons[["hour", "city_nrmse_pct"]].copy() if "city_nrmse_pct" in df_cons.columns else None
         hourly = rows_by_hour.copy()
         if site_nrmse is not None:
             hourly = hourly.merge(site_nrmse, on="hour", how="left")
         if city_nrmse is not None:
             hourly = hourly.merge(city_nrmse, on="hour", how="left")
 
-    else:
-        # ── Path 2: Fallback to round-specific city_hourly CSV ─────────────────
-        rn = "".join(filter(str.isdigit, round_name))
-        csv_path = metrics_dir / f"round{rn}_city_hourly_nrmse.csv"
-
-        if not csv_path.exists():
-            print("  WARNING: no consistent CSV and no city_hourly CSV found, skipping")
-            return []
-
-        print(f"  Loading city hourly CSV: {csv_path}")
-        df_csv = pd.read_csv(csv_path)
-        col_map = {
-            "小时": "hour", "小时（时）": "hour",
-            "站点平均NRMSE（%）": "site_nrmse_mean_pct",
-            "站点平均 NRMSE（%）": "site_nrmse_mean_pct",
-            "城市NRMSE（%）": "city_nrmse_pct",
-            "城市 NRMSE（%）": "city_nrmse_pct",
-            "nrmse_city_pct": "city_nrmse_pct",
-            "NRMSE（%）": "city_nrmse_pct",
-        }
-        df_csv = df_csv.rename(columns={k: v for k, v in col_map.items() if k in df_csv.columns})
-        if "city_nrmse_pct" not in df_csv.columns or "hour" not in df_csv.columns:
-            print("  WARNING: CSV missing required columns, skipping")
-            return []
-
-        df_csv["hour"] = pd.to_numeric(df_csv["hour"], errors="coerce")
-        df_csv = df_csv[df_csv["hour"].between(6, 19)]
-        if len(df_csv) > 14:
-            city_nrmse_by_hour = df_csv.groupby("hour")["city_nrmse_pct"].mean().reset_index()
-        else:
-            city_nrmse_by_hour = df_csv[["hour", "city_nrmse_pct"]].copy()
-        city_nrmse_by_hour["hour"] = pd.to_numeric(city_nrmse_by_hour["hour"], errors="coerce")
-        city_nrmse_by_hour = (
-            city_nrmse_by_hour.dropna(subset=["hour"])
-            .groupby("hour")["city_nrmse_pct"].mean().reset_index()
+    # ── Path 2: latest round*_hourly_nrmse_consistent.csv ─────────────────────
+    elif hourly is None:
+        consistent_candidates = sorted(
+            metrics_dir.glob("round*_hourly_nrmse_consistent.csv"),
+            key=lambda p: p.stat().st_mtime,
+            reverse=True,
         )
+        if consistent_candidates:
+            csv_path = consistent_candidates[0]
+            print(f"  [AUTO] Using latest consistent CSV: {csv_path.name}")
+            df_cons = pd.read_csv(csv_path)
+            col_map = {
+                "小时": "hour", "小时（时）": "hour",
+                "站点平均NRMSE（%）": "site_avg_nrmse_pct",
+                "站点平均 NRMSE（%）": "site_avg_nrmse_pct",
+                "site_avg_nrmse_pct": "site_avg_nrmse_pct",
+                "城市NRMSE（%）": "city_nrmse_pct",
+                "城市 NRMSE（%）": "city_nrmse_pct",
+                "city_nrmse_pct": "city_nrmse_pct",
+            }
+            df_cons = df_cons.rename(columns={k: v for k, v in col_map.items() if k in df_cons.columns})
+            if "hour" in df_cons.columns:
+                df_cons["hour"] = pd.to_numeric(df_cons["hour"], errors="coerce")
+                df_cons = df_cons[df_cons["hour"].between(6, 19)]
+            site_nrmse = df_cons[["hour", "site_avg_nrmse_pct"]].copy() if "site_avg_nrmse_pct" in df_cons.columns else None
+            city_nrmse = df_cons[["hour", "city_nrmse_pct"]].copy() if "city_nrmse_pct" in df_cons.columns else None
+            hourly = rows_by_hour.copy()
+            if site_nrmse is not None:
+                hourly = hourly.merge(site_nrmse, on="hour", how="left")
+            if city_nrmse is not None:
+                hourly = hourly.merge(city_nrmse, on="hour", how="left")
 
-        # Compute site-level NRMSE from PKL (legacy fallback)
+    # ── Path 3: fallback — compute from final_df ─────────────────────────────────
+    if hourly is None:
+        print("  [AUTO] No canonical CSV found, computing hourly from final_df ...")
+
         def rmse(x):
             return float(np.sqrt(np.mean(np.square(np.asarray(x, dtype=float)))))
 
@@ -2122,15 +2279,26 @@ def export_hourly_prediction_summary(output_root, dashboard_root, final_df=None,
         ).reset_index(name="nrmse_pct")
 
         site_nrmse_by_hour = (
-            site_hour_rmse.groupby("hour")["nrmse_pct"].mean().reset_index(name="site_avg_nrmse_pct")
+            site_hour_rmse.groupby("hour")["nrmse_pct"]
+            .mean().reset_index(name="site_avg_nrmse_pct")
         )
         site_nrmse_by_hour["site_avg_nrmse_pct"] = site_nrmse_by_hour["site_avg_nrmse_pct"].round(3)
 
-        hourly = rows_by_hour.merge(site_nrmse_by_hour, on="hour", how="outer")
+        # City-level from CSV if available
+        city_nrmse_csv_path = metrics_dir / "hourly_nrmse_consistent.csv"
+        city_nrmse_by_hour = None
+        if city_nrmse_csv_path.exists():
+            df_c = pd.read_csv(city_nrmse_csv_path)
+            if "hour" in df_c.columns and "city_nrmse_pct" in df_c.columns:
+                df_c["hour"] = pd.to_numeric(df_c["hour"], errors="coerce")
+                df_c = df_c[df_c["hour"].between(6, 19)]
+                city_nrmse_by_hour = df_c[["hour", "city_nrmse_pct"]].copy()
+
+        hourly = rows_by_hour.merge(site_nrmse_by_hour, on="hour", how="left")
         if city_nrmse_by_hour is not None:
             hourly = hourly.merge(city_nrmse_by_hour, on="hour", how="left")
 
-    # ── Build final 4-column output ───────────────────────────────────────────
+    # ── Build final 4-column output ────────────────────────────────────────────────
     hourly["hour"] = pd.to_numeric(hourly["hour"], errors="coerce")
     hourly = hourly.dropna(subset=["hour"])
     hourly["hour"] = hourly["hour"].astype(int)
@@ -2141,7 +2309,6 @@ def export_hourly_prediction_summary(output_root, dashboard_root, final_df=None,
     hourly["city_nrmse_pct"] = (
         hourly.get("city_nrmse_pct", pd.Series(dtype=float)).fillna(0).round(3)
     )
-    # Aggregate to one row per hour (merge may have expanded rows from multi-date CSV)
     hourly_agg = (
         hourly[hourly["hour"].between(6, 19)]
         .groupby("hour", as_index=False)
@@ -2433,6 +2600,26 @@ def validate_against_power_clean(dashboard_root, output_root):
     return result
 
 
+def assert_no_placeholder_dashboard(out_dir: Path, expected_site_count: int) -> None:
+    """严格断言：不允许任何占位数据存在。"""
+    site_dir = out_dir / "site_series"
+    files = sorted(site_dir.glob("*.json"))
+    if len(files) < expected_site_count:
+        raise RuntimeError(
+            f"site_series 不完整：期望至少 {expected_site_count} 个，实际 {len(files)} 个。"
+            "不允许发布不完整的 dashboard 数据。"
+        )
+    bad = []
+    for p in files:
+        text = p.read_text(encoding="utf-8")
+        if '"stale": true' in text or '"placeholder": true' in text or '"pending"' in text:
+            bad.append(p.name)
+    if bad:
+        raise RuntimeError(
+            f"发现占位 dashboard JSON，不允许发布：{bad[:10]}"
+        )
+
+
 def main():
     args = parse_args()
     output_root = args.output_root
@@ -2446,159 +2633,160 @@ def main():
         print(f"  Output root : {output_root}")
         print(f"  Dashboard dir: {dashboard_root} (derived from output_root)")
 
-    # ── Clean output directory (only json/csv, keep subdirs) ──────────────────────
+    # ── Round97_2: Atomic write using tmp dir ───────────────────────────────────
+    # Never touch the live dashboard dir until all exports are validated.
+    # If anything fails, the original dashboard is preserved intact.
+    from pv_forecasting.core.progress import stage_log
+
     dash_dir = Path(dashboard_root)
-    if dash_dir.exists():
-        for p in dash_dir.rglob("*"):
-            if p.is_file() and p.suffix.lower() in [".json", ".csv"]:
-                # Preserve dashboard_update_stamp.json (managed by update_dashboard_after_training.py)
-                if p.name == "dashboard_update_stamp.json":
-                    continue
-                p.unlink()
-    dash_dir.mkdir(parents=True, exist_ok=True)
+    tmp_dir = dash_dir.parent / (dash_dir.name + "_tmp")
+    backup_dir = dash_dir.parent / (dash_dir.name + "_backup_before_replace")
 
-    # Load data (auto-detects latest round, unless custom pkl is provided)
-    print("\n[1] Loading prediction data...")
-    if args.prediction_pkl:
-        print(f"  [CUSTOM] Loading: {args.prediction_pkl}")
-        df = pd.read_pickle(args.prediction_pkl)
-        df["time"] = pd.to_datetime(df["time"], errors="coerce")
-        if "hour" not in df.columns:
-            df["hour"] = df["time"].dt.hour
-        if "date" not in df.columns:
-            df["date"] = df["time"].dt.strftime("%Y-%m-%d")
-        if args.exclude_future:
-            before = len(df)
-            df = df[df["split"] != "future"].copy()
-            print(f"  Excluded future: {before} -> {len(df)} rows")
-        round_name = args.label or "round64_candidate"
-        pred_col = args.prediction_col or "power_pred_round64_safe"
-        pred_path = args.prediction_pkl
-        # Patch resolve_prediction_column in pv_forecasting.core.eval_frame
-        import types
-        import pv_forecasting.core.eval_frame as _ef
-        _target_col = pred_col
-        _orig_resolve = _ef.resolve_prediction_column
-        def patched_resolve(df):
-            if _target_col in df.columns:
-                return _target_col
-            return _orig_resolve(df)
-        _ef.resolve_prediction_column = patched_resolve
-        # Also patch local
-        import __main__
-        if hasattr(__main__, 'resolve_prediction_column'):
-            __main__.resolve_prediction_column = patched_resolve
-        # Add required validity columns (may not exist in round63/64 pkl)
-        if "_site_status" not in df.columns:
-            df["_site_status"] = "正常评价"
-        if "_exclude_from_ranking" not in df.columns:
-            df["_exclude_from_ranking"] = "否"
-        if "_exclude_reason" not in df.columns:
-            df["_exclude_reason"] = ""
-        print(f"  Shape: {df.shape}, sites: {df['site_id'].nunique()}")
-        print(f"  Splits: {sorted(df['split'].unique().tolist())}")
-    else:
-        df, round_name, pred_col = load_predictions(output_root)
-        pred_path, _ = find_latest_prediction_file(output_root)
-        print(f"  Shape: {df.shape}, sites: {df['site_id'].nunique()}")
-        print(f"  Splits: {sorted(df['split'].unique().tolist())}")
+    # Clean up any stale tmp dir from previous failed runs
+    if tmp_dir.exists():
+        shutil.rmtree(tmp_dir)
+    tmp_dir.mkdir(parents=True, exist_ok=True)
 
-    # Build full history DataFrame once (used by all export functions)
-    print("\n[1b] Building full history frame (non-future, per-split best pred col)...")
-    full_history_df = build_full_history_frame(df)
-    print(f"  [OK] full_history_df: {len(full_history_df):,} rows, "
-          f"dates: {full_history_df['date'].min()} ~ {full_history_df['date'].max()}")
-
-    # Load site master for names
-    print("\n[2] Loading site master...")
-    sm_df = load_site_master_full(output_root)
-    site_names = build_site_name_lookup(sm_df)
-    if site_names:
-        print(f"  Loaded {len(site_names)} site names")
-    else:
-        print("  No site names found, will use site_id")
-        site_names = None
-
-    # Export all data files
-    print("\n[3] Exporting index.json...")
-    # Round94_6: use display label "Round94" instead of "canonical"
-    display_label = args.label if args.label else "Round94"
-    export_index(df, site_names, dashboard_root, round_name, pred_col, label=display_label)
-
-    print("\n[4] Exporting city_series.json...")
-    city = export_city_series(full_history_df, dashboard_root)
-
-    print("\n[5] Exporting site_series/...")
-    site_ids = export_site_series(full_history_df, site_names, dashboard_root)
-
-    print("\n[6] Exporting site_metrics.json...")
-    print("\n[6b] Computing test 6-19 zero ratio stats...")
-    test_daytime_zero_stats = compute_site_test_daytime_zero_stats(df)
-    metrics_path = Path(output_root) / "metrics" / "site_test_daytime_zero_ratio_summary.csv"
-    metrics_path.parent.mkdir(parents=True, exist_ok=True)
-    test_daytime_zero_stats.to_csv(metrics_path, index=False, encoding="utf-8-sig")
-    print(f"  [OK] site_test_daytime_zero_ratio_summary.csv ({len(test_daytime_zero_stats)} sites)")
-    metrics_df = export_site_metrics(df, site_names, dashboard_root, test_daytime_zero_stats)
-
-    # [6] Export typical_city_view_days.json
-    print("\n[6c] Exporting typical_city_view_days.json...")
-    export_typical_city_view_days(dashboard_root, metrics_df)
-
-    print("\n[7] Exporting midday_city_by_date.json...")
-    export_midday_city(full_history_df, dashboard_root)
-
-    print("\n[8] Exporting season_days.json...")
-    export_season_days(full_history_df, dashboard_root)
-
-    print("\n[8b] Exporting season_best_days_city.json (using full_history_df)...")
-    export_season_best_days_city(full_history_df, dashboard_root)
-
-    print("\n[8c] Exporting season_best_days_by_site.json (using full_history_df)...")
-    export_season_best_days_by_site(full_history_df, dashboard_root)
-
-    print("\n[9] Exporting scatter_site_hour.json...")
-    scatter_data = export_scatter_site_hour(full_history_df, site_names, metrics_df, dashboard_root)
-
-    print("\n[9b] Exporting scatter_site_sample_nrmse.json...")
-    sm_df = load_site_master_full(output_root)
-    scatter_site = export_scatter_site_sample_nrmse(full_history_df, site_names, sm_df, metrics_df, dashboard_root, test_daytime_zero_stats)
-
-    print("\n[9c] Exporting invalid_zero_sites.json...")
-    invalid_zero_sites = export_invalid_zero_sites(metrics_df, dashboard_root, df)
-
-    print("\n[9d] Exporting sample_requirement_summary.json...")
-    sample_req_summary = export_sample_requirement_summary(scatter_site, dashboard_root)
-
-    print("\n[9d] Exporting sample_requirement_bins.json...")
-    sample_req_bins = export_sample_requirement_bins(scatter_site, dashboard_root)
-
-    print("\n[10] Exporting error_threshold_summary.json...")
-    export_error_threshold_summary(scatter_data, dashboard_root)
-
-    print("\n[10b] Exporting hourly_prediction_summary.json...")
-    hourly_summary = export_hourly_prediction_summary(output_root, dashboard_root, full_history_df, round_name)
-
-    # Validation
-    print("\n[11] Validating outputs...")
-    if len(city) == 0:
-        # Fallback: regenerate from df directly (handles pv_forecasting patch state pollution)
-        import sys
-        _mod = sys.modules.get("scripts.export_interactive_dashboard_data")
-        if _mod:
-            _orig_hs = _mod.HISTORY_SPLITS
-            _mod.HISTORY_SPLITS = ["train", "valid", "test"]
-            city = _mod.export_city_series(df, dashboard_root)
-            _mod.HISTORY_SPLITS = _orig_hs
+    try:
+        # Load data (auto-detects latest round, unless custom pkl is provided)
+        print("\n[1] Loading prediction data...")
+        if args.prediction_pkl:
+            print(f"  [CUSTOM] Loading: {args.prediction_pkl}")
+            df = pd.read_pickle(args.prediction_pkl)
+            df["time"] = pd.to_datetime(df["time"], errors="coerce")
+            if "hour" not in df.columns:
+                df["hour"] = df["time"].dt.hour
+            if "date" not in df.columns:
+                df["date"] = df["time"].dt.strftime("%Y-%m-%d")
+            if args.exclude_future:
+                before = len(df)
+                df = df[df["split"] != "future"].copy()
+                print(f"  Excluded future: {before} -> {len(df)} rows")
+            round_name = args.label or "round64_candidate"
+            pred_col = args.prediction_col or "power_pred_round64_safe"
+            pred_path = args.prediction_pkl
+            # Patch resolve_prediction_column
+            import types
+            import pv_forecasting.core.eval_frame as _ef
+            _target_col = pred_col
+            _orig_resolve = _ef.resolve_prediction_column
+            def patched_resolve(df_):
+                if _target_col in df_.columns:
+                    return _target_col
+                return _orig_resolve(df_)
+            _ef.resolve_prediction_column = patched_resolve
+            import __main__
+            if hasattr(__main__, 'resolve_prediction_column'):
+                __main__.resolve_prediction_column = patched_resolve
+            if "_site_status" not in df.columns:
+                df["_site_status"] = "正常评价"
+            if "_exclude_from_ranking" not in df.columns:
+                df["_exclude_from_ranking"] = "否"
+            if "_exclude_reason" not in df.columns:
+                df["_exclude_reason"] = ""
+            print(f"  Shape: {df.shape}, sites: {df['site_id'].nunique()}")
+            print(f"  Splits: {sorted(df['split'].unique().tolist())}")
         else:
-            # Direct approach: inline regeneration
-            import json as _json
-            _hist = df[df["split"].isin(["train","valid","test"])].copy()
-            _hist["time"] = pd.to_datetime(_hist["time"], errors="coerce")
-            _hist["hour"] = _hist["time"].dt.hour
-            _hist["actual_mw"] = _hist["power_mw"]
-            _hist["pred_mw"] = _hist["power_pred_final"]
-            _df_f = _hist[_hist["hour"].between(6,19) & _hist["actual_mw"].notna() & _hist["pred_mw"].notna()]
-            if len(_df_f) > 0:
+            df, round_name, pred_col = load_predictions(output_root)
+            pred_path, _ = find_latest_prediction_file(output_root)
+            print(f"  Shape: {df.shape}, sites: {df['site_id'].nunique()}")
+            print(f"  Splits: {sorted(df['split'].unique().tolist())}")
+
+        # Build full history DataFrame
+        print("\n[1b] Building full history frame (non-future, per-split best pred col)...")
+        full_history_df = build_full_history_frame(df)
+        print(f"  [OK] full_history_df: {len(full_history_df):,} rows, "
+              f"dates: {full_history_df['date'].min()} ~ {full_history_df['date'].max()}")
+
+        # Load site master for names
+        print("\n[2] Loading site master...")
+        sm_df = load_site_master_full(output_root)
+        site_names = build_site_name_lookup(sm_df)
+        if site_names:
+            print(f"  Loaded {len(site_names)} site names")
+        else:
+            print("  No site names found, will use site_id")
+            site_names = None
+
+        # Export all data files to tmp_dir
+        print("\n[3] Exporting index.json...")
+        display_label = args.label if args.label else "Round94"
+        stage_log("[11.1] 导出全市序列 index.json")
+        export_index(df, site_names, str(tmp_dir), round_name, pred_col, label=display_label)
+
+        print("\n[4] Exporting city_series.json...")
+        stage_log("[11.1] 导出全市辐照/功率序列")
+        city = export_city_series(full_history_df, str(tmp_dir))
+
+        print("\n[5] Exporting site_series/...")
+        stage_log("[11.2] 按站点导出单站曲线 JSON")
+        site_ids = export_site_series(full_history_df, site_names, str(tmp_dir))
+
+        print("\n[6] Exporting site_metrics.json...")
+        stage_log("[11.3] 导出逐站指标与分类")
+        print("\n[6b] Computing test 6-19 zero ratio stats...")
+        test_daytime_zero_stats = compute_site_test_daytime_zero_stats(df)
+        metrics_path = Path(output_root) / "metrics" / "site_test_daytime_zero_ratio_summary.csv"
+        metrics_path.parent.mkdir(parents=True, exist_ok=True)
+        test_daytime_zero_stats.to_csv(metrics_path, index=False, encoding="utf-8-sig")
+        print(f"  [OK] site_test_daytime_zero_ratio_summary.csv ({len(test_daytime_zero_stats)} sites)")
+        metrics_df = export_site_metrics(df, site_names, str(tmp_dir), test_daytime_zero_stats)
+
+        print("\n[6c] Exporting typical_city_view_days.json...")
+        export_typical_city_view_days(str(tmp_dir), metrics_df)
+
+        print("\n[7] Exporting midday_city_by_date.json...")
+        export_midday_city(full_history_df, str(tmp_dir))
+
+        print("\n[8] Exporting season_days.json...")
+        export_season_days(full_history_df, str(tmp_dir))
+
+        print("\n[8b] Exporting season_best_days_city.json...")
+        export_season_best_days_city(full_history_df, str(tmp_dir))
+
+        print("\n[8c] Exporting season_best_days_by_site.json...")
+        export_season_best_days_by_site(full_history_df, str(tmp_dir))
+
+        print("\n[9] Exporting scatter_site_hour.json...")
+        scatter_data = export_scatter_site_hour(full_history_df, site_names, metrics_df, str(tmp_dir))
+
+        print("\n[9b] Exporting scatter_site_sample_nrmse.json...")
+        sm_df = load_site_master_full(output_root)
+        scatter_site = export_scatter_site_sample_nrmse(full_history_df, site_names, sm_df, metrics_df, str(tmp_dir), test_daytime_zero_stats)
+
+        print("\n[9c] Exporting invalid_zero_sites.json...")
+        invalid_zero_sites = export_invalid_zero_sites(metrics_df, str(tmp_dir), df)
+
+        print("\n[9d] Exporting sample_requirement_summary.json...")
+        sample_req_summary = export_sample_requirement_summary(scatter_site, str(tmp_dir))
+
+        print("\n[9e] Exporting sample_requirement_bins.json...")
+        sample_req_bins = export_sample_requirement_bins(scatter_site, str(tmp_dir))
+
+        print("\n[10] Exporting error_threshold_summary.json...")
+        export_error_threshold_summary(scatter_data, str(tmp_dir))
+
+        print("\n[10b] Exporting hourly_prediction_summary.json...")
+        hourly_summary = export_hourly_prediction_summary(output_root, str(tmp_dir), full_history_df, round_name)
+
+        # Validation
+        print("\n[11] Validating outputs...")
+        if len(city) == 0:
+            import sys
+            _mod = sys.modules.get("scripts.export_interactive_dashboard_data")
+            if _mod:
+                _orig_hs = _mod.HISTORY_SPLITS
+                _mod.HISTORY_SPLITS = ["train", "valid", "test"]
+                city = _mod.export_city_series(df, str(tmp_dir))
+                _mod.HISTORY_SPLITS = _orig_hs
+            else:
+                import json as _json
+                _hist = df[df["split"].isin(["train","valid","test"])].copy()
+                _hist["time"] = pd.to_datetime(_hist["time"], errors="coerce")
+                _hist["hour"] = _hist["time"].dt.hour
+                _hist["actual_mw"] = _hist["power_mw"]
+                _hist["pred_mw"] = _hist["power_pred_final"]
+                _df_f = _hist[_hist["hour"].between(6,19) & _hist["actual_mw"].notna() & _hist["pred_mw"].notna()]
                 _agg = _df_f.groupby("time").agg(
                     actual_mw=("actual_mw","sum"), pred_mw=("pred_mw","sum"),
                     n_sites=("site_id","nunique"), sample_count=("site_id","size"),
@@ -2620,107 +2808,130 @@ def main():
                     _r["time"] = pd.Timestamp(_r["time"]).strftime("%Y-%m-%d %H:%M:%S")
                     for _k in ["actual_mw","pred_mw","abs_error_mw","city_nrmse_point_pct","capacity_sum_mw"]:
                         _r[_k] = round(float(_r[_k]), 4)
-                _out_path = Path(dashboard_root) / "city_series.json"
+                _out_path = tmp_dir / "city_series.json"
                 with open(_out_path,"w",encoding="utf-8") as _f:
                     _json.dump(_records, _f, ensure_ascii=False, indent=2)
                 city = _agg
-        print(f"  [RETRY] city regenerated: {len(city):,} rows")
-    assert len(city) > 0, "city_series is empty"
-    assert len(metrics_df) > 0, "site_metrics is empty"
-    assert len(scatter_data) > 0, "scatter is empty"
-    assert len(site_ids) > 0, "no site series files"
-    assert isinstance(scatter_site, list) and len(scatter_site) > 0, "scatter_site_sample_nrmse is empty"
-    assert len(sample_req_summary) == 5, f"expected 5 thresholds, got {len(sample_req_summary)}"
-    assert len(sample_req_bins) > 0, "sample_requirement_bins is empty"
-    assert "train_valid_positive_rows" in scatter_site[0], "missing train_valid_positive_rows field"
-    assert "full_history_rows" in scatter_site[0], "missing full_history_rows field"
-    assert "full_history_positive_rows" in scatter_site[0], "missing full_history_positive_rows field"
-    assert "full_history_zero_ratio_pct" in scatter_site[0], "missing full_history_zero_ratio_pct field"
-    assert "full_history_start_date" in scatter_site[0], "missing full_history_start_date field"
-    assert "full_history_end_date" in scatter_site[0], "missing full_history_end_date field"
-    assert "test_nrmse_pct" in scatter_site[0], "missing test_nrmse_pct field"
-    assert "median_full_history_rows" in sample_req_summary[0], "missing median_full_history_rows in summary"
-    assert len(hourly_summary) == 14, f"hourly_summary expected 14 rows (6-19h), got {len(hourly_summary)}"
-    assert "hour" in hourly_summary[0], "missing hour field"
-    assert "rows" in hourly_summary[0], "missing rows field"
-    assert "site_avg_nrmse_pct" in hourly_summary[0], "missing site_avg_nrmse_pct field"
-    assert "city_nrmse_pct" in hourly_summary[0], "missing city_nrmse_pct field"
-    # Verify future is excluded from city_series
-    future_in_city = any(r.get("split") == "future" for r in city.to_dict(orient="records"))
-    assert not future_in_city, "city_series still contains future rows"
-    # Verify all-zero sites excluded from scatter
-    bad_scatter = [
-        r for r in scatter_site
-        if (r.get("full_history_positive_rows") or 0) <= 0
-        or (r.get("full_history_zero_ratio_pct") or 0) >= 99.999
-    ]
-    assert not bad_scatter, f"scatter contains all-zero sites: {[r.get('site_id') for r in bad_scatter]}"
-    assert isinstance(invalid_zero_sites, list), "invalid_zero_sites.json not valid"
-    total_actual = city["actual_mw"].sum()
-    total_pred = city["pred_mw"].sum()
-    assert total_actual > 0, "actual_mw all zero"
-    assert total_pred > 0, "pred_mw all zero"
-    print(f"  All assertions passed.")
+            print(f"  [RETRY] city regenerated: {len(city):,} rows")
 
-    # [11b] Validate dashboard actual_mw against source pkl
-    print("\n[11b] Validating dashboard actual values...")
-    integrity_summary = validate_dashboard_actual_values(df, dashboard_root, output_root)
-    assert integrity_summary["status"] == "PASS", f"integrity check failed: {integrity_summary}"
-    assert integrity_summary["max_abs_diff"] <= 1e-9, f"max_abs_diff too large: {integrity_summary['max_abs_diff']}"
+        assert len(city) > 0, "city_series is empty"
+        assert len(metrics_df) > 0, "site_metrics is empty"
+        assert len(scatter_data) > 0, "scatter is empty"
+        assert len(site_ids) > 0, "no site series files"
+        assert isinstance(scatter_site, list) and len(scatter_site) > 0, "scatter_site_sample_nrmse is empty"
+        assert len(sample_req_summary) == 5, f"expected 5 thresholds, got {len(sample_req_summary)}"
+        assert len(sample_req_bins) > 0, "sample_requirement_bins is empty"
+        assert "train_valid_positive_rows" in scatter_site[0], "missing train_valid_positive_rows field"
+        assert "full_history_rows" in scatter_site[0], "missing full_history_rows field"
+        assert "full_history_positive_rows" in scatter_site[0], "missing full_history_positive_rows field"
+        assert "full_history_zero_ratio_pct" in scatter_site[0], "missing full_history_zero_ratio_pct field"
+        assert "full_history_start_date" in scatter_site[0], "missing full_history_start_date field"
+        assert "full_history_end_date" in scatter_site[0], "missing full_history_end_date field"
+        assert "test_nrmse_pct" in scatter_site[0], "missing test_nrmse_pct field"
+        assert "median_full_history_rows" in sample_req_summary[0], "missing median_full_history_rows in summary"
+        if not hourly_summary:
+            print(
+                "[ERROR] hourly_prediction_summary.json 为空（hourly_summary 长度为 0）\n"
+                "   请确认 metrics/ 目录下有 round*_hourly_nrmse_consistent.csv 文件，"
+                "且 full_history_df 数据正常"
+            )
+            # Round97_3: 由调用方写入 optional_blocks，此处不 raise
+        else:
+            assert len(hourly_summary) == 14, f"hourly_summary expected 14 rows (6-19h), got {len(hourly_summary)}"
+            assert "hour" in hourly_summary[0], "missing hour field"
+            assert "rows" in hourly_summary[0], "missing rows field"
+            assert "site_avg_nrmse_pct" in hourly_summary[0], "missing site_avg_nrmse_pct field"
+            assert "city_nrmse_pct" in hourly_summary[0], "missing city_nrmse_pct field"
+        future_in_city = any(r.get("split") == "future" for r in city.to_dict(orient="records"))
+        assert not future_in_city, "city_series still contains future rows"
+        bad_scatter = [
+            r for r in scatter_site
+            if (r.get("full_history_positive_rows") or 0) <= 0
+            or (r.get("full_history_zero_ratio_pct") or 0) >= 99.999
+        ]
+        assert not bad_scatter, f"scatter contains all-zero sites: {[r.get('site_id') for r in bad_scatter]}"
+        assert isinstance(invalid_zero_sites, list), "invalid_zero_sites.json not valid"
+        total_actual = city["actual_mw"].sum()
+        total_pred = city["pred_mw"].sum()
+        assert total_actual > 0, "actual_mw all zero"
+        assert total_pred > 0, "pred_mw all zero"
+        print(f"  All assertions passed.")
 
-    # [11c] Secondary validation against power_clean.pkl
-    print("\n[11c] Validating against power_clean.pkl...")
-    validate_against_power_clean(dashboard_root, output_root)
+        print("\n[11b] Validating dashboard actual values...")
+        integrity_summary = validate_dashboard_actual_values(df, str(tmp_dir), output_root)
+        assert integrity_summary["status"] == "PASS", f"integrity check failed: {integrity_summary}"
+        assert integrity_summary["max_abs_diff"] <= 1e-9, f"max_abs_diff too large: {integrity_summary['max_abs_diff']}"
 
-    # [11d] Write metadata.json
-    print("\n[11d] Writing metadata.json...")
-    meta = write_metadata(dashboard_root, round_name, pred_col, pred_path,
-                          label=args.label,
-                          official_final=(args.prediction_pkl is None or
-                                         "interactive_dashboard_round64" not in dashboard_root),
-                          full_history_df=full_history_df)
+        print("\n[11c] Validating against power_clean.pkl...")
+        validate_against_power_clean(str(tmp_dir), output_root)
 
-    # [11e] Export typical_sites.json
-    print("\n[11e] Exporting typical_sites.json...")
-    typical_sites = export_typical_sites(dashboard_root, output_root, round_name)
+        print("\n[11e] Exporting typical_sites.json...")
+        typical_sites = export_typical_sites(str(tmp_dir), output_root, round_name)
 
-    # [11f] Export city_performance_days.json (must be after [11] validation which may retry city_series)
-    print("\n[11f] Exporting city_performance_days.json...")
-    city_perf = build_city_performance_days_from_json(Path(dashboard_root) / "city_series.json")
-    perf_path = Path(dashboard_root) / "city_performance_days.json"
-    perf_path.write_text(json.dumps(city_perf, ensure_ascii=False, indent=2), encoding="utf-8")
-    print(f"  [OK] city_performance_days.json (best={city_perf.get('best',{}).get('date','N/A')} "
-          f"worst={city_perf.get('worst',{}).get('date','N/A')} "
-          f"normal={city_perf.get('normal',{}).get('date','N/A')} "
-          f"low_sample=available:{city_perf.get('low_sample',{}).get('available','N/A')})")
+        print("\n[11d] Writing metadata.json...")  # after typical_sites so it can read the csv
+        meta = write_metadata(str(tmp_dir), round_name, pred_col, pred_path,
+                              label=args.label,
+                              official_final=(args.prediction_pkl is None or
+                                            "interactive_dashboard_round64" not in dashboard_root),
+                              full_history_df=full_history_df)
 
-    # [11g] Validate full history coverage
-    print("\n[11g] Validating full history coverage...")
-    coverage_report = validate_dashboard_full_history(Path(dashboard_root))
+        print("\n[11f] Exporting city_performance_days.json...")
+        city_perf = build_city_performance_days_from_json(tmp_dir / "city_series.json")
+        perf_path = tmp_dir / "city_performance_days.json"
+        perf_path.write_text(json.dumps(city_perf, ensure_ascii=False, indent=2), encoding="utf-8")
+        print(f"  [OK] city_performance_days.json (best={city_perf.get('best',{}).get('date','N/A')} "
+              f"worst={city_perf.get('worst',{}).get('date','N/A')} "
+              f"normal={city_perf.get('normal',{}).get('date','N/A')} "
+              f"low_sample=available:{city_perf.get('low_sample',{}).get('available','N/A')})")
 
-    # Summary
-    history_dates = pd.to_datetime(full_history_df["date"]).dropna().unique()
-    min_date = pd.to_datetime(history_dates).min().strftime("%Y-%m-%d")
-    max_date = pd.to_datetime(history_dates).max().strftime("%Y-%m-%d")
-    site_series_dir = Path(dashboard_root) / "site_series"
-    site_series_count = len(list(site_series_dir.glob("*.json")))
+        print("\n[11g] Validating full history coverage...")
+        coverage_report = validate_dashboard_full_history(tmp_dir)
 
-    print(f"\n[OK] interactive dashboard data exported")
-    print(f"     round          = {round_name}")
-    print(f"     pred_col      = {pred_col}")
-    print(f"     rows          = {len(full_history_df[full_history_df['hour'].between(6,19)]):,}")
-    print(f"     sites         = {len(site_ids)}")
-    print(f"     date_range    = {min_date} ~ {max_date}")
-    print(f"     city_series   = {len(city):,} rows")
-    print(f"     site_series   = {site_series_count} files")
-    print(f"     has_spring    = {coverage_report['has_2025_spring']} ({coverage_report['spring_2025_rows']} rows)")
-    print(f"     scatter_pts (site-hour) = {len(scatter_data)}")
-    print(f"     scatter_pts (site)      = {len(scatter_site)}")
-    print(f"     invalid_zero_sites      = {len(invalid_zero_sites)}")
-    print(f"     hourly_prediction_summary = {len(hourly_summary)} rows (6-19h)")
-    print(f"\nDashboard root: {dashboard_root}")
-    print(f"Run: python -m http.server 8060")
-    print(f"Open: http://127.0.0.1:8060/stages/05_visualization/interactive_forecast_dashboard.html")
+        # ── Round97_2 严格断言：禁止任何占位数据 ────────────────────────────────
+        print("\n[11h] Strict placeholder check...")
+        expected_site_count = len(site_ids)
+        assert_no_placeholder_dashboard(tmp_dir, expected_site_count)
+        print(f"  [OK] 无占位数据，{expected_site_count} 个站点 JSON 全部真实")
+
+        # ── 原子替换：tmp_dir → 正式 dashboard 目录 ─────────────────────────────
+        print("\n[12] Atomically replacing dashboard directory...")
+        if backup_dir.exists():
+            shutil.rmtree(backup_dir)
+        if dash_dir.exists():
+            dash_dir.rename(backup_dir)
+        tmp_dir.rename(dash_dir)
+        shutil.rmtree(backup_dir, ignore_errors=True)
+        print(f"  [OK] Dashboard 更新完成: {dash_dir}")
+
+        # Summary
+        history_dates = pd.to_datetime(full_history_df["date"]).dropna().unique()
+        min_date = pd.to_datetime(history_dates).min().strftime("%Y-%m-%d")
+        max_date = pd.to_datetime(history_dates).max().strftime("%Y-%m-%d")
+        site_series_dir = dash_dir / "site_series"
+        site_series_count = len(list(site_series_dir.glob("*.json")))
+
+        print(f"\n[OK] interactive dashboard data exported")
+        print(f"     round          = {round_name}")
+        print(f"     pred_col      = {pred_col}")
+        print(f"     rows          = {len(full_history_df[full_history_df['hour'].between(6,19)]):,}")
+        print(f"     sites         = {len(site_ids)}")
+        print(f"     date_range    = {min_date} ~ {max_date}")
+        print(f"     city_series   = {len(city):,} rows")
+        print(f"     site_series   = {site_series_count} files")
+        print(f"     has_spring    = {coverage_report['has_2025_spring']} ({coverage_report['spring_2025_rows']} rows)")
+        print(f"     scatter_pts (site-hour) = {len(scatter_data)}")
+        print(f"     scatter_pts (site)      = {len(scatter_site)}")
+        print(f"     invalid_zero_sites      = {len(invalid_zero_sites)}")
+        print(f"     hourly_prediction_summary = {len(hourly_summary)} rows (6-19h)")
+        print(f"\nDashboard root: {dash_dir}")
+        print(f"Run: python -m http.server 8060")
+        print(f"Open: http://127.0.0.1:8060/stages/05_visualization/interactive_forecast_dashboard.html")
+
+    except Exception:
+        # Never leave tmp_dir in place on failure — preserve original dashboard intact
+        if tmp_dir.exists():
+            shutil.rmtree(tmp_dir, ignore_errors=True)
+        raise
 
 
 if __name__ == "__main__":

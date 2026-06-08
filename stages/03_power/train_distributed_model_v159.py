@@ -44,6 +44,7 @@ if str(SRC) not in sys.path:
 from pv_forecasting.core.runtime import build_parser, make_paths
 from pv_forecasting.tasks.distributed_model import prepare_distributed_dataset, train_distributed_model
 from pv_forecasting.tasks.distributed_power_v152 import train_distributed_power_v152
+from pv_forecasting.core.progress import stage_log, progress_iter
 
 # ── 原有常量（与 v1.5.8 保持一致）───────────────────────────────
 ON_G_MIN = 90.0
@@ -248,12 +249,16 @@ def build_training_table_v159(power_clean, site_master, quality, site_irradiance
     """构建训练表 + PR重算（关键修复）"""
     from pv_forecasting.core.features import add_clear_sky_features, add_lag_features
     from pv_forecasting.core.split import add_standard_split
+    from pv_forecasting.core.progress import stage_log
 
     site_irr_aligned = site_irradiance.copy()
     site_irr_aligned['time'] = pd.to_datetime(site_irr_aligned['time']) + pd.Timedelta(hours=8)
 
+    stage_log("[6.2] 合并辐照/气象/功率数据")
     df = prepare_distributed_dataset(power_clean, site_master, quality, site_irr_aligned)
+    stage_log(f"[6.2] after merge: rows={len(df):,}, sites={df['site_id'].nunique()}")
     df = add_clear_sky_features(df, irradiance_col='g_blend_pred')
+    stage_log("[6.2] after clear-sky features: rows={}".format(len(df)))
 
     # ── 关键修复：PR重算 ──────────────────────────────
     # df 已有 add_standard_split 添加的 split 列
@@ -269,6 +274,7 @@ def build_training_table_v159(power_clean, site_master, quality, site_irradiance
         return df
 
     # 从训练 split 重算 pr_month（只用训练数据，无泄露）
+    stage_log("[6.3] 仅用train集重算站点月度PR")
     print("[v159] 从训练split重算pr_month（混合策略：样本不足时保留原PR）...")
     pr_new = estimate_pr_from_train_split(train_s, full_df=df)
     print(f"[v159] 新pr_month: {len(pr_new)} 行 (site×month)")
@@ -289,7 +295,9 @@ def build_training_table_v159(power_clean, site_master, quality, site_irradiance
 
     # 用新的 pr_month 重新计算所有依赖特征
     # p_base 已改变 → p_base_lag 需要在 recompute 之后追加
+    stage_log("[6.3] 重算PR依赖特征(p_base/base_ratio/y_on/scene)")
     df = recompute_pr_dependent_features(df, pr_new)
+    stage_log("[6.3] 重算完成，追加p_base滞后特征")
     df = add_lag_features(df, 'site_id', ['p_base'], [1, 2])
 
     return df
@@ -304,13 +312,13 @@ def main():
     print("v1.5.9: PR重算 + 分布式光伏功率预测")
     print("=" * 60)
 
-    print("\nLoading source data...")
+    stage_log("[6.1] 加载分布式功率、辐照、气象、站点元数据")
     site_master = pd.read_csv(paths.tables / 'site_master.csv')
     quality = pd.read_csv(paths.tables / 'site_quality.csv')
     power_clean = pd.read_pickle(paths.tables / 'power_clean.pkl')
     site_irr = pd.read_pickle(paths.tables / 'site_irradiance.pkl')
 
-    print("\nBuilding training table with PR recompute from train split...")
+    stage_log("[6.2] 构建分布式功率训练样本 + 重算站点PR")
     train_df = build_training_table_v159(power_clean, site_master, quality, site_irr)
 
     # Drop 5 worst MAPE sites (same as v1.5.8)
@@ -326,7 +334,7 @@ def main():
     baseline_model_path = paths.models / 'distributed_model_baseline_v159.pkl'
     baseline_metrics_path = paths.metrics / 'distributed_metrics_baseline_v159.csv'
 
-    print("\nTraining baseline LightGBM...")
+    stage_log("[6.3] 训练基线LightGBM模型")
     baseline_bundle, baseline_metrics_df, baseline_pred_df = train_distributed_model(
         train_df.copy(),
         baseline_model_path,
@@ -336,7 +344,7 @@ def main():
     print(f"Baseline saved: {baseline_model_path}")
 
     # ── Step 2: v152 MAPE-aware residual correction ────
-    print("\nTraining v152 MAPE-aware residual models...")
+    stage_log("[6.4] 训练v152 MAPE感知残差修正模型")
     bundle, metrics_df, pred_df = train_distributed_power_v152(
         train_df,
         paths.models / 'distributed_model_v159.pkl',
@@ -352,6 +360,7 @@ def main():
         if 'scene_summary' in bundle:
             bundle['scene_summary'].to_csv(paths.metrics / 'power_scene_summary_v159.csv', index=False, encoding='utf-8-sig')
 
+    stage_log("[6.5] 保存最终预测结果")
     print("\n" + "=" * 60)
     print("v1.5.9 Training Results:")
     print("=" * 60)

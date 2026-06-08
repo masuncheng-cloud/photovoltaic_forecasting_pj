@@ -756,13 +756,21 @@ def write_reports(c: ValidationCheck, cfg: dict):
 def main():
     parser = argparse.ArgumentParser(description="训练后逻辑审计")
     parser.add_argument("--config", type=str, default=None, help="pipeline.yaml 路径")
-    args = parser.parse_args()
+    parser.add_argument("--output-root", type=str, default=None,
+                      help="output_root 路径（默认为 configs/pipeline.yaml 中指定）")
+    raw_args = parser.parse_known_args()
+    args = raw_args[0]
+    extra_opts = raw_args[1]
 
     try:
         cfg = load_config(args.config)
     except FileNotFoundError as e:
         print(f"[FAIL] 配置未找到: {e}")
         sys.exit(1)
+
+    # Override output_root if provided
+    if args.output_root is not None:
+        cfg.setdefault("data", {})["output_root"] = args.output_root
 
     c = run_validation(cfg)
     write_reports(c, cfg)

@@ -1,10 +1,13 @@
 from __future__ import annotations
 
+import os
 from dataclasses import dataclass, field
 from typing import Sequence
 
 import numpy as np
 import pandas as pd
+
+MODEL_VERBOSE = os.getenv("PV_MODEL_VERBOSE", "0") == "1"
 
 
 @dataclass
@@ -56,7 +59,7 @@ def _build_catboost_regressor(X_train, y_train, X_valid, y_valid,
         random_strength=0.3,
         loss_function='RMSE',
         eval_metric='RMSE',
-        verbose=False,
+        verbose=100 if MODEL_VERBOSE else False,
         random_seed=42,
         early_stopping_rounds=150,
     )
@@ -95,7 +98,7 @@ def _build_lightgbm_regressor(X_train, y_train, X_valid, y_valid,
         eval_set=[(X_valid, y_valid)],
         callbacks=[
             _make_lgbm_early_stopping(150),
-            _make_lgbm_log_evaluation(0),
+            _make_lgbm_log_evaluation(100 if MODEL_VERBOSE else 0),
         ] if w_train is None else [
             _make_lgbm_early_stopping(150),
         ],
@@ -117,7 +120,7 @@ def _build_catboost_classifier(X_train, y_train, X_valid, y_valid,
         random_strength=0.3,
         loss_function='Logloss',
         eval_metric='AUC',
-        verbose=False,
+        verbose=100 if MODEL_VERBOSE else False,
         random_seed=42,
         early_stopping_rounds=150,
     )

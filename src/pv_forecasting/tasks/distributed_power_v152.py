@@ -26,8 +26,9 @@ import numpy as np
 import pandas as pd
 import pickle
 
-from ..core.features import add_clear_sky_features, add_lag_features
+    from ..core.features import add_clear_sky_features, add_lag_features
 from ..core.models import fit_tabular_classifier, fit_tabular_regressor, predict_bundle, predict_proba_bundle
+from ..core.progress import progress_iter, stage_log
 from ..core.split import add_standard_split
 from ..core.utils import mae, nrmse, rmse, safe_pickle_dump
 from .distributed_model import prepare_distributed_dataset, train_distributed_model
@@ -428,7 +429,7 @@ def _per_site_calibrate(pred_df, site_ids=None):
         site_ids = pred_df['site_id'].unique()
 
     calibration_params = {}
-    for sid in site_ids:
+    for sid in progress_iter(site_ids, total=len(site_ids), desc="[6.6] per-site calibration", min_interval=1.0):
         mask = (pred_df['site_id'] == sid) & pred_df['power_mw'].notna() & pred_df['power_pred'].notna()
         m = mask & (pred_df['power_mw'] > 0)
         if m.sum() < 30:

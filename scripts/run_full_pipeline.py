@@ -26,12 +26,12 @@ run_full_pipeline.py
     [3]  数据清洗与气象插值          → stages/01_data/prepare_meteo_and_power.py
     [3b] 辐照反演                   → stages/02_irradiance/train_inverse_model.py
     [4]  辐照融合                   → stages/02_irradiance/train_irradiance_blend.py
-    [5]  训练前数据审计              → scripts/pretrain_audit_round36.py
+    [5]  训练前数据审计              → scripts/pretrain_audit.py
     [6]  分布式功率模型训练          → stages/03_power/train_distributed_model_v159.py
-    [7]  构建最终预测文件            → scripts/build_round36_predictions.py
-    [8]  站点有效性分层              → scripts/build_site_validity_round36.py
-    [9]  偏差校准                   → scripts/apply_round36_calibration.py
-    [10] 指标重算                   → scripts/compute_round36_metrics.py
+    [7]  构建最终预测文件            → scripts/build_final_predictions.py
+    [8]  站点有效性分层              → scripts/build_site_validity.py
+    [9]  偏差校准                   → scripts/apply_final_calibration.py
+    [10] 指标重算                   → scripts/compute_final_metrics.py
     [11] 训练后统一收口             → scripts/post_training_finalize_outputs.py
     [12] 训练后逻辑审计             → scripts/posttrain_validation.py
     [13] Dashboard 预测值校验        → scripts/check_dashboard_prediction_values.py
@@ -50,8 +50,10 @@ run_full_pipeline.py
 import argparse
 import hashlib
 import json
+import os
 import subprocess
 import sys
+import time
 from contextlib import contextmanager
 from datetime import datetime
 from pathlib import Path
@@ -152,6 +154,120 @@ def write_timing_logs(out_dir: Path, mode: str):
         print(f"  {i}. [{icon} {r['step']}] {r['seconds']:.1f}s ({r['minutes']:.2f}min)")
 
 
+# ─── Progress tracking ─────────────────────────────────────────────────────────
+
+progress_state = {
+    "mode": "",
+    "total_steps": 0,
+    "current_index": 0,
+    "current_step": "",
+    "current_status": "INIT",
+    "started_at": "",
+    "updated_at": "",
+}
+
+
+def _now() -> str:
+    return datetime.now().isoformat(timespec="seconds")
+
+
+def update_progress(out_dir: Path, *, mode: str, total_steps: int,
+                    current_index: int, current_step: str,
+                    current_status: str) -> None:
+    """写出实时训练状态 JSON，供 Cursor 或外部工具查看。终端输出已移除外层伪进度条。"""
+    logs_dir = out_dir / "logs"
+    logs_dir.mkdir(parents=True, exist_ok=True)
+    progress_state.update({
+        "mode": mode,
+        "total_steps": total_steps,
+        "current_index": current_index,
+        "current_step": current_step,
+        "current_status": current_status,
+        "updated_at": _now(),
+    })
+    if not progress_state.get("started_at"):
+        progress_state["started_at"] = _now()
+
+    percent = 0 if total_steps <= 0 else round(current_index / total_steps * 100, 1)
+    progress_state["percent"] = percent
+
+    bar_len = 28
+    filled = int(bar_len * percent / 100)
+    bar = "\u2588" * filled + "\u2591" * (bar_len - filled)
+    line = (
+        f"[{bar}] {percent:5.1f}% "
+        f"({current_index}/{total_steps}) "
+        f"{current_status}: {current_step}"
+    )
+    progress_state["bar"] = line
+
+    (logs_dir / "pipeline_progress_latest.json").write_text(
+        json.dumps(progress_state, ensure_ascii=False, indent=2),
+        encoding="utf-8",
+    )
+    (logs_dir / "pipeline_progress_latest.txt").write_text(line + "\n", encoding="utf-8")
+
+
+def run_subprocess_streaming(cmd: list[str], cwd: Path, log_path: Path | None = None,
+                              *, progress_mode: str = "tqdm") -> int:
+    """
+    Run a subprocess with streaming output.
+
+    When PV_PROGRESS_MODE=tqdm, stdout/stderr are inherited directly so that
+    tqdm's single-line refresh works correctly.  Log output is still captured
+    to disk when log_path is given.
+    """
+    env = os.environ.copy()
+    env["PYTHONUNBUFFERED"] = "1"
+    env.setdefault("PV_PROGRESS", "1")
+    env.setdefault("PV_PROGRESS_MODE", progress_mode)
+    env.setdefault("PV_MODEL_VERBOSE", "0")
+
+    if log_path is not None:
+        log_path.parent.mkdir(parents=True, exist_ok=True)
+        log_file = log_path.open("a", encoding="utf-8")
+    else:
+        log_file = None
+
+    try:
+        print("[CMD] " + " ".join(cmd), flush=True)
+
+        if progress_mode == "tqdm":
+            # Inherit stdout/stderr so tqdm can refresh in-place on the terminal.
+            # PIPE would break tqdm's \r carriage-return mechanism.
+            proc = subprocess.Popen(
+                cmd,
+                cwd=str(cwd),
+                env=env,
+            )
+            returncode = proc.wait()
+            if log_file is not None and returncode == 0:
+                log_file.write(f"[CMD] {' '.join(cmd)}  -> exit {returncode}\n")
+                log_file.flush()
+            return returncode
+
+        # Log mode: capture stdout line by line for display and file logging.
+        proc = subprocess.Popen(
+            cmd,
+            cwd=str(cwd),
+            env=env,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.STDOUT,
+            text=True,
+            bufsize=1,
+        )
+        assert proc.stdout is not None
+        for line in proc.stdout:
+            print(line, end="", flush=True)
+            if log_file is not None:
+                log_file.write(line)
+                log_file.flush()
+        return proc.wait()
+    finally:
+        if log_file is not None:
+            log_file.close()
+
+
 # ─── Step definitions ─────────────────────────────────────────────────────────
 
 STEPS = [
@@ -202,7 +318,7 @@ STEPS = [
     {
         "id": "5",
         "name": "训练前数据审计",
-        "script": "scripts/pretrain_audit_round36.py",
+        "script": "scripts/pretrain_audit.py",
         "required": True,
         "timeout": 120,
         "needs_output_root": True,
@@ -219,7 +335,7 @@ STEPS = [
     {
         "id": "7",
         "name": "构建最终预测文件",
-        "script": "scripts/build_round36_predictions.py",
+        "script": "scripts/build_final_predictions.py",
         "required": True,
         "timeout": 300,
         "needs_output_root": True,
@@ -227,7 +343,7 @@ STEPS = [
     {
         "id": "8",
         "name": "站点有效性分层",
-        "script": "scripts/build_site_validity_round36.py",
+        "script": "scripts/build_site_validity.py",
         "required": True,
         "timeout": 120,
         "needs_output_root": True,
@@ -235,7 +351,7 @@ STEPS = [
     {
         "id": "9",
         "name": "偏差校准",
-        "script": "scripts/apply_round36_calibration.py",
+        "script": "scripts/apply_final_calibration.py",
         "required": True,
         "timeout": 120,
         "needs_output_root": True,
@@ -243,7 +359,7 @@ STEPS = [
     {
         "id": "10",
         "name": "指标重算",
-        "script": "scripts/compute_round36_metrics.py",
+        "script": "scripts/compute_final_metrics.py",
         "required": True,
         "timeout": 300,
         "needs_output_root": True,
@@ -251,7 +367,7 @@ STEPS = [
     {
         "id": "11",
         "name": "训练后统一收口",
-        "desc": "11a 重算指标, 11b 导出看板, 11c 看板stamp, 11d 看板回归",
+        "desc": "11a 重算指标, 11b 导出看板, 11c stamp, 11d 回归, 11e 完整性检查（禁止占位）",
         "script": "scripts/post_training_finalize_outputs.py",
         "needs_output_root": True,
         "subs": [
@@ -259,6 +375,7 @@ STEPS = [
             {"id": "11b", "name": "export_interactive_dashboard_data", "desc": "导出可视化看板数据", "needs_output_root": True},
             {"id": "11c", "name": "dashboard_stamp_check", "desc": "看板新鲜度stamp检查", "needs_output_root": True},
             {"id": "11d", "name": "dashboard_regression_check", "desc": "看板回归检查", "needs_output_root": True},
+            {"id": "11e", "name": "check_dashboard_integrity", "desc": "看板数据完整性检查（禁止占位数据）", "needs_output_root": True},
         ],
         "required": True,
         "timeout": 600,
@@ -321,36 +438,6 @@ MODES = {
         "run_step14": False,
         "run_step15": False,
     },
-    "round64-experiment": {
-        "desc": "Round64 安全残差融合实验：基线复核 -> 权重融合 -> test评估 -> 决策 -> 导出候选dashboard",
-        "steps": [],
-        "run_step14": False,
-        "run_step15": False,
-    },
-    "round70-performance-upgrade": {
-        "desc": "Round70 训练样本口径重构与状态专家模型性能提升",
-        "steps": [],
-        "run_step14": False,
-        "run_step15": False,
-    },
-    "round71-conservative-residual": {
-        "desc": "Round71 季节适配与保守残差提升，先诊断后训练",
-        "steps": [],
-        "run_step14": False,
-        "run_step15": False,
-    },
-    "round72-consistent-base-residual": {
-        "desc": "Round72 重建全历史一致基线并重新训练残差模型",
-        "steps": [],
-        "run_step14": False,
-        "run_step15": False,
-    },
-    "round73-training-framework-reset": {
-        "desc": "Round73 回退最优版本并重构训练框架",
-        "steps": [],
-        "run_step14": False,
-        "run_step15": False,
-    },
 }
 
 
@@ -392,23 +479,46 @@ def check_upstream_dependencies(mode: str, cwd: Path) -> bool:
 # ─── Step execution ───────────────────────────────────────────────────────────
 
 def run_step(step: dict, python: str, cwd: Path, cfg: dict,
-             cache=None) -> bool:
-    """运行单个步骤（带缓存检查和计时）。"""
+             cache=None, *, out_dir: Path | None = None,
+             mode: str = "", total_steps: int = 0,
+             progress_index: int = 0,
+             progress_mode: str = "tqdm") -> bool:
+    """运行单个步骤（带缓存检查、计时、流式输出和进度追踪）。"""
     script = step["script"]
     full_path = cwd / script
     step_id = step["id"]
     step_name = step["name"]
 
+    if out_dir is not None and total_steps > 0:
+        update_progress(out_dir, mode=mode, total_steps=total_steps,
+                       current_index=progress_index,
+                       current_step=f"[{step_id}] {step_name}",
+                       current_status="RUNNING")
+
     if not full_path.exists():
         if step["required"]:
             print(f"\n[FAIL] [{step_id}] 必需步骤脚本不存在: {full_path}")
+            if out_dir is not None and total_steps > 0:
+                update_progress(out_dir, mode=mode, total_steps=total_steps,
+                               current_index=progress_index,
+                               current_step=f"[{step_id}] {step_name}",
+                               current_status="FAIL")
             return False
         print(f"\n[WARN] [{step_id}] 可选步骤脚本不存在，跳过: {full_path}")
+        if out_dir is not None and total_steps > 0:
+            update_progress(out_dir, mode=mode, total_steps=total_steps,
+                           current_index=progress_index,
+                           current_step=f"[{step_id}] {step_name}",
+                           current_status="SKIP")
         return True
 
     # Step 11 有 4 个独立子步骤，各自计时
-    if "subs" in step:
-        return run_step_with_subs(step, python, cwd, cfg)
+        if "subs" in step:
+            return run_step_with_subs(step, python, cwd, cfg,
+                                      out_dir=out_dir, mode=mode,
+                                      total_steps=total_steps,
+                                      progress_index=progress_index,
+                                      progress_mode=progress_mode)
 
     # 使用显式 flags 决定传递哪些参数（不再依赖脚本名猜测）
     cmd = [python, str(full_path)]
@@ -419,31 +529,38 @@ def run_step(step: dict, python: str, cwd: Path, cfg: dict,
     if step.get("needs_output_root"):
         cmd.extend(["--output-root", output_root])
 
+    log_path = None
+    if out_dir is not None:
+        log_path = (out_dir / "logs" / f"step_{step_id}_{step_name.replace(' ', '_')}.log")
+
     with timed_step(f"[{step_id}] {step_name}", outputs=[str(full_path)]):
-        result = subprocess.run(
-            cmd,
-            cwd=str(cwd),
-            check=False,
-            capture_output=True,
-        )
+        returncode = run_subprocess_streaming(cmd, cwd, log_path, progress_mode=progress_mode)
 
-        if result.stdout:
-            print(result.stdout.decode("utf-8", errors="replace")[-2000:])
-        if result.stderr and result.returncode != 0:
-            print(result.stderr.decode("utf-8", errors="replace")[-500:])
-
-        if result.returncode == 0:
+        if returncode == 0:
             print(f"\n[PASS] [{step_id}] {step_name}")
+            if out_dir is not None and total_steps > 0:
+                update_progress(out_dir, mode=mode, total_steps=total_steps,
+                               current_index=progress_index,
+                               current_step=f"[{step_id}] {step_name}",
+                               current_status="PASS")
             return True
         else:
-            print(f"\n[FAIL] [{step_id}] {step_name} — exit {result.returncode}")
+            print(f"\n[FAIL] [{step_id}] {step_name} — exit {returncode}")
+            if out_dir is not None and total_steps > 0:
+                update_progress(out_dir, mode=mode, total_steps=total_steps,
+                               current_index=progress_index,
+                               current_step=f"[{step_id}] {step_name}",
+                               current_status="FAIL")
             if step["required"]:
                 print("\n[STOP] 必需步骤失败。请修复后重新运行本脚本。")
             return not step["required"]
 
 
-def run_step_with_subs(step: dict, python: str, cwd: Path, cfg: dict) -> bool:
-    """Step 11：按子步骤执行，每个子步骤独立计时。"""
+def run_step_with_subs(step: dict, python: str, cwd: Path, cfg: dict,
+                       *, out_dir: Path | None = None, mode: str = "",
+                       total_steps: int = 0, progress_index: int = 0,
+                       progress_mode: str = "tqdm") -> bool:
+    """Step 11：按子步骤执行，每个子步骤独立计时、流式输出和进度追踪。"""
     step_id = step["id"]
     step_name = step["name"]
     subs = step["subs"]
@@ -463,22 +580,38 @@ def run_step_with_subs(step: dict, python: str, cwd: Path, cfg: dict) -> bool:
             print(f"\n[WARN] [{sub_id}] {sub_name} — 脚本不存在，跳过")
             continue
 
+        if out_dir is not None and total_steps > 0:
+            update_progress(out_dir, mode=mode, total_steps=total_steps,
+                          current_index=progress_index,
+                          current_step=f"[{sub_id}] {sub_name}",
+                          current_status="RUNNING")
+
         cmd = [python, str(sub_script)]
         output_root = str(cwd / cfg.get("data", {}).get("output_root", "output/pv_pipeline"))
         if sub.get("needs_output_root"):
             cmd.extend(["--output-root", output_root])
 
-        with timed_step(f"[{sub_id}] {sub_name} ({sub_desc})", outputs=[str(sub_script)]):
-            result = subprocess.run(cmd, cwd=str(cwd), check=False, capture_output=True)
-            if result.stdout:
-                print(result.stdout.decode("utf-8", errors="replace")[-1000:])
-            if result.stderr and result.returncode != 0:
-                print(result.stderr.decode("utf-8", errors="replace")[-500:])
+        log_path = None
+        if out_dir is not None:
+            log_path = (out_dir / "logs" / f"step_{step_id}_{sub_id}_{sub_name.replace(' ', '_')}.log")
 
-            if result.returncode == 0:
+        with timed_step(f"[{sub_id}] {sub_name} ({sub_desc})", outputs=[str(sub_script)]):
+            returncode = run_subprocess_streaming(cmd, cwd, log_path, progress_mode=progress_mode)
+
+            if returncode == 0:
                 print(f"\n[PASS] [{sub_id}] {sub_name}")
+                if out_dir is not None and total_steps > 0:
+                    update_progress(out_dir, mode=mode, total_steps=total_steps,
+                                  current_index=progress_index,
+                                  current_step=f"[{sub_id}] {sub_name}",
+                                  current_status="PASS")
             else:
-                print(f"\n[FAIL] [{sub_id}] {sub_name} — exit {result.returncode}")
+                print(f"\n[FAIL] [{sub_id}] {sub_name} — exit {returncode}")
+                if out_dir is not None and total_steps > 0:
+                    update_progress(out_dir, mode=mode, total_steps=total_steps,
+                                  current_index=progress_index,
+                                  current_step=f"[{sub_id}] {sub_name}",
+                                  current_status="FAIL")
                 all_ok = False
 
     print(f"\n{'='*60}")
@@ -492,7 +625,7 @@ def _find_sub_script(sub_name: str, cwd: Path) -> Path | None:
     """根据子步骤名称找到对应的脚本路径。"""
     candidates = {
         "recompute_hourly_nrmse_consistent": [
-            cwd / "scripts" / "compute_hourly_nrmse_consistent.py",
+            cwd / "scripts" / "recompute_hourly_nrmse_consistent.py",
             cwd / "scripts" / "round46_recompute_hourly_nrmse_consistent.py",
         ],
         "export_interactive_dashboard_data": [
@@ -506,6 +639,9 @@ def _find_sub_script(sub_name: str, cwd: Path) -> Path | None:
         ],
         "check_dashboard_data_freshness": [
             cwd / "scripts" / "check_dashboard_data_freshness.py",
+        ],
+        "check_dashboard_integrity": [
+            cwd / "scripts" / "check_dashboard_integrity.py",
         ],
         "dashboard_regression_check": [
             cwd / "scripts" / "dashboard_regression_check.py",
@@ -605,6 +741,7 @@ def file_sha256(path: Path) -> str:
 def write_manifest(cfg: dict, cwd: Path) -> None:
     """写出 manifest.json，记录训练元信息和 artifact hash。"""
     out_dir = cwd / cfg["data"]["output_root"]
+    out_rel = Path(cfg["data"]["output_root"])
     manifest = {
         "generated_at": datetime.now().isoformat(timespec="seconds"),
         "pipeline_entry": "scripts/run_full_pipeline.py",
@@ -613,12 +750,12 @@ def write_manifest(cfg: dict, cwd: Path) -> None:
         "eval": cfg.get("eval", {}),
         "final_prediction_column": cfg.get("prediction", {}).get("final_column", "power_pred_final"),
         "artifacts": {
-            "final_full_pkl":    "output/pv_pipeline/predictions/distributed_predictions_final_full.pkl",
-            "final_eval_pkl":    "output/pv_pipeline/predictions/distributed_predictions_final_eval.pkl",
-            "hourly_nrmse_csv":  "output/pv_pipeline/metrics/hourly_nrmse_consistent.csv",
-            "site_metrics_csv":  "output/pv_pipeline/metrics/site_metrics_consistent.csv",
-            "dashboard_dir":     "output/pv_pipeline/interactive_dashboard",
-            "dashboard_index":    "output/pv_pipeline/interactive_dashboard/index.json",
+            "final_full_pkl":    str(out_rel / "predictions" / "distributed_predictions_final_full.pkl"),
+            "final_eval_pkl":    str(out_rel / "predictions" / "distributed_predictions_final_eval.pkl"),
+            "hourly_nrmse_csv":  str(out_rel / "metrics" / "hourly_nrmse_consistent.csv"),
+            "site_metrics_csv":  str(out_rel / "metrics" / "site_metrics_consistent.csv"),
+            "dashboard_dir":     str(out_rel / "interactive_dashboard"),
+            "dashboard_index":   str(out_rel / "interactive_dashboard" / "index.json"),
         },
         "artifact_hashes": {
             "final_full_pkl_sha256":   file_sha256(out_dir / "predictions" / "distributed_predictions_final_full.pkl"),
@@ -665,6 +802,16 @@ def write_manifest(cfg: dict, cwd: Path) -> None:
 
 # ─── Main ─────────────────────────────────────────────────────────────────────
 
+def warn_if_not_interactive_terminal():
+    """提示非交互式终端风险。"""
+    if not sys.stdout.isatty():
+        print(
+            "[WARN] 当前 stdout 不是交互式终端。"
+            "如果你使用 nohup、后台任务或重定向运行，可能看不到实时训练进度。",
+            flush=True,
+        )
+
+
 def main():
     parser = argparse.ArgumentParser(
         description="光伏预测训练流水线 — 唯一正式入口",
@@ -705,6 +852,11 @@ def main():
         help="强制重新执行所有步骤（忽略缓存）",
     )
     parser.add_argument(
+        "--dry-run",
+        action="store_true",
+        help="仅打印将要执行的步骤，不执行任何训练脚本",
+    )
+    parser.add_argument(
         "--python",
         type=str,
         default=sys.executable,
@@ -718,6 +870,8 @@ def main():
     )
     args = parser.parse_args()
 
+    progress_mode = os.getenv("PV_PROGRESS_MODE", "tqdm").lower().strip()
+
     python = args.python
     if not Path(python).exists():
         conda_py = "/home/ac/anaconda3/bin/python3"
@@ -729,6 +883,9 @@ def main():
     mode = args.mode
     mode_info = MODES[mode]
 
+    # 前台执行检查
+    warn_if_not_interactive_terminal()
+
     print("=" * 60)
     print("光伏预测训练流水线")
     print(f"执行模式: {mode} — {mode_info['desc']}")
@@ -738,171 +895,52 @@ def main():
     print(f"Force:      {args.force}")
     print()
 
-    # 检查上游依赖
-    if not check_upstream_dependencies(mode, cwd):
+    # ── Dry-run ─────────────────────────────────────────────────────────────────
+    if args.dry_run:
+        print()
+        print("[DRY-RUN] 仅检查步骤配置，不执行任何训练脚本")
+        print("=" * 60)
+        try:
+            cfg = load_config(args.config)
+        except Exception as e:
+            print(f"[WARN] 配置加载跳过（dry-run）: {e}")
+        steps_to_run = []
+        for step in STEPS:
+            if args.skip and step["id"] in args.skip.split(","):
+                continue
+            sid = step["id"].ljust(3)
+            name = step["name"]
+            script = step["script"]
+            script_path = cwd / script
+            exists = "YES" if script_path.exists() else "NO"
+            status = "SKIP" if args.skip and step["id"] in args.skip.split(",") else ""
+            print(f"[DRY-RUN] [{sid}] {name} -> {script}  exists={exists}  {status}")
+            steps_to_run.append(step)
+        print()
+        print(f"[DRY-RUN] total steps: {len(steps_to_run)}")
+        print(f"[DRY-RUN] progress_mode={progress_mode}")
+        # Check output dirs writable
+        test_dirs = ["predictions", "metrics", "tables", "interactive_dashboard"]
+        for d in test_dirs:
+            out_path = cwd / "output" / "pv_pipeline" / d
+            writable = "WRITABLE" if out_path.exists() and os.access(out_path, os.W_OK) else "NOT_WRITABLE_OR_MISSING"
+            print(f"[DRY-RUN] output/{d}/: {writable}")
+        print()
+        print("[DRY-RUN] no subprocess executed — exiting")
+        sys.exit(0)
+
+    # ── 训练前预检 ──────────────────────────────────────────────────────────────
+    preflight_cmd = [python, str(cwd / "scripts" / "preflight_check.py")]
+    if args.config:
+        preflight_cmd.extend(["--config", args.config])
+    pf_result = subprocess.call(preflight_cmd, cwd=str(cwd))
+    if pf_result != 0:
+        print()
+        print("=" * 60)
+        print("[FAIL] 训练前预检失败，请修复上述问题后重新运行。")
+        print("=" * 60)
         sys.exit(1)
-
-    # Special handling for round64-experiment: runs outside the normal pipeline steps
-    if mode == "round64-experiment":
-        print()
-        print("=" * 60)
-        print("Round64 实验模式（独立脚本调用）")
-        print("=" * 60)
-        round64_scripts = [
-            ("基线复核", "scripts/verify_round61_baseline.py"),
-            ("安全残差融合构建", "scripts/build_round64_safe_residual_blend.py"),
-            ("Test 集评估", "scripts/evaluate_round64_safe_blend.py"),
-            ("最终决策", "scripts/select_round64_final_decision.py"),
-        ]
-        for label, script in round64_scripts:
-            print(f"\n>>> [{label}] {script}")
-            ret = subprocess.run(
-                [python, str(cwd / script)],
-                cwd=str(cwd),
-            )
-            if ret.returncode != 0:
-                print(f"\n[FAIL] {label} 失败，退出")
-                sys.exit(1)
-        print()
-        print("=" * 60)
-        print("Round64 实验完成！")
-        print("=" * 60)
-        sys.exit(0)
-
-    # Special handling for round70-performance-upgrade
-    if mode == "round70-performance-upgrade":
-        print()
-        print("=" * 60)
-        print("Round70 训练样本口径重构与状态专家模型性能提升")
-        print("=" * 60)
-        round70_scripts = [
-            ("Step 1: 构建训练表", "scripts/build_round70_training_table.py"),
-            ("Step 2: 发电状态分类模型", "scripts/train_round70_active_state_model.py"),
-            ("Step 3: 10-14点bias约束模型", "scripts/train_round70_noon_bias_constrained_model.py"),
-            ("Step 4: 高误差站点专家模型", "scripts/train_round70_high_error_site_expert.py"),
-            ("Step 5: 候选有效性检查", "scripts/check_candidate_prediction_diff.py"),
-            ("Step 6: 最终候选选择与safe blend", "scripts/select_round70_final_candidate.py"),
-            ("Step 7: Test集评估", "scripts/evaluate_round70_candidate_on_test.py"),
-        ]
-        for label, script in round70_scripts:
-            print(f"\n>>> [{label}] {script}")
-            ret = subprocess.run(
-                [python, str(cwd / script)],
-                cwd=str(cwd),
-            )
-            if ret.returncode != 0:
-                print(f"\n[WARN] [{label}] 失败 (exit {ret.returncode})，继续执行后续步骤")
-        print()
-        print("=" * 60)
-        print("Round70 性能提升实验完成！")
-        print("=" * 60)
-        print("\n主要输出文件：")
-        print("  output/pv_pipeline/round70/round70_training_distribution_by_split.csv")
-        print("  output/pv_pipeline/round70/round70_candidate_diff_check.csv")
-        print("  output/pv_pipeline/round70/round70_active_state_valid_metrics.csv")
-        print("  output/pv_pipeline/round70/round70_valid_candidate_compare.csv")
-        print("  output/pv_pipeline/round70/round70_candidate_decision.json")
-        print("  output/pv_pipeline/round70/round70_test_overall_compare.csv")
-        print("  docs/Round70_训练样本口径重构与状态专家模型性能提升报告.md")
-        sys.exit(0)
-
-    # Special handling for round71-conservative-residual
-    if mode == "round71-conservative-residual":
-        print()
-        print("=" * 60)
-        print("Round71 季节适配与保守残差提升（先诊断后训练）")
-        print("=" * 60)
-        round71_scripts = [
-            ("Step 1: 诊断", "scripts/diagnose_round71_drift_and_error_sources.py"),
-            ("Step 2: 构建训练表", "scripts/build_round71_residual_training_table.py"),
-            ("Step 3: 训练候选", "scripts/train_round71_conservative_residual_candidates.py"),
-            ("Step 4: 候选差异检查", "scripts/check_candidate_prediction_diff.py"),
-            ("Step 5: 多窗口选择", "scripts/select_round71_candidate_multi_window.py"),
-            ("Step 6: Test评估", "scripts/evaluate_round71_candidate_on_test.py"),
-        ]
-        for label, script in round71_scripts:
-            print(f"\n>>> [{label}] {script}")
-            ret = subprocess.run(
-                [python, str(cwd / script)],
-                cwd=str(cwd),
-            )
-            if ret.returncode != 0:
-                print(f"\n[WARN] [{label}] 失败 (exit {ret.returncode})，继续执行后续步骤")
-        print()
-        print("=" * 60)
-        print("Round71 实验完成！")
-        print("=" * 60)
-        print("\n主要输出文件：")
-        print("  output/pv_pipeline/round71/round71_diagnosis_summary.json")
-        print("  output/pv_pipeline/round71/round71_candidate_decision.json")
-        print("  output/pv_pipeline/round71/round71_test_overall_compare.csv")
-        print("  docs/Round71_季节适配与保守残差提升报告.md")
-        sys.exit(0)
-
-    # Special handling for round72-consistent-base-residual
-    if mode == "round72-consistent-base-residual":
-        print()
-        print("=" * 60)
-        print("Round72 重建全历史一致基线并重新训练残差模型")
-        print("=" * 60)
-        round72_scripts = [
-            ("Step1: 审计预测列", "scripts/audit_prediction_column_consistency.py"),
-            ("Step2: 构建一致基线", "scripts/build_round72_consistent_base_prediction.py"),
-            ("Step3: 校验一致基线", "scripts/validate_round72_consistent_base.py"),
-            ("Step4: 训练残差候选", "scripts/train_round72_residual_on_consistent_base.py"),
-            ("Step5: 多窗口选择", "scripts/select_round72_candidate_multi_window.py"),
-            ("Step6: Test评估", "scripts/evaluate_round72_candidate_on_test.py"),
-        ]
-        for label, script in round72_scripts:
-            print(f"\n>>> [{label}] {script}")
-            ret = subprocess.run(
-                [python, str(cwd / script)],
-                cwd=str(cwd),
-            )
-            if ret.returncode != 0:
-                print(f"\n[WARN] [{label}] 失败 (exit {ret.returncode})，继续执行后续步骤")
-        print()
-        print("=" * 60)
-        print("Round72 实验完成！")
-        print("=" * 60)
-        print("\n主要输出文件：")
-        print("  output/pv_pipeline/round72/round72_prediction_column_audit_summary.json")
-        print("  output/pv_pipeline/round72/round72_consistent_base_predictions.pkl")
-        print("  output/pv_pipeline/round72/round72_consistent_base_validation.json")
-        print("  output/pv_pipeline/round72/round72_candidate_decision.json")
-        print("  output/pv_pipeline/round72/round72_test_overall_compare.csv")
-        print("  docs/Round72_重建全历史一致基线并重新训练残差模型报告.md")
-        sys.exit(0)
-
-    # Special handling for round73-training-framework-reset
-    if mode == "round73-training-framework-reset":
-        print()
-        print("=" * 60)
-        print("Round73 回退最优版本并重构训练框架")
-        print("=" * 60)
-        round73_scripts = [
-            ("Step1: 校验基线", "scripts/verify_current_best_round68.py"),
-            ("Step2: 归档失败实验", "scripts/archive_failed_round_experiments.py"),
-            ("Step3: 构建回测数据集", "scripts/build_training_v2_backtest_dataset.py"),
-            ("Step4: 训练候选", "scripts/train_round73_backtest_candidates.py"),
-            ("Step5: 回测选择", "scripts/select_round73_candidate_by_backtest.py"),
-            ("Step6: Test评估", "scripts/evaluate_round73_candidate_on_test.py"),
-        ]
-        for label, script in round73_scripts:
-            print(f"\n>>> [{label}] {script}")
-            ret = subprocess.run([python, str(cwd / script)], cwd=str(cwd))
-            if ret.returncode != 0:
-                print(f"\n[WARN] [{label}] 失败 (exit {ret.returncode})，继续")
-        print()
-        print("=" * 60)
-        print("Round73 完成！")
-        print("=" * 60)
-        print("\n主要输出文件：")
-        print("  output/pv_pipeline/round73/round73_current_best_verify.json")
-        print("  output/pv_pipeline/round73/round73_candidate_decision.json")
-        print("  output/pv_pipeline/round73/round73_test_overall_compare.csv")
-        print("  docs/Round73_回退最优版本并重构训练框架提升报告.md")
-        sys.exit(0)
+    print("[PREFLIGHT] 预检通过。")
 
     try:
         cfg = load_config(args.config)
@@ -947,6 +985,18 @@ def main():
     skip_ids = set(args.skip.split(",")) - {""}
     step_ids_to_run = set(mode_info["steps"])
 
+    # 计算总步骤数（用于进度条）
+    run_steps_order = [s for s in STEPS if s["id"] in step_ids_to_run and s["id"] not in skip_ids]
+    total_steps = len(run_steps_order)
+    if mode_info.get("run_step14", True):
+        total_steps += 1
+    if mode_info.get("run_step15", True):
+        total_steps += 1
+    progress_index = 0
+
+    print(f"[PROGRESS] total steps: {total_steps}")
+    print()
+
     # ── Phase 1: pre-validation steps ──────────────────────────────────────
     for step in STEPS:
         step_id = step["id"]
@@ -959,7 +1009,11 @@ def main():
         # Stop before step 12 (posttrain_validation needs manifest written first)
         if step_id == "12":
             break
-        ok = run_step(step, python, cwd, cfg, cache)
+        progress_index += 1
+        ok = run_step(step, python, cwd, cfg, cache,
+                     out_dir=out_dir, mode=mode, total_steps=total_steps,
+                     progress_index=progress_index,
+                     progress_mode=progress_mode)
         check_pollution(step["name"])
         if not ok:
             print(f"\n{'='*60}")
@@ -970,16 +1024,39 @@ def main():
     # ── Phase 2: manifest must be written before step 12 ─────────────────
     # Step 14：同步正式产物文件名
     if mode_info.get("run_step14", True):
+        progress_index += 1
+        update_progress(out_dir, mode=mode, total_steps=total_steps,
+                      current_index=progress_index,
+                      current_step="[14] 同步 canonical 产物",
+                      current_status="RUNNING")
         with timed_step("[14] 同步 canonical 产物"):
             sync_canonical_paths(cwd, out_dir)
+        update_progress(out_dir, mode=mode, total_steps=total_steps,
+                      current_index=progress_index,
+                      current_step="[14] 同步 canonical 产物",
+                      current_status="PASS")
 
-    # Step 15：写出 manifest.json（必须在 step 12 之前）
+    # Step 15：写出 manifest.json（必须在 step 12 之前，硬失败）
     if mode_info.get("run_step15", True):
+        progress_index += 1
+        update_progress(out_dir, mode=mode, total_steps=total_steps,
+                      current_index=progress_index,
+                      current_step="[15] 写出 manifest.json",
+                      current_status="RUNNING")
         with timed_step("[15] 写出 manifest.json"):
             try:
                 write_manifest(cfg, cwd)
             except Exception as e:
-                print(f"\n[WARN] manifest 写出失败（不影响主流程）: {e}")
+                print(f"\n[FAIL] manifest 写出失败: {e}")
+                update_progress(out_dir, mode=mode, total_steps=total_steps,
+                              current_index=progress_index,
+                              current_step="[15] 写出 manifest.json",
+                              current_status="FAIL")
+                sys.exit(1)
+        update_progress(out_dir, mode=mode, total_steps=total_steps,
+                      current_index=progress_index,
+                      current_step="[15] 写出 manifest.json",
+                      current_status="PASS")
 
     # ── Phase 3: post-validation steps (12, 13) ───────────────────────────
     for step in STEPS:
@@ -992,7 +1069,11 @@ def main():
         # Only run step 12 and later (already handled 1-11 above)
         if step_id < "12":
             continue
-        ok = run_step(step, python, cwd, cfg, cache)
+        progress_index += 1
+        ok = run_step(step, python, cwd, cfg, cache,
+                     out_dir=out_dir, mode=mode, total_steps=total_steps,
+                     progress_index=progress_index,
+                     progress_mode=progress_mode)
         check_pollution(step["name"])
         if not ok:
             print(f"\n{'='*60}")
