@@ -88,9 +88,11 @@ def check_split_no_overlap():
 
 def check_prediction_files():
     """检查预测表文件存在性（canonical 优先，旧版本可选）。
-    Round97_3: canonical 文件缺失直接 ERROR。"""
+    Round97_3: canonical 文件缺失直接 ERROR。
+    Round98_1: posttrain 模式检测 LFS 指针并报错；pretrain 模式已在上层跳过本函数。"""
     print("\n[2/12] 检查预测表文件...")
     from pv_forecasting.core.utils import safe_pickle_load
+    from pv_forecasting.core.file_checks import is_lfs_pointer, describe_file_state
 
     canonical_files = {
         "最终完整预测表（canonical）": PREDICTIONS_DIR / "distributed_predictions_final_full.pkl",
@@ -103,6 +105,12 @@ def check_prediction_files():
 
     for name, path in canonical_files.items():
         if path.exists():
+            # Round98_1: LFS 指针在 posttrain 模式是致命错误
+            if is_lfs_pointer(path):
+                print(f"  [ERROR] {name} 是 Git LFS 指针，不是真实数据（需完整重训）")
+                err(f"{name} 是 Git LFS 指针，不是真实数据（需完整重训）")
+                all_ok = False
+                continue
             try:
                 df_test = safe_pickle_load(path)
                 del df_test
@@ -139,10 +147,15 @@ def check_prediction_files():
 def check_full_table_scope():
     """检查 full 表不是只包含 6-19 点"""
     from pv_forecasting.core.utils import safe_pickle_load
+    from pv_forecasting.core.file_checks import is_lfs_pointer
     print("\n[3/8] 检查 full 表小时范围...")
     full_path = PREDICTIONS_DIR / "distributed_predictions_final_full.pkl"
     if not full_path.exists():
         warn(f"final full 表不存在，跳过检查: {full_path}")
+        return
+    if is_lfs_pointer(full_path):
+        print(f"  [ERROR] final full 表是 Git LFS 指针，不是真实数据（需完整重训）")
+        err(f"final full 表是 Git LFS 指针，不是真实数据（需完整重训）")
         return
     try:
         df = safe_pickle_load(full_path)
@@ -162,10 +175,15 @@ def check_full_table_scope():
 def check_eval_table_scope():
     """检查 eval 表只包含 6-19 点"""
     from pv_forecasting.core.utils import safe_pickle_load
+    from pv_forecasting.core.file_checks import is_lfs_pointer
     print("\n[4/8] 检查 eval 表小时范围...")
     eval_path = PREDICTIONS_DIR / "distributed_predictions_final_eval.pkl"
     if not eval_path.exists():
         warn(f"final eval 表不存在，跳过: {eval_path}")
+        return
+    if is_lfs_pointer(eval_path):
+        print(f"  [ERROR] final eval 表是 Git LFS 指针，不是真实数据（需完整重训）")
+        err(f"final eval 表是 Git LFS 指针，不是真实数据（需完整重训）")
         return
     try:
         df = safe_pickle_load(eval_path)
@@ -323,6 +341,7 @@ def check_split_consistency():
     """检查所有 final 文件使用同一套 split（core/split.py 标准）。"""
     print("\n[9/12] 检查 split 唯一性 …")
     from pv_forecasting.core.split import TRAIN_END, VALID_END, TEST_END
+    from pv_forecasting.core.file_checks import is_lfs_pointer
     print(f"    标准 split: TRAIN_END={TRAIN_END}, VALID_END={VALID_END}, TEST_END={TEST_END}")
     files = [
         ("最终预测表", PREDICTIONS_DIR / "distributed_predictions_final_full.pkl", False),
@@ -331,6 +350,10 @@ def check_split_consistency():
     for name, path, is_eval_only in files:
         if not path.exists():
             warn(f"{name} 不存在，跳过: {path}")
+            continue
+        if is_lfs_pointer(path):
+            print(f"  [ERROR] {name} 是 Git LFS 指针，不是真实数据（需完整重训）")
+            err(f"{name} 是 Git LFS 指针，不是真实数据（需完整重训）")
             continue
         df = pd.read_pickle(path)
         if "time" in df.columns and "split" in df.columns:
@@ -394,6 +417,7 @@ def check_final_prediction_loop():
     """闭环校验：确认最终预测表已按 version selection 更新"""
     print("\n[11/12] 检查 final 预测闭环 …")
     from pv_forecasting.core.split import add_standard_split
+    from pv_forecasting.core.file_checks import is_lfs_pointer
     sel_path = METRICS_DIR / "final_version_selection_by_hour.csv"
     final_path = PREDICTIONS_DIR / "distributed_predictions_final_full.pkl"
     if not sel_path.exists():
@@ -401,6 +425,10 @@ def check_final_prediction_loop():
         return
     if not final_path.exists():
         warn(f"最终预测表不存在: {final_path}（需完整重训后生成）")
+        return
+    if is_lfs_pointer(final_path):
+        print(f"  [ERROR] 最终预测表是 Git LFS 指针，不是真实数据（需完整重训）")
+        err(f"最终预测表是 Git LFS 指针，不是真实数据（需完整重训）")
         return
     sel = pd.read_csv(sel_path)
     df = pd.read_pickle(final_path)
@@ -434,9 +462,14 @@ def check_final_eval_strict():
     """检查 final_eval 是否为严格口径。"""
     print("\n[12/12] 检查 final_eval 严格口径 …")
     from pv_forecasting.core.evaluation import DEFAULT_BAD_SITES as BAD_SITES, DEFAULT_EVAL_HOURS
+    from pv_forecasting.core.file_checks import is_lfs_pointer
     path = PREDICTIONS_DIR / "distributed_predictions_final_eval.pkl"
     if not path.exists():
         warn(f"final_eval 不存在: {path}（需完整重训后生成）")
+        return
+    if is_lfs_pointer(path):
+        print(f"  [ERROR] final_eval 是 Git LFS 指针，不是真实数据（需完整重训）")
+        err(f"final_eval 是 Git LFS 指针，不是真实数据（需完整重训）")
         return
     try:
         df = pd.read_pickle(path)
@@ -488,14 +521,27 @@ def main():
         "--strict", action="store_true",
         help="严格模式：额外检查历史实验可选项（V3/roundXX 文件）"
     )
+    parser.add_argument(
+        "--stage",
+        type=str,
+        default="posttrain",
+        choices=["pretrain", "posttrain"],
+        help=(
+            "检查口径：pretrain（训练前，轻量，不要求最终 PKL）"
+            " 或 posttrain（训练后，严格要求最终 PKL）。"
+            " 默认为 posttrain。"
+        ),
+    )
     args = parser.parse_args()
 
     strict = args.strict
+    stage = args.stage
 
     print("=" * 70)
     print("Pipeline 一致性检查")
     print("=" * 70)
     print(f"项目: {PROJECT_ROOT}")
+    print(f"检查阶段: {'PRE-TRAIN（训练前，轻量）' if stage == 'pretrain' else 'POST-TRAIN（训练后，严格）'}")
     print(f"检查模式: {'STRICT（包含历史实验可选项）' if strict else 'DEFAULT（仅当前正式必需项）'}")
     print(f"split 口径: train < 2025-07-01 < valid < 2025-09-01 < test < 2026-01-01 = future")
 
@@ -504,17 +550,29 @@ def main():
     print("-" * 70)
 
     check_split_no_overlap()
-    check_prediction_files()
-    check_full_table_scope()
-    check_eval_table_scope()
-    check_metrics_files()
+    # pretrain 模式不检查最终 PKL，避免被旧 LFS 指针阻塞
+    if stage == "posttrain":
+        check_prediction_files()
+        check_full_table_scope()
+        check_eval_table_scope()
+        check_metrics_files()
+    else:
+        print("\n[PRE-TRAIN] 跳过最终 PKL 检查（pretrain 模式）")
+        # 检查原始数据、ERA5、配置、脚本、输出目录（原有逻辑）
+        print("[PRE-TRAIN INFO] distributed_predictions_final_full.pkl 是旧文件，将在完整训练后重新生成")
+        print("[PRE-TRAIN INFO] distributed_predictions_final_eval.pkl 是旧文件，将在完整训练后重新生成")
+        print("[PRE-TRAIN INFO] hourly_nrmse_consistent.csv 是旧文件，将在完整训练后重新生成")
+        print("[PRE-TRAIN INFO] interactive_dashboard/ 是旧目录，将在完整训练后重新导出")
     check_no_stale_split_mentions()
     compute_and_print_improvements()
-    check_split_consistency()
-    check_selection_fields()
-    check_final_prediction_loop()
-    check_final_eval_strict()
-    check_not_all_baseline_total()
+    if stage == "posttrain":
+        check_split_consistency()
+        check_selection_fields()
+        check_final_prediction_loop()
+        check_final_eval_strict()
+        check_not_all_baseline_total()
+    else:
+        print("[PRE-TRAIN] 跳过 split 一致性/选择表/闭环校验（pretrain 模式）")
 
     if strict:
         print("\n" + "-" * 70)

@@ -5,6 +5,10 @@ Round97_4 严格 Dashboard 完整性检查。
   - typical_sites.json / typical_sites CSV 必须存在
   - hourly_prediction_summary.json 必须存在且覆盖 6-19h
   - metadata.optional_blocks 不得包含页面必需数据缺失标记
+
+Round98_1 新增：
+  - LFS 指针快速识别（避免 pd.read_pickle() 超时）
+  - --allow-structure-only 模式：只做静态结构检查，不读取 PKL
 """
 from __future__ import annotations
 
@@ -100,11 +104,14 @@ def _build_full_history_frame(df: pd.DataFrame, pred_col_policy: str = "single_c
 
 
 # ── 主检查函数 ──────────────────────────────────────────────────────────────
-def check_dashboard_integrity(dashboard_root: str | Path) -> None:
+def check_dashboard_integrity(dashboard_root: str | Path, allow_structure_only: bool = False) -> None:
     root = Path(dashboard_root).resolve()
     errors: list[str] = []
     meta = None
     pred_col_policy = "single_column"   # 缺省
+
+    if allow_structure_only:
+        print("[STRUCTURE ONLY] 未核对 pkl，不代表预测值一致性通过")
 
     # ── 1. metadata.json ─────────────────────────────────────────────────
     meta_path = root / "metadata.json"
@@ -255,16 +262,28 @@ def check_dashboard_integrity(dashboard_root: str | Path) -> None:
             pkl_path = max(candidates, key=lambda p: p.stat().st_mtime)
 
     df_pkl = None
-    if pkl_path:
-        try:
-            df_pkl = _rp(str(pkl_path))
-            ts_col = "datetime" if "datetime" in df_pkl.columns else "time"
-            df_pkl["datetime"] = pd.to_datetime(df_pkl[ts_col], errors="coerce")
-            print(f"[INFO] PKL: {pkl_path.name}  {len(df_pkl):,} 行, "
-                  f"站点 {df_pkl['site_id'].nunique()}, splits={sorted(df_pkl['split'].unique().tolist())}")
-        except Exception as e:
-            errors.append(f"[ERROR] PKL 读取失败: {pkl_path.name} → {e}")
-            df_pkl = None
+    # Round98_1: structure-only 模式跳过 PKL 读取
+    if allow_structure_only:
+        print("[STRUCTURE ONLY] 跳过 PKL 读取（--allow-structure-only 模式）")
+    elif pkl_path:
+        # Round98_1: LFS 指针必须快速失败，不执行 pd.read_pickle()
+        from pv_forecasting.core.file_checks import is_lfs_pointer
+        if is_lfs_pointer(pkl_path):
+            errors.append(
+                f"[ERROR] {pkl_path.name} 是 Git LFS 指针，不是真实 PKL。"
+                "如果这是训练前检查，请用 --allow-structure-only；"
+                "如果这是训练后检查，说明训练结果未生成。"
+            )
+        else:
+            try:
+                df_pkl = _rp(str(pkl_path))
+                ts_col = "datetime" if "datetime" in df_pkl.columns else "time"
+                df_pkl["datetime"] = pd.to_datetime(df_pkl[ts_col], errors="coerce")
+                print(f"[INFO] PKL: {pkl_path.name}  {len(df_pkl):,} 行, "
+                      f"站点 {df_pkl['site_id'].nunique()}, splits={sorted(df_pkl['split'].unique().tolist())}")
+            except Exception as e:
+                errors.append(f"[ERROR] PKL 读取失败: {pkl_path.name} → {e}")
+                df_pkl = None
     else:
         print("[INFO] 未找到预测 PKL，跳过 actual/pred 核对")
 
@@ -426,13 +445,23 @@ def main() -> None:
         default="output/pv_pipeline/interactive_dashboard",
         help="Dashboard 根目录",
     )
+    parser.add_argument(
+        "--allow-structure-only",
+        action="store_true",
+        help=(
+            "只做静态结构检查，不读取 PKL。"
+            "只能用于训练前快速确认页面文件存在，不能作为训练后通过依据。"
+        ),
+    )
     args = parser.parse_args()
     print("=" * 60)
     print("Round97_4 Dashboard 完整性检查（含 typical_sites + hourly_prediction_summary）")
     print("=" * 60)
     print(f"Dashboard: {args.dashboard_root}")
+    if args.allow_structure_only:
+        print("[STRUCTURE ONLY] 模式：不读取 PKL，不代表预测值一致性通过")
     print()
-    check_dashboard_integrity(args.dashboard_root)
+    check_dashboard_integrity(args.dashboard_root, allow_structure_only=args.allow_structure_only)
 
 
 if __name__ == "__main__":

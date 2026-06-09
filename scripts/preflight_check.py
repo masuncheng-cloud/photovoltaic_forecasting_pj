@@ -9,6 +9,8 @@ preflight_check.py
     python scripts/preflight_check.py
     python scripts/preflight_check.py --config configs/pipeline.yaml
 """
+from __future__ import annotations
+
 import argparse
 import os
 import sys
@@ -105,10 +107,26 @@ def run(cfg: dict) -> bool:
     print()
     print("[3] 功率数据")
     power_dir = data_root / "power_data"
-    power_files = ["2023_power.csv", "2024_power.csv", "2025_power.csv"]
-    for pf in power_files:
-        all_ok &= check(f"功率数据 {pf}", (power_dir / pf).exists(),
-            str((power_dir / pf).relative_to(PROJECT_ROOT)))
+    # 数据实际以 Excel 格式存储；检查台账 Excel 是否存在
+    excel_files = [
+        power_dir / "集中式光伏" / "连云港地区集中式光伏2023-2026年出力值（25座）.xlsx",
+        power_dir / "分布式光伏" / "连云港地区分布式光伏2023-2026年出力值（前38座）.xlsx",
+        power_dir / "分布式光伏" / "连云港地区分布式光伏2023-2026年出力值（后40座）.xlsx",
+    ]
+    excel_ok = all(f.exists() for f in excel_files)
+    all_ok &= check("功率 Excel 数据", excel_ok,
+        f"{len([f for f in excel_files if f.exists()])}/{len(excel_files)} files exist")
+    # CSV 文件（data/power_data/2023_power.csv 等）在本环境中不存在，
+    # 实际由 build_site_master.py + prepare_meteo_and_power.py 从 Excel 读取，
+    # Step 1 会重新构建 site_master.csv；此处仅记录状态
+    csv_files = ["2023_power.csv", "2024_power.csv", "2025_power.csv"]
+    csv_missing = [pf for pf in csv_files if not (power_dir / pf).exists()]
+    if csv_missing:
+        print(f"  [NOTE] CSV 功率文件不存在（{len(csv_missing)} 个），实际数据来自 Excel 台账，Step 1 将重建 site_master")
+    else:
+        for pf in csv_files:
+            all_ok &= check(f"功率数据 {pf}", (power_dir / pf).exists(),
+                str(((power_dir / pf).relative_to(PROJECT_ROOT))))
 
     # 4. 站点映射
     print()
@@ -121,17 +139,23 @@ def run(cfg: dict) -> bool:
     if site_master.exists():
         import pandas as pd
         try:
-            df = pd.read_csv(site_master)
-            cols = set(df.columns)
-            needed = {"site_id", "lon", "lat", "capacity_mw", "dev_type"}
-            for col in needed:
-                all_ok &= check(f"site_master.{col}", col in cols, "")
-            # S115 / S116 检查
-            if "site_id" in df.columns:
-                s115_ok = "S115" in df["site_id"].values
-                s116_ok = "S116" in df["site_id"].values
-                all_ok &= check("站点 S115 存在", s115_ok)
-                all_ok &= check("站点 S116 存在", s116_ok)
+            first_line = site_master.read_text(encoding="utf-8").split("\n", 1)[0]
+            is_lfs = first_line.startswith("version https://git-lfs.github.com/spec")
+            if is_lfs:
+                # LFS 指针文件，Step 1 (build_site_master.py) 会重建，跳过列验证
+                print(f"  [WARN] site_master.csv 是 LFS 指针，Step 1 将重建，跳过列验证")
+            else:
+                df = pd.read_csv(site_master)
+                cols = set(df.columns)
+                needed = {"site_id", "lon", "lat", "capacity_mw", "dev_type"}
+                for col in needed:
+                    all_ok &= check(f"site_master.{col}", col in cols, "")
+                # S115 / S116 检查
+                if "site_id" in df.columns:
+                    s115_ok = "S115" in df["site_id"].values
+                    s116_ok = "S116" in df["site_id"].values
+                    all_ok &= check("站点 S115 存在", s115_ok)
+                    all_ok &= check("站点 S116 存在", s116_ok)
         except Exception as e:
             all_ok &= check("读取 site_master", False, str(e))
 
@@ -172,6 +196,25 @@ def run(cfg: dict) -> bool:
         all_ok &= check(f"output/{sub} 可写", writable, str(d.relative_to(PROJECT_ROOT)))
 
     # Summary
+    sys.path.insert(0, str(PROJECT_ROOT / "src"))
+    from pv_forecasting.core.file_checks import is_lfs_pointer, describe_file_state
+    old_pkls = [
+        output_root / "predictions" / "distributed_predictions_final_full.pkl",
+        output_root / "predictions" / "distributed_predictions_final_eval.pkl",
+        output_root / "metrics" / "hourly_nrmse_consistent.csv",
+        output_root / "interactive_dashboard" / "typical_sites.json",
+        output_root / "interactive_dashboard" / "hourly_prediction_summary.json",
+    ]
+    for p in old_pkls:
+        state = describe_file_state(p)
+        if state == "missing":
+            print(f"  [INFO] {p.name} 不存在（将在完整训练后生成）")
+        elif state == "lfs_pointer":
+            print(f"  [PRE-TRAIN INFO] {p.name} 是 LFS 指针，完整训练后会重新生成")
+        elif state == "empty":
+            print(f"  [WARN] {p.name} 为空文件")
+        else:
+            print(f"  [INFO] {p.name} 存在（{p.stat().st_size:,} bytes）")
     print()
     print("=" * 60)
     if all_ok:

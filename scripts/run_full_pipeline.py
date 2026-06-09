@@ -367,7 +367,7 @@ STEPS = [
     {
         "id": "11",
         "name": "训练后统一收口",
-        "desc": "11a 重算指标, 11b 导出看板, 11c stamp, 11d 回归, 11e 完整性检查（禁止占位）",
+        "desc": "11a 重算指标, 11b 导出看板, 11c stamp, 11d 回归, 11e 完整性检查, 11f 一致性检查",
         "script": "scripts/post_training_finalize_outputs.py",
         "needs_output_root": True,
         "subs": [
@@ -376,6 +376,7 @@ STEPS = [
             {"id": "11c", "name": "dashboard_stamp_check", "desc": "看板新鲜度stamp检查", "needs_output_root": True},
             {"id": "11d", "name": "dashboard_regression_check", "desc": "看板回归检查", "needs_output_root": True},
             {"id": "11e", "name": "check_dashboard_integrity", "desc": "看板数据完整性检查（禁止占位数据）", "needs_output_root": True},
+            {"id": "11f", "name": "check_pipeline_consistency", "desc": "pipeline 一致性检查", "needs_output_root": True},
         ],
         "required": True,
         "timeout": 600,
@@ -590,6 +591,9 @@ def run_step_with_subs(step: dict, python: str, cwd: Path, cfg: dict,
         output_root = str(cwd / cfg.get("data", {}).get("output_root", "output/pv_pipeline"))
         if sub.get("needs_output_root"):
             cmd.extend(["--output-root", output_root])
+        # Round98_1: check_pipeline_consistency 必须用 --stage posttrain
+        if sub_name == "check_pipeline_consistency":
+            cmd.extend(["--stage", "posttrain"])
 
         log_path = None
         if out_dir is not None:
@@ -642,6 +646,9 @@ def _find_sub_script(sub_name: str, cwd: Path) -> Path | None:
         ],
         "check_dashboard_integrity": [
             cwd / "scripts" / "check_dashboard_integrity.py",
+        ],
+        "check_pipeline_consistency": [
+            cwd / "scripts" / "check_pipeline_consistency.py",
         ],
         "dashboard_regression_check": [
             cwd / "scripts" / "dashboard_regression_check.py",
@@ -904,6 +911,17 @@ def main():
             cfg = load_config(args.config)
         except Exception as e:
             print(f"[WARN] 配置加载跳过（dry-run）: {e}")
+        print()
+        print("[DRY-RUN] pretrain checks:")
+        print("  - preflight_check.py")
+        print("  - check_pipeline_consistency.py --stage pretrain")
+        print()
+        print("[DRY-RUN] posttrain hooks (after training):")
+        print("  - export_interactive_dashboard_data.py")
+        print("  - check_dashboard_integrity.py")
+        print("  - check_pipeline_consistency.py --stage posttrain")
+        print()
+        print("[DRY-RUN] steps to execute:")
         steps_to_run = []
         for step in STEPS:
             if args.skip and step["id"] in args.skip.split(","):
@@ -941,6 +959,19 @@ def main():
         print("=" * 60)
         sys.exit(1)
     print("[PREFLIGHT] 预检通过。")
+
+    # Round98_1: 训练前一致性检查（pretrain 模式，不检查最终 PKL）
+    pretrain_check_cmd = [python, str(cwd / "scripts" / "check_pipeline_consistency.py"), "--stage", "pretrain"]
+    print()
+    print("[PRETRAIN CHECK] 开始训练前一致性检查（--stage pretrain）...")
+    pc_result = subprocess.call(pretrain_check_cmd, cwd=str(cwd))
+    if pc_result != 0:
+        print()
+        print("=" * 60)
+        print("[FAIL] 训练前一致性检查失败，请修复上述问题后重新运行。")
+        print("=" * 60)
+        sys.exit(1)
+    print("[PRETRAIN CHECK] 训练前一致性检查通过。")
 
     try:
         cfg = load_config(args.config)
