@@ -25,9 +25,9 @@ from pathlib import Path
 
 SCRIPT_DIR = Path(__file__).resolve().parent
 PROJECT_ROOT = SCRIPT_DIR.parent
-DASHBOARD_ROOT = Path("/home/ac/data16t/msc/photovoltaic_forecasting_pj/output/pv_pipeline/interactive_dashboard")
-PREDICTIONS_DIR = Path("/home/ac/data16t/msc/photovoltaic_forecasting_pj/output/pv_pipeline/predictions")
-METRICS_DIR = Path("/home/ac/data16t/msc/photovoltaic_forecasting_pj/output/pv_pipeline/metrics")
+DASHBOARD_ROOT = PROJECT_ROOT / "output" / "pv_pipeline" / "interactive_dashboard"
+PREDICTIONS_DIR = PROJECT_ROOT / "output" / "pv_pipeline" / "predictions"
+METRICS_DIR = PROJECT_ROOT / "output" / "pv_pipeline" / "metrics"
 
 
 def run_check(cmd: list[str], expect_fail: bool = False) -> bool:
@@ -55,7 +55,7 @@ def test_missing_prediction_column():
         meta_path.write_text(json.dumps(meta, ensure_ascii=False, indent=2), encoding="utf-8")
 
         ok = run_check(
-            ["/home/mjj/anaconda3/bin/python3",
+            [sys.executable,
              str(SCRIPT_DIR / "check_dashboard_integrity.py"),
              "--dashboard-root", str(DASHBOARD_ROOT)],
             expect_fail=True,
@@ -83,7 +83,7 @@ def test_stale_dashboard():
         test_site.write_text(json.dumps(data, ensure_ascii=False, indent=2), encoding="utf-8")
 
         ok = run_check(
-            ["/home/mjj/anaconda3/bin/python3",
+            [sys.executable,
              str(SCRIPT_DIR / "check_dashboard_integrity.py"),
              "--dashboard-root", str(DASHBOARD_ROOT)],
             expect_fail=True,
@@ -111,7 +111,7 @@ def test_stale_placeholder():
         test_site.write_text(json.dumps(data, ensure_ascii=False, indent=2), encoding="utf-8")
 
         ok = run_check(
-            ["/home/mjj/anaconda3/bin/python3",
+            [sys.executable,
              str(SCRIPT_DIR / "check_dashboard_integrity.py"),
              "--dashboard-root", str(DASHBOARD_ROOT)],
             expect_fail=True,
@@ -134,7 +134,7 @@ def test_missing_required_file():
     try:
         pkl_path.unlink()
         ok = run_check(
-            ["/home/mjj/anaconda3/bin/python3",
+            [sys.executable,
              str(SCRIPT_DIR / "check_pipeline_consistency.py")],
             expect_fail=True,
         )
@@ -160,7 +160,7 @@ def test_missing_hourly_summary():
 
     try:
         ok = run_check(
-            ["/home/mjj/anaconda3/bin/python3",
+            [sys.executable,
              str(SCRIPT_DIR / "check_dashboard_integrity.py"),
              "--dashboard-root", str(DASHBOARD_ROOT)],
             expect_fail=True,
@@ -187,7 +187,7 @@ def test_missing_typical_sites():
         meta_path.write_text(json.dumps(meta, ensure_ascii=False, indent=2), encoding="utf-8")
 
         ok = run_check(
-            ["/home/mjj/anaconda3/bin/python3",
+            [sys.executable,
              str(SCRIPT_DIR / "check_dashboard_integrity.py"),
              "--dashboard-root", str(DASHBOARD_ROOT)],
             expect_fail=True,

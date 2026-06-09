@@ -881,7 +881,7 @@ def main():
 
     python = args.python
     if not Path(python).exists():
-        conda_py = "/home/ac/anaconda3/bin/python3"
+        conda_py = sys.executable
         if Path(conda_py).exists():
             python = conda_py
             print(f"[INFO] 使用 conda Python: {python}")
@@ -1129,9 +1129,9 @@ def main():
     print("  output/pv_pipeline/manifest.json")
     print()
     print("启动可视化看板：")
-    print("  cd /home/ac/data16t/msc/photovoltaic_forecasting_pj")
-    print("  python -m http.server 8060")
-    print("  访问 http://127.0.0.1:8060/stages/05_visualization/interactive_forecast_dashboard.html")
+    print(f"  cd {project_root()}")
+    print("  python -m http.server 8070")
+    print("  访问 http://127.0.0.1:8070/stages/05_visualization/interactive_forecast_dashboard.html")
 
 
 if __name__ == "__main__":

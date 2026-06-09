@@ -23,9 +23,8 @@ import argparse, subprocess, sys, os
 from pathlib import Path
 from datetime import datetime
 
-# 优先使用项目环境的 Python，避免系统 Python 缺少依赖
-_PROJECT_PYTHON = "/home/ac/anaconda3/bin/python3"
-PYTHON_BIN = _PROJECT_PYTHON if os.path.exists(_PROJECT_PYTHON) else sys.executable
+# Use the current Python interpreter
+PYTHON_BIN = sys.executable
 
 ROOT = Path(__file__).resolve().parents[1]
 

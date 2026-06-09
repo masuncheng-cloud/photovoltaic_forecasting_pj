@@ -32,6 +32,8 @@ from __future__ import annotations
 
 from pathlib import Path
 import sys
+import time
+from contextlib import contextmanager
 
 import numpy as np
 import pandas as pd
@@ -45,6 +47,16 @@ from pv_forecasting.core.runtime import build_parser, make_paths
 from pv_forecasting.tasks.distributed_model import prepare_distributed_dataset, train_distributed_model
 from pv_forecasting.tasks.distributed_power_v152 import train_distributed_power_v152
 from pv_forecasting.core.progress import stage_log, progress_iter
+
+
+@contextmanager
+def timed_stage(name: str):
+    t0 = time.time()
+    print(f"{name}: start", flush=True)
+    try:
+        yield
+    finally:
+        print(f"{name}: done elapsed={time.time() - t0:.1f}s", flush=True)
 
 # ── 原有常量（与 v1.5.8 保持一致）───────────────────────────────
 ON_G_MIN = 90.0
@@ -335,23 +347,25 @@ def main():
     baseline_metrics_path = paths.metrics / 'distributed_metrics_baseline_v159.csv'
 
     stage_log("[6.3] 训练基线LightGBM模型")
-    baseline_bundle, baseline_metrics_df, baseline_pred_df = train_distributed_model(
-        train_df.copy(),
-        baseline_model_path,
-        baseline_metrics_path,
-    )
+    with timed_stage("[6.3] training baseline LightGBM"):
+        baseline_bundle, baseline_metrics_df, baseline_pred_df = train_distributed_model(
+            train_df.copy(),
+            baseline_model_path,
+            baseline_metrics_path,
+        )
     baseline_pred_df.to_pickle(paths.tables / 'distributed_baseline_pred_v159.pkl')
     print(f"Baseline saved: {baseline_model_path}")
 
     # ── Step 2: v152 MAPE-aware residual correction ────
     stage_log("[6.4] 训练v152 MAPE感知残差修正模型")
-    bundle, metrics_df, pred_df = train_distributed_power_v152(
-        train_df,
-        paths.models / 'distributed_model_v159.pkl',
-        paths.metrics / 'distributed_metrics_v159.csv',
-        reuse_baseline_path=baseline_model_path,
-        reuse_baseline_pred_path=paths.tables / 'distributed_baseline_pred_v159.pkl',
-    )
+    with timed_stage("[6.4] training v152 MAPE-aware model"):
+        bundle, metrics_df, pred_df = train_distributed_power_v152(
+            train_df,
+            paths.models / 'distributed_model_v159.pkl',
+            paths.metrics / 'distributed_metrics_v159.csv',
+            reuse_baseline_path=baseline_model_path,
+            reuse_baseline_pred_path=paths.tables / 'distributed_baseline_pred_v159.pkl',
+        )
     pred_df.to_pickle(paths.tables / 'distributed_predictions_v159.pkl')
 
     if isinstance(bundle, dict):

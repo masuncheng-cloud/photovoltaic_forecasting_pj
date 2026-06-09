@@ -16,7 +16,7 @@ import pandas as pd
 import numpy as np
 from pathlib import Path
 
-ROOT = Path('/root/autodl-tmp/photovoltaic_forecasting_pj/output/pv_pipeline/metrics')
+ROOT = Path(__file__).resolve().parents[2] / "output" / "pv_pipeline" / "metrics"
 
 # ═══════════════════════════════════════════════════════════════════════════════
 #  Step 1: 从时序文件中计算各站点零值比例

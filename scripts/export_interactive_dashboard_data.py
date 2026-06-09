@@ -36,12 +36,6 @@ import pandas as pd
 import sys
 sys.path.insert(0, str(Path(__file__).parent.parent / "src"))
 
-# Use anaconda python when available
-PYTHON_BIN = "/home/mjj/anaconda3/bin/python3"
-import sys
-if os.path.exists(PYTHON_BIN):
-    sys.executable = PYTHON_BIN
-
 # ============================================================
 # SHARED FILTER FUNCTIONS
 # ============================================================

@@ -25,7 +25,7 @@ post_training_finalize_outputs.py
   subprocess.run([sys.executable, "scripts/post_training_finalize_outputs.py"], check=True)
 
 依赖：
-  - /home/ac/anaconda3/bin/python3  (必须有 numpy, pandas)
+  - python (sys.executable)
   - output/pv_pipeline/tables/distributed_predictions_final_*.pkl  (必须存在)
   - scripts/round46_recompute_hourly_nrmse_consistent.py
   - scripts/export_interactive_dashboard_data.py
