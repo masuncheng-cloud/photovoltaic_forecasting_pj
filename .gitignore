@@ -45,3 +45,4 @@ data/
 
 # Config with secrets (optional)
 # configs/secrets.yaml
+.bundle

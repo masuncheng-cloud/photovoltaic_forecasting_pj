@@ -1,0 +1,11 @@
+{
+  "mode": "full",
+  "total_steps": 5,
+  "current_index": 1,
+  "current_step": "[11] 训练后统一收口",
+  "current_status": "FAIL",
+  "started_at": "2026-06-09T10:46:22",
+  "updated_at": "2026-06-09T10:48:12",
+  "percent": 20.0,
+  "bar": "[█████░░░░░░░░░░░░░░░░░░░░░░░]  20.0% (1/5) FAIL: [11] 训练后统一收口"
+}
