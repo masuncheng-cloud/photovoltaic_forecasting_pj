@@ -39,7 +39,6 @@ def prepare_blend_training(inverse_pred: pd.DataFrame, site_master: pd.DataFrame
         total=len(time_groups),
         desc="[4.1] blend training time groups",
         min_interval=3.0,
-        every=500,
     ):
         if len(g) < 4:
             continue
@@ -134,7 +133,6 @@ def infer_site_irradiance(inverse_pred: pd.DataFrame, site_master: pd.DataFrame,
         total=len(time_groups),
         desc="[4.3] infer site irradiance time groups",
         min_interval=10.0,
-        every=500,
     ):
         if len(g) < 2:
             continue

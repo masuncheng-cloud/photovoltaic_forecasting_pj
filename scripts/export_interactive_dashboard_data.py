@@ -655,19 +655,20 @@ def _generate_typical_sites_csv(metrics_dir: Path) -> Path | None:
     else:
         df["test_daytime_zero_ratio_6_19_pct"] = 0.0
 
-    # 过滤无效站点
-    df_valid = df[df["site_status"] == "正常评价"].copy()
-    df_valid["nrmse_pct"] = pd.to_numeric(df_valid["nrmse_pct"], errors="coerce")
-    df_valid = df_valid[df_valid["nrmse_pct"].notna()].copy()
-
-    if len(df_valid) == 0:
+    if len(df) == 0:
         print(f"  [_generate_typical_sites] 无有效站点数据，无法生成 typical_sites")
         return None
 
     # 估算 pred_actual_ratio（无 direct 列，从 bias 推算）
-    df_valid["pred_actual_ratio"] = (
-        (df_valid["mae_MW"] + df_valid["bias_MW"]) / df_valid["capacity_mw"].clip(lower=1e-6) + 1.0
+    df["pred_actual_ratio"] = (
+        (pd.to_numeric(df["mae_MW"], errors="coerce") + pd.to_numeric(df["bias_MW"], errors="coerce"))
+        / pd.to_numeric(df["capacity_mw"], errors="coerce").clip(lower=1e-6) + 1.0
     ).clip(lower=0.0, upper=3.0)
+
+    # 过滤无效站点（pred_actual_ratio 已在 df 上可用）
+    df_valid = df[df["site_status"] == "正常评价"].copy()
+    df_valid["nrmse_pct"] = pd.to_numeric(df_valid["nrmse_pct"], errors="coerce")
+    df_valid = df_valid[df_valid["nrmse_pct"].notna()].copy()
 
     # 分类选取
     results = []
@@ -723,8 +724,8 @@ def _generate_typical_sites_csv(metrics_dir: Path) -> Path | None:
         })
 
     # 样本少：全量历史样本数较少但有效发电样本不为 0 的前 5
-    if zero_ratio.exists():
-        df_with_zero = df.merge(pd.read_csv(zero_ratio)[["site_id", "test_daytime_positive_rows_6_19"]], on="site_id", how="left")
+    if zero_ratio.exists() and "test_daytime_positive_rows_6_19" in df.columns:
+        df_with_zero = df.copy()
         df_with_zero["positive_rows"] = pd.to_numeric(df_with_zero["test_daytime_positive_rows_6_19"], errors="coerce").fillna(0)
         df_with_zero = df_with_zero[df_with_zero["positive_rows"] > 0].copy()
         for _, row in df_with_zero.nsmallest(5, "n_samples").iterrows():
